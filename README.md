@@ -1,6 +1,6 @@
 # AdvancedSensitiveWords
 A one-stop-shop ultimate anti-swear solution for your Minecraft server!
-(Compatible with spigot 1.8.8~1.20.4)
+(Compatible with spigot 1.8.8~Latest)
 <p align="center">
   <img src="icon.webp" alt="logo" width="128" height="128"/>
 </p>
