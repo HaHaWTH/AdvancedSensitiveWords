@@ -1,4 +1,4 @@
-# AdvancedSensitiveWords
+# This repository is migrated to https://github.com/PolpotMC/AdvancedSensitiveWords
 A one-stop-shop ultimate anti-swear solution for your Minecraft server!
 (Compatible with spigot 1.8.8~Latest)
 <p align="center">
