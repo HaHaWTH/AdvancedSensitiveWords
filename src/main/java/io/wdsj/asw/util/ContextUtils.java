@@ -12,6 +12,9 @@ import static io.wdsj.asw.AdvancedSensitiveWords.settingsManager;
 public class ContextUtils {
     private static final ConcurrentHashMap<Player, Queue<String>> chatHistory = new ConcurrentHashMap<>();
 
+    /**
+     * Add player message to history
+     */
     public static void addMessage(Player player, String message) {
         chatHistory.computeIfAbsent(player, k -> new LinkedList<>());
         Queue<String> history = chatHistory.get(player);

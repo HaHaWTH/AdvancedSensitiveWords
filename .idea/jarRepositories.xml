@@ -52,6 +52,11 @@
       <option name="url" value="https://crystal.app.lss233.com/repositories/minecraft" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="codemc-snapshots" />
+      <option name="name" value="codemc-snapshots" />
+      <option name="url" value="https://repo.codemc.io/repository/maven-snapshots/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="dmulloy2-repo-releases" />
       <option name="name" value="dmulloy2-repo-releases" />
       <option name="url" value="https://repo.dmulloy2.net/nexus/repository/releases/" />
