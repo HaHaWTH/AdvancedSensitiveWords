@@ -14,7 +14,7 @@ Logo 由 GPT-4 生成
 [![Love from Earth](https://img.shields.io/badge/Love%20%E2%9D%A4%EF%B8%8F-red.svg?v=202007241736)](https://github.com/hahawth/AdvancedSensitiveWords/stargazers)
 [![](https://jitpack.io/v/HaHaWTH/AdvancedSensitiveWords.svg)](https://jitpack.io/#HaHaWTH/AdvancedSensitiveWords)
 
-[![](https://img.shields.io/github/downloads/HaHaWTH/AdvancedSensitiveWords/total?style=for-the-badge)](https://github.com/HaHaWTH/AdvancedSensitiveWords/releases) [![](https://img.shields.io/github/license/HaHaWTH/AdvancedSensitiveWords?style=for-the-badge)](https://github.com/HaHaWTH/AdvancedSensitiveWords/blob/master/LICENSE)
+[![](https://img.shields.io/github/downloads/HaHaWTH/AdvancedSensitiveWords/total?style=for-the-badge)](https://github.com/HaHaWTH/AdvancedSensitiveWords/releases) [![](https://img.shields.io/github/license/HaHaWTH/AdvancedSensitiveWords?style=for-the-badge)](https://github.com/HaHaWTH/AdvancedSensitiveWords/blob/master/LICENSE)![Visitors](https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2FHaHaWTH%2FAdvancedSensitiveWords&label=Repo%20Views&labelColor=%23d9e3f0&countColor=%232ccce4&labelStyle=upper)
 
 ## 功能
 1. 使用DFA(确定性有穷自动机) 算法
