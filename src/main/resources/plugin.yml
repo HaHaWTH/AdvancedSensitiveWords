@@ -1,0 +1,42 @@
+name: AdvancedSensitiveWords
+version: ${project.version}
+main: io.wdsj.asw.AdvancedSensitiveWords
+api-version: '1.13'
+website: https://github.com/HaHaWTH/AdvancedSensitiveWords
+authors:
+  - HeyWTF_IS_That
+  - HaHaWTH
+  - 0D00_0721
+description: Ultimate AntiSwear plugin for Minecraft
+softdepend:
+  - ProtocolLib
+  - ProtocolSupport
+  - ViaVersion
+  - ViaBackwards
+  - ViaRewind
+  - Geyser-Spigot
+  - floodgate
+  - PlaceholderAPI
+  - AuthMe
+  - CatSeedLogin
+folia-supported: true
+commands:
+  advancedsensitivewords:
+    description: Advanced Sensitive Words main command.
+    usage: /asw <reload|status|test|help>
+    aliases: [asw]
+permissions:
+  advancedsensitivewords.bypass:
+    description: Bypass the Advanced Sensitive Words filter.
+    default: false
+  advancedsensitivewords.reload:
+    description: Reload the Advanced Sensitive Words filter.
+    default: op
+  advancedsensitivewords.status:
+    description: Show the Advanced Sensitive Words filter status.
+    default: op
+  advancedsensitivewords.test:
+    description: Test the Advanced Sensitive Words filter.
+    default: op
+# Love you
+# Support me on Afdian https://afdian.net/a/114514woxiuyuan/

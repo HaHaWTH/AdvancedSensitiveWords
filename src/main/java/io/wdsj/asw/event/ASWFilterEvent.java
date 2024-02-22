@@ -1,5 +1,6 @@
 package io.wdsj.asw.event;
 
+import org.apiguardian.api.API;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -8,7 +9,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * This event fired when each message is processed by the plugin.
+ * @author HaHaWTH & HeyWTF_IS_That & 0D00_0721
+ * Edited on 2024/2/6 03:58 UTC+8
+ * @since Flare
+ * @version Railgun
  */
 public class ASWFilterEvent extends Event {
     private final Player player;
@@ -16,10 +20,10 @@ public class ASWFilterEvent extends Event {
     private final String filteredMessage;
     private final List<String> sensitiveWordList;
     private final EventType eventType;
-
     private static final HandlerList handlers = new HandlerList();
 
-    public ASWFilterEvent(Player player, String originalMessage, String filteredMessage, List<String> sensitiveWordList, EventType eventType) {
+    public ASWFilterEvent(Player player, String originalMessage, String filteredMessage, List<String> sensitiveWordList, EventType eventType, boolean isAsync) {
+        super(isAsync);
         this.player = player;
         this.originalMessage = originalMessage;
         this.filteredMessage = filteredMessage;
@@ -28,65 +32,62 @@ public class ASWFilterEvent extends Event {
     }
 
     /**
-     * Returns the player who sent the message.
-     *
-     * @return the player
+     * Get the player who triggers the event.
+     * @return The player who triggers the event.
      */
     public Player getPlayer() {
-        return player;
+        return this.player;
     }
 
     /**
-     * Returns the message which is not filtered.
-     *
-     * @return the original message
+     * Get the original message (Which is not being processed by the plugin)
+     * @return the message
      */
     public String getOriginalMessage() {
-        return originalMessage;
+        return this.originalMessage;
     }
 
     /**
-     * Returns the message filtered
-     *
-     * @return the filtered message
+     * Get the filtered message (Which has been processed by the plugin)
+     * @return the message
      */
     public String getFilteredMessage() {
-        return filteredMessage;
+        return this.filteredMessage;
     }
 
     /**
-     * Returns true if the message is filtered.
-     * If the player has bypass permission, this will return false.
-     *
-     * @return true if the message is filtered, false otherwise
-     * @deprecated Since version Flare, this always returns true.
+     * @deprecated Since version Flare, all events will be called only if the message is filtered
+     * so this will always return true.
      */
+    @API(status = API.Status.DEPRECATED, since = "Flare")
     @Deprecated
     public boolean isMessageFiltered() {
-        return !originalMessage.equals(filteredMessage);
+        return !this.originalMessage.equals(this.filteredMessage);
     }
 
     /**
-     * Returns a list of filtered words in the message.
-     *
-     * @return the list of filtered words
+     * Get the filtered word list.
+     * @return a list that contains the sensitive words found in the message.
      */
     public List<String> getFilteredWordList() {
-        return sensitiveWordList;
+        return this.sensitiveWordList;
     }
 
     /**
-     * Returns the type of event that is being fired.
-     * EventTypes: CHAT, SIGN, BOOK, ANVIL
-     *
-     * @return the event type
+     * Get the event type.
+     * Available event types: CHAT, BOOK, NAME, SIGN, ANVIL
+     * @return the event type.
      */
+    @NotNull
     public EventType getEventType() {
-        return eventType;
+        return this.eventType;
     }
 
-    @Override
     public @NotNull HandlerList getHandlers() {
+        return handlers;
+    }
+
+    public static HandlerList getHandlerList() {
         return handlers;
     }
 }
