@@ -1,8 +1,13 @@
 # AdvancedSensitiveWords
 One-stop-shop **ultimate** anti-swear solution for your Minecraft server!
+
+[English](https://github.com/hahawth/AdvancedSensitiveWords/blob/main/README.md)
+[简体中文](https://github.com/hahawth/AdvancedSensitiveWords/blob/main/README_zh.md)]
 <p align="center">
   <img src="logo.webp" alt="logo" width="128" height="128"/>
 </p>
+
+Logo designed by GPT-4
 
 [![CodeFactor](https://www.codefactor.io/repository/github/hahawth/advancedsensitivewords/badge)](https://www.codefactor.io/repository/github/hahawth/advancedsensitivewords)
 [![Made with Java](https://img.shields.io/badge/Made%20with-Java-blue.svg)](https://www.java.com/)
