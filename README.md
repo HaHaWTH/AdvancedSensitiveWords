@@ -35,6 +35,7 @@ Logo designed by GPT-4
 17. Chinese support
 18. Fast processing depending on our custom data structure
 19. Online sensitive word list support
+20. Folia supported
 
 **Features above make us unique in the anti-swear plugins!**
 
