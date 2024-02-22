@@ -9,3 +9,7 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
+    ignore:
+    - dependency-name: "com.comphenix.protocol:ProtocolLib"
+      versions: ">=4.8.0"
+    
