@@ -12,6 +12,7 @@ Logo 由 GPT-4 生成
 [![CodeFactor](https://www.codefactor.io/repository/github/hahawth/advancedsensitivewords/badge)](https://www.codefactor.io/repository/github/hahawth/advancedsensitivewords)
 [![Made with Java](https://img.shields.io/badge/Made%20with-Java-blue.svg)](https://www.java.com/)
 [![Love from Earth](https://img.shields.io/badge/Love%20%E2%9D%A4%EF%B8%8F-red.svg?v=202007241736)](https://github.com/hahawth/AdvancedSensitiveWords/stargazers)
+[![](https://jitpack.io/v/HaHaWTH/AdvancedSensitiveWords.svg)](https://jitpack.io/#HaHaWTH/AdvancedSensitiveWords)
 
 [![](https://img.shields.io/github/downloads/HaHaWTH/AdvancedSensitiveWords/total?style=for-the-badge)](https://github.com/HaHaWTH/AdvancedSensitiveWords/releases) [![](https://img.shields.io/github/license/HaHaWTH/AdvancedSensitiveWords?style=for-the-badge)](https://github.com/HaHaWTH/AdvancedSensitiveWords/blob/master/LICENSE)
 
@@ -19,7 +20,7 @@ Logo 由 GPT-4 生成
 1. 使用DFA(确定性有穷自动机) 算法
 2. 预配置 简洁明了,开箱即用
 3. 高质量的超大默认敏感词库 (60000+ 敏感词)
-4. 运行在数据包层, 不会干扰其他聊天插件 (在2c2g的服务器上能做到3.2w qps
+4. 运行在数据包层, 不会干扰其他聊天插件 (在2c2g的服务器上能做到3.2w qps)
 5. 高度自定义的配置
 6. 支持告示牌检测
 7. 支持铁砧检测
@@ -77,8 +78,8 @@ AdvancedSensitiveWords 提供了一个 [简单的事件](./src/main/java/io/wdsj
 
 ```xml
 <dependency>
-    <groupId>io.wdsj</groupId>
-    <artifactId>asw</artifactId>
+    <groupId>com.github.HaHaWTH</groupId>
+    <artifactId>AdvancedSensitiveWords</artifactId>
     <version>LATEST</version>
     <scope>provided</scope>
 </dependency>
