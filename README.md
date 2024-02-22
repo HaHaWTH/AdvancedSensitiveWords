@@ -78,8 +78,8 @@ To use this, you just need to import the plugin binary file as a dependency in y
 
 ```xml
 <dependency>
-    <groupId>com.github.HaHaWTH</groupId>
-    <artifactId>AdvancedSensitiveWords</artifactId>
+    <groupId>io.wdsj</groupId>
+    <artifactId>asw</artifactId>
     <version>LATEST</version>
     <scope>provided</scope>
 </dependency>

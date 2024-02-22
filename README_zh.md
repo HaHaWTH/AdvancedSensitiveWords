@@ -77,8 +77,8 @@ AdvancedSensitiveWords 提供了一个 [简单的事件](./src/main/java/io/wdsj
 
 ```xml
 <dependency>
-    <groupId>com.github.HaHaWTH</groupId>
-    <artifactId>AdvancedSensitiveWords</artifactId>
+    <groupId>io.wdsj</groupId>
+    <artifactId>asw</artifactId>
     <version>LATEST</version>
     <scope>provided</scope>
 </dependency>

@@ -1,0 +1,8 @@
+jdk:
+  - openjdk17
+before_install:
+  - sdk install maven 3.8.1
+  - sdk use maven 3.8.1
+env:
+  GROUP=io.wdsj
+  ARTIFACT=asw
