@@ -34,7 +34,7 @@ Logo designed by GPT-4
 16. Emoji and other unicode support
 17. Chinese support
 18. Fast processing depending on our custom data structure
-19. Online sensitive word list support
+19. Online sensitive word list support ([Repository here](https://github.com/HaHaWTH/ASW-OnlineWordList))
 20. Folia supported
 21. Fake message support (Inspired by [Bilibili Avalon System](https://github.com/freedom-introvert/Research-on-Avalon-System-in-Bilibili-Comment-Area))
 
