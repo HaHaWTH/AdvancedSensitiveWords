@@ -29,6 +29,7 @@ One-stop-shop **ultimate** anti-swear solution for your Minecraft server!
 16. Emoji and other unicode support
 17. Chinese support
 18. Fast processing depending on our custom data structure
+19. Online sensitive word list support
 
 **Features above make us unique in the anti-swear plugins!**
 
