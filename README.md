@@ -84,3 +84,6 @@ To use this, you just need to import the plugin binary file as a dependency in y
     <scope>provided</scope>
 </dependency>
 ```
+
+## Sponsor
+If you like this project, you can sponsor me on [Afdian](https://afdian.net/a/114514woxiuyuan).

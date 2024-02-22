@@ -83,3 +83,8 @@ AdvancedSensitiveWords 提供了一个 [简单的事件](./src/main/java/io/wdsj
     <scope>provided</scope>
 </dependency>
 ```
+
+## 赞助
+如果您喜欢这个项目, 请我喝杯迎宾酒罢(喜)!
+
+[爱发电](https://afdian.net/a/114514woxiuyuan)
