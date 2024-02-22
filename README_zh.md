@@ -35,6 +35,7 @@ Logo 由 GPT-4 生成
 17. 基于自定义数据结构的高速处理
 18. 支持加载在线词库
 19. Folia兼容
+20. **假消息支持(灵感来自 [Bilibili 阿瓦隆系统](https://github.com/freedom-introvert/Research-on-Avalon-System-in-Bilibili-Comment-Area))**
 
 **我们的目标: 干掉ChatSentry!(迫真)**
 

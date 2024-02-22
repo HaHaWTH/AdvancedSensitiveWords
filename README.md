@@ -36,6 +36,7 @@ Logo designed by GPT-4
 18. Fast processing depending on our custom data structure
 19. Online sensitive word list support
 20. Folia supported
+21. Fake message support (Inspired by [Bilibili Avalon System](https://github.com/freedom-introvert/Research-on-Avalon-System-in-Bilibili-Comment-Area))
 
 **Features above make us unique in the anti-swear plugins!**
 
