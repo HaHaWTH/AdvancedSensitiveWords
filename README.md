@@ -1,7 +1,7 @@
 # AdvancedSensitiveWords
 One-stop-shop **ultimate** anti-swear solution for your Minecraft server!
 <p align="center">
-  <img src="icon.webp" alt="logo" width="128" height="128"/>
+  <img src="logo.webp" alt="logo" width="128" height="128"/>
 </p>
 
 [![CodeFactor](https://www.codefactor.io/repository/github/hahawth/advancedsensitivewords/badge)](https://www.codefactor.io/repository/github/hahawth/advancedsensitivewords)
