@@ -71,8 +71,8 @@ To use this, you just need to import the plugin binary file as a dependency in y
 
 ```xml
 <dependency>
-    <groupId>io.wdsj</groupId>
-    <artifactId>asw</artifactId>
+    <groupId>com.github.HaHaWTH</groupId>
+    <artifactId>AdvancedSensitiveWords</artifactId>
     <version>LATEST</version>
     <scope>provided</scope>
 </dependency>
