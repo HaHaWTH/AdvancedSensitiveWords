@@ -38,7 +38,7 @@ public class ProtocolLibListener {
                         if (!fr.xephi.authme.api.v3.AuthMeApi.getInstance().isAuthenticated(player)) return;
                     }
                     if (isCslAvailable && settingsManager.getProperty(PluginSettings.ENABLE_CSL_COMPATIBILITY)) {
-                        if (!cc.baka9.catseedlogin.CatSeedLoginAPI.isLogin(player.getName()) || !cc.baka9.catseedlogin.CatSeedLoginAPI.isRegister(player.getName())) return;
+                        if (!cc.baka9.catseedlogin.bukkit.CatSeedLoginAPI.isLogin(player.getName()) || !cc.baka9.catseedlogin.bukkit.CatSeedLoginAPI.isRegister(player.getName())) return;
                     }
                     long startTime = System.currentTimeMillis();
                     // Chat check

@@ -1,7 +1,5 @@
 package io.wdsj.asw.impl.uuid;
 
-import com.google.common.annotations.Beta;
-
 import java.util.Objects;
 import java.util.UUID;
 
@@ -10,7 +8,6 @@ import java.util.UUID;
  * @version Railgun
  * @since Trident
  */
-@Beta
 public final class FastUuidParser {
     public static UUID fromString(String s) {
         Objects.requireNonNull(s);

@@ -288,11 +288,10 @@
 
         <!-- CatSeedLogin -->
         <dependency>
-            <groupId>cc.baka9</groupId>
-            <artifactId>catseedlogin</artifactId>
-            <version>1.3.10-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/CatSeedLogin-1.3.10-SNAPSHOT.jar</systemPath>
+            <groupId>com.github.CatSeed</groupId>
+            <artifactId>CatSeedLogin</artifactId>
+            <version>1.4.1</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- ConfigMe 1.3.1 as we can't update to 1.4+ -->

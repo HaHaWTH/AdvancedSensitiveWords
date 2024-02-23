@@ -147,7 +147,7 @@ public class ASWPacketListener extends PacketListenerAbstract {
                 if (!fr.xephi.authme.api.v3.AuthMeApi.getInstance().isAuthenticated(player)) return true;
             }
             if (isCslAvailable && settingsManager.getProperty(PluginSettings.ENABLE_CSL_COMPATIBILITY)) {
-                return !cc.baka9.catseedlogin.CatSeedLoginAPI.isLogin(player.getName()) || !cc.baka9.catseedlogin.CatSeedLoginAPI.isRegister(player.getName());
+                return !cc.baka9.catseedlogin.bukkit.CatSeedLoginAPI.isLogin(player.getName()) || !cc.baka9.catseedlogin.bukkit.CatSeedLoginAPI.isRegister(player.getName());
             }
             return false;
         }
