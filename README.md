@@ -1,7 +1,7 @@
 # AdvancedSensitiveWords
 One-stop-shop **ultimate** anti-swear solution for your Minecraft server!
 
-[English](https://github.com/hahawth/AdvancedSensitiveWords/blob/main/README.md)
+[English](https://github.com/hahawth/AdvancedSensitiveWords)
 [简体中文](https://github.com/hahawth/AdvancedSensitiveWords/blob/main/README_zh.md)
 <p align="center">
   <img src="logo.webp" alt="logo" width="128" height="128"/>
