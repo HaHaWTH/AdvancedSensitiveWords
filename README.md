@@ -1,6 +1,8 @@
 # AdvancedSensitiveWords
 One-stop-shop **ultimate** anti-swear solution for your Minecraft server!
 
+Available on GitHub, MineBBS
+
 [English](https://github.com/hahawth/AdvancedSensitiveWords)
 [简体中文](https://github.com/hahawth/AdvancedSensitiveWords/blob/main/README_zh.md)
 <p align="center">
