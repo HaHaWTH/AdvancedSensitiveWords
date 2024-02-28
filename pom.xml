@@ -6,7 +6,7 @@
 
     <groupId>io.wdsj</groupId>
     <artifactId>AdvancedSensitiveWords</artifactId>
-    <version>Railgun</version>
+    <version>ImagineBreaker</version>
     <packaging>jar</packaging>
 
     <name>AdvancedSensitiveWords</name>
@@ -116,6 +116,7 @@
                                     </excludes>
                                 </filter>
                             </filters>
+                            <finalName>${project.name}.jar</finalName>
                         </configuration>
                     </execution>
                 </executions>
