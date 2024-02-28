@@ -116,7 +116,7 @@
                                     </excludes>
                                 </filter>
                             </filters>
-                            <finalName>${project.name}.jar</finalName>
+                            <finalName>${project.name}</finalName>
                         </configuration>
                     </execution>
                 </executions>
