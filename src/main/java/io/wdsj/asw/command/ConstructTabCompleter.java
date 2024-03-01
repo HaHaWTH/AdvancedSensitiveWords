@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 
 public class ConstructTabCompleter implements TabCompleter {
@@ -32,6 +33,6 @@ public class ConstructTabCompleter implements TabCompleter {
             }
             return tabComplete;
         }
-        return null;
+        return Collections.emptyList(); // Must return empty list, if null paper will supply player names
     }
 }
