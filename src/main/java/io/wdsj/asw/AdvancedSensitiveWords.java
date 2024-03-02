@@ -61,6 +61,16 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     }
     @Override
     public void onLoad() {
+        settingsManager = SettingsManagerBuilder
+                .withYamlFile(CONFIG_FILE)
+                .configurationData(PluginSettings.class)
+                .useDefaultMigrationService()
+                .create();
+        messagesManager = SettingsManagerBuilder
+                .withYamlFile(MESSAGE_FILE)
+                .configurationData(PluginMessages.class)
+                .useDefaultMigrationService()
+                .create();
         if (!checkProtocolLib()) return;
         PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
         PacketEvents.getAPI().getSettings().reEncodeByDefault(true).checkForUpdates(false).bStats(false);
@@ -74,16 +84,6 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         instance = this;
         cleanStatisticCache();
         scheduler = UniversalScheduler.getScheduler(this);
-        settingsManager = SettingsManagerBuilder
-                .withYamlFile(CONFIG_FILE)
-                .configurationData(PluginSettings.class)
-                .useDefaultMigrationService()
-                .create();
-        messagesManager = SettingsManagerBuilder
-                .withYamlFile(MESSAGE_FILE)
-                .configurationData(PluginMessages.class)
-                .useDefaultMigrationService()
-                .create();
         doInitTasks();
         if (settingsManager.getProperty(PluginSettings.PURGE_LOG_FILE)) purgeLog();
         if (checkProtocolLib()) {
