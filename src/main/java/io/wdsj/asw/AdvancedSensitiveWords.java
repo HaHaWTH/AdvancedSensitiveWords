@@ -16,6 +16,8 @@ import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder
 import io.wdsj.asw.command.ConstructCommandExecutor;
 import io.wdsj.asw.command.ConstructTabCompleter;
 import io.wdsj.asw.listener.*;
+import io.wdsj.asw.listener.packet.ASWPacketListener;
+import io.wdsj.asw.listener.packet.ProtocolLibListener;
 import io.wdsj.asw.method.*;
 import io.wdsj.asw.setting.PluginMessages;
 import io.wdsj.asw.setting.PluginSettings;

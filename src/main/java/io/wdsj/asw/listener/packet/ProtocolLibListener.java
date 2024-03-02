@@ -1,4 +1,4 @@
-package io.wdsj.asw.listener;
+package io.wdsj.asw.listener.packet;
 
 import io.wdsj.asw.AdvancedSensitiveWords;
 import io.wdsj.asw.event.ASWFilterEvent;

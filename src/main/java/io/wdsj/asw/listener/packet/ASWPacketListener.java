@@ -1,4 +1,4 @@
-package io.wdsj.asw.listener;
+package io.wdsj.asw.listener.packet;
 
 import com.github.retrooper.packetevents.event.PacketListenerAbstract;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
