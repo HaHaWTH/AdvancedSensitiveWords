@@ -91,7 +91,7 @@ public class PluginSettings implements SettingsHolder {
     public static final Property<Boolean> CHAT_INVERT_WHITELIST = newProperty("Chat.invertCommandWhiteList", false);
     @Comment("指令白名单(白名单的指令如含敏感词不会被检测)")
     public static final Property<List<String>> CHAT_COMMAND_WHITE_LIST = newListProperty("Chat.commandWhiteList", "/asw", "/reload", "/help", "/ban",
-            "/mute", "/unmute", "/kick", "/unban", "/res", "/sethome", "/home", "/l", "/tp", "/tpa", "/login", "/log", "/register", "/reg");
+            "/mute", "/unmute", "/kick", "/unban", "/res", "/sethome", "/home", "/l", "/tp", "/tpa", "/login", "/log", "/register", "/reg", "/lp");
     @Comment("替换还是取消(replace/cancel)")
     public static final Property<String> BOOK_METHOD = newProperty("Book.method", "replace");
     @Comment("是否跳过换行")
