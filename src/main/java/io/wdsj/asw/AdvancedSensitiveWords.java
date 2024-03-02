@@ -128,6 +128,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         IWordAllow wA = WordAllows.chains(WordAllows.defaults(), new WordAllow());
         AtomicReference<IWordDeny> wD = new AtomicReference<>();
         isInitialized = false;
+        sensitiveWordBs = null;
         ProxySelector.setDefault(null);
         getScheduler().runTaskAsynchronously(() -> {
             if (settingsManager.getProperty(PluginSettings.ENABLE_DEFAULT_WORDS) && settingsManager.getProperty(PluginSettings.ENABLE_ONLINE_WORDS)) {
