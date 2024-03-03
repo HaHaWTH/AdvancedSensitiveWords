@@ -27,13 +27,13 @@ public class PluginSettings implements SettingsHolder {
     public static final Property<String> REPLACEMENT = newProperty("Plugin.replacement", "*");
     @Comment("预定义替换(需要先加入blackList)(如包含相同敏感词,长的放前面)(用|来分隔敏感词和替换词)")
     public static final Property<List<String>> DEFINED_REPLACEMENT = newListProperty("Plugin.definedReplacement", "失业|灵活就业");
-    @Comment("*是否启用告示牌检测")
+    @Comment("是否启用告示牌检测")
     public static final Property<Boolean> ENABLE_SIGN_EDIT_CHECK = newProperty("Plugin.enableSignEditCheck", true);
-    @Comment("*是否启用铁砧重命名检测")
+    @Comment("是否启用铁砧重命名检测")
     public static final Property<Boolean> ENABLE_ANVIL_EDIT_CHECK = newProperty("Plugin.enableAnvilEditCheck", true);
-    @Comment("*是否启用书检测")
+    @Comment("是否启用书检测")
     public static final Property<Boolean> ENABLE_BOOK_EDIT_CHECK = newProperty("Plugin.enableBookEditCheck", true);
-    @Comment("*是否启用玩家名称检测(推荐支持中文名的服务器开启)")
+    @Comment("是否启用玩家名称检测(推荐支持中文名的服务器开启)")
     public static final Property<Boolean> ENABLE_PLAYER_NAME_CHECK = newProperty("Plugin.enablePlayerNameCheck", false);
     @Comment("是否启用API接口(非必要请勿关闭)")
     public static final Property<Boolean> ENABLE_API = newProperty("Plugin.enableApi", true);
@@ -75,6 +75,9 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"是否关闭插件启动时的求赞助消息:(",
             "赞助链接: https://afdian.net/a/114514woxiuyuan/"})
     public static final Property<Boolean> DISABLE_DONATION = newProperty("Plugin.disableDonation", false);
+    @Comment({"插件处理聊天检测的方式: 基于数据包/事件(packet/event)",
+            "注意: 事件模式无法使用聊天上下文检测"})
+    public static final Property<String> CHAT_DETECTION_MODE = newProperty("Chat.detectionMode", "packet");
     @Comment("替换还是取消(replace/cancel)")
     public static final Property<String> CHAT_METHOD = newProperty("Chat.method", "replace");
     @Comment({"取消后是否发送假消息(仅取消模式可用)(支持PAPI)(Inspired by Bilibili Avalon System)",
@@ -125,7 +128,7 @@ public class PluginSettings implements SettingsHolder {
 
     @Override
     public void registerComments(CommentsConfiguration conf) {
-        conf.setComment("", "AdvancedSensitiveWords 配置文件", "所有配置项均支持重载(标*的配置项仅支持重载关闭)");
+        conf.setComment("", "AdvancedSensitiveWords 配置文件", "所有配置项均支持重载");
         conf.setComment("Plugin", "插件总配置");
         conf.setComment("Plugin.compatibility", "插件兼容配置");
         conf.setComment("Chat", "聊天检测配置");

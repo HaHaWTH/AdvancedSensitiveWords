@@ -142,7 +142,7 @@ public class ASWPacketListener extends PacketListenerAbstract {
         }
     }
     private boolean shouldNotProcess(Player player, String message) {
-        if (isInitialized && !player.hasPermission("advancedsensitivewords.bypass") && !isCommandAndWhiteListed(message)) {
+        if (isInitialized && isPacketBased() && !player.hasPermission("advancedsensitivewords.bypass") && !isCommandAndWhiteListed(message)) {
             if (isAuthMeAvailable && settingsManager.getProperty(PluginSettings.ENABLE_AUTHME_COMPATIBILITY)) {
                 if (!fr.xephi.authme.api.v3.AuthMeApi.getInstance().isAuthenticated(player)) return true;
             }

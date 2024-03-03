@@ -30,7 +30,7 @@ import static io.wdsj.asw.util.Utils.*;
 public class EventChatListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onChat(AsyncPlayerChatEvent event) {
-        if (!isInitialized) return;
+        if (!isInitialized || isPacketBased()) return;
         Player player = event.getPlayer();
         if (player.hasPermission("advancedsensitivewords.bypass")) return;
         if (isAuthMeAvailable && settingsManager.getProperty(PluginSettings.ENABLE_AUTHME_COMPATIBILITY)) {
@@ -71,7 +71,7 @@ public class EventChatListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onCommand(PlayerCommandPreprocessEvent event) {
-        if (!isInitialized) return;
+        if (!isInitialized || isPacketBased()) return;
         Player player = event.getPlayer();
         if (player.hasPermission("advancedsensitivewords.bypass")) return;
         if (isAuthMeAvailable && settingsManager.getProperty(PluginSettings.ENABLE_AUTHME_COMPATIBILITY)) {
