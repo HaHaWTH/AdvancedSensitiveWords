@@ -114,6 +114,9 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         if (settingsManager.getProperty(PluginSettings.ENABLE_PLAYER_NAME_CHECK)) {
             getServer().getPluginManager().registerEvents(new PlayerLoginListener(), this);
         }
+        if (settingsManager.getProperty(PluginSettings.CHAT_BROADCAST_CHECK)) {
+            getServer().getPluginManager().registerEvents(new BroadCastListener(), this);
+        }
         long endTime = System.currentTimeMillis();
         getLogger().info("AdvancedSensitiveWords is enabled!(took " + (endTime - startTime) + "ms)");
         // bro, don't bytecode this, you can just disable it in the config TAT

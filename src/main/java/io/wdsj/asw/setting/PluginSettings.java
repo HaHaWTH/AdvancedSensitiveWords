@@ -83,6 +83,8 @@ public class PluginSettings implements SettingsHolder {
     public static final Property<Boolean> CHAT_FAKE_MESSAGE_ON_CANCEL = newProperty("Chat.fakeMessageOnCancel", false);
     @Comment("是否发送消息提醒(和假消息冲突)")
     public static final Property<Boolean> CHAT_SEND_MESSAGE = newProperty("Chat.sendMessage", true);
+    @Comment("*是否启用服务器广播消息检测(仅提供取消和替换模式,配置跟随聊天检测)(不会触发API事件)")
+    public static final Property<Boolean> CHAT_BROADCAST_CHECK = newProperty("Chat.broadcastCheck", true);
     @Comment("是否开启聊天上下文检测(仅提供取消和假消息模式,配置跟随聊天检测)")
     public static final Property<Boolean> CHAT_CONTEXT_CHECK = newProperty("Chat.contextCheck", false);
     @Comment("最大检测上下文大小")
