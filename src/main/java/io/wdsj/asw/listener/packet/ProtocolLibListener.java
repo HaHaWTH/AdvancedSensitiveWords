@@ -32,7 +32,7 @@ public class ProtocolLibListener {
                     Player player = event.getPlayer();
                     assert player != null; // In some cases, player maybe null
                     String message = event.getPacket().getStrings().read(0);
-                    if (isCommandAndWhiteListed(message) || player.hasPermission("advancedsensitivewords.bypass") || !isPacketBased())
+                    if (isCommandAndWhiteListed(message) || player.hasPermission("advancedsensitivewords.bypass"))
                         return;
                     if (isAuthMeAvailable && settingsManager.getProperty(PluginSettings.ENABLE_AUTHME_COMPATIBILITY)) {
                         if (!fr.xephi.authme.api.v3.AuthMeApi.getInstance().isAuthenticated(player)) return;

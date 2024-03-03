@@ -102,10 +102,18 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         metrics.addCustomChart(new SimplePie("default_list", () -> String.valueOf(settingsManager.getProperty(PluginSettings.ENABLE_DEFAULT_WORDS))));
         metrics.addCustomChart(new SimplePie("mode", () -> checkProtocolLib() ? "Fast" : "Compatibility"));
         metrics.addCustomChart(new SimplePie("java_vendor", TimingUtils::getJvmVendor));
-        getServer().getPluginManager().registerEvents(new SignListener(), this);
-        getServer().getPluginManager().registerEvents(new AnvilListener(), this);
-        getServer().getPluginManager().registerEvents(new BookListener(), this);
-        getServer().getPluginManager().registerEvents(new PlayerLoginListener(), this);
+        if (settingsManager.getProperty(PluginSettings.ENABLE_SIGN_EDIT_CHECK)) {
+            getServer().getPluginManager().registerEvents(new SignListener(), this);
+        }
+        if (settingsManager.getProperty(PluginSettings.ENABLE_ANVIL_EDIT_CHECK)) {
+            getServer().getPluginManager().registerEvents(new AnvilListener(), this);
+        }
+        if (settingsManager.getProperty(PluginSettings.ENABLE_BOOK_EDIT_CHECK)) {
+            getServer().getPluginManager().registerEvents(new BookListener(), this);
+        }
+        if (settingsManager.getProperty(PluginSettings.ENABLE_PLAYER_NAME_CHECK)) {
+            getServer().getPluginManager().registerEvents(new PlayerLoginListener(), this);
+        }
         long endTime = System.currentTimeMillis();
         getLogger().info("AdvancedSensitiveWords is enabled!(took " + (endTime - startTime) + "ms)");
         // bro, don't bytecode this, you can just disable it in the config TAT
@@ -139,6 +147,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
             isInitialized = true;
         });
     }
+
     @Override
     public void onDisable() {
         if (checkProtocolLib()) {
