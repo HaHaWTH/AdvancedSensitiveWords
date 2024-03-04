@@ -30,7 +30,7 @@ public class BroadCastListener implements Listener {
                 event.setMessage(processedMessage);
             }
             if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
-                Utils.logViolation("服务器广播消息(IP: 无)(Chat)(BroadCast)", originalMessage + censoredWordList);
+                Utils.logViolation("Broadcast(IP: None)(Chat)(BroadCast)", originalMessage + censoredWordList);
             }
             long endTime = System.currentTimeMillis();
             addProcessStatistic(endTime, startTime);
