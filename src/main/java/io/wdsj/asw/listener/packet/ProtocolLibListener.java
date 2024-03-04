@@ -5,7 +5,7 @@ import io.wdsj.asw.event.ASWFilterEvent;
 import io.wdsj.asw.event.EventType;
 import io.wdsj.asw.setting.PluginMessages;
 import io.wdsj.asw.setting.PluginSettings;
-import io.wdsj.asw.util.ContextUtils;
+import io.wdsj.asw.util.context.ChatContext;
 import io.wdsj.asw.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -77,8 +77,8 @@ public class ProtocolLibListener {
                     }
                     // Context check
                     if (settingsManager.getProperty(PluginSettings.CHAT_CONTEXT_CHECK) && isNotCommand(message)) {
-                        ContextUtils.addMessage(player, message);
-                        Queue<String> history = ContextUtils.getHistory(player);
+                        ChatContext.addMessage(player, message);
+                        Queue<String> history = ChatContext.getHistory(player);
                         String originalContext = String.join("", history);
                         List<String> censoredContextList = sensitiveWordBs.findAll(originalContext);
                         if (!censoredContextList.isEmpty()) {

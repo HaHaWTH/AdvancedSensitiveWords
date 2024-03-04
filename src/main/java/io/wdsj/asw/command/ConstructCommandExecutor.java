@@ -4,7 +4,7 @@ import com.github.houbb.heaven.util.util.OsUtil;
 import io.wdsj.asw.AdvancedSensitiveWords;
 import io.wdsj.asw.setting.PluginMessages;
 import io.wdsj.asw.setting.PluginSettings;
-import io.wdsj.asw.util.CacheUtils;
+import io.wdsj.asw.util.cache.BookCache;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -29,7 +29,7 @@ public class ConstructCommandExecutor implements CommandExecutor {
                 messagesManager.reload();
                 AdvancedSensitiveWords.getInstance().doInitTasks();
                 if (settingsManager.getProperty(PluginSettings.BOOK_CACHE_CLEAR_ON_RELOAD) &&
-                        settingsManager.getProperty(PluginSettings.BOOK_CACHE)) CacheUtils.forceClearCache();
+                        settingsManager.getProperty(PluginSettings.BOOK_CACHE)) BookCache.forceClearCache();
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_RELOAD)));
                 return true;
             }

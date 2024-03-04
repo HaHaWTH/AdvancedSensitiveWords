@@ -21,8 +21,8 @@ import io.wdsj.asw.listener.packet.ProtocolLibListener;
 import io.wdsj.asw.method.*;
 import io.wdsj.asw.setting.PluginMessages;
 import io.wdsj.asw.setting.PluginSettings;
-import io.wdsj.asw.util.CacheUtils;
-import io.wdsj.asw.util.ContextUtils;
+import io.wdsj.asw.util.cache.BookCache;
+import io.wdsj.asw.util.context.ChatContext;
 import io.wdsj.asw.util.TimingUtils;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
@@ -159,8 +159,8 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
             com.comphenix.protocol.ProtocolLibrary.getProtocolManager().removePacketListeners(this);
         }
         TimingUtils.cleanStatisticCache();
-        ContextUtils.forceClearContext();
-        CacheUtils.forceClearCache();
+        ChatContext.forceClearContext();
+        BookCache.forceClearCache();
         HandlerList.unregisterAll(this);
         Objects.requireNonNull(getCommand("advancedsensitivewords")).setExecutor(null);
         Objects.requireNonNull(getCommand("asw")).setExecutor(null);

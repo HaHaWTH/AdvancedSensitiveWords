@@ -6,7 +6,7 @@ import io.wdsj.asw.event.EventType;
 import io.wdsj.asw.impl.list.AdvancedList;
 import io.wdsj.asw.setting.PluginMessages;
 import io.wdsj.asw.setting.PluginSettings;
-import io.wdsj.asw.util.CacheUtils;
+import io.wdsj.asw.util.cache.BookCache;
 import io.wdsj.asw.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -43,11 +43,11 @@ public class BookListener implements Listener {
         if (bookMeta.hasPages()) {
             for (String originalPage : originalPages) {
                 if (skipReturnLine) originalPage = originalPage.replace("\n", "").replace("§0", "");
-                boolean isBookCached = CacheUtils.isBookCached(originalPage);
-                List<String> censoredWordList = isBookCached && isCacheEnabled ? CacheUtils.getCachedBookSensitiveWordList(originalPage) : AdvancedSensitiveWords.sensitiveWordBs.findAll(originalPage);
+                boolean isBookCached = BookCache.isBookCached(originalPage);
+                List<String> censoredWordList = isBookCached && isCacheEnabled ? BookCache.getCachedBookSensitiveWordList(originalPage) : AdvancedSensitiveWords.sensitiveWordBs.findAll(originalPage);
                 if (!censoredWordList.isEmpty()) {
-                    String processedPage = isBookCached && isCacheEnabled ? CacheUtils.getCachedProcessedBookContent(originalPage) : AdvancedSensitiveWords.sensitiveWordBs.replace(originalPage);
-                    if (!isBookCached && isCacheEnabled) CacheUtils.addToBookCache(originalPage, processedPage, censoredWordList);
+                    String processedPage = isBookCached && isCacheEnabled ? BookCache.getCachedProcessedBookContent(originalPage) : AdvancedSensitiveWords.sensitiveWordBs.replace(originalPage);
+                    if (!isBookCached && isCacheEnabled) BookCache.addToBookCache(originalPage, processedPage, censoredWordList);
                     if (settingsManager.getProperty(PluginSettings.BOOK_METHOD).equalsIgnoreCase("cancel")) {
                         event.setCancelled(true);
                         shouldSendMessage = true;

@@ -13,7 +13,7 @@ import io.wdsj.asw.event.ASWFilterEvent;
 import io.wdsj.asw.event.EventType;
 import io.wdsj.asw.setting.PluginMessages;
 import io.wdsj.asw.setting.PluginSettings;
-import io.wdsj.asw.util.ContextUtils;
+import io.wdsj.asw.util.context.ChatContext;
 import io.wdsj.asw.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -82,12 +82,12 @@ public class ASWPacketListener extends PacketListenerAbstract {
 
             // Context check
             if (settingsManager.getProperty(PluginSettings.CHAT_CONTEXT_CHECK) && isNotCommand(originalMessage)) {
-                ContextUtils.addMessage(player, originalMessage);
-                Queue<String> queue = ContextUtils.getHistory(player);
+                ChatContext.addMessage(player, originalMessage);
+                Queue<String> queue = ChatContext.getHistory(player);
                 String originalContext = String.join("", queue);
                 List<String> censoredContextList = sensitiveWordBs.findAll(originalContext);
                 if (!censoredContextList.isEmpty()) {
-                    ContextUtils.clearPlayerContext(player);
+                    ChatContext.clearPlayerContext(player);
                     messagesFilteredNum.getAndIncrement();
                     String processedContext = AdvancedSensitiveWords.sensitiveWordBs.replace(originalContext);
                     event.setCancelled(true);

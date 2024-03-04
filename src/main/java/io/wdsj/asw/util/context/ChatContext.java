@@ -1,4 +1,4 @@
-package io.wdsj.asw.util;
+package io.wdsj.asw.util.context;
 
 import io.wdsj.asw.setting.PluginSettings;
 import org.bukkit.entity.Player;
@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static io.wdsj.asw.AdvancedSensitiveWords.settingsManager;
 
-public class ContextUtils {
+public class ChatContext {
     private static final ConcurrentHashMap<Player, Queue<String>> chatHistory = new ConcurrentHashMap<>();
     /**
      * Add player message to history
@@ -35,5 +35,5 @@ public class ContextUtils {
         chatHistory.clear();
     }
 
-    private ContextUtils() {}
+    private ChatContext() {}
 }
