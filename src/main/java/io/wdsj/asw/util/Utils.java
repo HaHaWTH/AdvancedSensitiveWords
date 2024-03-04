@@ -105,16 +105,16 @@ public class Utils {
     }
 
     public static boolean isCommandAndWhiteListed(String command) {
-    if (!command.startsWith("/")) return false;
-    List<String> whitelist = settingsManager.getProperty(PluginSettings.CHAT_COMMAND_WHITE_LIST);
-    String[] splitCommand = command.split(" ");
-    for (String s : whitelist) {
-        if (splitCommand[0].equalsIgnoreCase(s)) {
-            return !settingsManager.getProperty(PluginSettings.CHAT_INVERT_WHITELIST);
+        if (!command.startsWith("/")) return false;
+        List<String> whitelist = settingsManager.getProperty(PluginSettings.CHAT_COMMAND_WHITE_LIST);
+        String[] splitCommand = command.split(" ");
+        for (String s : whitelist) {
+            if (splitCommand[0].equalsIgnoreCase(s)) {
+                return !settingsManager.getProperty(PluginSettings.CHAT_INVERT_WHITELIST);
+            }
         }
+        return settingsManager.getProperty(PluginSettings.CHAT_INVERT_WHITELIST);
     }
-    return settingsManager.getProperty(PluginSettings.CHAT_INVERT_WHITELIST);
-}
 
     public static String getMinecraftVersion() {
         return Bukkit.getBukkitVersion().split("-")[0];
