@@ -6,7 +6,7 @@
 
     <groupId>io.wdsj</groupId>
     <artifactId>AdvancedSensitiveWords</artifactId>
-    <version>ImagineBreaker</version>
+    <version>Flame</version>
     <packaging>jar</packaging>
 
     <name>AdvancedSensitiveWords</name>
