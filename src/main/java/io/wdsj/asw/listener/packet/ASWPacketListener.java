@@ -9,7 +9,6 @@ import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientChatCommand;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientChatMessage;
 import io.wdsj.asw.AdvancedSensitiveWords;
-import io.wdsj.asw.event.ASWChatPassEvent;
 import io.wdsj.asw.event.ASWFilterEvent;
 import io.wdsj.asw.event.EventType;
 import io.wdsj.asw.setting.PluginMessages;
@@ -79,8 +78,6 @@ public class ASWPacketListener extends PacketListenerAbstract {
                 long endTime = System.currentTimeMillis();
                 addProcessStatistic(endTime, startTime);
                 return;
-            } else if (settingsManager.getProperty(PluginSettings.ENABLE_API)){
-                getScheduler().runTask(() -> Bukkit.getPluginManager().callEvent(new ASWChatPassEvent(player, originalMessage, false)));
             }
 
             // Context check

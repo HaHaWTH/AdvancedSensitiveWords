@@ -1,7 +1,6 @@
 package io.wdsj.asw.listener.packet;
 
 import io.wdsj.asw.AdvancedSensitiveWords;
-import io.wdsj.asw.event.ASWChatPassEvent;
 import io.wdsj.asw.event.ASWFilterEvent;
 import io.wdsj.asw.event.EventType;
 import io.wdsj.asw.setting.PluginMessages;
@@ -75,9 +74,8 @@ public class ProtocolLibListener {
                         long endTime = System.currentTimeMillis();
                         addProcessStatistic(endTime, startTime);
                         return;
-                    } else if (settingsManager.getProperty(PluginSettings.ENABLE_API)) {
-                        getScheduler().runTask(() -> Bukkit.getPluginManager().callEvent(new ASWChatPassEvent(player, message, false)));
                     }
+
                     // Context check
                     if (settingsManager.getProperty(PluginSettings.CHAT_CONTEXT_CHECK) && isNotCommand(message)) {
                         ChatContext.addMessage(player, message);
