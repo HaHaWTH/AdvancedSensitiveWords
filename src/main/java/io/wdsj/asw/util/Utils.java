@@ -37,10 +37,6 @@ public class Utils {
         }
     }
 
-    public static void playSounds(Player player, String soundName) {
-        if (soundName.equalsIgnoreCase("NONE")) return;
-        player.playSound(player.getLocation(), soundName, 1.0f, 0.0f);
-    }
 
     public static void logViolation(String playerName, String violationReason) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd-HH:mm:ss");

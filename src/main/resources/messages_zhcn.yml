@@ -1,0 +1,60 @@
+# AdvancedSensitiveWords 插件消息配置
+# 聊天检测消息
+Chat:
+  # 玩家发送敏感消息时候回复的假消息(只有玩家本人能看见)
+  # 内置变量%integrated_player% %integrated_message% (支持PlaceHolderAPI)
+  fakeMessage: <%integrated_player%> %integrated_message%
+  # 玩家发送敏感消息时候的提示
+  messageOnChat: '&c请勿在聊天中发送敏感词汇.'
+# 告示牌检测消息
+Sign:
+  # 玩家写入敏感消息时的提示
+  messageOnSign: '&c请勿在告示牌中写入敏感词汇.'
+# 铁砧重命名检测消息
+Anvil:
+  # 玩家在铁砧重命名时写入敏感消息的提示
+  messageOnAnvilRename: '&c请勿在铁砧中写入敏感词汇.'
+# 书检测消息
+Book:
+  # 玩家在书中写入敏感消息的提示
+  messageOnBook: '&c请勿在书中写入敏感词汇.'
+# 玩家名检测消息
+Name:
+  # 玩家名包含敏感词时的消息
+  messageOnName: '&c您的用户名包含敏感词,请修改您的用户名或联系管理员.'
+# 插件消息
+Plugin:
+  # 插件重载消息
+  messageOnCommandReload: '&aAdvancedSensitiveWords has been reloaded.'
+  # 插件帮助菜单
+  messageOnCommandHelp: |-
+    &bAdvancedSensitiveWords&r---&b帮助菜单
+       &7/asw reload&7: &a重新加载过滤词库和插件配置
+       &7/asw status&7: &a显示插件状态菜单
+       &7/asw test <待测消息>: &a运行敏感词测试
+       &7/asw help&7: &a显示帮助信息
+  # 插件状态菜单
+  messageOnCommandStatus: |-
+    &bAdvancedSensitiveWords&r---&b插件状态(%VERSION%)(MC %MC_VERSION%)
+       &7系统信息: &b%PLATFORM% %BIT% (Java %JAVA_VERSION% -- %JAVA_VENDOR%)
+       &7初始化: %INIT%
+       &7API状态: %API_STATUS%
+       &7当前模式: %MODE%
+       &7已过滤消息数: &a%NUM%
+       &7近20次处理平均耗时: %MS%
+  # 敏感词测试消息(不计入已过滤消息)
+  commandTest:
+    # 敏感词测试返回
+    testResultTrue: |-
+      &b一眼丁真, 鉴定为敏感词(鉴定报告)
+         &7原消息: &c%ORIGINAL_MSG%
+         &7过滤后消息: &a%PROCESSED_MSG%
+         &7敏感词列表: &b%CENSORED_LIST%
+    # 敏感词测试通过
+    testResultPass: '&a待测消息中没有敏感词喵~'
+    # 敏感词测试参数不足
+    testArgNotEnough: '&c参数不足, 请使用 &7/asw test <待测消息>'
+    # 敏感词测试未初始化
+    testNotInit: '&c插件还没有初始化完毕喵'
+  # 没有权限执行该指令
+  noPermission: '&c你没有权限执行该指令.'

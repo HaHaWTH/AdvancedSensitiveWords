@@ -44,7 +44,6 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     public static boolean isInitialized = false;
     public static SensitiveWordBs sensitiveWordBs;
     private final File CONFIG_FILE = new File(getDataFolder(), "config.yml");
-    private final File MESSAGE_FILE = new File(getDataFolder(), "messages.yml");
     public static boolean isAuthMeAvailable;
     public static boolean isCslAvailable;
     public static SettingsManager settingsManager;
@@ -66,8 +65,13 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
                 .configurationData(PluginSettings.class)
                 .useDefaultMigrationService()
                 .create();
+        File msgFile = new File(getDataFolder(), "messages_" + settingsManager.getProperty(PluginSettings.PLUGIN_LANGUAGE) +
+                ".yml");
+        if (!msgFile.exists()) {
+            saveResource("messages_" + settingsManager.getProperty(PluginSettings.PLUGIN_LANGUAGE) + ".yml", false);
+        }
         messagesManager = SettingsManagerBuilder
-                .withYamlFile(MESSAGE_FILE)
+                .withYamlFile(msgFile)
                 .configurationData(PluginMessages.class)
                 .useDefaultMigrationService()
                 .create();

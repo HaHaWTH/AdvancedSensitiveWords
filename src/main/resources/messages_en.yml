@@ -1,0 +1,59 @@
+#AdvancedSensitiveWords Messages configuration
+#Chat related messages
+Chat:
+  #Fake messages(Only the player who send the message can see it)
+  #Internal placeholders: %integrated_player% %integrated_message% (PlaceHolderAPI supported)
+  fakeMessage: <%integrated_player%> %integrated_message%
+  #Messages on Chat
+  messageOnChat: '&cDo not send sensitive words in the chat.'
+#Sign check related messages
+Sign:
+  #Messages on Sign editing
+  messageOnSign: '&cDo not write sensitive vocabulary in the sign.'
+#Anvil check related messages
+Anvil:
+  #Messages on Anvil renaming
+  messageOnAnvilRename: '&cDo not write sensitive words in the Anvil.'
+#Book check related messages
+Book:
+  #Messages on Book editing
+  messageOnBook: '&cDo not write sensitive words in the book.'
+#Player name check related messages
+Name:
+  #Messages on Player name
+  messageOnName: '&cYour username contains sensitive words, please change your username or contact an administrator.'
+#Plugin related messages
+Plugin:
+  #Reload command
+  messageOnCommandReload: '&aAdvancedSensitiveWords has been reloaded.'
+  #Help command
+  messageOnCommandHelp: |-
+    &bAdvancedSensitiveWords&r---&b Help Menu
+    &7/asw reload&7: &areload filter dictionary and plug-in configuration
+    &7/asw status&7: &ashow plug-in status menu
+    &7/asw test <text to be tested>: &arun sensitive word test
+    &7/asw help&7: &ashow help information
+  #Status command
+  messageOnCommandStatus: |-
+    &bAdvancedSensitiveWords&r---&b Plugin Status(%VERSION%)(MC %MC_VERSION%)
+    &7 System Information: &b%PLATFORM% %BIT% (Java %JAVA_VERSION% -- %JAVA_VENDOR%)
+    &7 Initialization: %INIT%
+    &7 API status: %API_STATUS%
+    &7 Current mode: %MODE%
+    &7 Number of filtered messages: &a%NUM%
+    &7 Average time spent on nearly 20 processes: %MS%
+  #Test command
+  commandTest:
+    #Return message when the test contains sensitive words
+    testResultTrue: |-
+      &7 Original message: &c%ORIGINAL_MSG%
+      &7 After filtering message: &a%PROCESSED_MSG%
+      &7 List of sensitive words: &b%CENSORED_LIST%
+    #No sensitive words in the test
+    testResultPass: '&aPending message has no sensitive words!'
+    #Not enough parameters
+    testArgNotEnough: '&cInsufficient parameters, use &7/asw test <Pending Messages>'
+    #Plugin has not been initialized
+    testNotInit: '&cPlugin has not been initialized'
+  #No permission
+  noPermission: '&cYou do not have permission to execute the command.'
