@@ -8,5 +8,6 @@ public enum EventType {
     SIGN,
     ANVIL,
     BOOK,
-    NAME
+    NAME,
+    ITEM
 }

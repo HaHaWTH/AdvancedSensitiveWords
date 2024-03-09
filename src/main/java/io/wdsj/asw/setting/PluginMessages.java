@@ -22,6 +22,8 @@ public class PluginMessages implements SettingsHolder {
     public static final Property<String> MESSAGE_ON_BOOK = newProperty("Book.messageOnBook", "&c请勿在书中写入敏感词汇.");
     @Comment("玩家名包含敏感词时的消息")
     public static final Property<String> MESSAGE_ON_NAME = newProperty("Name.messageOnName", "&c您的用户名包含敏感词,请修改您的用户名或联系管理员.");
+    @Comment("玩家物品包含敏感词时的消息")
+    public static final Property<String> MESSAGE_ON_ITEM = newProperty("Item.messageOnItem", "&c您的物品包含敏感词.");
     @Comment("插件重载消息")
     public static final Property<String> MESSAGE_ON_COMMAND_RELOAD = newProperty("Plugin.messageOnCommandReload", "&aAdvancedSensitiveWords has been reloaded.");
     @Comment("插件帮助菜单")

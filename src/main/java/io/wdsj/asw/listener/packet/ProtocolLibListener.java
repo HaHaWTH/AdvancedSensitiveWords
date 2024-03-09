@@ -5,15 +5,15 @@ import io.wdsj.asw.event.ASWFilterEvent;
 import io.wdsj.asw.event.EventType;
 import io.wdsj.asw.setting.PluginMessages;
 import io.wdsj.asw.setting.PluginSettings;
-import io.wdsj.asw.util.context.ChatContext;
 import io.wdsj.asw.util.Utils;
+import io.wdsj.asw.util.context.ChatContext;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Deque;
 import java.util.List;
-import java.util.Queue;
 
 import static io.wdsj.asw.AdvancedSensitiveWords.*;
 import static io.wdsj.asw.util.TimingUtils.addProcessStatistic;
@@ -31,7 +31,7 @@ public class ProtocolLibListener {
                 if (event.getPacketType() == com.comphenix.protocol.PacketType.Play.Client.CHAT && isInitialized) {
                     Player player = event.getPlayer();
                     assert player != null; // In some cases, player maybe null
-                    String message = event.getPacket().getStrings().read(0);
+                    String message = settingsManager.getProperty(PluginSettings.IGNORE_FORMAT_CODE) ? event.getPacket().getStrings().read(0).replaceAll(IGNORE_FORMAT_CODE_REGEX, "") : event.getPacket().getStrings().read(0);
                     if (isCommandAndWhiteListed(message) || player.hasPermission("advancedsensitivewords.bypass"))
                         return;
                     if (isAuthMeAvailable && settingsManager.getProperty(PluginSettings.ENABLE_AUTHME_COMPATIBILITY)) {
@@ -79,10 +79,11 @@ public class ProtocolLibListener {
                     // Context check
                     if (settingsManager.getProperty(PluginSettings.CHAT_CONTEXT_CHECK) && isNotCommand(message)) {
                         ChatContext.addMessage(player, message);
-                        Queue<String> history = ChatContext.getHistory(player);
+                        Deque<String> history = ChatContext.getHistory(player);
                         String originalContext = String.join("", history);
                         List<String> censoredContextList = sensitiveWordBs.findAll(originalContext);
                         if (!censoredContextList.isEmpty()) {
+                            ChatContext.removePlayerContext(player);
                             messagesFilteredNum.getAndIncrement();
                             String processedContext = AdvancedSensitiveWords.sensitiveWordBs.replace(String.join("", censoredContextList));
                             event.setCancelled(true);

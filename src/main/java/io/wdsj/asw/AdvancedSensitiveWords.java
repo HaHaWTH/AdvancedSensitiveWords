@@ -21,9 +21,9 @@ import io.wdsj.asw.listener.packet.ProtocolLibListener;
 import io.wdsj.asw.method.*;
 import io.wdsj.asw.setting.PluginMessages;
 import io.wdsj.asw.setting.PluginSettings;
+import io.wdsj.asw.util.TimingUtils;
 import io.wdsj.asw.util.cache.BookCache;
 import io.wdsj.asw.util.context.ChatContext;
-import io.wdsj.asw.util.TimingUtils;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
@@ -49,6 +49,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     public static SettingsManager settingsManager;
     public static SettingsManager messagesManager;
     private static AdvancedSensitiveWords instance;
+    public static final String IGNORE_FORMAT_CODE_REGEX = "[§&][a-zA-Z\\d]";
     private static TaskScheduler scheduler;
 
     public static TaskScheduler getScheduler() {

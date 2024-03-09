@@ -43,6 +43,7 @@ public class BookListener implements Listener {
         if (bookMeta.hasPages()) {
             for (String originalPage : originalPages) {
                 if (skipReturnLine) originalPage = originalPage.replace("\n", "").replace("§0", "");
+                if (settingsManager.getProperty(PluginSettings.IGNORE_FORMAT_CODE)) originalPage = originalPage.replaceAll(IGNORE_FORMAT_CODE_REGEX, "");
                 boolean isBookCached = BookCache.isBookCached(originalPage);
                 List<String> censoredWordList = isBookCached && isCacheEnabled ? BookCache.getCachedBookSensitiveWordList(originalPage) : AdvancedSensitiveWords.sensitiveWordBs.findAll(originalPage);
                 if (!censoredWordList.isEmpty()) {
@@ -66,32 +67,41 @@ public class BookListener implements Listener {
             }
         }
         String originalAuthor = event.getNewBookMeta().getAuthor();
-        List<String> censoredWordListAuthor = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalAuthor);
-        if (!censoredWordListAuthor.isEmpty()) {
-            String processedAuthor = AdvancedSensitiveWords.sensitiveWordBs.replace(originalAuthor);
-            if (settingsManager.getProperty(PluginSettings.BOOK_METHOD).equalsIgnoreCase("cancel")) {
-                event.setCancelled(true);
-            } else {
-                bookMeta.setAuthor(processedAuthor);
+        if (originalAuthor != null) {
+            if (settingsManager.getProperty(PluginSettings.IGNORE_FORMAT_CODE)) originalAuthor = originalAuthor.replaceAll(IGNORE_FORMAT_CODE_REGEX, "");
+            List<String> censoredWordListAuthor = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalAuthor);
+            if (!censoredWordListAuthor.isEmpty()) {
+                String processedAuthor = AdvancedSensitiveWords.sensitiveWordBs.replace(originalAuthor);
+                if (settingsManager.getProperty(PluginSettings.BOOK_METHOD).equalsIgnoreCase("cancel")) {
+                    event.setCancelled(true);
+                } else {
+                    bookMeta.setAuthor(processedAuthor);
+                }
+                shouldSendMessage = true;
+                outMessage = originalAuthor;
+                outList = censoredWordListAuthor;
+                processedOutMessage = processedAuthor;
             }
-            shouldSendMessage = true;
-            outMessage = originalAuthor;
-            outList = censoredWordListAuthor;
-            processedOutMessage = processedAuthor;
         }
+
+
         String originalTitle = event.getNewBookMeta().getTitle();
-        List<String> censoredWordListTitle = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalTitle);
-        if (!censoredWordListTitle.isEmpty()) {
-            String processedTitle = AdvancedSensitiveWords.sensitiveWordBs.replace(originalTitle);
-            if (settingsManager.getProperty(PluginSettings.BOOK_METHOD).equalsIgnoreCase("cancel")) {
-                event.setCancelled(true);
-            } else {
-                bookMeta.setTitle(processedTitle);
+        if (originalTitle != null) {
+            if (settingsManager.getProperty(PluginSettings.IGNORE_FORMAT_CODE))
+                originalTitle = originalTitle.replaceAll(IGNORE_FORMAT_CODE_REGEX, "");
+            List<String> censoredWordListTitle = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalTitle);
+            if (!censoredWordListTitle.isEmpty()) {
+                String processedTitle = AdvancedSensitiveWords.sensitiveWordBs.replace(originalTitle);
+                if (settingsManager.getProperty(PluginSettings.BOOK_METHOD).equalsIgnoreCase("cancel")) {
+                    event.setCancelled(true);
+                } else {
+                    bookMeta.setTitle(processedTitle);
+                }
+                shouldSendMessage = true;
+                outMessage = originalTitle;
+                outList = censoredWordListTitle;
+                processedOutMessage = processedTitle;
             }
-            shouldSendMessage = true;
-            outMessage = originalTitle;
-            outList = censoredWordListTitle;
-            processedOutMessage = processedTitle;
         }
 
         if (shouldSendMessage) {

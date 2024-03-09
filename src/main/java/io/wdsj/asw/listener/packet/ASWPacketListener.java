@@ -13,14 +13,14 @@ import io.wdsj.asw.event.ASWFilterEvent;
 import io.wdsj.asw.event.EventType;
 import io.wdsj.asw.setting.PluginMessages;
 import io.wdsj.asw.setting.PluginSettings;
-import io.wdsj.asw.util.context.ChatContext;
 import io.wdsj.asw.util.Utils;
+import io.wdsj.asw.util.context.ChatContext;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.util.Deque;
 import java.util.List;
-import java.util.Queue;
 
 import static io.wdsj.asw.AdvancedSensitiveWords.*;
 import static io.wdsj.asw.util.TimingUtils.addProcessStatistic;
@@ -42,7 +42,7 @@ public class ASWPacketListener extends PacketListenerAbstract {
         String userName = user.getName();
         if (packetType == PacketType.Play.Client.CHAT_MESSAGE) {
             WrapperPlayClientChatMessage wrapperPlayClientChatMessage = new WrapperPlayClientChatMessage(event);
-            String originalMessage = wrapperPlayClientChatMessage.getMessage();
+            String originalMessage = settingsManager.getProperty(PluginSettings.IGNORE_FORMAT_CODE) ? wrapperPlayClientChatMessage.getMessage().replaceAll(IGNORE_FORMAT_CODE_REGEX, "") : wrapperPlayClientChatMessage.getMessage();
             if (shouldNotProcess(player, originalMessage)) return;
             long startTime = System.currentTimeMillis();
             // Word check
@@ -83,11 +83,11 @@ public class ASWPacketListener extends PacketListenerAbstract {
             // Context check
             if (settingsManager.getProperty(PluginSettings.CHAT_CONTEXT_CHECK) && isNotCommand(originalMessage)) {
                 ChatContext.addMessage(player, originalMessage);
-                Queue<String> queue = ChatContext.getHistory(player);
+                Deque<String> queue = ChatContext.getHistory(player);
                 String originalContext = String.join("", queue);
                 List<String> censoredContextList = sensitiveWordBs.findAll(originalContext);
                 if (!censoredContextList.isEmpty()) {
-                    ChatContext.clearPlayerContext(player);
+                    ChatContext.removePlayerContext(player);
                     messagesFilteredNum.getAndIncrement();
                     String processedContext = AdvancedSensitiveWords.sensitiveWordBs.replace(originalContext);
                     event.setCancelled(true);

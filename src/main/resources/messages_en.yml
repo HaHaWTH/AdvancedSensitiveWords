@@ -22,6 +22,10 @@ Book:
 Name:
   #Messages on Player name
   messageOnName: '&cYour username contains sensitive words, please change your username or contact an administrator.'
+#Player item check related messages
+Item:
+  #Messages on Player item
+  messageOnItem: '&cThe item you held contains sensitive words.'
 #Plugin related messages
 Plugin:
   #Reload command

@@ -62,6 +62,9 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"*是否启用玩家名称检测(推荐支持中文名的服务器开启)",
             "*Whether to enable player name checks (recommended for servers supporting Chinese names)"})
     public static final Property<Boolean> ENABLE_PLAYER_NAME_CHECK = newProperty("Plugin.enablePlayerNameCheck", false);
+    @Comment({"*是否启用玩家物品检测",
+            "*Whether to enable player item check"})
+    public static final Property<Boolean> ENABLE_PLAYER_ITEM_CHECK = newProperty("Plugin.enableItemCheck", true);
 
     @Comment({"是否启用API接口(非必要请勿关闭)",
             "Whether to enable API (do not disable unless necessary)"})
@@ -77,7 +80,10 @@ public class PluginSettings implements SettingsHolder {
 
     @Comment({"默认跳过字符",
             "Default characters to ignore"})
-    public static final Property<String> IGNORE_CHAR = newProperty("Plugin.ignoreChar", "`-—=~～!！@#$%^&*()_+[]{}\\|;:'\"“”,，.。、（）<>?？¥【】《》 ");
+    public static final Property<String> IGNORE_CHAR = newProperty("Plugin.ignoreChar", "`-—=~～!！@#$%^&§*()_+[]{}\\|;:'\"“”,，.。、（）<>?？¥【】《》 ");
+    @Comment({"忽略格式化符号§&",
+            "Ignore format codes"})
+    public static final Property<Boolean> IGNORE_FORMAT_CODE = newProperty("Plugin.ignoreFormatCode", false);
 
     @Comment({"检测大小写",
             "Whether to ignore case"})
@@ -236,6 +242,13 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"是否启用NPC兼容(支持Leaves NPC)",
             "Whether to enable NPC compatibility (supports Leaves NPC)"})
     public static final Property<Boolean> NAME_IGNORE_NPC = newProperty("Name.ignoreNPC", true);
+    @Comment({"替换还是取消(replace/cancel)",
+            "Replace or cancel (replace/cancel"})
+    public static final Property<String> ITEM_METHOD = newProperty("Item.method", "replace");
+    @Comment({"存在敏感词时是否发送消息提醒",
+            "Whether to send a message alert when sensitive words are found"})
+    public static final Property<Boolean> ITEM_SEND_MESSAGE = newProperty("Item.sendMessage", true);
+
 
     @Override
     public void registerComments(CommentsConfiguration conf) {
