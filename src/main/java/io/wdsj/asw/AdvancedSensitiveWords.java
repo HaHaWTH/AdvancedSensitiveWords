@@ -36,8 +36,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static io.wdsj.asw.util.TimingUtils.cleanStatisticCache;
-import static io.wdsj.asw.util.Utils.checkProtocolLib;
-import static io.wdsj.asw.util.Utils.purgeLog;
+import static io.wdsj.asw.util.Utils.*;
 
 
 public final class AdvancedSensitiveWords extends JavaPlugin {
@@ -120,7 +119,11 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
             getServer().getPluginManager().registerEvents(new PlayerLoginListener(), this);
         }
         if (settingsManager.getProperty(PluginSettings.CHAT_BROADCAST_CHECK)) {
-            getServer().getPluginManager().registerEvents(new BroadCastListener(), this);
+            if (isClassLoaded("org.bukkit.event.server.BroadcastMessageEvent")) {
+                getServer().getPluginManager().registerEvents(new BroadCastListener(), this);
+            } else {
+                getLogger().info("BroadcastMessageEvent is not available, please disable chat broadcast check in config.yml");
+            }
         }
         long endTime = System.currentTimeMillis();
         getLogger().info("AdvancedSensitiveWords is enabled!(took " + (endTime - startTime) + "ms)");
