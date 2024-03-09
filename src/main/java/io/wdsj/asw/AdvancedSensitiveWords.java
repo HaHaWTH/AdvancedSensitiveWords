@@ -122,7 +122,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
             if (isClassLoaded("org.bukkit.event.server.BroadcastMessageEvent")) {
                 getServer().getPluginManager().registerEvents(new BroadCastListener(), this);
             } else {
-                getLogger().info("BroadcastMessageEvent is not available, please disable chat broadcast check in config.yml");
+                getLogger().info("BroadcastMessage is not available, please disable chat broadcast check in config.yml");
             }
         }
         long endTime = System.currentTimeMillis();

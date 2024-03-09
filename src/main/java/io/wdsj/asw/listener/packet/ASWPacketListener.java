@@ -110,7 +110,7 @@ public class ASWPacketListener extends PacketListenerAbstract {
             }
         } else if (packetType == PacketType.Play.Client.CHAT_COMMAND) {
             WrapperPlayClientChatCommand wrapperPlayClientChatCommand = new WrapperPlayClientChatCommand(event);
-            String originalCommand = wrapperPlayClientChatCommand.getCommand();
+            String originalCommand = settingsManager.getProperty(PluginSettings.IGNORE_FORMAT_CODE) ? wrapperPlayClientChatCommand.getCommand().replaceAll(IGNORE_FORMAT_CODE_REGEX, "") : wrapperPlayClientChatCommand.getCommand();
             if (shouldNotProcess(player, "/" + originalCommand)) return;
             long startTime = System.currentTimeMillis();
             List<String> censoredWords = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalCommand);

@@ -60,7 +60,7 @@ public class PluginSettings implements SettingsHolder {
     public static final Property<Boolean> ENABLE_BOOK_EDIT_CHECK = newProperty("Plugin.enableBookEditCheck", true);
 
     @Comment({"*是否启用玩家名称检测(推荐支持中文名的服务器开启)",
-            "*Whether to enable player name checks (recommended for servers supporting Chinese names)"})
+            "*Whether to enable player name checks (recommended for servers supporting Non-ASCII character names)"})
     public static final Property<Boolean> ENABLE_PLAYER_NAME_CHECK = newProperty("Plugin.enablePlayerNameCheck", false);
     @Comment({"*是否启用玩家物品检测",
             "*Whether to enable player item check"})
