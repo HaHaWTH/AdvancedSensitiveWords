@@ -20,7 +20,7 @@ public class ChatContext {
         while (history.size() >= settingsManager.getProperty(PluginSettings.CHAT_CONTEXT_MAX_SIZE)) {
             history.poll();
         }
-        history.offer(message.trim());
+        history.offerLast(message.trim());
     }
 
     public static Deque<String> getHistory(Player player) {

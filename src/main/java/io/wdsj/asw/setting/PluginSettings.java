@@ -261,6 +261,7 @@ public class PluginSettings implements SettingsHolder {
         conf.setComment("Sign", "告示牌检测配置");
         conf.setComment("Anvil", "铁砧重命名检测配置");
         conf.setComment("Name", "玩家名检测配置");
+        conf.setComment("Item", "物品检测配置");
     }
 
     // Do not instantiate.
