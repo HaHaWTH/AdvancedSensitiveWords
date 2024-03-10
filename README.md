@@ -3,6 +3,7 @@ One-stop-shop **ultimate** anti-swear solution for your Minecraft server!
 
 [![Available on SpigotMC](https://img.shields.io/badge/Available%20on%20SpigotMC-orange?style=for-the-badge&logo=SpigotMC&logoColor=FFFFFF)](https://www.spigotmc.org/resources/advancedsensitivewords.115484/)
 ![Available on GitHub](https://img.shields.io/badge/Available%20on%20GitHub-black?style=for-the-badge&logo=GitHub&logoColor=FFFFFF)
+[![Available on Modrinth](https://img.shields.io/badge/Available%20on%20Modrinth-darkgreen?style=for-the-badge&logo=Modrinth&logoColor=FFFFFF)](https://modrinth.com/plugin/advancedsensitivewords)
 
 [English](https://github.com/hahawth/AdvancedSensitiveWords)
 [简体中文](https://github.com/hahawth/AdvancedSensitiveWords/blob/main/README_zh.md)
