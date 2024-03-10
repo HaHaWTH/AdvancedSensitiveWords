@@ -31,7 +31,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.net.ProxySelector;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -126,11 +125,6 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         }
         long endTime = System.currentTimeMillis();
         getLogger().info("AdvancedSensitiveWords is enabled!(took " + (endTime - startTime) + "ms)");
-        // bro, don't bytecode this, you can just disable it in the config TAT
-        if (Math.random() < 0.1 && !settingsManager.getProperty(PluginSettings.DISABLE_DONATION)) {
-            getLogger().info("This plugin takes over 600 hours to develop and optimize, if you think it's nice, consider" +
-                    " support: https://afdian.net/a/114514woxiuyuan/");
-        }
     }
 
 

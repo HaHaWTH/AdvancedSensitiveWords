@@ -146,11 +146,6 @@ public class PluginSettings implements SettingsHolder {
             "Sensitive word whitelist"})
     public static final Property<List<String>> WHITE_LIST = newListProperty("Plugin.whiteList", "3p");
 
-    @Comment({"是否关闭插件启动时的求赞助消息:(",
-            "赞助链接: https://afdian.net/a/114514woxiuyuan/",          "Whether to disable donation request messages on plugin startup",
-            "Donation link: https://afdian.net/a/114514woxiuyuan/"})
-    public static final Property<Boolean> DISABLE_DONATION = newProperty("Plugin.disableDonation", false);
-
     @Comment({"替换还是取消(replace/cancel)",
             "Replace or cancel (replace/cancel)"})
     public static final Property<String> CHAT_METHOD = newProperty("Chat.method", "replace");
