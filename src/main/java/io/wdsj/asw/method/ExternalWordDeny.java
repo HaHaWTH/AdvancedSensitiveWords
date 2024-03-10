@@ -37,7 +37,7 @@ public class ExternalWordDeny implements IWordDeny {
                 List<String> lines = Files.readAllLines(file.toPath());
                 totalList.addAll(lines);
             }
-            if (files.size() > 0) AdvancedSensitiveWords.getInstance().getLogger().info("Loaded " + files.size() + " external deny files.");
+            if (files.size() > 0) AdvancedSensitiveWords.getInstance().getLogger().info("Loaded " + files.size() + " external deny file(s).");
         } catch (IOException e) {
             e.printStackTrace();
             return Collections.emptyList();

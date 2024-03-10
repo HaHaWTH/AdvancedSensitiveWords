@@ -37,7 +37,7 @@ public class ExternalWordAllow implements IWordAllow {
                 List<String> lines = Files.readAllLines(file.toPath());
                 totalList.addAll(lines);
             }
-            if (files.size() > 0) AdvancedSensitiveWords.getInstance().getLogger().info("Loaded " + files.size() + " external allow files.");
+            if (files.size() > 0) AdvancedSensitiveWords.getInstance().getLogger().info("Loaded " + files.size() + " external allow file(s).");
         } catch (IOException e) {
             e.printStackTrace();
             return Collections.emptyList();

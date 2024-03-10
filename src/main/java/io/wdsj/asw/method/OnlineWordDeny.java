@@ -40,7 +40,7 @@ public class OnlineWordDeny implements IWordDeny {
             AdvancedSensitiveWords.getInstance().getLogger().warning("Failed to load online words list.");
             return Collections.emptyList();
         }
-        AdvancedSensitiveWords.getInstance().getLogger().info("Loaded " + lines.size() + " words online.");
+        AdvancedSensitiveWords.getInstance().getLogger().info("Loaded " + lines.size() + " word(s) online.");
         return lines;
     }
 }
