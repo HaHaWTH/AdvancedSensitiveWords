@@ -98,6 +98,10 @@ public class Utils {
         if (splitCommand.length <= 1) return "";
         return String.join(" ", Arrays.copyOfRange(splitCommand, 1, splitCommand.length));
     }
+    public static String getIgnoreFormatCodeRegex() {
+        return "[§" + settingsManager.getProperty(PluginSettings.ALT_COLOR_CODE) + "][0-9A-Fa-fK-Ok-oRr]";
+    }
+
 
     public static boolean isCommandAndWhiteListed(String command) {
         if (!command.startsWith("/")) return false;

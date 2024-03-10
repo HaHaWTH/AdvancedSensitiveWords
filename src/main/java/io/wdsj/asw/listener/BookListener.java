@@ -21,6 +21,7 @@ import java.util.List;
 
 import static io.wdsj.asw.AdvancedSensitiveWords.*;
 import static io.wdsj.asw.util.TimingUtils.addProcessStatistic;
+import static io.wdsj.asw.util.Utils.getIgnoreFormatCodeRegex;
 import static io.wdsj.asw.util.Utils.messagesFilteredNum;
 
 public class BookListener implements Listener {

@@ -157,9 +157,6 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
             isInitialized = true;
         });
     }
-    public static String getIgnoreFormatCodeRegex() {
-        return "[§" + settingsManager.getProperty(PluginSettings.ALT_COLOR_CODE) + "][0-9A-Fa-fK-Ok-oRr]";
-    }
 
     @Override
     public void onDisable() {

@@ -19,6 +19,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.List;
 
 import static io.wdsj.asw.AdvancedSensitiveWords.*;
+import static io.wdsj.asw.util.Utils.getIgnoreFormatCodeRegex;
 
 public class PlayerHeldItemListener implements Listener {
 
