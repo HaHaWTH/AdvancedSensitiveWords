@@ -8,13 +8,14 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ExternalWordDeny implements IWordDeny {
-    private final File dataFolder = new File(AdvancedSensitiveWords.getInstance().getDataFolder(), "/external/deny");
+    private final File dataFolder = Paths.get(AdvancedSensitiveWords.getInstance().getDataFolder().getPath(),"external","deny").toFile();
 
     @Override
     public List<String> deny() {
