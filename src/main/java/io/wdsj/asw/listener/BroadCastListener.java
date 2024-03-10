@@ -18,7 +18,7 @@ public class BroadCastListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onBroadCast(BroadcastMessageEvent event) {
         if (!isInitialized || !settingsManager.getProperty(PluginSettings.CHAT_BROADCAST_CHECK)) return;
-        String originalMessage = settingsManager.getProperty(PluginSettings.IGNORE_FORMAT_CODE) ? event.getMessage().replaceAll(IGNORE_FORMAT_CODE_REGEX, "") : event.getMessage();
+        String originalMessage = settingsManager.getProperty(PluginSettings.IGNORE_FORMAT_CODE) ? event.getMessage().replaceAll(getIgnoreFormatCodeRegex(), "") : event.getMessage();
         long startTime = System.currentTimeMillis();
         List<String> censoredWordList = sensitiveWordBs.findAll(originalMessage);
         if (!censoredWordList.isEmpty()) {

@@ -48,7 +48,6 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     public static SettingsManager settingsManager;
     public static SettingsManager messagesManager;
     private static AdvancedSensitiveWords instance;
-    public static final String IGNORE_FORMAT_CODE_REGEX = "[§&][a-zA-Z\\d]";
     private static TaskScheduler scheduler;
 
     public static TaskScheduler getScheduler() {
@@ -157,6 +156,9 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
             sensitiveWordBs = SensitiveWordBs.newInstance().ignoreCase(settingsManager.getProperty(PluginSettings.IGNORE_CASE)).ignoreWidth(settingsManager.getProperty(PluginSettings.IGNORE_WIDTH)).ignoreNumStyle(settingsManager.getProperty(PluginSettings.IGNORE_NUM_STYLE)).ignoreChineseStyle(settingsManager.getProperty(PluginSettings.IGNORE_CHINESE_STYLE)).ignoreEnglishStyle(settingsManager.getProperty(PluginSettings.IGNORE_ENGLISH_STYLE)).ignoreRepeat(settingsManager.getProperty(PluginSettings.IGNORE_REPEAT)).enableNumCheck(settingsManager.getProperty(PluginSettings.ENABLE_NUM_CHECK)).enableEmailCheck(settingsManager.getProperty(PluginSettings.ENABLE_EMAIL_CHECK)).enableUrlCheck(settingsManager.getProperty(PluginSettings.ENABLE_URL_CHECK)).enableWordCheck(settingsManager.getProperty(PluginSettings.ENABLE_WORD_CHECK)).wordResultCondition(settingsManager.getProperty(PluginSettings.FORCE_ENGLISH_FULL_MATCH) ? WordResultConditions.englishWordMatch() : WordResultConditions.alwaysTrue()).wordDeny(wD.get()).wordAllow(wA).numCheckLen(settingsManager.getProperty(PluginSettings.NUM_CHECK_LEN)).wordReplace(new WordReplace()).wordTag(WordTags.none()).charIgnore(new CharIgnore()).init();
             isInitialized = true;
         });
+    }
+    public static String getIgnoreFormatCodeRegex() {
+        return "[§" + settingsManager.getProperty(PluginSettings.ALT_COLOR_CODE) + "][0-9A-Fa-fK-Ok-oRr]";
     }
 
     @Override

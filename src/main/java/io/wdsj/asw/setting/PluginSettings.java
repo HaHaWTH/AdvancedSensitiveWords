@@ -81,9 +81,12 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"默认跳过字符",
             "Default characters to ignore"})
     public static final Property<String> IGNORE_CHAR = newProperty("Plugin.ignoreChar", "`-—=~～!！@#$%^&§*()_+[]{}\\|;:'\"“”,，.。、（）<>?？¥【】《》 ");
-    @Comment({"忽略格式化符号§&",
+    @Comment({"忽略格式化符号§",
             "Ignore format codes"})
     public static final Property<Boolean> IGNORE_FORMAT_CODE = newProperty("Plugin.ignoreFormatCode", false);
+    @Comment({"备用格式化符号",
+            "Alternate code codes"})
+    public static final Property<String> ALT_COLOR_CODE = newProperty("Plugin.altColorCode", "&");
 
     @Comment({"检测大小写",
             "Whether to ignore case"})

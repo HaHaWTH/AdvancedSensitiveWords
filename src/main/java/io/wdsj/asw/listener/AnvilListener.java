@@ -39,7 +39,7 @@ public class AnvilListener implements Listener {
                     ItemMeta itemMeta = outputItem.getItemMeta();
                     if (itemMeta != null && itemMeta.hasDisplayName()) {
                         String originalItemName = itemMeta.getDisplayName();
-                        if (settingsManager.getProperty(PluginSettings.IGNORE_FORMAT_CODE)) originalItemName = originalItemName.replaceAll(IGNORE_FORMAT_CODE_REGEX, "");
+                        if (settingsManager.getProperty(PluginSettings.IGNORE_FORMAT_CODE)) originalItemName = originalItemName.replaceAll(getIgnoreFormatCodeRegex(), "");
                         List<String> censoredWords = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalItemName);
                         if (!censoredWords.isEmpty()) {
                             long startTime = System.currentTimeMillis();
