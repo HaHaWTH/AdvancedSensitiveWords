@@ -137,20 +137,20 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     public void doInitTasks() {
         isAuthMeAvailable = Bukkit.getPluginManager().getPlugin("AuthMe") != null;
         isCslAvailable = Bukkit.getPluginManager().getPlugin("CatSeedLogin") != null;
-        IWordAllow wA = WordAllows.chains(WordAllows.defaults(), new WordAllow());
+        IWordAllow wA = WordAllows.chains(WordAllows.defaults(), new WordAllow(), new ExternalWordAllow());
         AtomicReference<IWordDeny> wD = new AtomicReference<>();
         isInitialized = false;
         sensitiveWordBs = null;
         ProxySelector.setDefault(null);
         getScheduler().runTaskAsynchronously(() -> {
             if (settingsManager.getProperty(PluginSettings.ENABLE_DEFAULT_WORDS) && settingsManager.getProperty(PluginSettings.ENABLE_ONLINE_WORDS)) {
-                wD.set(WordDenys.chains(WordDenys.defaults(), new WordDeny(), new OnlineWordDeny()));
+                wD.set(WordDenys.chains(WordDenys.defaults(), new WordDeny(), new OnlineWordDeny(), new ExternalWordDeny()));
             } else if (settingsManager.getProperty(PluginSettings.ENABLE_DEFAULT_WORDS)) {
-                wD.set(WordDenys.chains(new WordDeny(), WordDenys.defaults()));
+                wD.set(WordDenys.chains(new WordDeny(), WordDenys.defaults(), new ExternalWordDeny()));
             } else if (settingsManager.getProperty(PluginSettings.ENABLE_ONLINE_WORDS)) {
-                wD.set(WordDenys.chains(new OnlineWordDeny(), new WordDeny()));
+                wD.set(WordDenys.chains(new OnlineWordDeny(), new WordDeny(), new ExternalWordDeny()));
             } else {
-                wD.set(new WordDeny());
+                wD.set(WordDenys.chains(new WordDeny(), new ExternalWordDeny()));
             }
             // Full async reload
             sensitiveWordBs = SensitiveWordBs.newInstance().ignoreCase(settingsManager.getProperty(PluginSettings.IGNORE_CASE)).ignoreWidth(settingsManager.getProperty(PluginSettings.IGNORE_WIDTH)).ignoreNumStyle(settingsManager.getProperty(PluginSettings.IGNORE_NUM_STYLE)).ignoreChineseStyle(settingsManager.getProperty(PluginSettings.IGNORE_CHINESE_STYLE)).ignoreEnglishStyle(settingsManager.getProperty(PluginSettings.IGNORE_ENGLISH_STYLE)).ignoreRepeat(settingsManager.getProperty(PluginSettings.IGNORE_REPEAT)).enableNumCheck(settingsManager.getProperty(PluginSettings.ENABLE_NUM_CHECK)).enableEmailCheck(settingsManager.getProperty(PluginSettings.ENABLE_EMAIL_CHECK)).enableUrlCheck(settingsManager.getProperty(PluginSettings.ENABLE_URL_CHECK)).enableWordCheck(settingsManager.getProperty(PluginSettings.ENABLE_WORD_CHECK)).wordResultCondition(settingsManager.getProperty(PluginSettings.FORCE_ENGLISH_FULL_MATCH) ? WordResultConditions.englishWordMatch() : WordResultConditions.alwaysTrue()).wordDeny(wD.get()).wordAllow(wA).numCheckLen(settingsManager.getProperty(PluginSettings.NUM_CHECK_LEN)).wordReplace(new WordReplace()).wordTag(WordTags.none()).charIgnore(new CharIgnore()).init();
