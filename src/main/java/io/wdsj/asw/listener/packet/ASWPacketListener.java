@@ -42,7 +42,7 @@ public class ASWPacketListener extends PacketListenerAbstract {
         String userName = user.getName();
         if (packetType == PacketType.Play.Client.CHAT_MESSAGE) {
             WrapperPlayClientChatMessage wrapperPlayClientChatMessage = new WrapperPlayClientChatMessage(event);
-            String originalMessage = settingsManager.getProperty(PluginSettings.IGNORE_FORMAT_CODE) ? wrapperPlayClientChatMessage.getMessage().replaceAll(getIgnoreFormatCodeRegex(), "") : wrapperPlayClientChatMessage.getMessage();
+            String originalMessage = wrapperPlayClientChatMessage.getMessage();
             if (shouldNotProcess(player, originalMessage)) return;
             long startTime = System.currentTimeMillis();
             // Word check
@@ -110,7 +110,7 @@ public class ASWPacketListener extends PacketListenerAbstract {
             }
         } else if (packetType == PacketType.Play.Client.CHAT_COMMAND) {
             WrapperPlayClientChatCommand wrapperPlayClientChatCommand = new WrapperPlayClientChatCommand(event);
-            String originalCommand = settingsManager.getProperty(PluginSettings.IGNORE_FORMAT_CODE) ? wrapperPlayClientChatCommand.getCommand().replaceAll(getIgnoreFormatCodeRegex(), "") : wrapperPlayClientChatCommand.getCommand();
+            String originalCommand = wrapperPlayClientChatCommand.getCommand();
             if (shouldNotProcess(player, "/" + originalCommand)) return;
             long startTime = System.currentTimeMillis();
             List<String> censoredWords = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalCommand);

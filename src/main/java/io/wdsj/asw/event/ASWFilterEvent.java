@@ -75,7 +75,7 @@ public class ASWFilterEvent extends Event {
 
     /**
      * Get the event type.
-     * Available event types: CHAT, BOOK, NAME, SIGN, ANVIL
+     * Available event types: CHAT, BOOK, NAME, SIGN, ANVIL, ITEM
      * @return the event type.
      */
     @NotNull

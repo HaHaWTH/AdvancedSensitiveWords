@@ -19,7 +19,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.List;
 
 import static io.wdsj.asw.AdvancedSensitiveWords.*;
-import static io.wdsj.asw.util.Utils.getIgnoreFormatCodeRegex;
 import static io.wdsj.asw.util.Utils.messagesFilteredNum;
 
 public class PlayerHeldItemListener implements Listener {
@@ -34,7 +33,6 @@ public class PlayerHeldItemListener implements Listener {
             ItemMeta meta = item.getItemMeta();
             if (meta != null && meta.hasDisplayName()) {
                 String originalName = meta.getDisplayName();
-                if (settingsManager.getProperty(PluginSettings.IGNORE_FORMAT_CODE)) originalName = originalName.replaceAll(getIgnoreFormatCodeRegex(), "");
                 long startTime = System.currentTimeMillis();
                 List<String> censoredWordList = sensitiveWordBs.findAll(originalName);
                 if (!censoredWordList.isEmpty()) {

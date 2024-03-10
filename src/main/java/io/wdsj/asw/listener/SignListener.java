@@ -20,7 +20,6 @@ import java.util.List;
 
 import static io.wdsj.asw.AdvancedSensitiveWords.*;
 import static io.wdsj.asw.util.TimingUtils.addProcessStatistic;
-import static io.wdsj.asw.util.Utils.getIgnoreFormatCodeRegex;
 import static io.wdsj.asw.util.Utils.messagesFilteredNum;
 
 public class SignListener implements Listener {
@@ -41,7 +40,6 @@ public class SignListener implements Listener {
         StringBuilder originalMultiMessages = new StringBuilder();
         for (int line = 0; line < 4; ++line) {
             String originalMessage = event.getLine(line);
-            if (settingsManager.getProperty(PluginSettings.IGNORE_FORMAT_CODE) && originalMessage != null) originalMessage = originalMessage.replaceAll(getIgnoreFormatCodeRegex(), "");
             assert originalMessage != null;
             List<String> censoredWordList = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalMessage);
             if (!censoredWordList.isEmpty()) {
