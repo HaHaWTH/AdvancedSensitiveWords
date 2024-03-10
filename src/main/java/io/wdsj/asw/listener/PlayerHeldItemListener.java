@@ -20,6 +20,7 @@ import java.util.List;
 
 import static io.wdsj.asw.AdvancedSensitiveWords.*;
 import static io.wdsj.asw.util.Utils.getIgnoreFormatCodeRegex;
+import static io.wdsj.asw.util.Utils.messagesFilteredNum;
 
 public class PlayerHeldItemListener implements Listener {
 
@@ -37,6 +38,7 @@ public class PlayerHeldItemListener implements Listener {
                 long startTime = System.currentTimeMillis();
                 List<String> censoredWordList = sensitiveWordBs.findAll(originalName);
                 if (!censoredWordList.isEmpty()) {
+                    messagesFilteredNum.getAndIncrement();
                     String processedName = sensitiveWordBs.replace(originalName);
                     if (settingsManager.getProperty(PluginSettings.ITEM_METHOD).equalsIgnoreCase("cancel")) {
                         event.setCancelled(true);
