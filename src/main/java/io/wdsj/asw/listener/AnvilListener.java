@@ -21,6 +21,7 @@ import java.util.List;
 
 import static io.wdsj.asw.AdvancedSensitiveWords.*;
 import static io.wdsj.asw.util.TimingUtils.addProcessStatistic;
+import static io.wdsj.asw.util.Utils.getIgnoreFormatCodeRegex;
 import static io.wdsj.asw.util.Utils.messagesFilteredNum;
 
 public class AnvilListener implements Listener {
@@ -39,6 +40,7 @@ public class AnvilListener implements Listener {
                     ItemMeta itemMeta = outputItem.getItemMeta();
                     if (itemMeta != null && itemMeta.hasDisplayName()) {
                         String originalItemName = itemMeta.getDisplayName();
+                        if (settingsManager.getProperty(PluginSettings.IGNORE_FORMAT_CODE)) originalItemName = originalItemName.replaceAll(getIgnoreFormatCodeRegex(), "");
                         List<String> censoredWords = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalItemName);
                         if (!censoredWords.isEmpty()) {
                             long startTime = System.currentTimeMillis();

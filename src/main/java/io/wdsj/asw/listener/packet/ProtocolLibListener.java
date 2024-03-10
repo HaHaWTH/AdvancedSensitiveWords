@@ -31,7 +31,7 @@ public class ProtocolLibListener {
                 if (event.getPacketType() == com.comphenix.protocol.PacketType.Play.Client.CHAT && isInitialized) {
                     Player player = event.getPlayer();
                     assert player != null; // In some cases, player maybe null
-                    String message = event.getPacket().getStrings().read(0);
+                    String message = settingsManager.getProperty(PluginSettings.IGNORE_FORMAT_CODE) ? event.getPacket().getStrings().read(0).replaceAll(getIgnoreFormatCodeRegex(), "") : event.getPacket().getStrings().read(0);
                     if (isCommandAndWhiteListed(message) || player.hasPermission("advancedsensitivewords.bypass"))
                         return;
                     if (isAuthMeAvailable && settingsManager.getProperty(PluginSettings.ENABLE_AUTHME_COMPATIBILITY)) {
