@@ -104,6 +104,7 @@ public class ProtocolLibListener {
                             long endTime = System.currentTimeMillis();
                             addProcessStatistic(endTime, startTime);
                             Notifier.notice(player, EventType.CHAT, originalContext);
+                            Punishment.punish(player);
                         }
                     }
                 }
