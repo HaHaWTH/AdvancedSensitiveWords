@@ -41,7 +41,7 @@ public class Punishment {
                     break;
                 case COMMAND:
                     if (splitPunish.length != 2) throw new IllegalArgumentException("Not enough args");
-                    String command = splitPunish[1].replace("%player%", player.getName());
+                    String command = splitPunish[1].replace("%PLAYER%", player.getName());
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
                     break;
                 default:
