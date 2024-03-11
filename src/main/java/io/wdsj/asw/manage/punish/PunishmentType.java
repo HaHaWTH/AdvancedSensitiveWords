@@ -5,5 +5,7 @@ public enum PunishmentType {
 
     HOSTILE,
 
-    DAMAGE
+    DAMAGE,
+
+    EFFECT
 }

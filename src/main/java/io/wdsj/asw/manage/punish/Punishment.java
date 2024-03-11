@@ -5,6 +5,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.List;
 import java.util.Locale;
@@ -40,9 +42,31 @@ public class Punishment {
                     }
                     break;
                 case COMMAND:
-                    if (normalPunish.length != 2) throw new IllegalArgumentException("Not enough args");
+                    if (normalPunish.length < 2) throw new IllegalArgumentException("Not enough args");
                     String command = normalPunish[1].replace("%player%", player.getName()).replace("%PLAYER%", player.getName());
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+                    break;
+                case EFFECT:
+                    if (normalPunish.length < 2) throw new IllegalArgumentException("Not enough args");
+                    String effect = normalPunish[1];
+                    PotionEffectType potionEffect = PotionEffectType.getByName(effect.toUpperCase(Locale.ROOT));
+                    if (potionEffect == null) throw new IllegalArgumentException("Unknown potion effect");
+                    switch (normalPunish.length) {
+                        case 2:
+                            player.addPotionEffect(new PotionEffect(potionEffect, 10, 0));
+                            break;
+                        case 3:
+                            int duration_3 = Integer.parseInt(normalPunish[2]);
+                            player.addPotionEffect(new PotionEffect(potionEffect, duration_3 * 20, 0));
+                            break;
+                        case 4:
+                            int duration_4 = Integer.parseInt(normalPunish[2]);
+                            int amplifier = Integer.parseInt(normalPunish[3]);
+                            player.addPotionEffect(new PotionEffect(potionEffect, duration_4 * 20, amplifier));
+                            break;
+                        default:
+                            throw new IllegalArgumentException("Too many args");
+                    }
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown punishment type");
