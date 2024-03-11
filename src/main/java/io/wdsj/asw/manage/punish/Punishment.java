@@ -7,6 +7,7 @@ import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Locale;
 
 import static io.wdsj.asw.AdvancedSensitiveWords.settingsManager;
 
@@ -19,13 +20,12 @@ public class Punishment {
         List<String> punishList = settingsManager.getProperty(PluginSettings.PUNISHMENT);
         if (punishList.isEmpty()) return;
         for (String punish : punishList) {
-            String upperCasePunish = punish.toUpperCase();
-            String[] splitPunish = upperCasePunish.split("\\|");
-            PunishmentType punishMethod = PunishmentType.valueOf(splitPunish[0]);
+            String[] normalPunish = punish.split("\\|");
+            PunishmentType punishMethod = PunishmentType.valueOf(normalPunish[0].toUpperCase(Locale.ROOT));
             switch (punishMethod) {
                 case DAMAGE:
                     try {
-                        double damageAmount = (splitPunish.length == 2) ? Double.parseDouble(splitPunish[1]) : 1.0D;
+                        double damageAmount = (normalPunish.length == 2) ? Double.parseDouble(normalPunish[1]) : 1.0D;
                         player.damage(damageAmount);
                     } catch (NumberFormatException e) {
                         player.damage(1.0D);
@@ -33,15 +33,15 @@ public class Punishment {
                     break;
                 case HOSTILE:
                     try {
-                        double radius = (splitPunish.length == 2) ? Double.parseDouble(splitPunish[1]) : 10D;
+                        double radius = (normalPunish.length == 2) ? Double.parseDouble(normalPunish[1]) : 10D;
                         makeHostileTowardsPlayer(player, radius);
                     } catch (NumberFormatException e) {
                         makeHostileTowardsPlayer(player, 10D);
                     }
                     break;
                 case COMMAND:
-                    if (splitPunish.length != 2) throw new IllegalArgumentException("Not enough args");
-                    String command = splitPunish[1].replace("%PLAYER%", player.getName());
+                    if (normalPunish.length != 2) throw new IllegalArgumentException("Not enough args");
+                    String command = normalPunish[1].replace("%player%", player.getName()).replace("%PLAYER%", player.getName());
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
                     break;
                 default:
