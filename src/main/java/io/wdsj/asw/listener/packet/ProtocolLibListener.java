@@ -75,8 +75,10 @@ public class ProtocolLibListener {
                         }
                         long endTime = System.currentTimeMillis();
                         addProcessStatistic(endTime, startTime);
-                        Notifier.notice(player, EventType.CHAT, message);
-                        Punishment.punish(player);
+                        getScheduler().runTask(()-> {
+                            Notifier.notice(player, EventType.CHAT, message);
+                            Punishment.punish(player);
+                        });
                         return;
                     }
 
@@ -103,8 +105,10 @@ public class ProtocolLibListener {
                             }
                             long endTime = System.currentTimeMillis();
                             addProcessStatistic(endTime, startTime);
-                            Notifier.notice(player, EventType.CHAT, originalContext);
-                            Punishment.punish(player);
+                            getScheduler().runTask(()-> {
+                                Notifier.notice(player, EventType.CHAT, originalContext);
+                                Punishment.punish(player);
+                            });
                         }
                     }
                 }

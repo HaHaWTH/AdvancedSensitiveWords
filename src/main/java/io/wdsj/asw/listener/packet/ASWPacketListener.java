@@ -78,8 +78,10 @@ public class ASWPacketListener extends PacketListenerAbstract {
                 }
                 long endTime = System.currentTimeMillis();
                 addProcessStatistic(endTime, startTime);
-                Notifier.notice(player, EventType.CHAT, originalMessage);
-                Punishment.punish(player);
+                getScheduler().runTask(()-> {
+                    Notifier.notice(player, EventType.CHAT, originalMessage);
+                    Punishment.punish(player);
+                });
                 return;
             }
 
@@ -109,8 +111,10 @@ public class ASWPacketListener extends PacketListenerAbstract {
                     }
                     long endTime = System.currentTimeMillis();
                     addProcessStatistic(endTime, startTime);
-                    Notifier.notice(player, EventType.CHAT, originalContext);
-                    Punishment.punish(player);
+                    getScheduler().runTask(()-> {
+                        Notifier.notice(player, EventType.CHAT, originalContext);
+                        Punishment.punish(player);
+                    });
                 }
             }
         } else if (packetType == PacketType.Play.Client.CHAT_COMMAND) {
@@ -143,8 +147,10 @@ public class ASWPacketListener extends PacketListenerAbstract {
                 }
                 long endTime = System.currentTimeMillis();
                 addProcessStatistic(endTime, startTime);
-                Notifier.notice(player, EventType.CHAT, "/" + originalCommand);
-                Punishment.punish(player);
+                getScheduler().runTask(()-> {
+                    Notifier.notice(player, EventType.CHAT, originalCommand);
+                    Punishment.punish(player);
+                });
             }
         }
     }
