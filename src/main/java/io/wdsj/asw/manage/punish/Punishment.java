@@ -1,6 +1,7 @@
 package io.wdsj.asw.manage.punish;
 
 import io.wdsj.asw.setting.PluginSettings;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
@@ -16,24 +17,35 @@ public class Punishment {
      */
     public static void punish(Player player) {
         List<String> punishList = settingsManager.getProperty(PluginSettings.PUNISHMENT);
+        if (punishList.isEmpty()) return;
         for (String punish : punishList) {
             String upperCasePunish = punish.toUpperCase();
-            if (upperCasePunish.startsWith("DAMAGE")) {
-                String[] damage = punish.split("\\|");
-                try {
-                    double damageAmount = (damage.length == 2) ? Double.parseDouble(damage[1]) : 1.0D;
-                    player.damage(damageAmount);
-                } catch (NumberFormatException e) {
-                    player.damage(1.0D);
-                }
-            } else if (upperCasePunish.startsWith("HOSTILE")) {
-                String[] hostile = upperCasePunish.split("\\|");
-                try {
-                    double radius = (hostile.length == 2) ? Double.parseDouble(hostile[1]) : 10D;
-                    makeHostileTowardsPlayer(player, radius);
-                } catch (NumberFormatException e) {
-                    makeHostileTowardsPlayer(player, 10D);
-                }
+            String[] splitPunish = upperCasePunish.split("\\|");
+            PunishmentType punishMethod = PunishmentType.valueOf(splitPunish[0]);
+            switch (punishMethod) {
+                case DAMAGE:
+                    try {
+                        double damageAmount = (splitPunish.length == 2) ? Double.parseDouble(splitPunish[1]) : 1.0D;
+                        player.damage(damageAmount);
+                    } catch (NumberFormatException e) {
+                        player.damage(1.0D);
+                    }
+                    break;
+                case HOSTILE:
+                    try {
+                        double radius = (splitPunish.length == 2) ? Double.parseDouble(splitPunish[1]) : 10D;
+                        makeHostileTowardsPlayer(player, radius);
+                    } catch (NumberFormatException e) {
+                        makeHostileTowardsPlayer(player, 10D);
+                    }
+                    break;
+                case COMMAND:
+                    if (splitPunish.length != 2) throw new IllegalArgumentException("Not enough args");
+                    String command = splitPunish[1].replace("%player%", player.getName());
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown punishment type");
             }
         }
     }
