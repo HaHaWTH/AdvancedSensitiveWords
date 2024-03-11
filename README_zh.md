@@ -1,6 +1,10 @@
 # AdvancedSensitiveWords(高级敏感词)
 您Minecraft服务器的一站式终极反脏话/敏感词解决方案!
 
+[![Available on SpigotMC](https://img.shields.io/badge/Available%20on%20SpigotMC-orange?style=for-the-badge&logo=SpigotMC&logoColor=FFFFFF)](https://www.spigotmc.org/resources/advancedsensitivewords.115484/)
+![Available on GitHub](https://img.shields.io/badge/Available%20on%20GitHub-black?style=for-the-badge&logo=GitHub&logoColor=FFFFFF)
+[![Available on Modrinth](https://img.shields.io/badge/Available%20on%20Modrinth-darkgreen?style=for-the-badge&logo=Modrinth&logoColor=FFFFFF)](https://modrinth.com/plugin/advancedsensitivewords)
+
 [English](https://github.com/hahawth/AdvancedSensitiveWords)
 [简体中文](https://github.com/hahawth/AdvancedSensitiveWords/blob/main/README_zh.md)
 <p align="center">
@@ -59,6 +63,8 @@ Logo 由 GPT-4 生成
 `advancedsensitivewords.status` - 允许使用status命令 (op默认)
 
 `advancedsensitivewords.test` - 允许使用test命令 (op默认)
+
+**更多详细信息，请前往[Wiki](https://github.com/HaHaWTH/AdvancedSensitiveWords/wiki)进行查看**
 
 ## 统计数据
 [![](https://img.shields.io/bstats/servers/20661?label=Spigot%20Servers&style=for-the-badge)](https://bstats.org/plugin/bukkit/AdvancedSensitiveWords/20661)
