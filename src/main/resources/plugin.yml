@@ -26,6 +26,15 @@ commands:
     usage: /asw <reload|status|test|help>
     aliases: [asw]
 permissions:
+  advancedsensitivewords.*:
+    description: All permissions of Advanced Sensitive Words.
+    children:
+      advancedsensitivewords.bypass: true
+      advancedsensitivewords.reload: true
+      advancedsensitivewords.status: true
+      advancedsensitivewords.test: true
+      advancedsensitivewords.help: true
+      advancedsensitivewords.notice: true
   advancedsensitivewords.bypass:
     description: Bypass the Advanced Sensitive Words filter.
     default: false
