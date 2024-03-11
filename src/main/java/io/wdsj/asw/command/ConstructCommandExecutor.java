@@ -45,6 +45,14 @@ public class ConstructCommandExecutor implements CommandExecutor {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.NO_PERMISSION)));
                 return true;
             }
+            if (args[0].equalsIgnoreCase("help") && (sender.hasPermission("advancedsensitivewords.help") || sender instanceof ConsoleCommandSender)) {
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_HELP)));
+                return true;
+            }
+            if (args[0].equalsIgnoreCase("help")) {
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.NO_PERMISSION)));
+                return true;
+            }
         }
         if (args.length >= 1) {
             if (args[0].equalsIgnoreCase("test") && (sender.hasPermission("advancedsensitivewords.test") || sender instanceof ConsoleCommandSender)) {
@@ -74,7 +82,7 @@ public class ConstructCommandExecutor implements CommandExecutor {
                 return true;
             }
         }
-        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_HELP)));
+        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.UNKNOWN_COMMAND)));
         return true;
     }
 

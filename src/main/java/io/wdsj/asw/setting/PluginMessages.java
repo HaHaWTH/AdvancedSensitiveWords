@@ -40,6 +40,10 @@ public class PluginMessages implements SettingsHolder {
     public static final Property<String> MESSAGE_ON_COMMAND_TEST_NOT_INIT = newProperty("Plugin.commandTest.testNotInit", "&c插件还没有初始化完毕喵");
     @Comment("没有权限执行该指令")
     public static final Property<String> NO_PERMISSION = newProperty("Plugin.noPermission", "&c你没有权限执行该指令.");
+    @Comment("未知命令")
+    public static final Property<String> UNKNOWN_COMMAND = newProperty("Plugin.unknownCommand", "&c未知命令, 请使用 &7/asw help");
+    @Comment("管理员提醒消息")
+    public static final Property<String> ADMIN_REMINDER = newProperty("Plugin.noticeOperator", "&f[&bASW&7Notify&f]&7玩家 &c%player% &7触发了敏感词检测(%type%)(原消息: %message%)");
 
     @Override
     public void registerComments(CommentsConfiguration conf) {

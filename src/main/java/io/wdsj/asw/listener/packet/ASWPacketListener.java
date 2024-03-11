@@ -11,6 +11,7 @@ import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientCh
 import io.wdsj.asw.AdvancedSensitiveWords;
 import io.wdsj.asw.event.ASWFilterEvent;
 import io.wdsj.asw.event.EventType;
+import io.wdsj.asw.manage.notice.Notifier;
 import io.wdsj.asw.setting.PluginMessages;
 import io.wdsj.asw.setting.PluginSettings;
 import io.wdsj.asw.util.Utils;
@@ -76,6 +77,7 @@ public class ASWPacketListener extends PacketListenerAbstract {
                 }
                 long endTime = System.currentTimeMillis();
                 addProcessStatistic(endTime, startTime);
+                Notifier.notice(player, EventType.CHAT, originalMessage);
                 return;
             }
 
@@ -105,6 +107,7 @@ public class ASWPacketListener extends PacketListenerAbstract {
                     }
                     long endTime = System.currentTimeMillis();
                     addProcessStatistic(endTime, startTime);
+                    Notifier.notice(player, EventType.CHAT, originalContext);
                 }
             }
         } else if (packetType == PacketType.Play.Client.CHAT_COMMAND) {
@@ -137,6 +140,7 @@ public class ASWPacketListener extends PacketListenerAbstract {
                 }
                 long endTime = System.currentTimeMillis();
                 addProcessStatistic(endTime, startTime);
+                Notifier.notice(player, EventType.CHAT, "/" + originalCommand);
             }
         }
     }

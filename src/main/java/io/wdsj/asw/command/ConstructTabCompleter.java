@@ -24,8 +24,10 @@ public class ConstructTabCompleter implements TabCompleter {
                 tabComplete.add("status");
             } else if (player.hasPermission("advancedsensitivewords.test") && args[0].startsWith("t")) {
                 tabComplete.add("test");
+            } else if (player.hasPermission("advancedsensitivewords.help") && args[0].startsWith("h")) {
+                tabComplete.add("help");
             } else if (player.hasPermission("advancedsensitivewords.reload") ||
-                    player.hasPermission("advancedsensitivewords.status") || player.hasPermission("advancedsensitivewords.test")) {
+                    player.hasPermission("advancedsensitivewords.status") || player.hasPermission("advancedsensitivewords.test") || player.hasPermission("advancedsensitivewords.help")) {
                 tabComplete.add("help");
                 tabComplete.add("reload");
                 tabComplete.add("status");

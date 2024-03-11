@@ -61,3 +61,7 @@ Plugin:
     testNotInit: '&cPlugin has not been initialized'
   #No permission
   noPermission: '&cYou do not have permission to execute the command.'
+  #Unknown command
+  unknownCommand: '&cUnknown command, please use &7/asw help.'
+  #Admin notice
+  noticeOperator: '&f[&bASW&7Notify&f]&7Player &c%player% &7failed anti-swear check(%type%)(Message: %message%)'

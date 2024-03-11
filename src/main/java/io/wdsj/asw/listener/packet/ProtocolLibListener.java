@@ -3,6 +3,7 @@ package io.wdsj.asw.listener.packet;
 import io.wdsj.asw.AdvancedSensitiveWords;
 import io.wdsj.asw.event.ASWFilterEvent;
 import io.wdsj.asw.event.EventType;
+import io.wdsj.asw.manage.notice.Notifier;
 import io.wdsj.asw.setting.PluginMessages;
 import io.wdsj.asw.setting.PluginSettings;
 import io.wdsj.asw.util.Utils;
@@ -73,6 +74,7 @@ public class ProtocolLibListener {
                         }
                         long endTime = System.currentTimeMillis();
                         addProcessStatistic(endTime, startTime);
+                        Notifier.notice(player, EventType.CHAT, message);
                         return;
                     }
 
@@ -99,6 +101,7 @@ public class ProtocolLibListener {
                             }
                             long endTime = System.currentTimeMillis();
                             addProcessStatistic(endTime, startTime);
+                            Notifier.notice(player, EventType.CHAT, originalContext);
                         }
                     }
                 }

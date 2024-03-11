@@ -5,6 +5,7 @@ import io.wdsj.asw.AdvancedSensitiveWords;
 import io.wdsj.asw.event.ASWFilterEvent;
 import io.wdsj.asw.event.EventType;
 import io.wdsj.asw.impl.list.AdvancedList;
+import io.wdsj.asw.manage.notice.Notifier;
 import io.wdsj.asw.setting.PluginMessages;
 import io.wdsj.asw.setting.PluginSettings;
 import io.wdsj.asw.util.Utils;
@@ -95,6 +96,7 @@ public class SignListener implements Listener {
             messagesFilteredNum.getAndIncrement();
             long endTime = System.currentTimeMillis();
             addProcessStatistic(endTime, startTime);
+            Notifier.notice(player, EventType.SIGN, outMessage);
         }
     }
 }

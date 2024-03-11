@@ -34,6 +34,9 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"是否记录违规消息(存储在violations.log中)",
             "Whether to log violations (stored in violations.log)"})
     public static final Property<Boolean> LOG_VIOLATION = newProperty("Plugin.logViolation", true);
+    @Comment({"玩家违规时是否提醒管理员(需权限advancedsensitivewords.notice)",
+            "Notify operators when player violated"})
+    public static final Property<Boolean> NOTICE_OPERATOR = newProperty("Plugin.noticeOperator", true);
 
     @Comment({"是否在插件启动时自动清除旧的日志文件",
             "Whether to automatically clear old log files on plugin startup"})
@@ -84,8 +87,8 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"忽略格式化符号§",
             "Ignore format codes"})
     public static final Property<Boolean> IGNORE_FORMAT_CODE = newProperty("Plugin.ignoreFormatCode", false);
-    @Comment({"备用格式化符号",
-            "Alternate code codes"})
+    @Comment({"忽略备用格式化符号",
+            "Alternate code codes to ignore"})
     public static final Property<String> ALT_COLOR_CODE = newProperty("Plugin.altColorCode", "&");
 
     @Comment({"检测大小写",
