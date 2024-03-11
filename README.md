@@ -1,4 +1,5 @@
 # AdvancedSensitiveWords
+If you trigger the sensitive word test you'll be penalised.
 One-stop-shop **ultimate** anti-swear solution for your Minecraft server!
 
 [![Available on SpigotMC](https://img.shields.io/badge/Available%20on%20SpigotMC-orange?style=for-the-badge&logo=SpigotMC&logoColor=FFFFFF)](https://www.spigotmc.org/resources/advancedsensitivewords.115484/)
