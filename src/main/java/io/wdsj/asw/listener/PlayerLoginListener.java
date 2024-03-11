@@ -4,6 +4,7 @@ import io.wdsj.asw.AdvancedSensitiveWords;
 import io.wdsj.asw.event.ASWFilterEvent;
 import io.wdsj.asw.event.EventType;
 import io.wdsj.asw.manage.notice.Notifier;
+import io.wdsj.asw.manage.punish.Punishment;
 import io.wdsj.asw.setting.PluginMessages;
 import io.wdsj.asw.setting.PluginSettings;
 import io.wdsj.asw.util.PlayerUtils;
@@ -57,6 +58,7 @@ public class PlayerLoginListener implements Listener {
             long endTime = System.currentTimeMillis();
             addProcessStatistic(endTime, startTime);
             Notifier.notice(player, EventType.NAME, playerName);
+            Punishment.punish(player);
         }
     }
 }

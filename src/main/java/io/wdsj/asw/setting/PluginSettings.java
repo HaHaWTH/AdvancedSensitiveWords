@@ -37,7 +37,9 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"玩家违规时是否提醒管理员(需权限advancedsensitivewords.notice)",
             "Notify operators when player violated"})
     public static final Property<Boolean> NOTICE_OPERATOR = newProperty("Plugin.noticeOperator", true);
-
+    @Comment({"玩家违规时的惩罚列表(留空为不进行惩罚)",
+            "Punishment after player swore"})
+    public static final Property<List<String>> PUNISHMENT = newListProperty("Plugin.punishment");
     @Comment({"是否在插件启动时自动清除旧的日志文件",
             "Whether to automatically clear old log files on plugin startup"})
     public static final Property<Boolean> PURGE_LOG_FILE = newProperty("Plugin.purgeLogFile", false);
