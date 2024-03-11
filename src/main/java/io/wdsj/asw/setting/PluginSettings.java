@@ -17,7 +17,7 @@ public class PluginSettings implements SettingsHolder {
 
     @Comment({"是否启用默认词库(6w+)(强烈建议开启)",
             "Whether to enable the default word library (60k+ words) (strongly recommended)"})
-    public static final Property<Boolean> ENABLE_DEFAULT_WORDS = newProperty("Plugin.enableDefaultWords", true);
+    public static final Property<Boolean> ENABLE_DEFAULT_WORDS = newProperty("Plugin.enableDefaultWords", false);
 
     @Comment({"是否启用在线词库",
             "Whether to enable online word library"})
