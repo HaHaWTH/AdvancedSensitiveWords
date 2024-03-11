@@ -25,6 +25,9 @@ public class ConstructCommandExecutor implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("reload") && (sender.hasPermission("advancedsensitivewords.reload") || sender instanceof ConsoleCommandSender)) {
+                if (!isInitialized) {
+                    return true;
+                }
                 settingsManager.reload();
                 messagesManager.reload();
                 AdvancedSensitiveWords.getInstance().doInitTasks();
