@@ -66,6 +66,8 @@ Logo designed by GPT-4
 
 `advancedsensitivewords.test` - Allows you to use the /asw test command`
 
+**For more info, please visit [our Wiki](https://github.com/HaHaWTH/AdvancedSensitiveWords/wiki)**
+
 ## Statistics
 [![](https://img.shields.io/bstats/servers/20661?label=Spigot%20Servers&style=for-the-badge)](https://bstats.org/plugin/bukkit/AdvancedSensitiveWords/20661)
 
