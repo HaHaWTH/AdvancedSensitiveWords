@@ -246,7 +246,7 @@ public class PluginSettings implements SettingsHolder {
             "Whether to enable NPC compatibility (supports Leaves NPC)"})
     public static final Property<Boolean> NAME_IGNORE_NPC = newProperty("Name.ignoreNPC", true);
     @Comment({"替换还是取消(replace/cancel)",
-            "Replace or cancel (replace/cancel"})
+            "Replace or cancel (replace/cancel)"})
     public static final Property<String> ITEM_METHOD = newProperty("Item.method", "replace");
     @Comment({"存在敏感词时是否发送消息提醒",
             "Whether to send a message alert when sensitive words are found"})
