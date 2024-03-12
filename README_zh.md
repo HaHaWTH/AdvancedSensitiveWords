@@ -40,7 +40,9 @@ Logo 由 GPT-4 生成
 17. 基于自定义数据结构的高速处理
 18. 支持加载自定义在线词库 ([我们的在线词库](https://github.com/HaHaWTH/ASW-OnlineWordList))
 19. Folia兼容
-20. **假消息支持(灵感来自 [Bilibili 阿瓦隆系统](https://github.com/freedom-introvert/Research-on-Avalon-System-in-Bilibili-Comment-Area))**
+20. 违规通知管理员
+21. 高自定义惩罚策略
+22. **假消息支持(灵感来自 [Bilibili 阿瓦隆系统](https://github.com/freedom-introvert/Research-on-Avalon-System-in-Bilibili-Comment-Area))**
 
 **我们的目标: 干掉ChatSentry!(迫真)**
 
@@ -63,6 +65,10 @@ Logo 由 GPT-4 生成
 `advancedsensitivewords.status` - 允许使用status命令 (op默认)
 
 `advancedsensitivewords.test` - 允许使用test命令 (op默认)
+
+`advancedsensitivewords.help` - 允许使用help命令 (op默认)
+
+`advancedsensitivewords.notice` - 玩家违规时获取提醒消息 (op默认)
 
 **更多详细信息，请前往[Wiki](https://github.com/HaHaWTH/AdvancedSensitiveWords/wiki)进行查看**
 

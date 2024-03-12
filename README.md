@@ -42,7 +42,9 @@ Logo designed by GPT-4
 18. Fast processing depending on our custom data structure
 19. Online sensitive word list support ([Repository here](https://github.com/HaHaWTH/ASW-OnlineWordList))
 20. Folia supported
-21. Fake message support (Inspired by [Bilibili Avalon System](https://github.com/freedom-introvert/Research-on-Avalon-System-in-Bilibili-Comment-Area))
+21. OP notifications on player swore
+22. Custom punishments (Effect, command, hostile, etc.)
+23. Fake message support (Inspired by [Bilibili Avalon System](https://github.com/freedom-introvert/Research-on-Avalon-System-in-Bilibili-Comment-Area))
 
 **Features above make us unique in the anti-swear plugins!**
 
@@ -62,9 +64,13 @@ Logo designed by GPT-4
 
 `advancedsensitivewords.reload` - Allows you to use the /asw reload command
 
-`advancedsensitivewords.status` - Allows you to use the /asw status command`
+`advancedsensitivewords.status` - Allows you to use the /asw status command
 
-`advancedsensitivewords.test` - Allows you to use the /asw test command`
+`advancedsensitivewords.test` - Allows you to use the /asw test command
+
+`advancedsensitivewords.help` - Allows you to use the /asw help command
+
+`advancedsensitivewords.notice` - Retrieve the notification when players swore
 
 **For more info, please visit [our Wiki](https://github.com/HaHaWTH/AdvancedSensitiveWords/wiki)**
 
