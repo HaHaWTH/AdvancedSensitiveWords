@@ -60,12 +60,11 @@ public class Punishment {
                             player.addPotionEffect(new PotionEffect(potionEffect, duration_3 * 20, 0));
                             break;
                         case 4:
+                        default:
                             int duration_4 = Integer.parseInt(normalPunish[2]);
                             int amplifier = Integer.parseInt(normalPunish[3]);
                             player.addPotionEffect(new PotionEffect(potionEffect, duration_4 * 20, amplifier));
                             break;
-                        default:
-                            throw new IllegalArgumentException("Too many args");
                     }
                     break;
                 default:
