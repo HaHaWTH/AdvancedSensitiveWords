@@ -68,7 +68,7 @@ public class AnvilListener implements Listener {
                             }
                             long endTime = System.currentTimeMillis();
                             addProcessStatistic(endTime, startTime);
-                            Notifier.notice(player, EventType.ANVIL, originalItemName);
+                            if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.ANVIL, originalItemName);
                             Punishment.punish(player);
                         }
                     }

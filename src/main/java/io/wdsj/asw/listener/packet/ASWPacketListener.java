@@ -79,7 +79,7 @@ public class ASWPacketListener extends PacketListenerAbstract {
                 long endTime = System.currentTimeMillis();
                 addProcessStatistic(endTime, startTime);
                 getScheduler().runTask(()-> {
-                    Notifier.notice(player, EventType.CHAT, originalMessage);
+                    if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.CHAT, originalMessage);
                     Punishment.punish(player);
                 });
                 return;
@@ -112,7 +112,7 @@ public class ASWPacketListener extends PacketListenerAbstract {
                     long endTime = System.currentTimeMillis();
                     addProcessStatistic(endTime, startTime);
                     getScheduler().runTask(()-> {
-                        Notifier.notice(player, EventType.CHAT, originalContext);
+                        if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.CHAT, originalContext);
                         Punishment.punish(player);
                     });
                 }
@@ -148,7 +148,7 @@ public class ASWPacketListener extends PacketListenerAbstract {
                 long endTime = System.currentTimeMillis();
                 addProcessStatistic(endTime, startTime);
                 getScheduler().runTask(()-> {
-                    Notifier.notice(player, EventType.CHAT, originalCommand);
+                    if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.CHAT, originalCommand);
                     Punishment.punish(player);
                 });
             }

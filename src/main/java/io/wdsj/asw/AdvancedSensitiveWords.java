@@ -21,6 +21,7 @@ import io.wdsj.asw.listener.packet.ProtocolLibListener;
 import io.wdsj.asw.method.*;
 import io.wdsj.asw.setting.PluginMessages;
 import io.wdsj.asw.setting.PluginSettings;
+import io.wdsj.asw.update.Updater;
 import io.wdsj.asw.util.TimingUtils;
 import io.wdsj.asw.util.cache.BookCache;
 import io.wdsj.asw.util.context.ChatContext;
@@ -125,6 +126,15 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         }
         long endTime = System.currentTimeMillis();
         getLogger().info("AdvancedSensitiveWords is enabled!(took " + (endTime - startTime) + "ms)");
+        if (settingsManager.getProperty(PluginSettings.CHECK_FOR_UPDATE)) {
+            getScheduler().runTaskAsynchronously(() -> {
+                Updater updater = new Updater(getDescription().getVersion());
+                if (updater.isUpdateAvailable()) {
+                    getLogger().warning("There is a new version available: " + updater.getLatestVersion() +
+                            ", you're on: " + updater.getCurrentVersion());
+                }
+            });
+        }
     }
 
 

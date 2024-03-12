@@ -76,7 +76,7 @@ public class ProtocolLibListener {
                         long endTime = System.currentTimeMillis();
                         addProcessStatistic(endTime, startTime);
                         getScheduler().runTask(()-> {
-                            Notifier.notice(player, EventType.CHAT, message);
+                            if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.CHAT, message);
                             Punishment.punish(player);
                         });
                         return;
@@ -106,7 +106,7 @@ public class ProtocolLibListener {
                             long endTime = System.currentTimeMillis();
                             addProcessStatistic(endTime, startTime);
                             getScheduler().runTask(()-> {
-                                Notifier.notice(player, EventType.CHAT, originalContext);
+                                if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.CHAT, originalContext);
                                 Punishment.punish(player);
                             });
                         }

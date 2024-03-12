@@ -113,7 +113,7 @@ public class BookListener implements Listener {
             }
             long endTime = System.currentTimeMillis();
             addProcessStatistic(endTime, startTime);
-            Notifier.notice(player, EventType.BOOK, outMessage);
+            if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.BOOK, outMessage);
             Punishment.punish(player);
         }
 

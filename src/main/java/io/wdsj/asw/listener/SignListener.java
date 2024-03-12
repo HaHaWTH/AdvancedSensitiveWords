@@ -97,7 +97,7 @@ public class SignListener implements Listener {
             messagesFilteredNum.getAndIncrement();
             long endTime = System.currentTimeMillis();
             addProcessStatistic(endTime, startTime);
-            Notifier.notice(player, EventType.SIGN, outMessage);
+            if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.SIGN, outMessage);
             Punishment.punish(player);
         }
     }
