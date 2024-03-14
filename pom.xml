@@ -88,6 +88,10 @@
                                     <shadedPattern>io.wdsj.asw.libs.lib</shadedPattern>
                                 </relocation>
                                 <relocation>
+                                    <pattern>com.cryptomorin.xseries</pattern>
+                                    <shadedPattern>io.wdsj.asw.libs.xseries</shadedPattern>
+                                </relocation>
+                                <relocation>
                                     <pattern>java.util.internal</pattern>
                                     <shadedPattern>io.wdsj.asw.libs.java.util.internal</shadedPattern>
                                 </relocation>
@@ -138,6 +142,7 @@
                                         <exclude>assets/mappings/entity/**</exclude>
                                         <exclude>assets/mappings/enchantment/**</exclude>
                                         <exclude>com/google/gson/**</exclude>
+                                        <exclude>com/cryptomorin/xseries/XSound*</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
@@ -275,8 +280,16 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.13.2-R0.1-SNAPSHOT</version>
+            <version>1.20.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- XSeries -->
+        <dependency>
+            <groupId>com.github.cryptomorin</groupId>
+            <artifactId>XSeries</artifactId>
+            <version>9.9.0</version>
+            <scope>compile</scope>
         </dependency>
 
         <!-- AuthMe -->
