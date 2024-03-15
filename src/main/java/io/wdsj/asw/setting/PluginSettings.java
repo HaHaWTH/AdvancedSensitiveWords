@@ -168,6 +168,9 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"是否发送消息提醒(和假消息冲突)",
             "Whether to send message alerts (conflicts with fake messages)"})
     public static final Property<Boolean> CHAT_SEND_MESSAGE = newProperty("Chat.sendMessage", true);
+    @Comment({"是否启用惩罚",
+            "Whether to enable punishment"})
+    public static final Property<Boolean> CHAT_PUNISH = newProperty("Chat.punish", true);
 
     @Comment({"*是否启用服务器广播消息检测(仅提供取消和替换模式,配置跟随聊天检测)(不会触发API事件)",
             "*Whether to enable server broadcast message checks (only offers cancel and replace modes, configuration follows chat checks) (does not trigger API events)"})
@@ -201,7 +204,9 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"存在敏感词时是否发送消息提醒",
             "Whether to send a message alert when sensitive words are found"})
     public static final Property<Boolean> BOOK_SEND_MESSAGE = newProperty("Book.sendMessage", true);
-
+    @Comment({"是否启用惩罚",
+            "Whether to enable punishment"})
+    public static final Property<Boolean> BOOK_PUNISH = newProperty("Book.punish", true);
     @Comment({"是否启用书检测缓存(有助于优化性能)",
             "Whether to enable book check caching (helps optimize performance)"})
     public static final Property<Boolean> BOOK_CACHE = newProperty("Book.cache.enableCache", false);
@@ -217,7 +222,9 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"替换还是取消(replace/cancel)",
             "Replace or cancel (replace/cancel)"})
     public static final Property<String> SIGN_METHOD = newProperty("Sign.method", "replace");
-
+    @Comment({"是否启用惩罚",
+            "Whether to enable punishment"})
+    public static final Property<Boolean> SIGN_PUNISH = newProperty("Sign.punish", true);
     @Comment({"是否启用跨行检测",
             "Whether to enable multi-line check"})
     public static final Property<Boolean> SIGN_MULTI_LINE_CHECK = newProperty("Sign.multiLineCheck", true);
@@ -236,7 +243,9 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"存在敏感词时是否发送消息提醒",
             "Whether to send a message alert when sensitive words are found"})
     public static final Property<Boolean> ANVIL_SEND_MESSAGE = newProperty("Anvil.sendMessage", true);
-
+    @Comment({"是否启用惩罚",
+            "Whether to enable punishment"})
+    public static final Property<Boolean> ANVIL_PUNISH = newProperty("Anvil.punish", true);
     @Comment({"替换还是禁止登录(replace/cancel)",
             "Replace or forbid login (replace/cancel)"})
     public static final Property<String> NAME_METHOD = newProperty("Name.method", "cancel");
@@ -244,7 +253,9 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"存在敏感词时是否发送消息/踢出消息",
             "Whether to send a message/kick message when sensitive words are found"})
     public static final Property<Boolean> NAME_SEND_MESSAGE = newProperty("Name.sendMessage", true);
-
+    @Comment({"是否启用惩罚",
+            "Whether to enable punishment"})
+    public static final Property<Boolean> NAME_PUNISH = newProperty("Name.punish", true);
     @Comment({"是否跳过对基岩版玩家名称的检测(需要floodgate)",
             "Whether to skip checking player names for Bedrock Edition players (requires floodgate)"})
     public static final Property<Boolean> NAME_IGNORE_BEDROCK = newProperty("Name.ignoreBedrock", false);
@@ -258,6 +269,9 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"存在敏感词时是否发送消息提醒",
             "Whether to send a message alert when sensitive words are found"})
     public static final Property<Boolean> ITEM_SEND_MESSAGE = newProperty("Item.sendMessage", true);
+    @Comment({"是否启用惩罚",
+            "Whether to enable punishment"})
+    public static final Property<Boolean> ITEM_PUNISH = newProperty("Item.punish", true);
 
 
     @Override

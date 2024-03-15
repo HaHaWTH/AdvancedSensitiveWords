@@ -77,7 +77,7 @@ public class ProtocolLibListener {
                         addProcessStatistic(endTime, startTime);
                         getScheduler().runTask(()-> {
                             if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.CHAT, message);
-                            Punishment.punish(player);
+                            if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) Punishment.punish(player);
                         });
                         return;
                     }
@@ -107,7 +107,7 @@ public class ProtocolLibListener {
                             addProcessStatistic(endTime, startTime);
                             getScheduler().runTask(()-> {
                                 if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.CHAT, originalContext);
-                                Punishment.punish(player);
+                                if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) Punishment.punish(player);
                             });
                         }
                     }

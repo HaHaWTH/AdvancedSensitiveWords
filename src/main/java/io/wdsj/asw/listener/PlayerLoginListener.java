@@ -58,7 +58,7 @@ public class PlayerLoginListener implements Listener {
             long endTime = System.currentTimeMillis();
             addProcessStatistic(endTime, startTime);
             if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.NAME, playerName);
-            Punishment.punish(player);
+            if (settingsManager.getProperty(PluginSettings.NAME_PUNISH)) Punishment.punish(player);
         }
     }
 }

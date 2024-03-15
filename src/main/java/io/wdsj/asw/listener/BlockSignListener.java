@@ -117,7 +117,7 @@ public class BlockSignListener implements Listener {
             long endTime = System.currentTimeMillis();
             addProcessStatistic(endTime, startTime);
             if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.SIGN, outMessage);
-            Punishment.punish(player);
+            if (settingsManager.getProperty(PluginSettings.SIGN_PUNISH)) Punishment.punish(player);
         }
 
     }

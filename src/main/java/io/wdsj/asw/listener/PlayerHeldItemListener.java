@@ -59,7 +59,7 @@ public class PlayerHeldItemListener implements Listener {
                     long endTime = System.currentTimeMillis();
                     TimingUtils.addProcessStatistic(endTime, startTime);
                     if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.ITEM, originalName);
-                    Punishment.punish(player);
+                    if (settingsManager.getProperty(PluginSettings.ITEM_PUNISH)) Punishment.punish(player);
                 }
             }
         }

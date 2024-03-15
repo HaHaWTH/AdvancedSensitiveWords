@@ -114,7 +114,7 @@ public class BookListener implements Listener {
             long endTime = System.currentTimeMillis();
             addProcessStatistic(endTime, startTime);
             if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.BOOK, outMessage);
-            Punishment.punish(player);
+            if (settingsManager.getProperty(PluginSettings.BOOK_PUNISH)) Punishment.punish(player);
         }
 
         if (settingsManager.getProperty(PluginSettings.BOOK_SEND_MESSAGE) && shouldSendMessage) {
