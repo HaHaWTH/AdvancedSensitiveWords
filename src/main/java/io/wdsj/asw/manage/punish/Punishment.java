@@ -81,7 +81,7 @@ public class Punishment {
     private static void makeHostileTowardsPlayer(Player target, double radius) {
         List<Entity> entities = target.getNearbyEntities(radius, radius, radius);
         for (Entity entity : entities) {
-            if (entity instanceof Mob) {
+            if (entity instanceof Mob && !entity.hasMetadata("NPC")) {
                 Mob mob = (Mob) entity;
                 mob.setTarget(target);
             }
