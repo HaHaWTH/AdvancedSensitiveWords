@@ -36,8 +36,8 @@ public class PlayerItemListener implements Listener {
         ItemStack item = player.getInventory().getItem(event.getNewSlot());
         if (item != null && item.hasItemMeta()) {
             ItemMeta meta = item.getItemMeta();
-            if (NORMAL_ITEM_META.contains(meta)) return;
             if (meta != null && meta.hasDisplayName()) {
+                if (NORMAL_ITEM_META.contains(meta)) return;
                 String originalName = meta.getDisplayName();
                 long startTime = System.currentTimeMillis();
                 if (settingsManager.getProperty(PluginSettings.IGNORE_FORMAT_CODE)) originalName = originalName.replaceAll(Utils.getIgnoreFormatCodeRegex(), "");
@@ -79,8 +79,8 @@ public class PlayerItemListener implements Listener {
         ItemStack item = event.getItemDrop().getItemStack();
         if (item.hasItemMeta()) {
             ItemMeta meta = item.getItemMeta();
-            if (NORMAL_ITEM_META.contains(meta)) return;
             if (meta != null && meta.hasDisplayName()) {
+                if (NORMAL_ITEM_META.contains(meta)) return;
                 String originalName = meta.getDisplayName();
                 long startTime = System.currentTimeMillis();
                 if (settingsManager.getProperty(PluginSettings.IGNORE_FORMAT_CODE)) originalName = originalName.replaceAll(Utils.getIgnoreFormatCodeRegex(), "");
