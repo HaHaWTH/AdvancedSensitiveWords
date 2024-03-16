@@ -1,12 +1,7 @@
 package io.wdsj.asw.util.cache;
 
-import io.wdsj.asw.setting.PluginSettings;
-
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-
-import static io.wdsj.asw.AdvancedSensitiveWords.settingsManager;
 
 /**
  * Cache utilities class for Book detections.
@@ -38,15 +33,7 @@ public class BookCache {
     }
 
     private static void trimCache(LinkedHashMap<String, ?> cache) {
-        if (cache.size() > settingsManager.getProperty(PluginSettings.BOOK_MAXIMUM_CACHE_SIZE)) {
-            Iterator<String> contentIterator = cache.keySet().iterator();
-            for (int i = settingsManager.getProperty(PluginSettings.BOOK_MAXIMUM_CACHE_SIZE); i < cache.size(); i++) {
-                if (contentIterator.hasNext()) {
-                    contentIterator.next();
-                    contentIterator.remove();
-                }
-            }
-        }
+        cache.clear();
     }
 
 
