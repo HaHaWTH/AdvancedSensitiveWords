@@ -19,14 +19,12 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.HashSet;
 import java.util.List;
 
 import static io.wdsj.asw.AdvancedSensitiveWords.*;
 import static io.wdsj.asw.util.Utils.messagesFilteredNum;
 
 public class PlayerItemListener implements Listener {
-    private static final HashSet<ItemMeta> NORMAL_ITEM_META = new HashSet<>();
 
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerHeldItem(PlayerItemHeldEvent event) {
@@ -37,7 +35,6 @@ public class PlayerItemListener implements Listener {
         if (item != null && item.hasItemMeta()) {
             ItemMeta meta = item.getItemMeta();
             if (meta != null && meta.hasDisplayName()) {
-                if (NORMAL_ITEM_META.contains(meta)) return;
                 String originalName = meta.getDisplayName();
                 long startTime = System.currentTimeMillis();
                 if (settingsManager.getProperty(PluginSettings.IGNORE_FORMAT_CODE)) originalName = originalName.replaceAll(Utils.getIgnoreFormatCodeRegex(), "");
@@ -64,8 +61,6 @@ public class PlayerItemListener implements Listener {
                     TimingUtils.addProcessStatistic(endTime, startTime);
                     if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.ITEM, originalName);
                     if (settingsManager.getProperty(PluginSettings.ITEM_PUNISH)) Punishment.punish(player);
-                } else {
-                    NORMAL_ITEM_META.add(meta);
                 }
             }
         }
@@ -80,7 +75,6 @@ public class PlayerItemListener implements Listener {
         if (item.hasItemMeta()) {
             ItemMeta meta = item.getItemMeta();
             if (meta != null && meta.hasDisplayName()) {
-                if (NORMAL_ITEM_META.contains(meta)) return;
                 String originalName = meta.getDisplayName();
                 long startTime = System.currentTimeMillis();
                 if (settingsManager.getProperty(PluginSettings.IGNORE_FORMAT_CODE)) originalName = originalName.replaceAll(Utils.getIgnoreFormatCodeRegex(), "");
@@ -107,8 +101,6 @@ public class PlayerItemListener implements Listener {
                     TimingUtils.addProcessStatistic(endTime, startTime);
                     if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.ITEM, originalName);
                     if (settingsManager.getProperty(PluginSettings.ITEM_PUNISH)) Punishment.punish(player);
-                } else {
-                    NORMAL_ITEM_META.add(meta);
                 }
             }
         }

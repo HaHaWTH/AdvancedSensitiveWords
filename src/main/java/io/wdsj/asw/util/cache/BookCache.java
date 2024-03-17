@@ -2,7 +2,7 @@ package io.wdsj.asw.util.cache;
 
 import io.wdsj.asw.setting.PluginSettings;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 
 import static io.wdsj.asw.AdvancedSensitiveWords.settingsManager;
@@ -12,7 +12,7 @@ import static io.wdsj.asw.AdvancedSensitiveWords.settingsManager;
  * @author HaHaWTH & HeyWTF_IS_That and 0D00_0721
  */
 public class BookCache {
-    private static final LinkedHashMap<String, BookCacheEntry> bookCache = new LinkedHashMap<>();
+    private static final HashMap<String, BookCacheEntry> bookCache = new HashMap<>();
 
     public static boolean isBookCached(String content) {
         return bookCache.containsKey(content);
