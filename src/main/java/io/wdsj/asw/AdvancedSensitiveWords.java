@@ -107,9 +107,6 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         metrics.addCustomChart(new SimplePie("java_vendor", TimingUtils::getJvmVendor));
         if (settingsManager.getProperty(PluginSettings.ENABLE_SIGN_EDIT_CHECK)) {
             getServer().getPluginManager().registerEvents(new SignListener(), this);
-            if (settingsManager.getProperty(PluginSettings.SIGN_ENHANCED_CHECK)) {
-                getServer().getPluginManager().registerEvents(new BlockSignListener(), this);
-            }
         }
         if (settingsManager.getProperty(PluginSettings.ENABLE_ANVIL_EDIT_CHECK)) {
             getServer().getPluginManager().registerEvents(new AnvilListener(), this);

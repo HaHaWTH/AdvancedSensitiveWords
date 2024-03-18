@@ -228,9 +228,6 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"是否启用跨行检测",
             "Whether to enable multi-line check"})
     public static final Property<Boolean> SIGN_MULTI_LINE_CHECK = newProperty("Sign.multiLineCheck", true);
-    @Comment({"*是否启用增强检测(避免外挂等的自动放置)",
-            "Whether to enable enhanced check(Prevents auto placement by some hacks)"})
-    public static final Property<Boolean> SIGN_ENHANCED_CHECK = newProperty("Sign.enhancedCheck", true);
 
     @Comment({"存在敏感词时是否发送消息提醒",
             "Whether to send a message alert when sensitive words are found"})
