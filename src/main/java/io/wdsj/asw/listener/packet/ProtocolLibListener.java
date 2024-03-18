@@ -116,5 +116,4 @@ public class ProtocolLibListener {
         };
         com.comphenix.protocol.ProtocolLibrary.getProtocolManager().addPacketListener(protocolChat);
     }
-
 }

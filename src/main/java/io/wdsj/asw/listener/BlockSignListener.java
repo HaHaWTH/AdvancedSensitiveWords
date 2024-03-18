@@ -25,6 +25,7 @@ import static io.wdsj.asw.util.TimingUtils.addProcessStatistic;
 import static io.wdsj.asw.util.Utils.isClassLoaded;
 import static io.wdsj.asw.util.Utils.messagesFilteredNum;
 
+@SuppressWarnings("deprecation")
 public class BlockSignListener implements Listener {
     private static final boolean isModernVersion;
     private static String outMessage;

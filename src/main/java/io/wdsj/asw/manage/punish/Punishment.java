@@ -13,6 +13,7 @@ import java.util.Locale;
 
 import static io.wdsj.asw.AdvancedSensitiveWords.settingsManager;
 
+@SuppressWarnings("deprecation")
 public class Punishment {
     /**
      * 对玩家执行配置中定义的惩罚。
