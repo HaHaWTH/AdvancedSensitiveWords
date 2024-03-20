@@ -24,7 +24,8 @@ import java.util.List;
 
 import static io.wdsj.asw.AdvancedSensitiveWords.*;
 import static io.wdsj.asw.util.TimingUtils.addProcessStatistic;
-import static io.wdsj.asw.util.Utils.*;
+import static io.wdsj.asw.util.Utils.getPlayerIp;
+import static io.wdsj.asw.util.Utils.messagesFilteredNum;
 
 @SuppressWarnings("unused")
 public class ChatListener implements Listener {

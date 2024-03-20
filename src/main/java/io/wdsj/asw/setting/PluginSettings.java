@@ -73,7 +73,7 @@ public class PluginSettings implements SettingsHolder {
     public static final Property<Boolean> ENABLE_PLAYER_NAME_CHECK = newProperty("Plugin.enablePlayerNameCheck", false);
     @Comment({"*是否启用玩家物品检测",
             "*Whether to enable player item check"})
-    public static final Property<Boolean> ENABLE_PLAYER_ITEM_CHECK = newProperty("Plugin.enableItemCheck", true);
+    public static final Property<Boolean> ENABLE_PLAYER_ITEM_CHECK = newProperty("Plugin.enableItemCheck", false);
 
     @Comment({"是否启用API接口(非必要请勿关闭)",
             "Whether to enable API (do not disable unless necessary)"})

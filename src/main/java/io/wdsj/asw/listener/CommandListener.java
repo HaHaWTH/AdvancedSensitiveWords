@@ -19,7 +19,6 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import java.util.List;
 
 import static io.wdsj.asw.AdvancedSensitiveWords.*;
-import static io.wdsj.asw.AdvancedSensitiveWords.isCslAvailable;
 import static io.wdsj.asw.util.Utils.*;
 
 @SuppressWarnings("unused")

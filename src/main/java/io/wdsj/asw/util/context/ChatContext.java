@@ -18,7 +18,7 @@ public class ChatContext {
         chatHistory.computeIfAbsent(player, k -> new LinkedList<>());
         Deque<String> history = chatHistory.get(player);
         while (history.size() >= settingsManager.getProperty(PluginSettings.CHAT_CONTEXT_MAX_SIZE)) {
-            history.poll();
+            history.pollFirst();
         }
         history.offerLast(message.trim());
     }
