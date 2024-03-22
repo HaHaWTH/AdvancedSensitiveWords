@@ -15,19 +15,18 @@ public class ConstructTabCompleter implements TabCompleter {
     @Nullable
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String s, @NotNull String[] args) {
-        Player player = (Player) sender;
         if (args.length == 1) {
             List<String> tabComplete = new AdvancedList<>();
-            if (player.hasPermission("advancedsensitivewords.reload") && args[0].startsWith("r")) {
+            if (sender.hasPermission("advancedsensitivewords.reload") && args[0].startsWith("r")) {
                 tabComplete.add("reload");
-            } else if (player.hasPermission("advancedsensitivewords.status") && args[0].startsWith("s")) {
+            } else if (sender.hasPermission("advancedsensitivewords.status") && args[0].startsWith("s")) {
                 tabComplete.add("status");
-            } else if (player.hasPermission("advancedsensitivewords.test") && args[0].startsWith("t")) {
+            } else if (sender.hasPermission("advancedsensitivewords.test") && args[0].startsWith("t")) {
                 tabComplete.add("test");
-            } else if (player.hasPermission("advancedsensitivewords.help") && args[0].startsWith("h")) {
+            } else if (sender.hasPermission("advancedsensitivewords.help") && args[0].startsWith("h")) {
                 tabComplete.add("help");
-            } else if (player.hasPermission("advancedsensitivewords.reload") ||
-                    player.hasPermission("advancedsensitivewords.status") || player.hasPermission("advancedsensitivewords.test") || player.hasPermission("advancedsensitivewords.help")) {
+            } else if (sender.hasPermission("advancedsensitivewords.reload") ||
+                    sender.hasPermission("advancedsensitivewords.status") || sender.hasPermission("advancedsensitivewords.test") || sender.hasPermission("advancedsensitivewords.help")) {
                 tabComplete.add("help");
                 tabComplete.add("reload");
                 tabComplete.add("status");

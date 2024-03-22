@@ -8,6 +8,7 @@ import java.util.Scanner;
 public class Updater {
     private final String currentVersion;
     private String latestVersion;
+    public static boolean isUpdateAvailable = false;
     private static final String UPDATE_URL = "https://api.github.com/repos/HaHaWTH/AdvancedSensitiveWords/releases/latest";
 
     public Updater(String currentVersion) {
@@ -26,9 +27,11 @@ public class Updater {
             String latestVersion = response.substring(response.indexOf("tag_name") + 11);
             latestVersion = latestVersion.substring(0, latestVersion.indexOf("\""));
             this.latestVersion = latestVersion;
-            return !currentVersion.equals(latestVersion);
+            isUpdateAvailable = !currentVersion.equals(latestVersion);
+            return isUpdateAvailable;
         } catch (IOException ignored) {
             this.latestVersion = null;
+            isUpdateAvailable = false;
             return false;
         }
     }
