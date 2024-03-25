@@ -2,6 +2,8 @@ package io.wdsj.asw.util;
 
 
 import io.wdsj.asw.AdvancedSensitiveWords;
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 
 public class SchedulingUtils {
     private SchedulingUtils() {
@@ -15,4 +17,21 @@ public class SchedulingUtils {
             runnable.run();
         }
     }
+
+    public static void runSyncIfFolia(Entity entity, Runnable runnable) {
+        if (isFolia) {
+            AdvancedSensitiveWords.getScheduler().runTask(entity, runnable);
+        } else {
+            runnable.run();
+        }
+    }
+
+    public static void runSyncIfFolia(Location location, Runnable runnable) {
+        if (isFolia) {
+            AdvancedSensitiveWords.getScheduler().runTask(location, runnable);
+        } else {
+            runnable.run();
+        }
+    }
+
 }
