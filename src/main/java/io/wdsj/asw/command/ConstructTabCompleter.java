@@ -33,6 +33,6 @@ public class ConstructTabCompleter implements TabCompleter {
             }
             return tabComplete;
         }
-        return Collections.emptyList(); // Must return empty list, if null paper will supply player names
+        return new AdvancedList<>(); // Must return empty list, if null paper will supply player names
     }
 }
