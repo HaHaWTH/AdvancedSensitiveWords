@@ -1,6 +1,7 @@
 package io.wdsj.asw.manage.punish;
 
 import io.wdsj.asw.setting.PluginSettings;
+import io.wdsj.asw.util.SchedulingUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
@@ -54,17 +55,17 @@ public class Punishment {
                     if (potionEffect == null) throw new IllegalArgumentException("Unknown potion effect");
                     switch (normalPunish.length) {
                         case 2:
-                            player.addPotionEffect(new PotionEffect(potionEffect, 10, 0));
+                            SchedulingUtils.runSyncIfFolia(() -> player.addPotionEffect(new PotionEffect(potionEffect, 10, 0)));
                             break;
                         case 3:
                             int duration_3 = Integer.parseInt(normalPunish[2]);
-                            player.addPotionEffect(new PotionEffect(potionEffect, duration_3 * 20, 0));
+                            SchedulingUtils.runSyncIfFolia(() -> player.addPotionEffect(new PotionEffect(potionEffect, duration_3 * 20, 0)));
                             break;
                         case 4:
                         default:
                             int duration_4 = Integer.parseInt(normalPunish[2]);
                             int amplifier = Integer.parseInt(normalPunish[3]);
-                            player.addPotionEffect(new PotionEffect(potionEffect, duration_4 * 20, amplifier));
+                            SchedulingUtils.runSyncIfFolia(() -> player.addPotionEffect(new PotionEffect(potionEffect, duration_4 * 20, amplifier)));
                             break;
                     }
                     break;
