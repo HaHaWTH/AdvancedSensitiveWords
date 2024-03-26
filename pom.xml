@@ -6,7 +6,7 @@
 
     <groupId>io.wdsj</groupId>
     <artifactId>AdvancedSensitiveWords</artifactId>
-    <version>Archaic</version>
+    <version>Crystal</version>
     <packaging>jar</packaging>
 
     <name>AdvancedSensitiveWords</name>
