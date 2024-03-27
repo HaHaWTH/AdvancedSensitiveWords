@@ -30,9 +30,9 @@ public class Punishment {
                 case DAMAGE:
                     try {
                         double damageAmount = (normalPunish.length == 2) ? Double.parseDouble(normalPunish[1]) : 1.0D;
-                        player.damage(damageAmount);
+                        SchedulingUtils.runSyncIfFolia(player, () -> player.damage(damageAmount));
                     } catch (NumberFormatException e) {
-                        player.damage(1.0D);
+                        SchedulingUtils.runSyncIfFolia(player, () -> player.damage(1.0D));
                     }
                     break;
                 case HOSTILE:
@@ -81,12 +81,14 @@ public class Punishment {
      * @param radius 敌对生物的搜索半径
      */
     private static void makeHostileTowardsPlayer(Player target, double radius) {
-        List<Entity> entities = target.getNearbyEntities(radius, radius, radius);
-        for (Entity entity : entities) {
-            if (entity instanceof Mob && !entity.hasMetadata("NPC")) {
-                Mob mob = (Mob) entity;
-                mob.setTarget(target);
+        SchedulingUtils.runSyncIfFolia(target, () -> {
+            List<Entity> entities = target.getNearbyEntities(radius, radius, radius);
+            for (Entity entity : entities) {
+                if (entity instanceof Mob && !entity.hasMetadata("NPC")) {
+                    Mob mob = (Mob) entity;
+                    mob.setTarget(target);
+                }
             }
-        }
+        });
     }
 }
