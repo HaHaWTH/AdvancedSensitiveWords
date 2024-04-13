@@ -49,6 +49,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     public static SettingsManager settingsManager;
     public static SettingsManager messagesManager;
     private static AdvancedSensitiveWords instance;
+    private static boolean USE_PE = false;
     private static TaskScheduler scheduler;
     private static Logger logger;
     public static TaskScheduler getScheduler() {
@@ -77,6 +78,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
                 .useDefaultMigrationService()
                 .create();
         if (!checkProtocolLib()) return;
+        USE_PE = true;
         PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
         PacketEvents.getAPI().getSettings().reEncodeByDefault(true).checkForUpdates(false).bStats(false);
         PacketEvents.getAPI().load();
@@ -165,7 +167,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (checkProtocolLib()) {
+        if (USE_PE) {
             PacketEvents.getAPI().terminate();
         } else {
             com.comphenix.protocol.ProtocolLibrary.getProtocolManager().removePacketListeners(this);
