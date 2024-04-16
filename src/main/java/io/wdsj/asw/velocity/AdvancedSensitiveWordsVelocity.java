@@ -48,7 +48,7 @@ public class AdvancedSensitiveWordsVelocity {
                         ByteArrayDataOutput out = ByteStreams.newDataOutput();
                         out.write(message);
                         out.writeUTF(source.getServerInfo().getName());
-                        server.sendPluginMessage(LEGACY_CHANNEL, out.toByteArray());
+                        server.sendPluginMessage(CHANNEL, out.toByteArray());
                         logger.debug("Send message to " + server.getServerInfo().getName());
                     }
                 });
