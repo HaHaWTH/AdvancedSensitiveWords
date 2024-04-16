@@ -1,6 +1,6 @@
 name: AdvancedSensitiveWords
 version: ${project.version}
-main: io.wdsj.asw.AdvancedSensitiveWords
+main: io.wdsj.asw.bukkit.AdvancedSensitiveWords
 api-version: '1.13'
 website: https://github.com/HaHaWTH/AdvancedSensitiveWords
 authors:
@@ -54,4 +54,3 @@ permissions:
     description: Retrive the notice message when player violated.
     default: op
 # Love you
-# Support me on Afdian https://afdian.net/a/114514woxiuyuan/
