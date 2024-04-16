@@ -32,6 +32,11 @@
       <option name="url" value="https://repo.kenzie.mx/releases" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="papermc-repo" />
+      <option name="name" value="papermc-repo" />
+      <option name="url" value="https://repo.papermc.io/repository/maven-public/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="opencollab-snapshots" />
       <option name="name" value="opencollab-snapshots" />
       <option name="url" value="https://repo.opencollab.dev/maven-snapshots/" />
