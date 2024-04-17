@@ -35,7 +35,7 @@
                             <goal>filter-sources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/generated-sources/templates</outputDirectory>
+                            <outputDirectory>${project.build.directory}/classes/templates</outputDirectory>
                             <sourceDirectory>src/main/java/io/wdsj/asw/velocity/template</sourceDirectory>
                         </configuration>
                     </execution>
