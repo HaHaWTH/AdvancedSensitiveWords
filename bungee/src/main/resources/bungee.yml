@@ -1,0 +1,3 @@
+name: AdvancedSensitiveWords
+version: '${project.version}'
+main: io.wdsj.asw.bungee.AdvancedSensitiveWords
