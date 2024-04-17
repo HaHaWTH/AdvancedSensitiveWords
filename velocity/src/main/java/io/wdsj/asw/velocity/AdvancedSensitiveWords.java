@@ -13,6 +13,7 @@ import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import io.wdsj.asw.velocity.template.PomData;
+import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 
 import java.util.Optional;
@@ -29,12 +30,15 @@ public class AdvancedSensitiveWords {
     private Logger logger;
     @Inject
     private ProxyServer server;
+    @Inject
+    private Metrics.Factory metricsFactory;
     private static final MinecraftChannelIdentifier CHANNEL = MinecraftChannelIdentifier.create("asw", "main");
     private static final ChannelIdentifier LEGACY_CHANNEL
             = new LegacyChannelIdentifier("asw:main");
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
         server.getChannelRegistrar().register(CHANNEL, LEGACY_CHANNEL);
+        Metrics metrics = metricsFactory.make(this, 21637);
     }
 
     @Subscribe
