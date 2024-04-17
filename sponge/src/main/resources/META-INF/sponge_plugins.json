@@ -1,0 +1,30 @@
+{
+  "loader": {
+    "name": "java_plain",
+    "version": "1.0"
+  },
+  "license": "AGPL-3.0",
+  "plugins": [
+    {
+      "id": "advancedsensitivewords",
+      "name": "AdvancedSensitiveWords",
+      "version": "${version}",
+      "entrypoint": "io.wdsj.asw.sponge.AdvancedSensitiveWords",
+      "description": "",
+      "branding": {},
+      "links": {
+        "homepage": "https://github.com/HaHaWTH/AdvancedSensitiveWords"
+      },
+      "contributors": [
+      ],
+      "dependencies": [
+        {
+          "id": "spongeapi",
+          "version": "11.0.0-SNAPSHOT",
+          "load-order": "after",
+          "optional": false
+        }
+      ]
+    }
+  ]
+}
