@@ -12,6 +12,7 @@ import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
+import io.wdsj.asw.velocity.template.PomData;
 import org.slf4j.Logger;
 
 import java.util.Optional;
@@ -19,7 +20,7 @@ import java.util.Optional;
 @Plugin(
         id = "advancedsensitivewords",
         name = "AdvancedSensitiveWordsVelocity",
-        version = "Crystal",
+        version = PomData.VERSION,
         authors = {"HaHaWTH"}
 )
 public class AdvancedSensitiveWordsVelocity {
