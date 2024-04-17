@@ -77,7 +77,7 @@ Logo designed by GPT-4
 ## Supported Platforms
 - Spigot(stable)
 - Velocity(experimental)
-- BungeeCord(WIP)
+- BungeeCord(experimental)
 - Sponge(WIP)
 - Fabric(Planned)
 - Forge/NeoForge(Coming s∞n)

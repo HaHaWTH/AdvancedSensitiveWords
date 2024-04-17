@@ -5,6 +5,7 @@ import io.wdsj.asw.bukkit.event.ASWFilterEvent;
 import io.wdsj.asw.bukkit.event.EventType;
 import io.wdsj.asw.bukkit.manage.notice.Notifier;
 import io.wdsj.asw.bukkit.manage.punish.Punishment;
+import io.wdsj.asw.bukkit.proxy.bungee.BungeeSender;
 import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
@@ -63,6 +64,9 @@ public class ChatListener implements Listener {
             if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
                 VelocitySender.send(player, EventType.CHAT, originalMessage);
             }
+            if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
+                BungeeSender.send(player, EventType.CHAT, originalMessage);
+            }
             long endTime = System.currentTimeMillis();
             TimingUtils.addProcessStatistic(endTime, startTime);
             getScheduler().runTask(()-> {
@@ -98,6 +102,9 @@ public class ChatListener implements Listener {
                 }
                 if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
                     VelocitySender.send(player, EventType.CHAT, originalContext);
+                }
+                if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
+                    BungeeSender.send(player, EventType.CHAT, originalContext);
                 }
                 long endTime = System.currentTimeMillis();
                 addProcessStatistic(endTime, startTime);

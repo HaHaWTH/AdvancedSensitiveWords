@@ -19,6 +19,7 @@
     <modules>
         <module>bukkit</module>
         <module>velocity</module>
+        <module>bungee</module>
     </modules>
 
 </project>

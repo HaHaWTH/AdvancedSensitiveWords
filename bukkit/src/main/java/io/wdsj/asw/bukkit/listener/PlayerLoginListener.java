@@ -5,6 +5,7 @@ import io.wdsj.asw.bukkit.event.ASWFilterEvent;
 import io.wdsj.asw.bukkit.event.EventType;
 import io.wdsj.asw.bukkit.manage.notice.Notifier;
 import io.wdsj.asw.bukkit.manage.punish.Punishment;
+import io.wdsj.asw.bukkit.proxy.bungee.BungeeSender;
 import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
@@ -58,6 +59,9 @@ public class PlayerLoginListener implements Listener {
             }
             if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
                 VelocitySender.send(player, EventType.NAME, playerName);
+            }
+            if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
+                BungeeSender.send(player, EventType.NAME, playerName);
             }
             long endTime = System.currentTimeMillis();
             addProcessStatistic(endTime, startTime);

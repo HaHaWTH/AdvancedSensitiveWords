@@ -80,7 +80,7 @@ Logo 由 GPT-4 生成
 ## 支持平台
 - Spigot(稳定)
 - Velocity(测试)
-- BungeeCord(在做了在做了)
+- BungeeCord(测试)
 - Sponge(在做了在做了)
 - Fabric(计划中)
 - Forge/NeoForge(Coming s∞n)

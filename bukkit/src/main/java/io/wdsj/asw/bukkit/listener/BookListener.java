@@ -6,6 +6,7 @@ import io.wdsj.asw.bukkit.event.EventType;
 import io.wdsj.asw.bukkit.impl.list.AdvancedList;
 import io.wdsj.asw.bukkit.manage.notice.Notifier;
 import io.wdsj.asw.bukkit.manage.punish.Punishment;
+import io.wdsj.asw.bukkit.proxy.bungee.BungeeSender;
 import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
@@ -114,6 +115,9 @@ public class BookListener implements Listener {
             }
             if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
                 VelocitySender.send(player, EventType.BOOK, outMessage);
+            }
+            if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
+                BungeeSender.send(player, EventType.BOOK, outMessage);
             }
             long endTime = System.currentTimeMillis();
             addProcessStatistic(endTime, startTime);

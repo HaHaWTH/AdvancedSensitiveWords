@@ -19,6 +19,8 @@ import io.wdsj.asw.bukkit.listener.*;
 import io.wdsj.asw.bukkit.listener.packet.ASWPacketListener;
 import io.wdsj.asw.bukkit.listener.packet.ProtocolLibListener;
 import io.wdsj.asw.bukkit.method.*;
+import io.wdsj.asw.bukkit.proxy.bungee.BungeeCordChannel;
+import io.wdsj.asw.bukkit.proxy.bungee.BungeeReceiver;
 import io.wdsj.asw.bukkit.proxy.velocity.VelocityChannel;
 import io.wdsj.asw.bukkit.proxy.velocity.VelocityReceiver;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
@@ -134,6 +136,10 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
             getServer().getMessenger().registerOutgoingPluginChannel(this, VelocityChannel.CHANNEL);
             getServer().getMessenger().registerIncomingPluginChannel(this, VelocityChannel.CHANNEL, new VelocityReceiver());
         }
+        if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
+            getServer().getMessenger().registerOutgoingPluginChannel(this, BungeeCordChannel.BUNGEE_CHANNEL);
+            getServer().getMessenger().registerIncomingPluginChannel(this, BungeeCordChannel.BUNGEE_CHANNEL, new BungeeReceiver());
+        }
         long endTime = System.currentTimeMillis();
         logger.info("AdvancedSensitiveWords is enabled!(took " + (endTime - startTime) + "ms)");
         if (settingsManager.getProperty(PluginSettings.CHECK_FOR_UPDATE)) {
@@ -176,6 +182,11 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
             PacketEvents.getAPI().terminate();
         } else {
             com.comphenix.protocol.ProtocolLibrary.getProtocolManager().removePacketListeners(this);
+        }
+        if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD) ||
+                settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
+            getServer().getMessenger().unregisterOutgoingPluginChannel(this);
+            getServer().getMessenger().unregisterIncomingPluginChannel(this);
         }
         TimingUtils.cleanStatisticCache();
         ChatContext.forceClearContext();
