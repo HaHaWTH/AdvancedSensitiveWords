@@ -29,7 +29,7 @@ public class TimingUtils {
 
     public static long getProcessAverage() {
         long sum = 0L;
-        for (Long l : processStatistic) {
+        for (long l : processStatistic) {
             sum += l;
         }
         return processStatistic.size() != 0 ? sum / processStatistic.size() : 0L;
