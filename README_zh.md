@@ -77,6 +77,14 @@ Logo 由 GPT-4 生成
 
 [![](https://img.shields.io/bstats/players/20661?label=Online%20Players&style=for-the-badge)](https://bstats.org/plugin/bukkit/AdvancedSensitiveWords/20661)
 
+## 支持平台
+- Spigot(稳定)
+- Velocity(测试)
+- BungeeCord(在做了在做了)
+- Sponge(在做了在做了)
+- Fabric(计划中)
+- Forge/NeoForge(Coming s∞n)
+
 ## 开发者
 AdvancedSensitiveWords 提供了一个 [简单的事件](./src/main/java/io/wdsj/asw/event/ASWFilterEvent.java) 便于开发者进行扩展.
 

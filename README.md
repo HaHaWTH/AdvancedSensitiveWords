@@ -74,6 +74,14 @@ Logo designed by GPT-4
 
 **For more info, please visit [our Wiki](https://github.com/HaHaWTH/AdvancedSensitiveWords/wiki)**
 
+## Supported Platforms
+- Spigot(stable)
+- Velocity(experimental)
+- BungeeCord(WIP)
+- Sponge(WIP)
+- Fabric(Planned)
+- Forge/NeoForge(Coming s∞n)
+
 ## Statistics
 [![](https://img.shields.io/bstats/servers/20661?label=Spigot%20Servers&style=for-the-badge)](https://bstats.org/plugin/bukkit/AdvancedSensitiveWords/20661)
 
