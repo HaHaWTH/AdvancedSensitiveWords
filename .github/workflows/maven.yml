@@ -24,8 +24,13 @@ jobs:
             - name: Upload Artifacts
               uses: actions/upload-artifact@v3.1.2
               with:
-                  name: Download
-                  path: ./target/AdvancedSensitiveWords.jar
+                  name: Download-Bukkit
+                  path: ./bukkit/target/AdvancedSensitiveWords-bukkit.jar
+            - name: Upload Velocity Artifacts
+              uses: actions/upload-artifact@v3.1.2
+              with:
+                  name: Download-Velocity
+                  path: ./velocity/target/AdvancedSensitiveWords-velocity.jar
     runtime-test:
         name: Plugin Runtime Test
         needs: [Build]
@@ -44,4 +49,4 @@ jobs:
               with:
                   server-version: ${{ matrix.mcVersion }}
                   java-version: ${{ matrix.javaVersion }}
-                  artifact-name: Download
+                  artifact-name: Download-Bukkit

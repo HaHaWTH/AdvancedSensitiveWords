@@ -19,11 +19,11 @@ import java.util.Optional;
 
 @Plugin(
         id = "advancedsensitivewords",
-        name = "AdvancedSensitiveWordsVelocity",
+        name = "AdvancedSensitiveWords",
         version = PomData.VERSION,
         authors = {"HaHaWTH"}
 )
-public class AdvancedSensitiveWordsVelocity {
+public class AdvancedSensitiveWords {
 
     @Inject
     private Logger logger;

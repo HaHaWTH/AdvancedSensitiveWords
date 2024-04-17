@@ -6,7 +6,8 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="AdvancedSensitiveWords" />
+        <module name="bukkit" />
+        <module name="velocity" />
       </profile>
     </annotationProcessing>
   </component>

@@ -27,6 +27,11 @@
       <option name="url" value="https://oss.sonatype.org/content/groups/public/" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="sonatype" />
+      <option name="name" value="sonatype" />
+      <option name="url" value="https://oss.sonatype.org/content/repositories/public/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="kenzie" />
       <option name="name" value="Kenzie's Repository" />
       <option name="url" value="https://repo.kenzie.mx/releases" />
