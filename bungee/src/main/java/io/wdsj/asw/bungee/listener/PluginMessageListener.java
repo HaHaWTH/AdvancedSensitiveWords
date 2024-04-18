@@ -23,15 +23,9 @@ public class PluginMessageListener implements Listener {
         ByteArrayDataInput in = ByteStreams.newDataInput(event.getData());
         if (in.readUTF().equals(SUB_CHANNEL)) {
             try {
-                String playerName = in.readUTF();
-                String eventType = in.readUTF();
-                String originalMessage = in.readUTF();
                 String serverName = ((Server) event.getSender()).getInfo().getName();
                 ByteArrayDataOutput out = ByteStreams.newDataOutput();
-                out.writeUTF(SUB_CHANNEL);
-                out.writeUTF(playerName);
-                out.writeUTF(eventType);
-                out.writeUTF(originalMessage);
+                out.write(event.getData());
                 out.writeUTF(serverName);
                 AdvancedSensitiveWords.getInstance().getProxy().getServers().forEach((name, server) -> {
                     if (!server.equals(((Server) event.getSender()).getInfo()) && !server.getPlayers().isEmpty()) {
