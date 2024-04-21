@@ -218,9 +218,12 @@ public class PluginSettings implements SettingsHolder {
             "Whether to enable book check caching (helps optimize performance)"})
     public static final Property<Boolean> BOOK_CACHE = newProperty("Book.cache.enableCache", false);
 
-    @Comment({"最大缓存数量(默认200)",
-            "Maximum cache size (default is 200)"})
+    @Comment({"*最大缓存数量(默认200)",
+            "*Maximum cache size (default is 200)"})
     public static final Property<Integer> BOOK_MAXIMUM_CACHE_SIZE = newProperty("Book.cache.maximumCacheSize", 200);
+    @Comment({"*缓存最大保存时间(分)",
+            "*Cache expire time (minutes)"})
+    public static final Property<Integer> BOOK_CACHE_EXPIRE_TIME = newProperty("Book.cache.expireTime", 60);
 
     @Comment({"重载时是否清空缓存",
             "Whether to clear cache on reload"})

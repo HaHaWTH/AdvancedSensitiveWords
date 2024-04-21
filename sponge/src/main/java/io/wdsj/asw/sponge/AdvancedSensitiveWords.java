@@ -1,6 +1,7 @@
 package io.wdsj.asw.sponge;
 
 import com.google.inject.Inject;
+import io.wdsj.asw.sponge.listener.ChatListener;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.LinearComponents;
@@ -9,6 +10,7 @@ import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.api.Server;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.Command;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.parameter.Parameter;
@@ -25,7 +27,7 @@ import org.spongepowered.plugin.builtin.jvm.Plugin;
  *
  * <p>All methods are optional -- some common event registrations are included as a jumping-off point.</p>
  */
-@Plugin("AdvancedSensitiveWords-sponge")
+@Plugin("AdvancedSensitiveWords")
 public class AdvancedSensitiveWords {
 
     private final PluginContainer container;
@@ -40,13 +42,14 @@ public class AdvancedSensitiveWords {
     @Listener
     public void onConstructPlugin(final ConstructPluginEvent event) {
         // Perform any one-time setup
-        this.logger.info("Constructing AdvancedSensitiveWords-sponge");
+        this.logger.info("Constructing AdvancedSensitiveWords");
     }
 
     @Listener
     public void onServerStarting(final StartingEngineEvent<Server> event) {
         // Any setup per-game instance. This can run multiple times when
         // using the integrated (singleplayer) server.
+        Sponge.eventManager().registerListeners(this.container, new ChatListener());
     }
 
     @Listener
