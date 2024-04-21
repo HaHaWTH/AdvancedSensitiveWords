@@ -59,6 +59,12 @@ public class PlayerItemListener implements Listener {
                     if (settingsManager.getProperty(PluginSettings.ENABLE_API)) {
                         Bukkit.getPluginManager().callEvent(new ASWFilterEvent(player, originalName, processedName, censoredWordList, EventType.ITEM, false));
                     }
+                    if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
+                        BungeeSender.send(player, EventType.ITEM, originalName);
+                    }
+                    if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
+                        VelocitySender.send(player, EventType.ITEM, originalName);
+                    }
                     long endTime = System.currentTimeMillis();
                     TimingUtils.addProcessStatistic(endTime, startTime);
                     if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.ITEM, originalName);
