@@ -1,7 +1,7 @@
 package io.wdsj.asw.bukkit.util.cache;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
 
 import java.util.List;
@@ -15,7 +15,7 @@ import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
  * @author HaHaWTH & HeyWTF_IS_That and 0D00_0721
  */
 public class BookCache {
-    private static final Cache<String, BookCacheEntry> cache = CacheBuilder.newBuilder()
+    private static final Cache<String, BookCacheEntry> cache = Caffeine.newBuilder()
             .maximumSize(settingsManager.getProperty(PluginSettings.BOOK_MAXIMUM_CACHE_SIZE))
             .expireAfterWrite(settingsManager.getProperty(PluginSettings.BOOK_CACHE_EXPIRE_TIME), TimeUnit.MINUTES)
             .build();
