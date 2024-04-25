@@ -84,10 +84,12 @@ public class Punishment {
         SchedulingUtils.runSyncIfFolia(target, () -> {
             List<Entity> entities = target.getNearbyEntities(radius, radius, radius);
             for (Entity entity : entities) {
-                if (entity instanceof Mob && !entity.hasMetadata("NPC")) {
-                    Mob mob = (Mob) entity;
-                    mob.setTarget(target);
-                }
+                SchedulingUtils.runSyncIfFolia(entity, () -> {
+                    if (entity instanceof Mob && !entity.hasMetadata("NPC")) {
+                        Mob mob = (Mob) entity;
+                        mob.setTarget(target);
+                    }
+                });
             }
         });
     }
