@@ -49,7 +49,7 @@ public class BookCache {
         return entry.getSensitiveWordList();
     }
 
-    public static void forceClearCache() {
+    public static void invalidateAll() {
         cache.invalidateAll();
     }
 

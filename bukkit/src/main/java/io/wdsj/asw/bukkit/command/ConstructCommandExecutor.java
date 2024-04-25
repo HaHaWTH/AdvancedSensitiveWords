@@ -32,7 +32,7 @@ public class ConstructCommandExecutor implements CommandExecutor {
                 messagesManager.reload();
                 AdvancedSensitiveWords.getInstance().doInitTasks();
                 if (settingsManager.getProperty(PluginSettings.BOOK_CACHE_CLEAR_ON_RELOAD) &&
-                        settingsManager.getProperty(PluginSettings.BOOK_CACHE)) BookCache.forceClearCache();
+                        settingsManager.getProperty(PluginSettings.BOOK_CACHE)) BookCache.invalidateAll();
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_RELOAD)));
                 return true;
             }

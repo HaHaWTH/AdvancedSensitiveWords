@@ -191,7 +191,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         TimingUtils.cleanStatisticCache();
         ChatContext.forceClearContext();
         if (settingsManager.getProperty(PluginSettings.BOOK_CACHE)) {
-            BookCache.forceClearCache();
+            BookCache.invalidateAll();
         }
         HandlerList.unregisterAll(this);
         Objects.requireNonNull(getCommand("advancedsensitivewords")).setExecutor(null);
