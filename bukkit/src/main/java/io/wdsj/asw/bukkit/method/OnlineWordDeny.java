@@ -1,7 +1,6 @@
 package io.wdsj.asw.bukkit.method;
 
 import com.github.houbb.sensitive.word.api.IWordDeny;
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 import io.wdsj.asw.bukkit.impl.list.AdvancedList;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
 
@@ -11,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
+import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER;
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
 
 /**
@@ -37,10 +37,10 @@ public class OnlineWordDeny implements IWordDeny {
                 connection.disconnect();
             }
         } catch (Exception e) {
-            AdvancedSensitiveWords.getInstance().getLogger().warning("Failed to load online words list.");
+            LOGGER.warning("Failed to load online words list.");
             return Collections.emptyList();
         }
-        AdvancedSensitiveWords.getInstance().getLogger().info("Loaded " + lines.size() + " word(s) online.");
+        LOGGER.info("Loaded " + lines.size() + " word(s) online.");
         return lines;
     }
 }

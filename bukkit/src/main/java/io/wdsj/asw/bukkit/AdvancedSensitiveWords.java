@@ -55,7 +55,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     private static AdvancedSensitiveWords instance;
     private static boolean USE_PE = false;
     private static TaskScheduler scheduler;
-    private static Logger logger;
+    public static Logger LOGGER;
     public static TaskScheduler getScheduler() {
         return scheduler;
     }
@@ -65,7 +65,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     }
     @Override
     public void onLoad() {
-        logger = getLogger();
+        LOGGER = getLogger();
         settingsManager = SettingsManagerBuilder
                 .withYamlFile(CONFIG_FILE)
                 .configurationData(PluginSettings.class)
@@ -90,7 +90,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        logger.info("Initializing DFA dict...");
+        LOGGER.info("Initializing DFA dict...");
         long startTime = System.currentTimeMillis();
         instance = this;
         cleanStatisticCache();
@@ -101,7 +101,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
             PacketEvents.getAPI().getEventManager().registerListener(new ASWPacketListener());
             PacketEvents.getAPI().init();
         } else {
-            logger.info("ProtocolLib v4 or older detected, enabling compatibility mode.");
+            LOGGER.info("ProtocolLib v4 or older detected, enabling compatibility mode.");
             ProtocolLibListener.addAlternateListener();
         }
         Objects.requireNonNull(getCommand("advancedsensitivewords")).setExecutor(new ConstructCommandExecutor());
@@ -129,7 +129,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
             if (isClassLoaded("org.bukkit.event.server.BroadcastMessageEvent")) {
                 getServer().getPluginManager().registerEvents(new BroadCastListener(), this);
             } else {
-                logger.info("BroadcastMessage is not available, please disable chat broadcast check in config.yml");
+                LOGGER.info("BroadcastMessage is not available, please disable chat broadcast check in config.yml");
             }
         }
         if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
@@ -141,12 +141,12 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
             getServer().getMessenger().registerIncomingPluginChannel(this, BungeeCordChannel.BUNGEE_CHANNEL, new BungeeReceiver());
         }
         long endTime = System.currentTimeMillis();
-        logger.info("AdvancedSensitiveWords is enabled!(took " + (endTime - startTime) + "ms)");
+        LOGGER.info("AdvancedSensitiveWords is enabled!(took " + (endTime - startTime) + "ms)");
         if (settingsManager.getProperty(PluginSettings.CHECK_FOR_UPDATE)) {
             getScheduler().runTaskAsynchronously(() -> {
                 Updater updater = new Updater(getDescription().getVersion());
                 if (updater.isUpdateAvailable()) {
-                    logger.warning("There is a new version available: " + updater.getLatestVersion() +
+                    LOGGER.warning("There is a new version available: " + updater.getLatestVersion() +
                             ", you're on: " + updater.getCurrentVersion());
                 }
             });
@@ -198,6 +198,6 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         Objects.requireNonNull(getCommand("asw")).setExecutor(null);
         Objects.requireNonNull(getCommand("advancedsensitivewords")).setTabCompleter(null);
         Objects.requireNonNull(getCommand("asw")).setTabCompleter(null);
-        logger.info("AdvancedSensitiveWords is disabled!");
+        LOGGER.info("AdvancedSensitiveWords is disabled!");
     }
 }

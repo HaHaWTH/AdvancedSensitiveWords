@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER;
+
 public class ExternalWordAllow implements IWordAllow {
     private final File dataFolder = Paths.get(AdvancedSensitiveWords.getInstance().getDataFolder().getPath(),"external","allow").toFile();
 
@@ -38,7 +40,7 @@ public class ExternalWordAllow implements IWordAllow {
                 List<String> lines = Files.readAllLines(file.toPath());
                 totalList.addAll(lines);
             }
-            if (files.size() > 0) AdvancedSensitiveWords.getInstance().getLogger().info("Loaded " + files.size() + " external allow file(s).");
+            if (files.size() > 0) LOGGER.info("Loaded " + files.size() + " external allow file(s).");
         } catch (IOException e) {
             e.printStackTrace();
             return Collections.emptyList();

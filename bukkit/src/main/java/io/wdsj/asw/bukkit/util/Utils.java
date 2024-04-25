@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER;
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
 
 public class Utils {
@@ -88,7 +89,7 @@ public class Utils {
         File logFile = new File(AdvancedSensitiveWords.getInstance().getDataFolder(), "violations.log");
         if (!logFile.exists()) return;
         FileUtil.deleteFile(logFile);
-        AdvancedSensitiveWords.getInstance().getLogger().info("Successfully purged violations");
+        LOGGER.info("Successfully purged violations");
     }
     public static boolean isCommand(String command) {
         return command.startsWith("/");
