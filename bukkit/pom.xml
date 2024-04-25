@@ -94,14 +94,6 @@
                                     <shadedPattern>io.wdsj.asw.libs.packetevents.api</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>com.github.benmanes.caffeine</pattern>
-                                    <shadedPattern>io.wdsj.asw.libs.caffeine</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.checkerframework</pattern>
-                                    <shadedPattern>io.wdsj.asw.libs.checkerframework</shadedPattern>
-                                </relocation>
-                                <relocation>
                                     <pattern>com.github.Anon8281.universalScheduler</pattern>
                                     <shadedPattern>io.wdsj.asw.libs.universalScheduler</shadedPattern>
                                 </relocation>
