@@ -191,6 +191,10 @@ public class PluginSettings implements SettingsHolder {
             "Maximum context size for checks"})
     public static final Property<Integer> CHAT_CONTEXT_MAX_SIZE = newProperty("Chat.contextMaxSize", 4);
 
+    @Comment({"最大检测上下文时间(单位: 秒)",
+            "Maximum context time for checks(seconds)"})
+    public static final Property<Integer> CHAT_CONTEXT_TIME_LIMIT = newProperty("Chat.contextMaxTime", 120);
+
     @Comment({"是否反转指令白名单为黑名单",
             "Whether to invert the command whitelist to a blacklist"})
     public static final Property<Boolean> CHAT_INVERT_WHITELIST = newProperty("Chat.invertCommandWhiteList", false);
