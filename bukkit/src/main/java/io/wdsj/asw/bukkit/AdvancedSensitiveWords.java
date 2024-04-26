@@ -193,6 +193,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         if (settingsManager.getProperty(PluginSettings.BOOK_CACHE)) {
             BookCache.invalidateAll();
         }
+        if (isInitialized) sensitiveWordBs.destroy();
         HandlerList.unregisterAll(this);
         Objects.requireNonNull(getCommand("advancedsensitivewords")).setExecutor(null);
         Objects.requireNonNull(getCommand("asw")).setExecutor(null);

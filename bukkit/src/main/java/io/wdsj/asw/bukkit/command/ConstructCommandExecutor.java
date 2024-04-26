@@ -30,6 +30,7 @@ public class ConstructCommandExecutor implements CommandExecutor {
                 }
                 settingsManager.reload();
                 messagesManager.reload();
+                sensitiveWordBs.destroy();
                 AdvancedSensitiveWords.getInstance().doInitTasks();
                 if (settingsManager.getProperty(PluginSettings.BOOK_CACHE_CLEAR_ON_RELOAD) &&
                         settingsManager.getProperty(PluginSettings.BOOK_CACHE)) BookCache.invalidateAll();
