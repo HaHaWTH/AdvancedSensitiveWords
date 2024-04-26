@@ -28,6 +28,7 @@ commands:
 permissions:
   advancedsensitivewords.*:
     description: All permissions of Advanced Sensitive Words.
+    default: false
     children:
       advancedsensitivewords.bypass: true
       advancedsensitivewords.reload: true
