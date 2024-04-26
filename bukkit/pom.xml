@@ -118,6 +118,18 @@
                                     <shadedPattern>io.wdsj.asw.libs.org.apiguardian.api</shadedPattern>
                                 </relocation>
                                 <relocation>
+                                    <pattern>com.github.benmanes.caffeine</pattern>
+                                    <shadedPattern>io.wdsj.asw.libs.com.github.benmanes.caffeine</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.google.errorprone</pattern>
+                                    <shadedPattern>io.wdsj.asw.libs.com.google.errorprone</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.checkerframework</pattern>
+                                    <shadedPattern>io.wdsj.asw.libs.org.checkerframework</shadedPattern>
+                                </relocation>
+                                <relocation>
                                     <pattern>ch.jalu.configme</pattern>
                                     <shadedPattern>io.wdsj.asw.libs.ch.jalu.configme</shadedPattern>
                                 </relocation>
@@ -308,6 +320,14 @@
             <artifactId>sqlite-jdbc</artifactId>
             <version>3.45.3.0</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- Caffeine -->
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+            <version>2.9.3</version>
+            <scope>compile</scope>
         </dependency>
 
         <!-- CatSeedLogin -->

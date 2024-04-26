@@ -1,7 +1,7 @@
 package io.wdsj.asw.bukkit.data;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -23,7 +23,7 @@ public class DatabaseManager {
 
     private static ThreadFactory threadFactory;
     private final File dbFile = new File(AdvancedSensitiveWords.getInstance().getDataFolder(), settingsManager.getProperty(PluginSettings.DATABASE_NAME));
-    private static final Cache<String, String> dbCache = CacheBuilder.newBuilder()
+    private static final Cache<String, String> dbCache = Caffeine.newBuilder()
             .expireAfterWrite(settingsManager.getProperty(PluginSettings.DATABASE_CACHE_TIME), TimeUnit.SECONDS)
             .build();
 
