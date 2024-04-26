@@ -132,6 +132,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
                 LOGGER.info("BroadcastMessage is not available, please disable chat broadcast check in config.yml");
             }
         }
+        getServer().getPluginManager().registerEvents(new PlayerQuitListener(), this);
         if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
             getServer().getMessenger().registerOutgoingPluginChannel(this, VelocityChannel.CHANNEL);
             getServer().getMessenger().registerIncomingPluginChannel(this, VelocityChannel.CHANNEL, new VelocityReceiver());

@@ -75,6 +75,10 @@ public class PluginSettings implements SettingsHolder {
             "*Whether to enable player item check"})
     public static final Property<Boolean> ENABLE_PLAYER_ITEM_CHECK = newProperty("Plugin.enableItemCheck", false);
 
+    @Comment({"是否在玩家退出时清理相关数据缓存?",
+            "Should we flush player data cache on they quit?"})
+    public static final Property<Boolean> FLUSH_PLAYER_DATA_CACHE = newProperty("Plugin.flushPlayerDataCache", false);
+
     @Comment({"是否启用API接口(非必要请勿关闭)",
             "Whether to enable API (do not disable unless necessary)"})
     public static final Property<Boolean> ENABLE_API = newProperty("Plugin.enableApi", true);
