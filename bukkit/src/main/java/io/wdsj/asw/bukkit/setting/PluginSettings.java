@@ -83,6 +83,10 @@ public class PluginSettings implements SettingsHolder {
             "Whether to enable API (do not disable unless necessary)"})
     public static final Property<Boolean> ENABLE_API = newProperty("Plugin.enableApi", true);
 
+    @Comment({"*是否启用占位符(需要PlaceholderAPI)",
+            "*Whether to enable placeholders"})
+    public static final Property<Boolean> ENABLE_PLACEHOLDER = newProperty("Plugin.enablePlaceholder", false);
+
     @Comment({"*是否启用Velocity支持",
             "*Whether to enable Velocity support"})
     public static final Property<Boolean> HOOK_VELOCITY = newProperty("Plugin.hookVelocity", false);

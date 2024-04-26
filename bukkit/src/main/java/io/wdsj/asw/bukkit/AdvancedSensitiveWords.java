@@ -18,6 +18,7 @@ import io.wdsj.asw.bukkit.command.ConstructTabCompleter;
 import io.wdsj.asw.bukkit.listener.*;
 import io.wdsj.asw.bukkit.listener.packet.ASWPacketListener;
 import io.wdsj.asw.bukkit.listener.packet.ProtocolLibListener;
+import io.wdsj.asw.bukkit.manage.placeholder.ASWExpansion;
 import io.wdsj.asw.bukkit.method.*;
 import io.wdsj.asw.bukkit.proxy.bungee.BungeeCordChannel;
 import io.wdsj.asw.bukkit.proxy.bungee.BungeeReceiver;
@@ -140,6 +141,11 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
             getServer().getMessenger().registerOutgoingPluginChannel(this, BungeeCordChannel.BUNGEE_CHANNEL);
             getServer().getMessenger().registerIncomingPluginChannel(this, BungeeCordChannel.BUNGEE_CHANNEL, new BungeeReceiver());
+        }
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") &&
+            settingsManager.getProperty(PluginSettings.ENABLE_PLACEHOLDER)) {
+            new ASWExpansion().register();
+            LOGGER.info("Placeholders registered.");
         }
         long endTime = System.currentTimeMillis();
         LOGGER.info("AdvancedSensitiveWords is enabled!(took " + (endTime - startTime) + "ms)");
