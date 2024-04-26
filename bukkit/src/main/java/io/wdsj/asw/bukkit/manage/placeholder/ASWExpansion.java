@@ -1,14 +1,10 @@
 package io.wdsj.asw.bukkit.manage.placeholder;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.concurrent.TimeUnit;
 
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.databaseManager;
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
@@ -17,9 +13,6 @@ import static io.wdsj.asw.bukkit.util.Utils.messagesFilteredNum;
 public class ASWExpansion extends PlaceholderExpansion {
     private long databaseCachedTotal = 0L;
     private long databaseTotalLastRequestTime = System.currentTimeMillis();
-    private final Cache<String, String> perPlayerCache = CacheBuilder.newBuilder()
-            .expireAfterWrite(settingsManager.getProperty(PluginSettings.DATABASE_CACHE_TIME), TimeUnit.SECONDS)
-            .build();
     @Override
     public @NotNull String getIdentifier() {
         return "asw";
@@ -67,14 +60,7 @@ public class ASWExpansion extends PlaceholderExpansion {
                 if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
                     String playerName = player.getName();
                     if (playerName == null) return "";
-                    String cached = perPlayerCache.getIfPresent(playerName);
-                    if (cached != null) {
-                        return cached;
-                    } else {
-                        String total = String.valueOf(databaseManager.getPlayerViolations(playerName));
-                        perPlayerCache.put(playerName, total);
-                        return total;
-                    }
+                    return String.valueOf(databaseManager.getPlayerViolations(playerName));
                 } else {
                     return "disabled";
                 }
