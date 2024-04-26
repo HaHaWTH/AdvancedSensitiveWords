@@ -42,7 +42,7 @@ public class ConstructCommandExecutor implements CommandExecutor {
                 return true;
             }
             if (args[0].equalsIgnoreCase("status") && (sender.hasPermission("advancedsensitivewords.status") || sender instanceof ConsoleCommandSender)) {
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_STATUS).replace("%NUM%", "&a" + messagesFilteredNum.get()).replace("%MODE%", checkProtocolLib() ? "&aFast" : "&cCompatibility").replace("%INIT%", isInitialized ? "&atrue" : "&cfalse").replace("%MS%", getProcessAverage() >= 120 ? getProcessAverage() >= 300 ? "&c" + getProcessAverage() + "ms" : "&e" + getProcessAverage() + "ms" : "&a" + getProcessAverage() + "ms").replace("%VERSION%", AdvancedSensitiveWords.getInstance().getDescription().getVersion()).replace("%MC_VERSION%", getMinecraftVersion()).replace("%PLATFORM%", OsUtil.isWindows() ? "Windows" : (OsUtil.isMac() ? "Mac" : isUnix() ? "Linux" : "Unknown")).replace("%BIT%", is64() ? "64bit" : "32bit").replace("%JAVA_VERSION%", getJvmVersion()).replace("%JAVA_VENDOR%", getJvmVendor()).replace("%API_STATUS%", settingsManager.getProperty(PluginSettings.ENABLE_API) ? "&aenabled" : "&cdisabled")));
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_STATUS).replace("%num%", "&a" + messagesFilteredNum.get()).replace("%mode%", checkProtocolLib() ? "&aFast" : "&cCompatibility").replace("%init%", isInitialized ? "&atrue" : "&cfalse").replace("%ms%", getProcessAverage() >= 120 ? getProcessAverage() >= 300 ? "&c" + getProcessAverage() + "ms" : "&e" + getProcessAverage() + "ms" : "&a" + getProcessAverage() + "ms").replace("%version%", AdvancedSensitiveWords.getInstance().getDescription().getVersion()).replace("%mc_version%", getMinecraftVersion()).replace("%platform%", OsUtil.isWindows() ? "Windows" : (OsUtil.isMac() ? "Mac" : isUnix() ? "Linux" : "Unknown")).replace("%bit%", is64() ? "64bit" : "32bit").replace("%java_version%", getJvmVersion()).replace("%java_vendor%", getJvmVendor()).replace("%api_status%", settingsManager.getProperty(PluginSettings.ENABLE_API) ? "&aenabled" : "&cdisabled")));
                 return true;
             }
             if (args[0].equalsIgnoreCase("status")) {
@@ -69,7 +69,7 @@ public class ConstructCommandExecutor implements CommandExecutor {
                         String testArgs = sb.toString();
                         List<String> censoredWordList = sensitiveWordBs.findAll(testArgs);
                         if (!censoredWordList.isEmpty()) {
-                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_TEST).replace("%ORIGINAL_MSG%", testArgs).replace("%PROCESSED_MSG%", sensitiveWordBs.replace(testArgs)).replace("%CENSORED_LIST%", censoredWordList.toString())));
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_TEST).replace("%original_msg%", testArgs).replace("%processed_msg%", sensitiveWordBs.replace(testArgs)).replace("%censored_list%", censoredWordList.toString())));
                         } else {
                             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_TEST_PASS)));
                         }
@@ -77,11 +77,33 @@ public class ConstructCommandExecutor implements CommandExecutor {
                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_TEST_NOT_INIT)));
                     }
                 } else {
-                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_TEST_NOT_ENOUGH)));
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.NOT_ENOUGH_ARGS)));
                 }
                 return true;
             }
             if (args[0].equalsIgnoreCase("test") && args.length == 1) {
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.NO_PERMISSION)));
+                return true;
+            }
+            if (args[0].equalsIgnoreCase("info") && (sender.hasPermission("advancedsensitivewords.info") || sender instanceof ConsoleCommandSender)) {
+                if (args.length > 1) {
+                    if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
+                        String playerName = args[1];
+                        String violations = databaseManager.getPlayerViolations(playerName);
+                        if (violations != null) {
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_PLAYER_INFO).replace("%player%", playerName).replace("%total_vl%", violations)));
+                        } else {
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_PLAYER_INFO_FAIL)));
+                        }
+                    } else {
+                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_PLAYER_INFO_CLOSE)));
+                    }
+                } else {
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.NOT_ENOUGH_ARGS)));
+                }
+                return true;
+            }
+            if (args[0].equalsIgnoreCase("info")) {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.NO_PERMISSION)));
                 return true;
             }

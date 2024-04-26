@@ -63,6 +63,9 @@ public class PlayerLoginListener implements Listener {
             if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
                 BungeeSender.send(player, EventType.NAME, playerName);
             }
+            if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
+                databaseManager.checkAndUpdatePlayer(playerName);
+            }
             long endTime = System.currentTimeMillis();
             addProcessStatistic(endTime, startTime);
             if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.NAME, playerName);

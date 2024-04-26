@@ -65,6 +65,9 @@ public class PlayerItemListener implements Listener {
                     if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
                         VelocitySender.send(player, EventType.ITEM, originalName);
                     }
+                    if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
+                        databaseManager.checkAndUpdatePlayer(player.getName());
+                    }
                     long endTime = System.currentTimeMillis();
                     TimingUtils.addProcessStatistic(endTime, startTime);
                     if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.ITEM, originalName);
@@ -110,6 +113,9 @@ public class PlayerItemListener implements Listener {
                     }
                     if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
                         BungeeSender.send(player, EventType.ITEM, originalName);
+                    }
+                    if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
+                        databaseManager.checkAndUpdatePlayer(player.getName());
                     }
                     long endTime = System.currentTimeMillis();
                     TimingUtils.addProcessStatistic(endTime, startTime);

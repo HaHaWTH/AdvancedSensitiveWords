@@ -121,12 +121,17 @@
                                     <pattern>ch.jalu.configme</pattern>
                                     <shadedPattern>io.wdsj.asw.libs.ch.jalu.configme</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>com.zaxxer.hikari</pattern>
+                                    <shadedPattern>io.wdsj.asw.libs.com.zaxxer.hikari</shadedPattern>
+                                </relocation>
                             </relocations>
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
                                     <excludes>
                                         <exclude>org/yaml/snakeyaml/**</exclude>
+                                        <exclude>org/slf4j/**</exclude>
                                         <exclude>*.md</exclude>
                                         <exclude>META-INF/maven/**</exclude>
                                         <exclude>assets/mappings/block/**</exclude>
@@ -286,6 +291,22 @@
             <groupId>fr.xephi</groupId>
             <artifactId>authme</artifactId>
             <version>5.6.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- HikariCP -->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>4.0.3</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- JDBC drivers -->
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.45.3.0</version>
             <scope>provided</scope>
         </dependency>
 

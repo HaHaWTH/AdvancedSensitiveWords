@@ -104,6 +104,10 @@ public class SignListener implements Listener {
             BungeeSender.send(player, EventType.SIGN, outMessage);
         }
 
+        if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
+            databaseManager.checkAndUpdatePlayer(player.getName());
+        }
+
         if (shouldSendMessage) {
             messagesFilteredNum.getAndIncrement();
             long endTime = System.currentTimeMillis();

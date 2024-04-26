@@ -83,6 +83,9 @@ public class ASWPacketListener extends PacketListenerAbstract {
                 if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
                     BungeeSender.send(player, EventType.CHAT, originalMessage);
                 }
+                if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
+                    databaseManager.checkAndUpdatePlayer(player.getName());
+                }
                 long endTime = System.currentTimeMillis();
                 addProcessStatistic(endTime, startTime);
                 getScheduler().runTask(()-> {
@@ -163,6 +166,9 @@ public class ASWPacketListener extends PacketListenerAbstract {
                 }
                 if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
                     BungeeSender.send(player, EventType.CHAT, originalCommand);
+                }
+                if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
+                    databaseManager.checkAndUpdatePlayer(player.getName());
                 }
                 long endTime = System.currentTimeMillis();
                 addProcessStatistic(endTime, startTime);

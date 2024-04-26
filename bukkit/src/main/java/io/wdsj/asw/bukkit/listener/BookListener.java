@@ -119,6 +119,9 @@ public class BookListener implements Listener {
             if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
                 BungeeSender.send(player, EventType.BOOK, outMessage);
             }
+            if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
+                databaseManager.checkAndUpdatePlayer(player.getName());
+            }
             long endTime = System.currentTimeMillis();
             addProcessStatistic(endTime, startTime);
             if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.BOOK, outMessage);

@@ -77,6 +77,10 @@ public class AnvilListener implements Listener {
                                 BungeeSender.send(player, EventType.ANVIL, originalItemName);
                             }
 
+                            if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
+                                databaseManager.checkAndUpdatePlayer(player.getName());
+                            }
+
                             long endTime = System.currentTimeMillis();
                             addProcessStatistic(endTime, startTime);
                             if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.ANVIL, originalItemName);

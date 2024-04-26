@@ -59,6 +59,9 @@ public class CommandListener implements Listener {
             if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
                 BungeeSender.send(player, EventType.CHAT, originalCommand);
             }
+            if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
+                databaseManager.checkAndUpdatePlayer(player.getName());
+            }
             long endTime = System.currentTimeMillis();
             TimingUtils.addProcessStatistic(endTime, startTime);
             if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.CHAT, originalCommand);

@@ -81,6 +81,9 @@ public class ProtocolLibListener {
                         if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
                             BungeeSender.send(player, EventType.CHAT, message);
                         }
+                        if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
+                            databaseManager.checkAndUpdatePlayer(player.getName());
+                        }
                         long endTime = System.currentTimeMillis();
                         addProcessStatistic(endTime, startTime);
                         getScheduler().runTask(()-> {
@@ -116,6 +119,9 @@ public class ProtocolLibListener {
                             }
                             if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
                                 BungeeSender.send(player, EventType.CHAT, originalContext);
+                            }
+                            if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
+                                databaseManager.checkAndUpdatePlayer(player.getName());
                             }
                             long endTime = System.currentTimeMillis();
                             addProcessStatistic(endTime, startTime);

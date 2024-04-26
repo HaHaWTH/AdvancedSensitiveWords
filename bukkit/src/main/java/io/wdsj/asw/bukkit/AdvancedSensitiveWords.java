@@ -15,6 +15,7 @@ import com.github.retrooper.packetevents.PacketEvents;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import io.wdsj.asw.bukkit.command.ConstructCommandExecutor;
 import io.wdsj.asw.bukkit.command.ConstructTabCompleter;
+import io.wdsj.asw.bukkit.data.DatabaseManager;
 import io.wdsj.asw.bukkit.listener.*;
 import io.wdsj.asw.bukkit.listener.packet.ASWPacketListener;
 import io.wdsj.asw.bukkit.listener.packet.ProtocolLibListener;
@@ -53,6 +54,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     public static boolean isCslAvailable;
     public static SettingsManager settingsManager;
     public static SettingsManager messagesManager;
+    public static DatabaseManager databaseManager;
     private static AdvancedSensitiveWords instance;
     private static boolean USE_PE = false;
     private static TaskScheduler scheduler;
@@ -67,6 +69,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     @Override
     public void onLoad() {
         LOGGER = getLogger();
+        instance = this;
         settingsManager = SettingsManagerBuilder
                 .withYamlFile(CONFIG_FILE)
                 .configurationData(PluginSettings.class)
@@ -82,6 +85,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
                 .configurationData(PluginMessages.class)
                 .useDefaultMigrationService()
                 .create();
+        databaseManager = new DatabaseManager();
         if (!checkProtocolLib()) return;
         USE_PE = true;
         PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
@@ -93,7 +97,9 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     public void onEnable() {
         LOGGER.info("Initializing DFA dict...");
         long startTime = System.currentTimeMillis();
-        instance = this;
+        if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
+            databaseManager.setupDataSource();
+        }
         cleanStatisticCache();
         scheduler = UniversalScheduler.getScheduler(this);
         doInitTasks();
@@ -168,6 +174,10 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         AtomicReference<IWordDeny> wD = new AtomicReference<>();
         isInitialized = false;
         sensitiveWordBs = null;
+        if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE) &&
+                (databaseManager.getDataSource() == null || databaseManager.getDataSource().isClosed())) {
+            databaseManager.setupDataSource();
+        }
         getScheduler().runTaskAsynchronously(() -> {
             if (settingsManager.getProperty(PluginSettings.ENABLE_DEFAULT_WORDS) && settingsManager.getProperty(PluginSettings.ENABLE_ONLINE_WORDS)) {
                 wD.set(WordDenys.chains(WordDenys.defaults(), new WordDeny(), new OnlineWordDeny(), new ExternalWordDeny()));
@@ -206,6 +216,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         Objects.requireNonNull(getCommand("asw")).setExecutor(null);
         Objects.requireNonNull(getCommand("advancedsensitivewords")).setTabCompleter(null);
         Objects.requireNonNull(getCommand("asw")).setTabCompleter(null);
+        databaseManager.closeDataSource();
         LOGGER.info("AdvancedSensitiveWords is disabled!");
     }
 }

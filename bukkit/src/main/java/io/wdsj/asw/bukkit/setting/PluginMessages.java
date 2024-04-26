@@ -27,23 +27,30 @@ public class PluginMessages implements SettingsHolder {
     @Comment("插件重载消息")
     public static final Property<String> MESSAGE_ON_COMMAND_RELOAD = newProperty("Plugin.messageOnCommandReload", "&aAdvancedSensitiveWords has been reloaded.");
     @Comment("插件帮助菜单")
-    public static final Property<String> MESSAGE_ON_COMMAND_HELP = newProperty("Plugin.messageOnCommandHelp", "&bAdvancedSensitiveWords&r---&b帮助菜单\n   &7/asw reload&7: &a重新加载过滤词库和插件配置\n   &7/asw status&7: &a显示插件状态菜单\n   &7/asw test <待测消息>: &a运行敏感词测试\n   &7/asw help&7: &a显示帮助信息");
+    public static final Property<String> MESSAGE_ON_COMMAND_HELP = newProperty("Plugin.messageOnCommandHelp", "&bAdvancedSensitiveWords&r---&b帮助菜单\n   &7/asw reload&7: &a重新加载过滤词库和插件配置\n   &7/asw status&7: &a显示插件状态菜单\n   &7/asw test <待测消息>: &a运行敏感词测试\n   &7/asw help&7: &a显示帮助信息\n   &7/asw info <玩家名称>: &a获取玩家违规次数");
     @Comment("插件状态菜单")
-    public static final Property<String> MESSAGE_ON_COMMAND_STATUS = newProperty("Plugin.messageOnCommandStatus", "&bAdvancedSensitiveWords&r---&b插件状态(%VERSION%)(MC %MC_VERSION%)\n   &7系统信息: &b%PLATFORM% %BIT% (Java %JAVA_VERSION% -- %JAVA_VENDOR%)\n   &7初始化: %INIT%\n   &7API状态: %API_STATUS%\n   &7当前模式: %MODE%\n   &7已过滤消息数: &a%NUM%\n   &7近20次处理平均耗时: %MS%");
+    public static final Property<String> MESSAGE_ON_COMMAND_STATUS = newProperty("Plugin.messageOnCommandStatus", "&bAdvancedSensitiveWords&r---&b插件状态(%version%)(MC %mc_version%)\n   &7系统信息: &b%platform% %bit% (Java %java_version% -- %java_vendor%)\n   &7初始化: %init%\n   &7API状态: %api_status%\n   &7当前模式: %mode%\n   &7已过滤消息数: &a%num%\n   &7近20次处理平均耗时: %ms%");
     @Comment("敏感词测试返回")
-    public static final Property<String> MESSAGE_ON_COMMAND_TEST = newProperty("Plugin.commandTest.testResultTrue", "&b一眼丁真, 鉴定为敏感词(鉴定报告)\n   &7原消息: &c%ORIGINAL_MSG%\n   &7过滤后消息: &a%PROCESSED_MSG%\n   &7敏感词列表: &b%CENSORED_LIST%");
+    public static final Property<String> MESSAGE_ON_COMMAND_TEST = newProperty("Plugin.commandTest.testResultTrue", "&b一眼丁真, 鉴定为敏感词(鉴定报告)\n   &7原消息: &c%original_msg%\n   &7过滤后消息: &a%processed_msg%\n   &7敏感词列表: &b%censored_list%");
     @Comment("敏感词测试通过")
     public static final Property<String> MESSAGE_ON_COMMAND_TEST_PASS = newProperty("Plugin.commandTest.testResultPass", "&a待测消息中没有敏感词喵~");
-    @Comment("敏感词测试参数不足")
-    public static final Property<String> MESSAGE_ON_COMMAND_TEST_NOT_ENOUGH = newProperty("Plugin.commandTest.testArgNotEnough", "&c参数不足, 请使用 &7/asw test <待测消息>");
     @Comment("敏感词测试未初始化")
     public static final Property<String> MESSAGE_ON_COMMAND_TEST_NOT_INIT = newProperty("Plugin.commandTest.testNotInit", "&c插件还没有初始化完毕喵");
     @Comment("没有权限执行该指令")
     public static final Property<String> NO_PERMISSION = newProperty("Plugin.noPermission", "&c你没有权限执行该指令.");
     @Comment("未知命令")
     public static final Property<String> UNKNOWN_COMMAND = newProperty("Plugin.unknownCommand", "&c未知命令, 请使用 &7/asw help");
+    @Comment("命令参数不足")
+    public static final Property<String> NOT_ENOUGH_ARGS = newProperty("Plugin.argsNotEnough", "&c参数不足, 请使用 &7/asw help");
     @Comment("管理员提醒消息")
     public static final Property<String> ADMIN_REMINDER = newProperty("Plugin.noticeOperator", "&f[&bASW&7Notify&f]&7玩家 &c%player% &7触发了敏感词检测(%type%)(原消息: %message%)");
+    @Comment("获取到玩家信息")
+    public static final Property<String> MESSAGE_ON_PLAYER_INFO = newProperty("Plugin.database.playerInfo", "&bAdvancedSensitiveWords&r---&b玩家信息\n   &7玩家名称: &b%player%\n   &7违规次数: &a%num%");
+    @Comment("获取玩家信息失败")
+    public static final Property<String> MESSAGE_ON_PLAYER_INFO_FAIL = newProperty("Plugin.database.playerInfoFailed", "&c获取玩家信息失败, 请检查玩家名称是否正确");
+    @Comment("玩家信息数据库已关闭")
+    public static final Property<String> MESSAGE_ON_PLAYER_INFO_CLOSE = newProperty("Plugin.database.playerInfoClosed", "&c玩家信息数据库已禁用");
+
 
     @Override
     public void registerComments(CommentsConfiguration conf) {

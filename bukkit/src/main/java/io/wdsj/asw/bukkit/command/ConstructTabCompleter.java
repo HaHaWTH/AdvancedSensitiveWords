@@ -23,12 +23,16 @@ public class ConstructTabCompleter implements TabCompleter {
                 tabComplete.add("test");
             } else if (sender.hasPermission("advancedsensitivewords.help") && args[0].startsWith("h")) {
                 tabComplete.add("help");
+            } else if (sender.hasPermission("advancedsensitivewords.info") && args[0].startsWith("i")) {
+                tabComplete.add("info");
             } else if (sender.hasPermission("advancedsensitivewords.reload") ||
-                    sender.hasPermission("advancedsensitivewords.status") || sender.hasPermission("advancedsensitivewords.test") || sender.hasPermission("advancedsensitivewords.help")) {
+                    sender.hasPermission("advancedsensitivewords.status") || sender.hasPermission("advancedsensitivewords.test") ||
+                    sender.hasPermission("advancedsensitivewords.help") || sender.hasPermission("advancedsensitivewords.info")) {
                 tabComplete.add("help");
                 tabComplete.add("reload");
                 tabComplete.add("status");
                 tabComplete.add("test");
+                tabComplete.add("info");
             }
             return tabComplete;
         }

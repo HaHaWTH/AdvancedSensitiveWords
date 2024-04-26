@@ -83,6 +83,18 @@ public class PluginSettings implements SettingsHolder {
             "Whether to enable API (do not disable unless necessary)"})
     public static final Property<Boolean> ENABLE_API = newProperty("Plugin.enableApi", true);
 
+    @Comment({"是否启用数据库记录玩家违规次数",
+            "Whether to enable database to log violations"})
+    public static final Property<Boolean> ENABLE_DATABASE = newProperty("Plugin.database.enableDatabase", false);
+
+    @Comment({"*数据库缓存时长(单位: 秒)",
+            "*Database cache time(seconds)"})
+    public static final Property<Integer> DATABASE_CACHE_TIME = newProperty("Plugin.database.databaseCacheTime", 30);
+
+    @Comment({"*数据库名称",
+            "*Database name"})
+    public static final Property<String> DATABASE_NAME = newProperty("Plugin.database.databaseName", "data.db");
+
     @Comment({"*是否启用占位符(需要PlaceholderAPI)",
             "*Whether to enable placeholders"})
     public static final Property<Boolean> ENABLE_PLACEHOLDER = newProperty("Plugin.enablePlaceholder", false);
