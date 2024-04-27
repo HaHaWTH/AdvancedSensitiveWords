@@ -7,10 +7,10 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
+import io.wdsj.asw.bukkit.util.VTUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.lang.reflect.Method;
 import java.sql.*;
 import java.util.Locale;
 import java.util.concurrent.ThreadFactory;
@@ -21,22 +21,12 @@ import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
 
 public class DatabaseManager {
 
-    private static ThreadFactory threadFactory;
+    private static final ThreadFactory threadFactory = VTUtils.getVTThreadFactoryOrProvided(new ThreadFactoryBuilder().setDaemon(true).build());
     private final File dbFile = new File(AdvancedSensitiveWords.getInstance().getDataFolder(), settingsManager.getProperty(PluginSettings.DATABASE_NAME));
     private static final Cache<String, String> dbCache = CacheBuilder.newBuilder()
             .expireAfterWrite(settingsManager.getProperty(PluginSettings.DATABASE_CACHE_TIME), TimeUnit.SECONDS)
             .build();
 
-    static {
-        try {
-            Method ofVirtual = Thread.class.getMethod("ofVirtual");
-            Class<?> ThreadBuilder = Class.forName("java.lang.Thread$Builder");
-            Method factory = ThreadBuilder.getMethod("factory");
-            threadFactory = (ThreadFactory) factory.invoke(ofVirtual.invoke(null));
-        } catch (Exception e) {
-            threadFactory = new ThreadFactoryBuilder().setDaemon(true).build();
-        }
-    }
     private HikariDataSource dataSource;
 
     public void setupDataSource() {
