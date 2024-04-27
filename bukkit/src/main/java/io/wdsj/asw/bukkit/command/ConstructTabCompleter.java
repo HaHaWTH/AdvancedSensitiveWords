@@ -3,11 +3,14 @@ package io.wdsj.asw.bukkit.command;
 import io.wdsj.asw.bukkit.impl.list.AdvancedList;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ConstructTabCompleter implements TabCompleter {
     @Nullable
@@ -35,6 +38,13 @@ public class ConstructTabCompleter implements TabCompleter {
                 tabComplete.add("info");
             }
             return tabComplete;
+        }
+        if (args.length == 2) {
+            if (args[0].equalsIgnoreCase("info") && (sender.hasPermission("advancedsensitivewords.info") || sender instanceof ConsoleCommandSender)) {
+                return sender.getServer().getOnlinePlayers().stream()
+                        .map(Player::getName)
+                        .collect(Collectors.toList());
+            }
         }
         return new AdvancedList<>(); // Must return empty list, if null paper will supply player names
     }
