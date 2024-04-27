@@ -47,7 +47,7 @@ public class BookListener implements Listener {
         if (bookMeta.hasPages()) {
             for (String originalPage : originalPages) {
                 if (skipReturnLine) originalPage = originalPage.replace("\n", "").replace("§0", "");
-                if (settingsManager.getProperty(PluginSettings.IGNORE_FORMAT_CODE)) originalPage = originalPage.replaceAll(Utils.getIgnoreFormatCodeRegex(), "");
+                if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) originalPage = originalPage.replaceAll(Utils.getPreProcessRegex(), "");
                 boolean isBookCached = BookCache.isBookCached(originalPage);
                 List<String> censoredWordList = isBookCached && isCacheEnabled ? BookCache.getCachedBookSensitiveWordList(originalPage) : AdvancedSensitiveWords.sensitiveWordBs.findAll(originalPage);
                 if (!censoredWordList.isEmpty()) {
@@ -72,7 +72,7 @@ public class BookListener implements Listener {
         }
         String originalAuthor = event.getNewBookMeta().getAuthor();
         if (originalAuthor != null) {
-            if (settingsManager.getProperty(PluginSettings.IGNORE_FORMAT_CODE)) originalAuthor = originalAuthor.replaceAll(Utils.getIgnoreFormatCodeRegex(), "");
+            if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) originalAuthor = originalAuthor.replaceAll(Utils.getPreProcessRegex(), "");
             List<String> censoredWordListAuthor = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalAuthor);
             if (!censoredWordListAuthor.isEmpty()) {
                 String processedAuthor = AdvancedSensitiveWords.sensitiveWordBs.replace(originalAuthor);
@@ -91,7 +91,7 @@ public class BookListener implements Listener {
 
         String originalTitle = event.getNewBookMeta().getTitle();
         if (originalTitle != null) {
-            if (settingsManager.getProperty(PluginSettings.IGNORE_FORMAT_CODE)) originalTitle = originalTitle.replaceAll(Utils.getIgnoreFormatCodeRegex(), "");
+            if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) originalTitle = originalTitle.replaceAll(Utils.getPreProcessRegex(), "");
             List<String> censoredWordListTitle = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalTitle);
             if (!censoredWordListTitle.isEmpty()) {
                 String processedTitle = AdvancedSensitiveWords.sensitiveWordBs.replace(originalTitle);

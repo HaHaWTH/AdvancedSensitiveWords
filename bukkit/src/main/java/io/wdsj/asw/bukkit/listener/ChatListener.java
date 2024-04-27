@@ -36,7 +36,7 @@ public class ChatListener implements Listener {
     public void onChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
         if (shouldNotProcess(player)) return;
-        String originalMessage = settingsManager.getProperty(PluginSettings.IGNORE_FORMAT_CODE) ? event.getMessage().replaceAll(Utils.getIgnoreFormatCodeRegex(), "") : event.getMessage();
+        String originalMessage = settingsManager.getProperty(PluginSettings.PRE_PROCESS) ? event.getMessage().replaceAll(Utils.getPreProcessRegex(), "") : event.getMessage();
         List<String> censoredWordList = sensitiveWordBs.findAll(originalMessage);
         long startTime = System.currentTimeMillis();
         if (!censoredWordList.isEmpty()) {

@@ -39,7 +39,7 @@ public class PlayerItemListener implements Listener {
             if (meta != null && meta.hasDisplayName()) {
                 String originalName = meta.getDisplayName();
                 long startTime = System.currentTimeMillis();
-                if (settingsManager.getProperty(PluginSettings.IGNORE_FORMAT_CODE)) originalName = originalName.replaceAll(Utils.getIgnoreFormatCodeRegex(), "");
+                if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) originalName = originalName.replaceAll(Utils.getPreProcessRegex(), "");
                 List<String> censoredWordList = sensitiveWordBs.findAll(originalName);
                 if (!censoredWordList.isEmpty()) {
                     messagesFilteredNum.getAndIncrement();
@@ -88,7 +88,7 @@ public class PlayerItemListener implements Listener {
             if (meta != null && meta.hasDisplayName()) {
                 String originalName = meta.getDisplayName();
                 long startTime = System.currentTimeMillis();
-                if (settingsManager.getProperty(PluginSettings.IGNORE_FORMAT_CODE)) originalName = originalName.replaceAll(Utils.getIgnoreFormatCodeRegex(), "");
+                if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) originalName = originalName.replaceAll(Utils.getPreProcessRegex(), "");
                 List<String> censoredWordList = sensitiveWordBs.findAll(originalName);
                 if (!censoredWordList.isEmpty()) {
                     messagesFilteredNum.getAndIncrement();

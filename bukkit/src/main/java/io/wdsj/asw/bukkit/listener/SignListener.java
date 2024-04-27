@@ -44,7 +44,7 @@ public class SignListener implements Listener {
         StringBuilder originalMultiMessages = new StringBuilder();
         for (int line = 0; line < 4; ++line) {
             String originalMessage = event.getLine(line);
-            if (settingsManager.getProperty(PluginSettings.IGNORE_FORMAT_CODE) && originalMessage != null) originalMessage = originalMessage.replaceAll(Utils.getIgnoreFormatCodeRegex(), "");
+            if (settingsManager.getProperty(PluginSettings.PRE_PROCESS) && originalMessage != null) originalMessage = originalMessage.replaceAll(Utils.getPreProcessRegex(), "");
             assert originalMessage != null;
             List<String> censoredWordList = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalMessage);
             if (!censoredWordList.isEmpty()) {

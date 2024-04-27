@@ -23,7 +23,7 @@ public class DatabaseManager {
 
     private static final ThreadFactory threadFactory = VTUtils.getVTThreadFactoryOrProvided(new ThreadFactoryBuilder().setDaemon(true).build());
     private final File dbFile = new File(AdvancedSensitiveWords.getInstance().getDataFolder(), settingsManager.getProperty(PluginSettings.DATABASE_NAME));
-    private static final Cache<String, String> dbCache = CacheBuilder.newBuilder()
+    private static final Cache<String, String> dbReadCache = CacheBuilder.newBuilder()
             .expireAfterWrite(settingsManager.getProperty(PluginSettings.DATABASE_CACHE_TIME), TimeUnit.SECONDS)
             .build();
 
@@ -68,7 +68,7 @@ public class DatabaseManager {
     @Nullable
     public String getPlayerViolations(String playerName) {
         String loweredPlayerName = playerName.toLowerCase(Locale.ROOT);
-        String cachedVl = dbCache.getIfPresent(loweredPlayerName);
+        String cachedVl = dbReadCache.getIfPresent(loweredPlayerName);
         if (cachedVl != null) {
             return cachedVl;
         }
@@ -79,7 +79,7 @@ public class DatabaseManager {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 String vl = String.valueOf(rs.getLong("violations"));
-                dbCache.put(loweredPlayerName, vl);
+                dbReadCache.put(loweredPlayerName, vl);
                 rs.close();
                 return vl;
             }

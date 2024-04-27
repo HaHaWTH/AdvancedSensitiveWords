@@ -104,7 +104,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         scheduler = UniversalScheduler.getScheduler(this);
         doInitTasks();
         if (settingsManager.getProperty(PluginSettings.PURGE_LOG_FILE)) purgeLog();
-        if (checkProtocolLib()) {
+        if (USE_PE) {
             PacketEvents.getAPI().getEventManager().registerListener(new ASWPacketListener());
             PacketEvents.getAPI().init();
         } else {

@@ -28,7 +28,7 @@ public class CommandListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onCommand(PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();
-        String originalCommand = settingsManager.getProperty(PluginSettings.IGNORE_FORMAT_CODE) ? event.getMessage().replaceAll(Utils.getIgnoreFormatCodeRegex(), "") : event.getMessage();
+        String originalCommand = settingsManager.getProperty(PluginSettings.PRE_PROCESS) ? event.getMessage().replaceAll(Utils.getPreProcessRegex(), "") : event.getMessage();
         if (shouldNotProcess(player, originalCommand)) return;
         List<String> censoredWordList = sensitiveWordBs.findAll(originalCommand);
         long startTime = System.currentTimeMillis();

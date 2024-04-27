@@ -117,12 +117,12 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"默认跳过字符",
             "Default characters to ignore"})
     public static final Property<String> IGNORE_CHAR = newProperty("Plugin.ignoreChar", "`-—=~～!！@#$%^&§*()_+[]{}\\|;:'\"“”,，.。、（）<>?？¥【】《》 ");
-    @Comment({"忽略格式化符号§",
-            "Ignore format codes"})
-    public static final Property<Boolean> IGNORE_FORMAT_CODE = newProperty("Plugin.ignoreFormatCode", false);
-    @Comment({"忽略备用格式化符号",
-            "Alternate code codes to ignore"})
-    public static final Property<String> ALT_COLOR_CODE = newProperty("Plugin.altColorCode", "&");
+    @Comment({"是否进行预处理",
+            "Whether to preprocess input"})
+    public static final Property<Boolean> PRE_PROCESS = newProperty("Plugin.enablePreProcess", false);
+    @Comment({"数据预处理正则",
+            "Regex for data preprocess"})
+    public static final Property<String> PRE_PROCESS_REGEX = newProperty("Plugin.preProcessRegex", "[§&][0-9A-Fa-fK-Ok-oRr]");
 
     @Comment({"检测大小写",
             "Whether to ignore case"})

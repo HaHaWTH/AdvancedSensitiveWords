@@ -25,7 +25,7 @@ import java.util.List;
 
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.*;
 import static io.wdsj.asw.bukkit.util.TimingUtils.addProcessStatistic;
-import static io.wdsj.asw.bukkit.util.Utils.getIgnoreFormatCodeRegex;
+import static io.wdsj.asw.bukkit.util.Utils.getPreProcessRegex;
 import static io.wdsj.asw.bukkit.util.Utils.messagesFilteredNum;
 
 public class AnvilListener implements Listener {
@@ -44,7 +44,7 @@ public class AnvilListener implements Listener {
                     ItemMeta itemMeta = outputItem.getItemMeta();
                     if (itemMeta != null && itemMeta.hasDisplayName()) {
                         String originalItemName = itemMeta.getDisplayName();
-                        if (settingsManager.getProperty(PluginSettings.IGNORE_FORMAT_CODE)) originalItemName = originalItemName.replaceAll(getIgnoreFormatCodeRegex(), "");
+                        if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) originalItemName = originalItemName.replaceAll(getPreProcessRegex(), "");
                         List<String> censoredWords = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalItemName);
                         if (!censoredWords.isEmpty()) {
                             long startTime = System.currentTimeMillis();
