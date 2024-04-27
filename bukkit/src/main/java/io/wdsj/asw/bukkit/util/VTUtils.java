@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Method;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 
 /**
@@ -64,6 +65,14 @@ public class VTUtils {
     @NotNull
     public static ExecutorService getVTExecutorServiceOrProvided(ExecutorService executorService) {
         return VTExecutorService != null ? VTExecutorService : executorService;
+    }
+
+    @NotNull
+    public static ScheduledExecutorService getVTScheduledExecutorServiceOrDefault(int poolSize) {
+        if (VTThreadFactory != null) {
+            return Executors.newScheduledThreadPool(poolSize, VTThreadFactory);
+        }
+        return Executors.newScheduledThreadPool(poolSize);
     }
 
 }
