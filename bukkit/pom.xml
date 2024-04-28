@@ -100,51 +100,51 @@
                             <relocations>
                                 <relocation>
                                     <pattern>com.github.retrooper.packetevents</pattern>
-                                    <shadedPattern>io.wdsj.asw.libs.packetevents.impl</shadedPattern>
+                                    <shadedPattern>io.wdsj.asw.bukkit.libs.packetevents.impl</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>com.github.houbb</pattern>
-                                    <shadedPattern>io.wdsj.asw.libs.lib</shadedPattern>
+                                    <shadedPattern>io.wdsj.asw.bukkit.libs.lib</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>java.util.internal</pattern>
-                                    <shadedPattern>io.wdsj.asw.libs.java.util.internal</shadedPattern>
+                                    <shadedPattern>io.wdsj.asw.bukkit.libs.java.util.internal</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>io.github.retrooper.packetevents</pattern>
-                                    <shadedPattern>io.wdsj.asw.libs.packetevents.api</shadedPattern>
+                                    <shadedPattern>io.wdsj.asw.bukkit.libs.packetevents.api</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>com.github.Anon8281.universalScheduler</pattern>
-                                    <shadedPattern>io.wdsj.asw.libs.universalScheduler</shadedPattern>
+                                    <shadedPattern>io.wdsj.asw.bukkit.libs.universalScheduler</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.bstats</pattern>
-                                    <shadedPattern>io.wdsj.asw.libs.bstats</shadedPattern>
+                                    <shadedPattern>io.wdsj.asw.bukkit.libs.bstats</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>net.kyori</pattern>
-                                    <shadedPattern>io.wdsj.asw.libs.packetevents.kyori</shadedPattern>
+                                    <shadedPattern>io.wdsj.asw.bukkit.libs.packetevents.kyori</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.jetbrains.annotations</pattern>
-                                    <shadedPattern>io.wdsj.asw.libs.org.jetbrains.annotations</shadedPattern>
+                                    <shadedPattern>io.wdsj.asw.bukkit.libs.org.jetbrains.annotations</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.intellij.lang.annotations</pattern>
-                                    <shadedPattern>io.wdsj.asw.libs.org.intellij.lang.annotations</shadedPattern>
+                                    <shadedPattern>io.wdsj.asw.bukkit.libs.org.intellij.lang.annotations</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.apiguardian.api</pattern>
-                                    <shadedPattern>io.wdsj.asw.libs.org.apiguardian.api</shadedPattern>
+                                    <shadedPattern>io.wdsj.asw.bukkit.libs.org.apiguardian.api</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>ch.jalu.configme</pattern>
-                                    <shadedPattern>io.wdsj.asw.libs.ch.jalu.configme</shadedPattern>
+                                    <shadedPattern>io.wdsj.asw.bukkit.libs.ch.jalu.configme</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>com.zaxxer.hikari</pattern>
-                                    <shadedPattern>io.wdsj.asw.libs.com.zaxxer.hikari</shadedPattern>
+                                    <shadedPattern>io.wdsj.asw.bukkit.libs.com.zaxxer.hikari</shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>
