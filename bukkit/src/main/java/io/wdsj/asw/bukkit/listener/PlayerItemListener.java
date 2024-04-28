@@ -3,6 +3,7 @@ package io.wdsj.asw.bukkit.listener;
 import io.wdsj.asw.bukkit.event.ASWFilterEvent;
 import io.wdsj.asw.bukkit.event.EventType;
 import io.wdsj.asw.bukkit.manage.notice.Notifier;
+import io.wdsj.asw.bukkit.manage.permission.Permissions;
 import io.wdsj.asw.bukkit.manage.punish.Punishment;
 import io.wdsj.asw.bukkit.proxy.bungee.BungeeSender;
 import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender;
@@ -32,7 +33,7 @@ public class PlayerItemListener implements Listener {
     public void onPlayerHeldItem(PlayerItemHeldEvent event) {
         if (!isInitialized || !settingsManager.getProperty(PluginSettings.ENABLE_PLAYER_ITEM_CHECK)) return;
         Player player = event.getPlayer();
-        if (player.hasPermission("advancedsensitivewords.bypass")) return;
+        if (player.hasPermission(Permissions.BYPASS)) return;
         ItemStack item = player.getInventory().getItem(event.getNewSlot());
         if (item != null && item.hasItemMeta()) {
             ItemMeta meta = item.getItemMeta();
@@ -81,7 +82,7 @@ public class PlayerItemListener implements Listener {
     public void onDrop(PlayerDropItemEvent event) {
         if (!isInitialized || !settingsManager.getProperty(PluginSettings.ENABLE_PLAYER_ITEM_CHECK)) return;
         Player player = event.getPlayer();
-        if (player.hasPermission("advancedsensitivewords.bypass")) return;
+        if (player.hasPermission(Permissions.BYPASS)) return;
         ItemStack item = event.getItemDrop().getItemStack();
         if (item.hasItemMeta()) {
             ItemMeta meta = item.getItemMeta();

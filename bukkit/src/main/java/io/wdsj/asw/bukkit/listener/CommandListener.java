@@ -3,6 +3,7 @@ package io.wdsj.asw.bukkit.listener;
 import io.wdsj.asw.bukkit.event.ASWFilterEvent;
 import io.wdsj.asw.bukkit.event.EventType;
 import io.wdsj.asw.bukkit.manage.notice.Notifier;
+import io.wdsj.asw.bukkit.manage.permission.Permissions;
 import io.wdsj.asw.bukkit.manage.punish.Punishment;
 import io.wdsj.asw.bukkit.proxy.bungee.BungeeSender;
 import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender;
@@ -72,7 +73,7 @@ public class CommandListener implements Listener {
     }
 
     private boolean shouldNotProcess(Player player, String message) {
-        if (isInitialized && !player.hasPermission("advancedsensitivewords.bypass") && !isCommandAndWhiteListed(message)) {
+        if (isInitialized && !player.hasPermission(Permissions.BYPASS) && !isCommandAndWhiteListed(message)) {
             if (isAuthMeAvailable && settingsManager.getProperty(PluginSettings.ENABLE_AUTHME_COMPATIBILITY)) {
                 if (!fr.xephi.authme.api.v3.AuthMeApi.getInstance().isAuthenticated(player)) return true;
             }

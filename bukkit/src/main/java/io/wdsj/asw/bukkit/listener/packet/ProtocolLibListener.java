@@ -4,6 +4,7 @@ import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 import io.wdsj.asw.bukkit.event.ASWFilterEvent;
 import io.wdsj.asw.bukkit.event.EventType;
 import io.wdsj.asw.bukkit.manage.notice.Notifier;
+import io.wdsj.asw.bukkit.manage.permission.Permissions;
 import io.wdsj.asw.bukkit.manage.punish.Punishment;
 import io.wdsj.asw.bukkit.proxy.bungee.BungeeSender;
 import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender;
@@ -36,7 +37,7 @@ public class ProtocolLibListener {
                     Player player = event.getPlayer();
                     assert player != null; // In some cases, player maybe null
                     String message = settingsManager.getProperty(PluginSettings.PRE_PROCESS) ? event.getPacket().getStrings().read(0).replaceAll(getPreProcessRegex(), "") : event.getPacket().getStrings().read(0);
-                    if (isCommandAndWhiteListed(message) || player.hasPermission("advancedsensitivewords.bypass"))
+                    if (isCommandAndWhiteListed(message) || player.hasPermission(Permissions.BYPASS))
                         return;
                     if (isAuthMeAvailable && settingsManager.getProperty(PluginSettings.ENABLE_AUTHME_COMPATIBILITY)) {
                         if (!fr.xephi.authme.api.v3.AuthMeApi.getInstance().isAuthenticated(player)) return;

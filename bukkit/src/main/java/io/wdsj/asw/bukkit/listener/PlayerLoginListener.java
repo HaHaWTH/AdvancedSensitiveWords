@@ -4,6 +4,7 @@ import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 import io.wdsj.asw.bukkit.event.ASWFilterEvent;
 import io.wdsj.asw.bukkit.event.EventType;
 import io.wdsj.asw.bukkit.manage.notice.Notifier;
+import io.wdsj.asw.bukkit.manage.permission.Permissions;
 import io.wdsj.asw.bukkit.manage.punish.Punishment;
 import io.wdsj.asw.bukkit.proxy.bungee.BungeeSender;
 import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender;
@@ -30,7 +31,7 @@ public class PlayerLoginListener implements Listener {
     public void onLogin(PlayerLoginEvent event) {
         if (!isInitialized || !settingsManager.getProperty(PluginSettings.ENABLE_PLAYER_NAME_CHECK)) return;
         Player player = event.getPlayer();
-        if (player.hasPermission("advancedsensitivewords.bypass")) return;
+        if (player.hasPermission(Permissions.BYPASS)) return;
         if (PlayerUtils.isNpc(player) && settingsManager.getProperty(PluginSettings.NAME_IGNORE_NPC)) return;
         if (Bukkit.getPluginManager().getPlugin("floodgate") != null && settingsManager.getProperty(PluginSettings.NAME_IGNORE_BEDROCK)) {
             if (org.geysermc.floodgate.api.FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) return;

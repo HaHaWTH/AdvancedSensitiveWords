@@ -5,6 +5,7 @@ import io.wdsj.asw.bukkit.event.ASWFilterEvent;
 import io.wdsj.asw.bukkit.event.EventType;
 import io.wdsj.asw.bukkit.impl.list.AdvancedList;
 import io.wdsj.asw.bukkit.manage.notice.Notifier;
+import io.wdsj.asw.bukkit.manage.permission.Permissions;
 import io.wdsj.asw.bukkit.manage.punish.Punishment;
 import io.wdsj.asw.bukkit.proxy.bungee.BungeeSender;
 import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender;
@@ -33,7 +34,7 @@ public class BookListener implements Listener {
         if (!isInitialized) return;
         if (!settingsManager.getProperty(PluginSettings.ENABLE_BOOK_EDIT_CHECK)) return;
         Player player = event.getPlayer();
-        if (player.hasPermission("advancedsensitivewords.bypass")) return;
+        if (player.hasPermission(Permissions.BYPASS)) return;
         boolean isCacheEnabled = settingsManager.getProperty(PluginSettings.BOOK_CACHE);
         boolean skipReturnLine = settingsManager.getProperty(PluginSettings.BOOK_IGNORE_NEWLINE);
         String outMessage = "";

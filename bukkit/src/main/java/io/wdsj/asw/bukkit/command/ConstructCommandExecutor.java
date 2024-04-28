@@ -2,6 +2,7 @@ package io.wdsj.asw.bukkit.command;
 
 import com.github.houbb.heaven.util.util.OsUtil;
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
+import io.wdsj.asw.bukkit.manage.permission.Permissions;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
 import io.wdsj.asw.bukkit.util.cache.BookCache;
@@ -24,7 +25,7 @@ public class ConstructCommandExecutor implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (args.length == 1) {
-            if (args[0].equalsIgnoreCase("reload") && (sender.hasPermission("advancedsensitivewords.reload") || sender instanceof ConsoleCommandSender)) {
+            if (args[0].equalsIgnoreCase("reload") && (sender.hasPermission(Permissions.RELOAD) || sender instanceof ConsoleCommandSender)) {
                 if (!isInitialized) {
                     return true;
                 }
@@ -41,7 +42,7 @@ public class ConstructCommandExecutor implements CommandExecutor {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.NO_PERMISSION)));
                 return true;
             }
-            if (args[0].equalsIgnoreCase("status") && (sender.hasPermission("advancedsensitivewords.status") || sender instanceof ConsoleCommandSender)) {
+            if (args[0].equalsIgnoreCase("status") && (sender.hasPermission(Permissions.STATUS) || sender instanceof ConsoleCommandSender)) {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_STATUS).replace("%num%", "&a" + messagesFilteredNum.get()).replace("%mode%", checkProtocolLib() ? "&aFast" : "&cCompatibility").replace("%init%", isInitialized ? "&atrue" : "&cfalse").replace("%ms%", getProcessAverage() >= 120 ? getProcessAverage() >= 300 ? "&c" + getProcessAverage() + "ms" : "&e" + getProcessAverage() + "ms" : "&a" + getProcessAverage() + "ms").replace("%version%", AdvancedSensitiveWords.getInstance().getDescription().getVersion()).replace("%mc_version%", getMinecraftVersion()).replace("%platform%", OsUtil.isWindows() ? "Windows" : (OsUtil.isMac() ? "Mac" : isUnix() ? "Linux" : "Unknown")).replace("%bit%", is64() ? "64bit" : "32bit").replace("%java_version%", getJvmVersion()).replace("%java_vendor%", getJvmVendor()).replace("%api_status%", settingsManager.getProperty(PluginSettings.ENABLE_API) ? "&aenabled" : "&cdisabled")));
                 return true;
             }
@@ -49,7 +50,7 @@ public class ConstructCommandExecutor implements CommandExecutor {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.NO_PERMISSION)));
                 return true;
             }
-            if (args[0].equalsIgnoreCase("help") && (sender.hasPermission("advancedsensitivewords.help") || sender instanceof ConsoleCommandSender)) {
+            if (args[0].equalsIgnoreCase("help") && (sender.hasPermission(Permissions.HELP) || sender instanceof ConsoleCommandSender)) {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_HELP)));
                 return true;
             }
@@ -59,7 +60,7 @@ public class ConstructCommandExecutor implements CommandExecutor {
             }
         }
         if (args.length >= 1) {
-            if (args[0].equalsIgnoreCase("test") && (sender.hasPermission("advancedsensitivewords.test") || sender instanceof ConsoleCommandSender)) {
+            if (args[0].equalsIgnoreCase("test") && (sender.hasPermission(Permissions.TEST) || sender instanceof ConsoleCommandSender)) {
                 if (args.length >= 2) {
                     if (isInitialized) {
                         StringBuilder sb = new StringBuilder();
@@ -85,7 +86,7 @@ public class ConstructCommandExecutor implements CommandExecutor {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.NO_PERMISSION)));
                 return true;
             }
-            if (args[0].equalsIgnoreCase("info") && (sender.hasPermission("advancedsensitivewords.info") || sender instanceof ConsoleCommandSender)) {
+            if (args[0].equalsIgnoreCase("info") && (sender.hasPermission(Permissions.INFO) || sender instanceof ConsoleCommandSender)) {
                 if (args.length > 1) {
                     if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
                         String playerName = args[1];

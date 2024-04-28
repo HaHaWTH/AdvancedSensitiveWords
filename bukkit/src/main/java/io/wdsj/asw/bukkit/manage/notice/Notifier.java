@@ -1,6 +1,7 @@
 package io.wdsj.asw.bukkit.manage.notice;
 
 import io.wdsj.asw.bukkit.event.EventType;
+import io.wdsj.asw.bukkit.manage.permission.Permissions;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -15,7 +16,7 @@ public class Notifier {
         Collection<? extends Player> players = Bukkit.getOnlinePlayers();
         String message = ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.ADMIN_REMINDER).replace("%player%", violatedPlayer.getName()).replace("%type%", eventType.toString()).replace("%message%", originalMessage));
         for (Player player : players) {
-            if (player.hasPermission("advancedsensitivewords.notice")) {
+            if (player.hasPermission(Permissions.NOTICE)) {
                 player.sendMessage(message);
             }
         }

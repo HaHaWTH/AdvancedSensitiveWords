@@ -2,6 +2,7 @@ package io.wdsj.asw.bukkit.proxy.bungee;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
+import io.wdsj.asw.bukkit.manage.permission.Permissions;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
 import org.bukkit.Bukkit;
@@ -29,7 +30,7 @@ public class BungeeReceiver implements PluginMessageListener {
                     Collection<? extends Player> players = Bukkit.getOnlinePlayers();
                     String msg = ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.ADMIN_REMINDER).replace("%player%", playerName + "(" + serverName + ")").replace("%type%", eventType).replace("%message%", originalMessage));
                     for (Player iPlayer : players) {
-                        if (iPlayer.hasPermission("advancedsensitivewords.notice")) {
+                        if (iPlayer.hasPermission(Permissions.NOTICE)) {
                             iPlayer.sendMessage(msg);
                         }
                     }
