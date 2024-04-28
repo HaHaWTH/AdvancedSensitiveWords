@@ -86,7 +86,7 @@ public class DatabaseManager {
             rs.close();
             return "0";
         } catch (SQLException e) {
-            LOGGER.warning("Failed to get player violations: " + e.getMessage());
+            LOGGER.warning("Error occurred while getting player violations: " + e.getMessage());
         }
         return null;
     }

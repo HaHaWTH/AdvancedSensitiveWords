@@ -5,6 +5,7 @@ import io.wdsj.asw.bukkit.impl.list.AdvancedList;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
 
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
@@ -24,8 +25,9 @@ public class OnlineWordDeny implements IWordDeny {
         String link = settingsManager.getProperty(PluginSettings.ONLINE_WORDS_URL);
         String charset = settingsManager.getProperty(PluginSettings.ONLINE_WORDS_ENCODING);
         List<String> lines = new AdvancedList<>();
+        URI uri = URI.create(link);
         try {
-            URL url = new URL(link);
+            URL url = uri.toURL();
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setConnectTimeout(4000);
             connection.setReadTimeout(5000);
