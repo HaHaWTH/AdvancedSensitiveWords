@@ -2,6 +2,7 @@ package io.wdsj.asw.bukkit.update;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.Scanner;
 
@@ -16,8 +17,9 @@ public class Updater {
     }
 
     public boolean isUpdateAvailable() {
+        URI uri = URI.create(UPDATE_URL);
         try {
-            URL url = new URL(UPDATE_URL);
+            URL url = uri.toURL();
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setConnectTimeout(10000);
             conn.setReadTimeout(10000);
