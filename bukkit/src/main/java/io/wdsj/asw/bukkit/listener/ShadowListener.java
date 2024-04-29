@@ -1,6 +1,6 @@
 package io.wdsj.asw.bukkit.listener;
 
-import io.wdsj.asw.bukkit.data.PlayerShadowController;
+import io.wdsj.asw.bukkit.manage.punish.PlayerShadowController;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

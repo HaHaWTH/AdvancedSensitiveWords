@@ -1,6 +1,5 @@
 package io.wdsj.asw.bukkit.manage.punish;
 
-import io.wdsj.asw.bukkit.data.PlayerShadowController;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
 import io.wdsj.asw.bukkit.util.SchedulingUtils;
 import org.bukkit.Bukkit;

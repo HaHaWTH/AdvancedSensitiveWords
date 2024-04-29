@@ -20,6 +20,7 @@ import io.wdsj.asw.bukkit.listener.*;
 import io.wdsj.asw.bukkit.listener.packet.ASWPacketListener;
 import io.wdsj.asw.bukkit.listener.packet.ProtocolLibListener;
 import io.wdsj.asw.bukkit.manage.placeholder.ASWExpansion;
+import io.wdsj.asw.bukkit.manage.punish.PlayerShadowController;
 import io.wdsj.asw.bukkit.method.*;
 import io.wdsj.asw.bukkit.proxy.bungee.BungeeCordChannel;
 import io.wdsj.asw.bukkit.proxy.bungee.BungeeReceiver;
@@ -208,6 +209,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         }
         TimingUtils.cleanStatisticCache();
         ChatContext.forceClearContext();
+        PlayerShadowController.clear();
         if (settingsManager.getProperty(PluginSettings.BOOK_CACHE)) {
             BookCache.invalidateAll();
         }

@@ -1,4 +1,4 @@
-package io.wdsj.asw.bukkit.data;
+package io.wdsj.asw.bukkit.manage.punish;
 
 import org.bukkit.entity.Player;
 
@@ -31,6 +31,10 @@ public class PlayerShadowController {
         } else {
             return true;
         }
+    }
+
+    public static void clear() {
+        SHADOWED_PLAYERS.clear();
     }
 
     private static class StartAndDuration {
