@@ -32,7 +32,7 @@ public class TimingUtils {
         for (long l : processStatistic) {
             sum += l;
         }
-        return processStatistic.size() != 0 ? sum / processStatistic.size() : 0L;
+        return !processStatistic.isEmpty() ? sum / processStatistic.size() : 0L;
     }
 
     public static void cleanStatisticCache() {

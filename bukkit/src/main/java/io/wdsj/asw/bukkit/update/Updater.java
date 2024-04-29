@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class Updater {
     private final String currentVersion;
     private String latestVersion;
-    public static boolean isUpdateAvailable = false;
+    private static boolean isUpdateAvailable = false;
     private static final String UPDATE_URL = "https://api.github.com/repos/HaHaWTH/AdvancedSensitiveWords/releases/latest";
 
     public Updater(String currentVersion) {
@@ -44,5 +44,9 @@ public class Updater {
 
     public String getCurrentVersion() {
         return currentVersion;
+    }
+
+    public static boolean hasUpdate() {
+        return isUpdateAvailable;
     }
 }
