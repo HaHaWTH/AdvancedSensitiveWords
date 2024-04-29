@@ -13,7 +13,7 @@ import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 public class PluginSettings implements SettingsHolder {
     @Comment({"插件语言(zhcn/en)(重启服务器生效)",
             "Plugin language: (zhcn/en)(Require a server restart)"})
-    public static final Property<String> PLUGIN_LANGUAGE = newProperty("Plugin.language", "zhcn");
+    public static final Property<String> PLUGIN_LANGUAGE = newProperty("Plugin.language", "en");
 
     @Comment({"是否启用默认词库(6w+)(强烈建议开启)",
             "Whether to enable the default word library (60k+ words) (strongly recommended)"})
