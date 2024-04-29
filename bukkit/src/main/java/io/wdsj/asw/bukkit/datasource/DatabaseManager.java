@@ -1,4 +1,4 @@
-package io.wdsj.asw.bukkit.data;
+package io.wdsj.asw.bukkit.datasource;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;

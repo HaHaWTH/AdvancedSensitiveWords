@@ -54,7 +54,7 @@ public class PluginSettings implements SettingsHolder {
 
     @Comment({"预定义替换(需要先加入blackList)(如包含相同敏感词,长的放前面)(用|来分隔敏感词和替换词)",
             "Predefined replacements (need to be added to blacklist first) (If there are identical sensitive words, place the longer one first) (Use '|' to separate sensitive words and their replacements)"})
-    public static final Property<List<String>> DEFINED_REPLACEMENT = newListProperty("Plugin.definedReplacement", "失业|灵活就业");
+    public static final Property<List<String>> DEFINED_REPLACEMENT = newListProperty("Plugin.definedReplacement", "fuck|love");
 
     @Comment({"*是否启用告示牌检测",
             "*Whether to enable sign edit checks"})
@@ -76,7 +76,7 @@ public class PluginSettings implements SettingsHolder {
     public static final Property<Boolean> ENABLE_PLAYER_ITEM_CHECK = newProperty("Plugin.enableItemCheck", false);
 
     @Comment({"是否在玩家退出时清理相关数据缓存?",
-            "Should we flush player data cache on they quit?"})
+            "Should we flush player datasource cache on they quit?"})
     public static final Property<Boolean> FLUSH_PLAYER_DATA_CACHE = newProperty("Plugin.flushPlayerDataCache", false);
 
     @Comment({"是否启用API接口(非必要请勿关闭)",
@@ -93,7 +93,7 @@ public class PluginSettings implements SettingsHolder {
 
     @Comment({"*数据库名称",
             "*Database name"})
-    public static final Property<String> DATABASE_NAME = newProperty("Plugin.database.databaseName", "data.db");
+    public static final Property<String> DATABASE_NAME = newProperty("Plugin.database.databaseName", "datasource.db");
 
     @Comment({"*是否启用占位符(需要PlaceholderAPI)",
             "*Whether to enable placeholders"})
@@ -121,7 +121,7 @@ public class PluginSettings implements SettingsHolder {
             "Whether to preprocess input"})
     public static final Property<Boolean> PRE_PROCESS = newProperty("Plugin.enablePreProcess", false);
     @Comment({"数据预处理正则",
-            "Regex for data preprocess"})
+            "Regex for datasource preprocess"})
     public static final Property<String> PRE_PROCESS_REGEX = newProperty("Plugin.preProcessRegex", "[§&][0-9A-Fa-fK-Ok-oRr]");
 
     @Comment({"检测大小写",

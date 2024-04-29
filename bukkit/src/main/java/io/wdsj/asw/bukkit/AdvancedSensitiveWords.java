@@ -15,7 +15,7 @@ import com.github.retrooper.packetevents.PacketEvents;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import io.wdsj.asw.bukkit.command.ConstructCommandExecutor;
 import io.wdsj.asw.bukkit.command.ConstructTabCompleter;
-import io.wdsj.asw.bukkit.data.DatabaseManager;
+import io.wdsj.asw.bukkit.datasource.DatabaseManager;
 import io.wdsj.asw.bukkit.listener.*;
 import io.wdsj.asw.bukkit.listener.packet.ASWPacketListener;
 import io.wdsj.asw.bukkit.listener.packet.ProtocolLibListener;
@@ -120,6 +120,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         metrics.addCustomChart(new SimplePie("default_list", () -> String.valueOf(settingsManager.getProperty(PluginSettings.ENABLE_DEFAULT_WORDS))));
         metrics.addCustomChart(new SimplePie("mode", () -> checkProtocolLib() ? "Fast" : "Compatibility"));
         metrics.addCustomChart(new SimplePie("java_vendor", TimingUtils::getJvmVendor));
+        getServer().getPluginManager().registerEvents(new ShadowListener(), this);
         if (settingsManager.getProperty(PluginSettings.ENABLE_SIGN_EDIT_CHECK)) {
             getServer().getPluginManager().registerEvents(new SignListener(), this);
         }

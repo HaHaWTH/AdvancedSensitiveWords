@@ -7,5 +7,7 @@ public enum PunishmentType {
 
     DAMAGE,
 
-    EFFECT
+    EFFECT,
+    
+    SHADOW
 }

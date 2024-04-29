@@ -1,5 +1,6 @@
 package io.wdsj.asw.bukkit.manage.punish;
 
+import io.wdsj.asw.bukkit.data.PlayerShadowController;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
 import io.wdsj.asw.bukkit.util.SchedulingUtils;
 import org.bukkit.Bukkit;
@@ -29,7 +30,7 @@ public class Punishment {
             switch (punishMethod) {
                 case DAMAGE:
                     try {
-                        double damageAmount = (normalPunish.length == 2) ? Double.parseDouble(normalPunish[1]) : 1.0D;
+                        double damageAmount = (normalPunish.length >= 2) ? Double.parseDouble(normalPunish[1]) : 1.0D;
                         SchedulingUtils.runSyncIfFolia(player, () -> player.damage(damageAmount));
                     } catch (NumberFormatException e) {
                         SchedulingUtils.runSyncIfFolia(player, () -> player.damage(1.0D));
@@ -37,7 +38,7 @@ public class Punishment {
                     break;
                 case HOSTILE:
                     try {
-                        double radius = (normalPunish.length == 2) ? Double.parseDouble(normalPunish[1]) : 10D;
+                        double radius = (normalPunish.length >= 2) ? Double.parseDouble(normalPunish[1]) : 10D;
                         makeHostileTowardsPlayer(player, radius);
                     } catch (NumberFormatException e) {
                         makeHostileTowardsPlayer(player, 10D);
@@ -69,6 +70,9 @@ public class Punishment {
                             break;
                     }
                     break;
+                case SHADOW:
+                    long duration = normalPunish.length >= 2 ? Long.parseLong(normalPunish[1]) : 30L;
+                    PlayerShadowController.shadowPlayer(player, System.currentTimeMillis(), duration);
                 default:
                     throw new IllegalArgumentException("Unknown punishment type");
             }
