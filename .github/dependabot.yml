@@ -12,4 +12,6 @@ updates:
     ignore:
     - dependency-name: "com.comphenix.protocol:ProtocolLib"
       versions: ">=4.8.0"
+    - dependency-name: "com.zaxxer:HikariCP"
+      versions: ">=5.0.0"
     
