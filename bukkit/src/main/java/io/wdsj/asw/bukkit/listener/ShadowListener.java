@@ -1,6 +1,5 @@
 package io.wdsj.asw.bukkit.listener;
 
-import com.comphenix.protocol.PacketType;
 import io.wdsj.asw.bukkit.data.PlayerShadowController;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

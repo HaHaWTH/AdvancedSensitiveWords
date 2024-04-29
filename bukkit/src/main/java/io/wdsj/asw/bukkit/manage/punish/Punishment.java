@@ -71,8 +71,12 @@ public class Punishment {
                     }
                     break;
                 case SHADOW:
-                    long duration = normalPunish.length >= 2 ? Long.parseLong(normalPunish[1]) : 30L;
-                    PlayerShadowController.shadowPlayer(player, System.currentTimeMillis(), duration);
+                    try {
+                        long duration = normalPunish.length >= 2 ? Long.parseLong(normalPunish[1]) : 30L;
+                        PlayerShadowController.shadowPlayer(player, System.currentTimeMillis(), duration);
+                    } catch (NumberFormatException e) {
+                        PlayerShadowController.shadowPlayer(player, System.currentTimeMillis(), 30L);
+                    }
                 default:
                     throw new IllegalArgumentException("Unknown punishment type");
             }
