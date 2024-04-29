@@ -13,6 +13,7 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.List;
 import java.util.Locale;
 
+import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER;
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
 
 @SuppressWarnings("deprecation")
@@ -77,8 +78,10 @@ public class Punishment {
                     } catch (NumberFormatException e) {
                         PlayerShadowController.shadowPlayer(player, System.currentTimeMillis(), 30L);
                     }
+                    break;
                 default:
-                    throw new IllegalArgumentException("Unknown punishment type");
+                    LOGGER.warning("Unknown punishment type");
+                    break;
             }
         }
     }

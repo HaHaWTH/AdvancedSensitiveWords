@@ -1,6 +1,5 @@
 package io.wdsj.asw.bukkit.data;
 
-import com.google.common.cache.Cache;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -14,7 +13,7 @@ public class PlayerShadowController {
      * @param start Start time, in milliseconds
      * @param duration Duration, in seconds
      */
-    public static void shadowPlayer(Player player,long start, long duration) {
+    public static void shadowPlayer(Player player, long start, long duration) {
         SHADOWED_PLAYERS.put(player, new StartAndDuration(start, duration));
     }
 
