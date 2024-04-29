@@ -76,7 +76,7 @@ public class PluginSettings implements SettingsHolder {
     public static final Property<Boolean> ENABLE_PLAYER_ITEM_CHECK = newProperty("Plugin.enableItemCheck", false);
 
     @Comment({"是否在玩家退出时清理相关数据缓存?",
-            "Should we flush player datasource cache on they quit?"})
+            "Should we flush player data cache on they quit?"})
     public static final Property<Boolean> FLUSH_PLAYER_DATA_CACHE = newProperty("Plugin.flushPlayerDataCache", false);
 
     @Comment({"是否启用API接口(非必要请勿关闭)",
@@ -93,7 +93,7 @@ public class PluginSettings implements SettingsHolder {
 
     @Comment({"*数据库名称",
             "*Database name"})
-    public static final Property<String> DATABASE_NAME = newProperty("Plugin.database.databaseName", "datasource.db");
+    public static final Property<String> DATABASE_NAME = newProperty("Plugin.database.databaseName", "data.db");
 
     @Comment({"*是否启用占位符(需要PlaceholderAPI)",
             "*Whether to enable placeholders"})
@@ -121,7 +121,7 @@ public class PluginSettings implements SettingsHolder {
             "Whether to preprocess input"})
     public static final Property<Boolean> PRE_PROCESS = newProperty("Plugin.enablePreProcess", false);
     @Comment({"数据预处理正则",
-            "Regex for datasource preprocess"})
+            "Regex for data preprocess"})
     public static final Property<String> PRE_PROCESS_REGEX = newProperty("Plugin.preProcessRegex", "[§&][0-9A-Fa-fK-Ok-oRr]");
 
     @Comment({"检测大小写",
