@@ -11,7 +11,7 @@ import java.util.Collection;
 
 public class ShadowListener implements Listener {
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
         if (PlayerShadowController.isShadowed(player)) {
