@@ -224,6 +224,10 @@ public class PluginSettings implements SettingsHolder {
     public static final Property<List<String>> CHAT_COMMAND_WHITE_LIST = newListProperty("Chat.commandWhiteList", "/asw", "/reload", "/help", "/ban",
             "/mute", "/unmute", "/kick", "/unban", "/res", "/sethome", "/home", "/l", "/tp", "/tpa", "/login", "/log", "/register", "/reg", "/lp");
 
+    @Comment({"是否检测指令名称(/fuck)",
+            "Whether to check command name?(e.g. /fuck"})
+    public static final Property<Boolean> CHAT_CHECK_COMMAND_NAME = newProperty("Chat.checkCommandName", false);
+
     @Comment({"替换还是取消(replace/cancel)",
             "Replace or cancel (replace/cancel)"})
     public static final Property<String> BOOK_METHOD = newProperty("Book.method", "replace");
