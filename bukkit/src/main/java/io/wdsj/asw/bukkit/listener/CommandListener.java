@@ -31,7 +31,6 @@ public class CommandListener implements Listener {
         Player player = event.getPlayer();
         String originalCommand = settingsManager.getProperty(PluginSettings.PRE_PROCESS) ? event.getMessage().replaceAll(Utils.getPreProcessRegex(), "") : event.getMessage();
         if (shouldNotProcess(player, originalCommand)) return;
-        if (!settingsManager.getProperty(PluginSettings.CHAT_CHECK_COMMAND_NAME)) originalCommand = Utils.getSplitCommandArgs(originalCommand);
         List<String> censoredWordList = sensitiveWordBs.findAll(originalCommand);
         long startTime = System.currentTimeMillis();
         if (!censoredWordList.isEmpty()) {
@@ -50,8 +49,7 @@ public class CommandListener implements Listener {
                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_CHAT).replace("%integrated_player%", player.getName()).replace("%integrated_message%", originalCommand)));
             }
             if (settingsManager.getProperty(PluginSettings.ENABLE_API)) {
-                String finalOriginalCommand = originalCommand;
-                getScheduler().runTask(() -> Bukkit.getPluginManager().callEvent(new ASWFilterEvent(player, finalOriginalCommand, processedCommand, censoredWordList, EventType.CHAT, false)));
+                getScheduler().runTask(() -> Bukkit.getPluginManager().callEvent(new ASWFilterEvent(player, originalCommand, processedCommand, censoredWordList, EventType.CHAT, false)));
             }
             if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
                 Utils.logViolation(player.getName() + "(IP: " + getPlayerIp(player) + ")(Chat)", originalCommand + censoredWordList);

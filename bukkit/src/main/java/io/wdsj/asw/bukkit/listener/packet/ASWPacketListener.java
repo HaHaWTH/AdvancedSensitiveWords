@@ -48,8 +48,6 @@ public class ASWPacketListener extends PacketListenerAbstract {
         if (packetType == PacketType.Play.Client.CHAT_MESSAGE) {
             WrapperPlayClientChatMessage wrapperPlayClientChatMessage = new WrapperPlayClientChatMessage(event);
             String originalMessage = settingsManager.getProperty(PluginSettings.PRE_PROCESS) ? wrapperPlayClientChatMessage.getMessage().replaceAll(getPreProcessRegex(), "") : wrapperPlayClientChatMessage.getMessage();            if (shouldNotProcess(player, originalMessage)) return;
-            if (isCommand(originalMessage) &&
-                    !settingsManager.getProperty(PluginSettings.CHAT_CHECK_COMMAND_NAME)) originalMessage = getSplitCommandArgs(originalMessage);
             long startTime = System.currentTimeMillis();
             // Word check
             List<String> censoredWords = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalMessage);
@@ -75,8 +73,7 @@ public class ASWPacketListener extends PacketListenerAbstract {
                 }
 
                 if (settingsManager.getProperty(PluginSettings.ENABLE_API)) {
-                    String finalOriginalMessage = originalMessage; //
-                    getScheduler().runTask(() -> Bukkit.getPluginManager().callEvent(new ASWFilterEvent(player, finalOriginalMessage, processedMessage, censoredWords, EventType.CHAT, false)));
+                    getScheduler().runTask(() -> Bukkit.getPluginManager().callEvent(new ASWFilterEvent(player, originalMessage, processedMessage, censoredWords, EventType.CHAT, false)));
                 }
                 if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
                     Utils.logViolation(userName + "(IP: " + user.getAddress().getAddress().getHostAddress() + ")(Chat)", originalMessage + censoredWords);
@@ -92,9 +89,8 @@ public class ASWPacketListener extends PacketListenerAbstract {
                 }
                 long endTime = System.currentTimeMillis();
                 addProcessStatistic(endTime, startTime);
-                String finalOriginalMessage1 = originalMessage; // No need to touch this
                 getScheduler().runTask(()-> {
-                    if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.CHAT, finalOriginalMessage1);
+                    if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.CHAT, originalMessage);
                     if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) Punishment.punish(player);
                 });
                 return;
@@ -141,7 +137,6 @@ public class ASWPacketListener extends PacketListenerAbstract {
         } else if (packetType == PacketType.Play.Client.CHAT_COMMAND) {
             WrapperPlayClientChatCommand wrapperPlayClientChatCommand = new WrapperPlayClientChatCommand(event);
             String originalCommand = settingsManager.getProperty(PluginSettings.PRE_PROCESS) ? wrapperPlayClientChatCommand.getCommand().replaceAll(getPreProcessRegex(), "") : wrapperPlayClientChatCommand.getCommand();
-            if (!settingsManager.getProperty(PluginSettings.CHAT_CHECK_COMMAND_NAME)) originalCommand = Utils.getSplitCommandArgs(originalCommand);
             if (shouldNotProcess(player, "/" + originalCommand)) return;
             long startTime = System.currentTimeMillis();
             List<String> censoredWords = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalCommand);
@@ -162,8 +157,7 @@ public class ASWPacketListener extends PacketListenerAbstract {
                     user.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_CHAT).replace("%integrated_player%", userName).replace("%integrated_message%", originalCommand)));
                 }
                 if (settingsManager.getProperty(PluginSettings.ENABLE_API)) {
-                    String finalOriginalCommand = originalCommand; // Don't touch this
-                    getScheduler().runTask(() -> Bukkit.getPluginManager().callEvent(new ASWFilterEvent(player, finalOriginalCommand, processedCommand, censoredWords, EventType.CHAT, false)));
+                    getScheduler().runTask(() -> Bukkit.getPluginManager().callEvent(new ASWFilterEvent(player, originalCommand, processedCommand, censoredWords, EventType.CHAT, false)));
                 }
                 if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
                     Utils.logViolation(userName + "(IP: " + user.getAddress().getAddress().getHostAddress() + ")(Chat)", "/" + originalCommand + censoredWords);
@@ -179,9 +173,8 @@ public class ASWPacketListener extends PacketListenerAbstract {
                 }
                 long endTime = System.currentTimeMillis();
                 addProcessStatistic(endTime, startTime);
-                String finalOriginalCommand1 = originalCommand; // Don't touch this
                 getScheduler().runTask(()-> {
-                    if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.CHAT, finalOriginalCommand1);
+                    if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.CHAT, originalCommand);
                     if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) Punishment.punish(player);
                 });
             }

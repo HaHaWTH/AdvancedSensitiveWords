@@ -45,9 +45,6 @@ public class ProtocolLibListener {
                     if (isCslAvailable && settingsManager.getProperty(PluginSettings.ENABLE_CSL_COMPATIBILITY)) {
                         if (!cc.baka9.catseedlogin.bukkit.CatSeedLoginAPI.isLogin(player.getName()) || !cc.baka9.catseedlogin.bukkit.CatSeedLoginAPI.isRegister(player.getName())) return;
                     }
-                    if (isCommand(message) && !settingsManager.getProperty(PluginSettings.CHAT_CHECK_COMMAND_NAME)) {
-                        message = getSplitCommandArgs(message);
-                    }
                     long startTime = System.currentTimeMillis();
                     // Chat check
                     List<String> censoredWords = AdvancedSensitiveWords.sensitiveWordBs.findAll(message);
@@ -74,8 +71,7 @@ public class ProtocolLibListener {
                             }
                         }
                         if (settingsManager.getProperty(PluginSettings.ENABLE_API)) {
-                            String finalMessage = message;
-                            getScheduler().runTask(() -> Bukkit.getPluginManager().callEvent(new ASWFilterEvent(player, finalMessage, processedMessage, censoredWords, EventType.CHAT, false)));
+                            getScheduler().runTask(() -> Bukkit.getPluginManager().callEvent(new ASWFilterEvent(player, message, processedMessage, censoredWords, EventType.CHAT, false)));
                         }
                         if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
                             Utils.logViolation(player.getName() + "(IP: " + getPlayerIp(player) + ")(Chat)", message + censoredWords);
@@ -91,9 +87,8 @@ public class ProtocolLibListener {
                         }
                         long endTime = System.currentTimeMillis();
                         addProcessStatistic(endTime, startTime);
-                        String finalMessage1 = message;
                         getScheduler().runTask(()-> {
-                            if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.CHAT, finalMessage1);
+                            if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.CHAT, message);
                             if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) Punishment.punish(player);
                         });
                         return;
