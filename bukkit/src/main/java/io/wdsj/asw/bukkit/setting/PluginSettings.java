@@ -18,6 +18,12 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"是否启用默认词库(6w+)(强烈建议开启)",
             "Whether to enable the default word library (60k+ words) (strongly recommended)"})
     public static final Property<Boolean> ENABLE_DEFAULT_WORDS = newProperty("Plugin.enableDefaultWords", true);
+
+    @Comment({"检测模式(packet/event)(重启生效)",
+            "Detection mode(packet/event)(Require restart)",
+            "Packet:Better plugin compatibility",
+            "Event:Better version compatibility"})
+    public static final Property<String> DETECTION_MODE = newProperty("Plugin.detectionMode", "packet");
     @Comment({"是否启用更新检查",
             "Whether to enable updater"})
     public static final Property<Boolean> CHECK_FOR_UPDATE = newProperty("Plugin.checkForUpdate", true);
@@ -75,8 +81,8 @@ public class PluginSettings implements SettingsHolder {
             "*Whether to enable player item check"})
     public static final Property<Boolean> ENABLE_PLAYER_ITEM_CHECK = newProperty("Plugin.enableItemCheck", false);
 
-    @Comment({"是否在玩家退出时清理相关数据缓存?",
-            "Should we flush player data cache on they quit?"})
+    @Comment({"*是否在玩家退出时清理相关数据缓存?",
+            "*Should we flush player data cache on they quit?"})
     public static final Property<Boolean> FLUSH_PLAYER_DATA_CACHE = newProperty("Plugin.flushPlayerDataCache", false);
 
     @Comment({"是否启用API接口(非必要请勿关闭)",

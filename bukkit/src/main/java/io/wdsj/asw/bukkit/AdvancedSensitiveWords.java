@@ -87,7 +87,8 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
                 .useDefaultMigrationService()
                 .create();
         databaseManager = new DatabaseManager();
-        if (!checkProtocolLib()) return;
+        if (!checkProtocolLib() ||
+                settingsManager.getProperty(PluginSettings.DETECTION_MODE).equalsIgnoreCase("event")) return;
         USE_PE = true;
         PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
         PacketEvents.getAPI().getSettings().reEncodeByDefault(true).checkForUpdates(false).bStats(false);
@@ -105,12 +106,17 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         scheduler = UniversalScheduler.getScheduler(this);
         doInitTasks();
         if (settingsManager.getProperty(PluginSettings.PURGE_LOG_FILE)) purgeLog();
-        if (USE_PE) {
-            PacketEvents.getAPI().getEventManager().registerListener(new ASWPacketListener());
-            PacketEvents.getAPI().init();
+        if (!settingsManager.getProperty(PluginSettings.DETECTION_MODE).equalsIgnoreCase("event")) {
+            if (USE_PE) {
+                PacketEvents.getAPI().getEventManager().registerListener(new ASWPacketListener());
+                PacketEvents.getAPI().init();
+            } else {
+                LOGGER.info("ProtocolLib v4 or older detected, enabling compatibility mode.");
+                ProtocolLibListener.addAlternateListener();
+            }
         } else {
-            LOGGER.info("ProtocolLib v4 or older detected, enabling compatibility mode.");
-            ProtocolLibListener.addAlternateListener();
+            getServer().getPluginManager().registerEvents(new ChatListener(), this);
+            getServer().getPluginManager().registerEvents(new CommandListener(), this);
         }
         Objects.requireNonNull(getCommand("advancedsensitivewords")).setExecutor(new ConstructCommandExecutor());
         Objects.requireNonNull(getCommand("asw")).setExecutor(new ConstructCommandExecutor());
@@ -141,7 +147,9 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
                 LOGGER.info("BroadcastMessage is not available, please disable chat broadcast check in config.yml");
             }
         }
-        getServer().getPluginManager().registerEvents(new PlayerQuitListener(), this);
+        if (settingsManager.getProperty(PluginSettings.FLUSH_PLAYER_DATA_CACHE)) {
+            getServer().getPluginManager().registerEvents(new PlayerQuitListener(), this);
+        }
         if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
             getServer().getMessenger().registerOutgoingPluginChannel(this, VelocityChannel.CHANNEL);
             getServer().getMessenger().registerIncomingPluginChannel(this, VelocityChannel.CHANNEL, new VelocityReceiver());
@@ -197,10 +205,12 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (USE_PE) {
-            PacketEvents.getAPI().terminate();
-        } else {
-            com.comphenix.protocol.ProtocolLibrary.getProtocolManager().removePacketListeners(this);
+        if (!settingsManager.getProperty(PluginSettings.DETECTION_MODE).equalsIgnoreCase("event")) {
+            if (USE_PE) {
+                PacketEvents.getAPI().terminate();
+            } else {
+                com.comphenix.protocol.ProtocolLibrary.getProtocolManager().removePacketListeners(this);
+            }
         }
         if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD) ||
                 settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
