@@ -44,11 +44,12 @@ public class ChatListener implements Listener {
             messagesFilteredNum.getAndIncrement();
             String processedMessage = sensitiveWordBs.replace(originalMessage);
             if (settingsManager.getProperty(PluginSettings.CHAT_METHOD).equalsIgnoreCase("cancel")) {
-                event.setCancelled(true);
                 if (settingsManager.getProperty(PluginSettings.CHAT_FAKE_MESSAGE_ON_CANCEL)) {
                     Collection<Player> players = event.getRecipients();
                     players.clear();
                     players.add(player);
+                } else {
+                    event.setCancelled(true);
                 }
             } else {
                 event.setMessage(processedMessage);
