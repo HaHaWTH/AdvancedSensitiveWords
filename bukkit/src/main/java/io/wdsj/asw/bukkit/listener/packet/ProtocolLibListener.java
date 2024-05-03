@@ -30,10 +30,10 @@ import static io.wdsj.asw.bukkit.util.Utils.*;
  */
 public class ProtocolLibListener {
     public static void addAlternateListener() {
-        com.comphenix.protocol.events.PacketAdapter protocolChat = new com.comphenix.protocol.events.PacketAdapter(AdvancedSensitiveWords.getInstance(), com.comphenix.protocol.PacketType.Play.Client.CHAT) {
+        com.comphenix.protocol.events.PacketAdapter protocolChat = new com.comphenix.protocol.events.PacketAdapter(AdvancedSensitiveWords.getInstance(), com.comphenix.protocol.events.ListenerPriority.LOW, com.comphenix.protocol.PacketType.Play.Client.CHAT) {
             @Override
             public void onPacketReceiving(@NotNull com.comphenix.protocol.events.PacketEvent event) {
-                if (event.getPacketType() == com.comphenix.protocol.PacketType.Play.Client.CHAT && isInitialized) {
+                if (isInitialized) {
                     Player player = event.getPlayer();
                     assert player != null; // In some cases, player maybe null
                     String message = settingsManager.getProperty(PluginSettings.PRE_PROCESS) ? event.getPacket().getStrings().read(0).replaceAll(getPreProcessRegex(), "") : event.getPacket().getStrings().read(0);
