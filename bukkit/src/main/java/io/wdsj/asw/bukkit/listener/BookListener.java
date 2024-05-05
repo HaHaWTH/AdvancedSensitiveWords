@@ -29,7 +29,7 @@ import static io.wdsj.asw.bukkit.util.TimingUtils.addProcessStatistic;
 import static io.wdsj.asw.bukkit.util.Utils.messagesFilteredNum;
 
 public class BookListener implements Listener {
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onBook(PlayerEditBookEvent event) {
         if (!isInitialized) return;
         if (!settingsManager.getProperty(PluginSettings.ENABLE_BOOK_EDIT_CHECK)) return;

@@ -16,6 +16,12 @@ public class Updater {
         this.currentVersion = currentVersion;
     }
 
+
+    /**
+     * Check if there is an update available
+     * Note: This method will perform a network request!
+     * @return true if there is an update available, false otherwise
+     */
     public boolean isUpdateAvailable() {
         URI uri = URI.create(UPDATE_URL);
         try {
@@ -46,6 +52,11 @@ public class Updater {
         return currentVersion;
     }
 
+    /**
+     * Returns true if there is an update available, false otherwise
+     * Must be called after {@link Updater#isUpdateAvailable()}
+     * @return A boolean indicating whether there is an update available
+     */
     public static boolean hasUpdate() {
         return isUpdateAvailable;
     }

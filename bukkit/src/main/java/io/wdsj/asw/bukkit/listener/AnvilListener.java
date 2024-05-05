@@ -30,7 +30,7 @@ import static io.wdsj.asw.bukkit.util.Utils.getPreProcessRegex;
 import static io.wdsj.asw.bukkit.util.Utils.messagesFilteredNum;
 
 public class AnvilListener implements Listener {
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onAnvil(InventoryClickEvent event) {
         if (!isInitialized) return;
         if (!settingsManager.getProperty(PluginSettings.ENABLE_ANVIL_EDIT_CHECK)) return;
