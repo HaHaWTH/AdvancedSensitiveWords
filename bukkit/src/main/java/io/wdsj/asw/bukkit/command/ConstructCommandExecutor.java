@@ -13,6 +13,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.List;
 
 import static com.github.houbb.heaven.util.util.OsUtil.is64;
@@ -30,6 +31,11 @@ public class ConstructCommandExecutor implements CommandExecutor {
                     return true;
                 }
                 settingsManager.reload();
+                File msgFile = new File(getInstance().getDataFolder(), "messages_" + settingsManager.getProperty(PluginSettings.PLUGIN_LANGUAGE) +
+                        ".yml");
+                if (!msgFile.exists()) {
+                    getInstance().saveResource("messages_" + settingsManager.getProperty(PluginSettings.PLUGIN_LANGUAGE) + ".yml", false);
+                }
                 messagesManager.reload();
                 sensitiveWordBs.destroy();
                 AdvancedSensitiveWords.getInstance().doInitTasks();
