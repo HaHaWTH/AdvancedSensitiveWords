@@ -2,13 +2,13 @@ package io.wdsj.asw.bukkit.method;
 
 import com.github.houbb.sensitive.word.api.IWordAllow;
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
-import io.wdsj.asw.bukkit.impl.list.AdvancedList;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,7 +21,7 @@ public class ExternalWordAllow implements IWordAllow {
 
     @Override
     public List<String> allow() {
-        List<String> totalList = new AdvancedList<>();
+        List<String> totalList = new ArrayList<>();
 
         if (Files.notExists(dataFolder.toPath())) {
             try {
@@ -40,7 +40,7 @@ public class ExternalWordAllow implements IWordAllow {
                 List<String> lines = Files.readAllLines(file.toPath());
                 totalList.addAll(lines);
             }
-            if (files.size() > 0) LOGGER.info("Loaded " + files.size() + " external allow file(s).");
+            if (!files.isEmpty()) LOGGER.info("Loaded " + files.size() + " external allow file(s).");
         } catch (IOException e) {
             e.printStackTrace();
             return Collections.emptyList();

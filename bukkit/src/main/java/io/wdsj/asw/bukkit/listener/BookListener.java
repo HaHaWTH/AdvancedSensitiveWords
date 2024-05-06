@@ -3,7 +3,6 @@ package io.wdsj.asw.bukkit.listener;
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 import io.wdsj.asw.bukkit.event.ASWFilterEvent;
 import io.wdsj.asw.bukkit.event.EventType;
-import io.wdsj.asw.bukkit.impl.list.AdvancedList;
 import io.wdsj.asw.bukkit.manage.notice.Notifier;
 import io.wdsj.asw.bukkit.manage.permission.Permissions;
 import io.wdsj.asw.bukkit.manage.punish.Punishment;
@@ -22,6 +21,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerEditBookEvent;
 import org.bukkit.inventory.meta.BookMeta;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.*;
@@ -39,7 +39,7 @@ public class BookListener implements Listener {
         boolean skipReturnLine = settingsManager.getProperty(PluginSettings.BOOK_IGNORE_NEWLINE);
         String outMessage = "";
         String processedOutMessage = "";
-        List<String> outList = new AdvancedList<>();
+        List<String> outList = new ArrayList<>();
         List<String> originalPages = event.getNewBookMeta().getPages();
         boolean shouldSendMessage = false;
         BookMeta bookMeta = event.getNewBookMeta();

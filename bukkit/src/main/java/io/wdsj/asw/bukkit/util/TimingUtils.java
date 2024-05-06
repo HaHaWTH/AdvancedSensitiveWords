@@ -1,13 +1,14 @@
 package io.wdsj.asw.bukkit.util;
 
-import io.wdsj.asw.bukkit.impl.list.AdvancedList;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static io.wdsj.asw.bukkit.util.Utils.messagesFilteredNum;
 
 public class TimingUtils {
-    private static final List<Long> processStatistic = new AdvancedList<>();
+    private static final List<Long> processStatistic = Collections.synchronizedList(new ArrayList<>());
     private static final String vendor = System.getProperties().getProperty("java.vendor");
     private static final String javaVersion = System.getProperties().getProperty("java.version");
 

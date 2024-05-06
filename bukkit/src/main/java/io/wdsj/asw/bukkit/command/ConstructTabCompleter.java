@@ -1,6 +1,5 @@
 package io.wdsj.asw.bukkit.command;
 
-import io.wdsj.asw.bukkit.impl.list.AdvancedList;
 import io.wdsj.asw.bukkit.manage.permission.Permissions;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -10,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,7 +18,7 @@ public class ConstructTabCompleter implements TabCompleter {
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String s, @NotNull String[] args) {
         if (args.length == 1) {
-            List<String> tabComplete = new AdvancedList<>();
+            List<String> tabComplete = new ArrayList<>();
             if (sender.hasPermission(Permissions.RELOAD) && args[0].startsWith("r")) {
                 tabComplete.add("reload");
             } else if (sender.hasPermission(Permissions.STATUS) && args[0].startsWith("s")) {
@@ -47,6 +47,6 @@ public class ConstructTabCompleter implements TabCompleter {
                         .collect(Collectors.toList());
             }
         }
-        return new AdvancedList<>(); // Must return empty list, if null paper will supply player names
+        return new ArrayList<>(); // Must return empty list, if null paper will supply player names
     }
 }

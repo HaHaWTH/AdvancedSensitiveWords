@@ -1,12 +1,12 @@
 package io.wdsj.asw.bukkit.method;
 
 import com.github.houbb.sensitive.word.api.IWordDeny;
-import io.wdsj.asw.bukkit.impl.list.AdvancedList;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
 
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
@@ -24,7 +24,7 @@ public class OnlineWordDeny implements IWordDeny {
     public List<String> deny() {
         String link = settingsManager.getProperty(PluginSettings.ONLINE_WORDS_URL);
         String charset = settingsManager.getProperty(PluginSettings.ONLINE_WORDS_ENCODING);
-        List<String> lines = new AdvancedList<>();
+        List<String> lines = new ArrayList<>();
         URI uri = URI.create(link);
         try {
             URL url = uri.toURL();

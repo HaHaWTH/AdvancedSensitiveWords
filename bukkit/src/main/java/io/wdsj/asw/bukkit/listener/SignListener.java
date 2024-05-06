@@ -4,7 +4,6 @@ import com.github.houbb.heaven.util.lang.StringUtil;
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 import io.wdsj.asw.bukkit.event.ASWFilterEvent;
 import io.wdsj.asw.bukkit.event.EventType;
-import io.wdsj.asw.bukkit.impl.list.AdvancedList;
 import io.wdsj.asw.bukkit.manage.notice.Notifier;
 import io.wdsj.asw.bukkit.manage.permission.Permissions;
 import io.wdsj.asw.bukkit.manage.punish.Punishment;
@@ -21,6 +20,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.*;
@@ -29,7 +29,7 @@ import static io.wdsj.asw.bukkit.util.Utils.messagesFilteredNum;
 
 public class SignListener implements Listener {
     private String outMessage = "";
-    private List<String> outList = new AdvancedList<>();
+    private List<String> outList = new ArrayList<>();
     private String outProcessedMessage = "";
 
 
@@ -41,7 +41,7 @@ public class SignListener implements Listener {
         if (player.hasPermission(Permissions.BYPASS)) return;
         boolean shouldSendMessage = false;
         long startTime = System.currentTimeMillis();
-        List<Integer> indexList = new AdvancedList<>();
+        List<Integer> indexList = new ArrayList<>();
         StringBuilder originalMultiMessages = new StringBuilder();
         for (int line = 0; line < 4; ++line) {
             String originalMessage = event.getLine(line);
