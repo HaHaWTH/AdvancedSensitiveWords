@@ -13,6 +13,7 @@ import static io.wdsj.asw.bukkit.util.Utils.messagesFilteredNum;
 public class ASWExpansion extends PlaceholderExpansion {
     private long databaseCachedTotal = 0L;
     private long databaseTotalLastRequestTime = System.currentTimeMillis();
+    private final AdvancedSensitiveWords plugin = AdvancedSensitiveWords.getInstance();
     @Override
     public @NotNull String getIdentifier() {
         return "asw";
@@ -25,7 +26,7 @@ public class ASWExpansion extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getVersion() {
-        return AdvancedSensitiveWords.getInstance().getDescription().getVersion();
+        return plugin.getDescription().getVersion();
     }
 
     @Override
