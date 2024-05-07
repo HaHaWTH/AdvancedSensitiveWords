@@ -99,9 +99,6 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     public void onEnable() {
         LOGGER.info("Initializing DFA dict...");
         long startTime = System.currentTimeMillis();
-        if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
-            databaseManager.setupDataSource();
-        }
         cleanStatisticCache();
         scheduler = UniversalScheduler.getScheduler(this);
         doInitTasks();
