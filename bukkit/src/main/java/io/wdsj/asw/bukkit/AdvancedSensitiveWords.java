@@ -184,6 +184,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         AtomicReference<IWordDeny> wD = new AtomicReference<>();
         isInitialized = false;
         sensitiveWordBs = null;
+        databaseManager.closeDataSource();
         if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE) &&
                 (databaseManager.getDataSource() == null || databaseManager.getDataSource().isClosed())) {
             databaseManager.setupDataSource();

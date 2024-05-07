@@ -60,6 +60,9 @@ public class DatabaseManager {
                     "player_name VARCHAR(255) PRIMARY KEY, " +
                     "violations BIGINT DEFAULT 0)";
             stmt.execute(createTableSQL);
+            String createIndexSQL = "CREATE INDEX IF NOT EXISTS" +
+                    " idx_player_name ON AdvancedSensitiveWords(player_name)";
+            stmt.execute(createIndexSQL);
         } catch (SQLException e) {
             throw new RuntimeException("Failed to initialize database", e);
         }
@@ -123,11 +126,14 @@ public class DatabaseManager {
                 try (PreparedStatement updateStmt = conn.prepareStatement(update)) {
                     updateStmt.setString(1, loweredPlayerName);
                     updateStmt.executeUpdate();
+                    String updatedVl = String.valueOf(rs.getLong("violations") + 1);
+                    dbReadCache.put(loweredPlayerName, updatedVl);
                 }
             } else {
                 try (PreparedStatement insertStmt = conn.prepareStatement(insert)) {
                     insertStmt.setString(1, loweredPlayerName);
                     insertStmt.executeUpdate();
+                    dbReadCache.put(loweredPlayerName, "1");
                 }
             }
             rs.close();
