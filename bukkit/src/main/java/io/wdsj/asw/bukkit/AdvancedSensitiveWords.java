@@ -87,7 +87,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
                 .useDefaultMigrationService()
                 .create();
         databaseManager = new DatabaseManager();
-        if (!checkProtocolLib() ||
+        if (!canUsePE() ||
                 settingsManager.getProperty(PluginSettings.DETECTION_MODE).equalsIgnoreCase("event")) return;
         USE_PE = true;
         PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
@@ -122,7 +122,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         int pluginId = 20661;
         Metrics metrics = new Metrics(this, pluginId);
         metrics.addCustomChart(new SimplePie("default_list", () -> String.valueOf(settingsManager.getProperty(PluginSettings.ENABLE_DEFAULT_WORDS))));
-        metrics.addCustomChart(new SimplePie("mode", () -> settingsManager.getProperty(PluginSettings.DETECTION_MODE).equalsIgnoreCase("event") ? "Event" : checkProtocolLib() ? "Fast" : "Compatibility"));
+        metrics.addCustomChart(new SimplePie("mode", () -> settingsManager.getProperty(PluginSettings.DETECTION_MODE).equalsIgnoreCase("event") ? "Event" : canUsePE() ? "Fast" : "Compatibility"));
         metrics.addCustomChart(new SimplePie("java_vendor", TimingUtils::getJvmVendor));
         getServer().getPluginManager().registerEvents(new ShadowListener(), this);
         if (settingsManager.getProperty(PluginSettings.ENABLE_SIGN_EDIT_CHECK)) {

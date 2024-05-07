@@ -72,9 +72,9 @@ public class Utils {
 
     }
 
-    public static boolean checkProtocolLib() {
+    public static boolean canUsePE() {
         Plugin protocolLib = Bukkit.getPluginManager().getPlugin("ProtocolLib");
-        if (protocolLib != null) {
+        if (protocolLib != null && protocolLib.isEnabled()) {
             // ProtocolLib is loaded
             try {
                 return StringUtil.toInt(String.valueOf(protocolLib.getDescription().getVersion().charAt(0))) >= 5;
