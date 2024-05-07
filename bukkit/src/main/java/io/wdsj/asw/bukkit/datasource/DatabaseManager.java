@@ -21,9 +21,9 @@ import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
 
 public class DatabaseManager {
 
-    private static final ThreadFactory threadFactory = VTUtils.getVTThreadFactoryOrProvided(new ThreadFactoryBuilder().setDaemon(true).build());
+    private final ThreadFactory threadFactory = VTUtils.getVTThreadFactoryOrProvided(new ThreadFactoryBuilder().setDaemon(true).build());
     private final File dbFile = new File(AdvancedSensitiveWords.getInstance().getDataFolder(), settingsManager.getProperty(PluginSettings.DATABASE_NAME));
-    private static final Cache<String, String> dbReadCache = CacheBuilder.newBuilder()
+    private final Cache<String, String> dbReadCache = CacheBuilder.newBuilder()
             .expireAfterWrite(settingsManager.getProperty(PluginSettings.DATABASE_CACHE_TIME), TimeUnit.SECONDS)
             .build();
 
