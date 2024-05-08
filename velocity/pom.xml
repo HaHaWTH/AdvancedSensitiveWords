@@ -10,7 +10,7 @@
     <parent>
         <groupId>io.wdsj</groupId>
         <artifactId>AdvancedSensitiveWords</artifactId>
-        <version>Crystal</version>
+        <version>Reflex</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
