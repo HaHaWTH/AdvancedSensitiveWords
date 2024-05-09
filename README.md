@@ -47,6 +47,7 @@ Logo designed by GPT-4
 21. OP notifications on player swore
 22. Custom punishments (Effect, command, hostile, etc.)
 23. Fake message support (Inspired by [Bilibili Avalon System](https://github.com/freedom-introvert/Research-on-Avalon-System-in-Bilibili-Comment-Area))
+24. PlaceHolder API expansion support
 
 **Features above make us unique in the anti-swear plugins!**
 
@@ -59,6 +60,8 @@ Logo designed by GPT-4
 `/asw status` - Show the status of the AdvancedSensitiveWords
 
 `/asw test <text>` - Test the AdvancedSensitiveWords filter with given text
+
+`/asw info <player>` - Check total violations of specific player from database
 
 ## Permissions
 
@@ -73,6 +76,8 @@ Logo designed by GPT-4
 `advancedsensitivewords.help` - Allows you to use the /asw help command
 
 `advancedsensitivewords.notice` - Retrieve the notification when players swore
+
+`advancedsensitivewords.info` - Ability to use /asw info command
 
 **For more info, please visit [our Wiki](https://github.com/HaHaWTH/AdvancedSensitiveWords/wiki)**
 
