@@ -35,7 +35,7 @@ public class ProtocolLibListener {
             public void onPacketReceiving(@NotNull com.comphenix.protocol.events.PacketEvent event) {
                 if (isInitialized) {
                     Player player = event.getPlayer();
-                    assert player != null; // In some cases, player maybe null
+                    assert player != null; // In some cases, player may be null
                     String message = settingsManager.getProperty(PluginSettings.PRE_PROCESS) ? event.getPacket().getStrings().read(0).replaceAll(getPreProcessRegex(), "") : event.getPacket().getStrings().read(0);
                     if (isCommandAndWhiteListed(message) || player.hasPermission(Permissions.BYPASS))
                         return;

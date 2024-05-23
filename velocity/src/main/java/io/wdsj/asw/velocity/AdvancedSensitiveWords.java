@@ -49,11 +49,12 @@ public class AdvancedSensitiveWords {
             byte[] message = event.getData();
             server.getAllServers().forEach(server -> {
                 conn.ifPresent(source -> {
-                    if (!server.getServerInfo().equals(source.getServerInfo()) && server.getPlayersConnected().size() > 0) {
+                    if (!server.getServerInfo().equals(source.getServerInfo()) && !server.getPlayersConnected().isEmpty()) {
                         ByteArrayDataOutput out = ByteStreams.newDataOutput();
                         out.write(message);
                         out.writeUTF(source.getServerInfo().getName());
                         server.sendPluginMessage(CHANNEL, out.toByteArray());
+                        server.sendPluginMessage(LEGACY_CHANNEL, out.toByteArray());
                         logger.debug("Send message to " + server.getServerInfo().getName());
                     }
                 });
@@ -66,11 +67,12 @@ public class AdvancedSensitiveWords {
             byte[] message = event.getData();
             server.getAllServers().forEach(server -> {
                 conn.ifPresent(source -> {
-                    if (!server.getServerInfo().equals(source.getServerInfo()) && server.getPlayersConnected().size() > 0) {
+                    if (!server.getServerInfo().equals(source.getServerInfo()) && !server.getPlayersConnected().isEmpty()) {
                         ByteArrayDataOutput out = ByteStreams.newDataOutput();
                         out.write(message);
                         out.writeUTF(source.getServerInfo().getName());
                         server.sendPluginMessage(LEGACY_CHANNEL, out.toByteArray());
+                        server.sendPluginMessage(CHANNEL, out.toByteArray());
                         logger.debug("Send message to " + server.getServerInfo().getName());
                     }
                 });
