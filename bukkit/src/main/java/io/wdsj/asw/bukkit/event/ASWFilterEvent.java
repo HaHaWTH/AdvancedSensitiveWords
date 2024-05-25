@@ -14,6 +14,7 @@ import java.util.List;
  * @since Flare
  * @version Railgun
  */
+@SuppressWarnings("unused")
 public class ASWFilterEvent extends Event {
     private final Player player;
     private final String originalMessage;
