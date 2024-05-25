@@ -37,7 +37,12 @@ public class Utils {
             return false;
         }
     }
-
+    public static boolean isAnyClassLoaded(String... classNames) {
+        for (String className : classNames) {
+            if (isClassLoaded(className)) return true;
+        }
+        return false;
+    }
 
     public static void logViolation(String playerName, String violationReason) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd-HH:mm:ss");
