@@ -2,16 +2,10 @@ package io.wdsj.asw.bukkit.util;
 
 import org.bukkit.entity.Player;
 
+import static io.wdsj.asw.bukkit.util.Utils.isClassLoaded;
+
 public class PlayerUtils {
-    private static boolean isLeavesServer;
-    static {
-        try {
-            Class.forName("top.leavesmc.leaves.LeavesConfig");
-            isLeavesServer = true;
-        } catch (ClassNotFoundException e) {
-            isLeavesServer = false;
-        }
-    }
+    private static final boolean isLeavesServer = isClassLoaded("top.leavesmc.leaves.LeavesConfig") || isClassLoaded("org.leavesmc.leaves.LeavesConfig");
 
     public static boolean isNpc(Player player) {
         if (isLeavesServer) {
