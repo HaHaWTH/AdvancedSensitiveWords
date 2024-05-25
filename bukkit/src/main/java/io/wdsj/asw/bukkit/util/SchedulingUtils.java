@@ -1,6 +1,7 @@
 package io.wdsj.asw.bukkit.util;
 
 
+import com.github.Anon8281.universalScheduler.UniversalScheduler;
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -8,7 +9,7 @@ import org.bukkit.entity.Entity;
 public class SchedulingUtils {
     private SchedulingUtils() {
     }
-    private static final boolean isFolia = Utils.isClassLoaded("io.papermc.paper.threadedregions.RegionizedServer");
+    private static final boolean isFolia = UniversalScheduler.isFolia;
 
     public static void runSyncIfFolia(Runnable runnable) {
         if (isFolia) {

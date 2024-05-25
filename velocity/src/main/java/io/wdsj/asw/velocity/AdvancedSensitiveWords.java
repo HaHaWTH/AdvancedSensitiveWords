@@ -43,7 +43,7 @@ public class AdvancedSensitiveWords {
 
     @Subscribe
     public void onPluginMessage(PluginMessageEvent event) {
-        if (event.getIdentifier().equals(CHANNEL)) {
+        if (event.getIdentifier().equals(CHANNEL) || event.getIdentifier().equals(LEGACY_CHANNEL)) {
             if (!(event.getSource() instanceof ServerConnection)) return;
             Optional<ServerConnection> conn = ((ServerConnection) event.getSource()).getPlayer().getCurrentServer();
             byte[] message = event.getData();
@@ -55,24 +55,6 @@ public class AdvancedSensitiveWords {
                         out.writeUTF(source.getServerInfo().getName());
                         server.sendPluginMessage(CHANNEL, out.toByteArray());
                         server.sendPluginMessage(LEGACY_CHANNEL, out.toByteArray());
-                        logger.debug("Send message to " + server.getServerInfo().getName());
-                    }
-                });
-            });
-            return;
-        }
-        if (event.getIdentifier().equals(LEGACY_CHANNEL)) {
-            if (!(event.getSource() instanceof ServerConnection)) return;
-            Optional<ServerConnection> conn = ((ServerConnection) event.getSource()).getPlayer().getCurrentServer();
-            byte[] message = event.getData();
-            server.getAllServers().forEach(server -> {
-                conn.ifPresent(source -> {
-                    if (!server.getServerInfo().equals(source.getServerInfo()) && !server.getPlayersConnected().isEmpty()) {
-                        ByteArrayDataOutput out = ByteStreams.newDataOutput();
-                        out.write(message);
-                        out.writeUTF(source.getServerInfo().getName());
-                        server.sendPluginMessage(LEGACY_CHANNEL, out.toByteArray());
-                        server.sendPluginMessage(CHANNEL, out.toByteArray());
                         logger.debug("Send message to " + server.getServerInfo().getName());
                     }
                 });
