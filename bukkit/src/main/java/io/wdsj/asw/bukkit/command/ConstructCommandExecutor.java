@@ -34,7 +34,7 @@ public class ConstructCommandExecutor implements CommandExecutor {
                 File msgFile = new File(getInstance().getDataFolder(), "messages_" + settingsManager.getProperty(PluginSettings.PLUGIN_LANGUAGE) +
                         ".yml");
                 if (!msgFile.exists()) {
-                    getInstance().saveResource("messages_" + settingsManager.getProperty(PluginSettings.PLUGIN_LANGUAGE) + ".yml", false);
+                    getInstance().saveResource("messages_" + settingsManager.getProperty(PluginSettings.PLUGIN_LANGUAGE) + ".yml", true);
                 }
                 messagesManager.reload();
                 sensitiveWordBs.destroy();
@@ -49,7 +49,7 @@ public class ConstructCommandExecutor implements CommandExecutor {
                 return true;
             }
             if (args[0].equalsIgnoreCase("status") && (sender.hasPermission(Permissions.STATUS) || sender instanceof ConsoleCommandSender)) {
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_STATUS).replace("%num%", "&a" + messagesFilteredNum.get()).replace("%mode%", settingsManager.getProperty(PluginSettings.DETECTION_MODE).equalsIgnoreCase("event") ? "&aEvent" : canUsePE() ? "&aFast" : "&cCompatibility")).replace("%init%", isInitialized ? "&atrue" : "&cfalse").replace("%ms%", getProcessAverage() >= 120 ? getProcessAverage() >= 300 ? "&c" + getProcessAverage() + "ms" : "&e" + getProcessAverage() + "ms" : "&a" + getProcessAverage() + "ms").replace("%version%", AdvancedSensitiveWords.getInstance().getDescription().getVersion()).replace("%mc_version%", getMinecraftVersion()).replace("%platform%", OsUtil.isWindows() ? "Windows" : (OsUtil.isMac() ? "Mac" : isUnix() ? "Linux" : "Unknown")).replace("%bit%", is64() ? "64bit" : "32bit").replace("%java_version%", getJvmVersion()).replace("%java_vendor%", getJvmVendor()).replace("%api_status%", settingsManager.getProperty(PluginSettings.ENABLE_API) ? "&aenabled" : "&cdisabled"));
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_STATUS).replace("%num%", String.valueOf(messagesFilteredNum.get())).replace("%mode%", settingsManager.getProperty(PluginSettings.DETECTION_MODE).equalsIgnoreCase("event") ? "Event" : canUsePE() ? "Fast" : "Compatibility")).replace("%init%", isInitialized ? "true" : "false").replace("%ms%", getProcessAverage() + "ms").replace("%version%", AdvancedSensitiveWords.getInstance().getDescription().getVersion()).replace("%mc_version%", getMinecraftVersion()).replace("%platform%", OsUtil.isWindows() ? "Windows" : (OsUtil.isMac() ? "Mac" : isUnix() ? "Linux" : "Unknown")).replace("%bit%", is64() ? "64bit" : "32bit").replace("%java_version%", getJvmVersion()).replace("%java_vendor%", getJvmVendor()).replace("%api_status%", settingsManager.getProperty(PluginSettings.ENABLE_API) ? "enabled" : "disabled"));
                 return true;
             }
             if (args[0].equalsIgnoreCase("status")) {
