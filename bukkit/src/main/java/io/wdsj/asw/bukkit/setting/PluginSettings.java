@@ -180,6 +180,10 @@ public class PluginSettings implements SettingsHolder {
             "Whether to enable sensitive English word checks"})
     public static final Property<Boolean> ENABLE_WORD_CHECK = newProperty("Plugin.enableWordCheck", true);
 
+    @Comment({"启用IPv4地址检测",
+            "Whether to enable IPv4 address check"})
+    public static final Property<Boolean> ENABLE_IP_CHECK = newProperty("Plugin.enableIpCheck", false);
+
     @Comment({"自定义敏感词列表",
             "Custom sensitive word list"})
     public static final Property<List<String>> BLACK_LIST = newListProperty("Plugin.blackList", "失业");
