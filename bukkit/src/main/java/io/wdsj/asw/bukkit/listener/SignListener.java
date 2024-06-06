@@ -98,11 +98,11 @@ public class SignListener implements Listener {
         }
 
         if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY) && shouldSendMessage) {
-            VelocitySender.send(player, EventType.SIGN, outMessage);
+            VelocitySender.send(player, EventType.SIGN, outMessage, outList);
         }
 
         if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
-            BungeeSender.send(player, EventType.SIGN, outMessage);
+            BungeeSender.send(player, EventType.SIGN, outMessage, outList);
         }
 
         if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
@@ -113,7 +113,7 @@ public class SignListener implements Listener {
             messagesFilteredNum.getAndIncrement();
             long endTime = System.currentTimeMillis();
             addProcessStatistic(endTime, startTime);
-            if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.SIGN, outMessage);
+            if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.SIGN, outMessage, outList);
             if (settingsManager.getProperty(PluginSettings.SIGN_PUNISH)) Punishment.punish(player);
         }
     }

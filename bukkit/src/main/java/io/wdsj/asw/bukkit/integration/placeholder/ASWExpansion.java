@@ -1,4 +1,4 @@
-package io.wdsj.asw.bukkit.manage.placeholder;
+package io.wdsj.asw.bukkit.integration.placeholder;
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 import io.wdsj.asw.bukkit.setting.PluginSettings;

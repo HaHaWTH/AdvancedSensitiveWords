@@ -71,11 +71,11 @@ public class AnvilListener implements Listener {
                             }
 
                             if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
-                                VelocitySender.send(player, EventType.ANVIL, originalItemName);
+                                VelocitySender.send(player, EventType.ANVIL, originalItemName, censoredWords);
                             }
 
                             if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
-                                BungeeSender.send(player, EventType.ANVIL, originalItemName);
+                                BungeeSender.send(player, EventType.ANVIL, originalItemName, censoredWords);
                             }
 
                             if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
@@ -84,7 +84,7 @@ public class AnvilListener implements Listener {
 
                             long endTime = System.currentTimeMillis();
                             addProcessStatistic(endTime, startTime);
-                            if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.ANVIL, originalItemName);
+                            if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.ANVIL, originalItemName, censoredWords);
                             if (settingsManager.getProperty(PluginSettings.ANVIL_PUNISH)) Punishment.punish(player);
                         }
                     }

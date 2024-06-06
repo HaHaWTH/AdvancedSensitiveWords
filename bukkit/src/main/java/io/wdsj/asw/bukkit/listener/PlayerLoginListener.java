@@ -59,17 +59,17 @@ public class PlayerLoginListener implements Listener {
                 Bukkit.getPluginManager().callEvent(new ASWFilterEvent(player, playerName, processedPlayerName, censoredWordList, EventType.NAME, false));
             }
             if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
-                VelocitySender.send(player, EventType.NAME, playerName);
+                VelocitySender.send(player, EventType.NAME, playerName, censoredWordList);
             }
             if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
-                BungeeSender.send(player, EventType.NAME, playerName);
+                BungeeSender.send(player, EventType.NAME, playerName, censoredWordList);
             }
             if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
                 databaseManager.checkAndUpdatePlayer(playerName);
             }
             long endTime = System.currentTimeMillis();
             addProcessStatistic(endTime, startTime);
-            if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.NAME, playerName);
+            if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.NAME, playerName, censoredWordList);
             if (settingsManager.getProperty(PluginSettings.NAME_PUNISH)) Punishment.punish(player);
         }
     }

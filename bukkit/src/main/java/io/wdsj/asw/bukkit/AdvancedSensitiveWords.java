@@ -19,7 +19,7 @@ import io.wdsj.asw.bukkit.datasource.DatabaseManager;
 import io.wdsj.asw.bukkit.listener.*;
 import io.wdsj.asw.bukkit.listener.packet.ASWPacketListener;
 import io.wdsj.asw.bukkit.listener.packet.ProtocolLibListener;
-import io.wdsj.asw.bukkit.manage.placeholder.ASWExpansion;
+import io.wdsj.asw.bukkit.integration.placeholder.ASWExpansion;
 import io.wdsj.asw.bukkit.manage.punish.PlayerShadowController;
 import io.wdsj.asw.bukkit.method.*;
 import io.wdsj.asw.bukkit.proxy.bungee.BungeeCordChannel;

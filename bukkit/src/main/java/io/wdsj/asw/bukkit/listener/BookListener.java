@@ -115,17 +115,17 @@ public class BookListener implements Listener {
                 Bukkit.getPluginManager().callEvent(new ASWFilterEvent(player, outMessage, processedOutMessage, outList, EventType.BOOK, false));
             }
             if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
-                VelocitySender.send(player, EventType.BOOK, outMessage);
+                VelocitySender.send(player, EventType.BOOK, outMessage, outList);
             }
             if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
-                BungeeSender.send(player, EventType.BOOK, outMessage);
+                BungeeSender.send(player, EventType.BOOK, outMessage, outList);
             }
             if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
                 databaseManager.checkAndUpdatePlayer(player.getName());
             }
             long endTime = System.currentTimeMillis();
             addProcessStatistic(endTime, startTime);
-            if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.BOOK, outMessage);
+            if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.BOOK, outMessage, outList);
             if (settingsManager.getProperty(PluginSettings.BOOK_PUNISH)) Punishment.punish(player);
         }
 

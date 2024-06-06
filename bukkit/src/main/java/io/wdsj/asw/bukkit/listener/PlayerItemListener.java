@@ -61,17 +61,17 @@ public class PlayerItemListener implements Listener {
                         Bukkit.getPluginManager().callEvent(new ASWFilterEvent(player, originalName, processedName, censoredWordList, EventType.ITEM, false));
                     }
                     if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
-                        BungeeSender.send(player, EventType.ITEM, originalName);
+                        BungeeSender.send(player, EventType.ITEM, originalName, censoredWordList);
                     }
                     if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
-                        VelocitySender.send(player, EventType.ITEM, originalName);
+                        VelocitySender.send(player, EventType.ITEM, originalName, censoredWordList);
                     }
                     if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
                         databaseManager.checkAndUpdatePlayer(player.getName());
                     }
                     long endTime = System.currentTimeMillis();
                     TimingUtils.addProcessStatistic(endTime, startTime);
-                    if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.ITEM, originalName);
+                    if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.ITEM, originalName, censoredWordList);
                     if (settingsManager.getProperty(PluginSettings.ITEM_PUNISH)) Punishment.punish(player);
                 }
             }
@@ -110,17 +110,17 @@ public class PlayerItemListener implements Listener {
                         Bukkit.getPluginManager().callEvent(new ASWFilterEvent(player, originalName, processedName, censoredWordList, EventType.ITEM, false));
                     }
                     if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
-                        VelocitySender.send(player, EventType.ITEM, originalName);
+                        VelocitySender.send(player, EventType.ITEM, originalName, censoredWordList);
                     }
                     if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
-                        BungeeSender.send(player, EventType.ITEM, originalName);
+                        BungeeSender.send(player, EventType.ITEM, originalName, censoredWordList);
                     }
                     if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
                         databaseManager.checkAndUpdatePlayer(player.getName());
                     }
                     long endTime = System.currentTimeMillis();
                     TimingUtils.addProcessStatistic(endTime, startTime);
-                    if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.ITEM, originalName);
+                    if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.ITEM, originalName, censoredWordList);
                     if (settingsManager.getProperty(PluginSettings.ITEM_PUNISH)) Punishment.punish(player);
                 }
             }

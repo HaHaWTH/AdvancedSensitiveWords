@@ -77,10 +77,10 @@ public class ProtocolLibListener {
                             Utils.logViolation(player.getName() + "(IP: " + getPlayerIp(player) + ")(Chat)", message + censoredWords);
                         }
                         if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
-                            VelocitySender.send(player, EventType.CHAT, message);
+                            VelocitySender.send(player, EventType.CHAT, message, censoredWords);
                         }
                         if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
-                            BungeeSender.send(player, EventType.CHAT, message);
+                            BungeeSender.send(player, EventType.CHAT, message, censoredWords);
                         }
                         if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
                             databaseManager.checkAndUpdatePlayer(player.getName());
@@ -88,7 +88,7 @@ public class ProtocolLibListener {
                         long endTime = System.currentTimeMillis();
                         addProcessStatistic(endTime, startTime);
                         getScheduler().runTask(()-> {
-                            if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.CHAT, message);
+                            if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.CHAT, message, censoredWords);
                             if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) Punishment.punish(player);
                         });
                         return;
@@ -116,10 +116,10 @@ public class ProtocolLibListener {
                                 Utils.logViolation(player.getName() + "(IP: " + getPlayerIp(player) + ")(Chat)(Context)", originalContext + censoredContextList);
                             }
                             if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
-                                VelocitySender.send(player, EventType.CHAT, originalContext);
+                                VelocitySender.send(player, EventType.CHAT, originalContext, censoredContextList);
                             }
                             if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
-                                BungeeSender.send(player, EventType.CHAT, originalContext);
+                                BungeeSender.send(player, EventType.CHAT, originalContext, censoredContextList);
                             }
                             if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
                                 databaseManager.checkAndUpdatePlayer(player.getName());
@@ -127,7 +127,7 @@ public class ProtocolLibListener {
                             long endTime = System.currentTimeMillis();
                             addProcessStatistic(endTime, startTime);
                             getScheduler().runTask(()-> {
-                                if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.CHAT, originalContext);
+                                if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.CHAT, originalContext, censoredContextList);
                                 if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) Punishment.punish(player);
                             });
                         }

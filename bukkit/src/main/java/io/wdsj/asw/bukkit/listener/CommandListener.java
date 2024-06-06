@@ -55,17 +55,17 @@ public class CommandListener implements Listener {
                 Utils.logViolation(player.getName() + "(IP: " + getPlayerIp(player) + ")(Chat)", originalCommand + censoredWordList);
             }
             if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
-                VelocitySender.send(player, EventType.CHAT, originalCommand);
+                VelocitySender.send(player, EventType.CHAT, originalCommand, censoredWordList);
             }
             if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
-                BungeeSender.send(player, EventType.CHAT, originalCommand);
+                BungeeSender.send(player, EventType.CHAT, originalCommand, censoredWordList);
             }
             if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
                 databaseManager.checkAndUpdatePlayer(player.getName());
             }
             long endTime = System.currentTimeMillis();
             TimingUtils.addProcessStatistic(endTime, startTime);
-            if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.CHAT, originalCommand);
+            if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.CHAT, originalCommand, censoredWordList);
             if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) Punishment.punish(player);
 
         }

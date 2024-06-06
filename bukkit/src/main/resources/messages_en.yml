@@ -45,7 +45,7 @@ Plugin:
     &7 Initialization: %init%
     &7 API status: %api_status%
     &7 Current mode: %mode%
-    &7 Number of filtered messages: &a%num%
+    &7 Number of filtered messages: %num%
     &7 Average time spent on nearly 20 processes: %ms%
   #Test command
   commandTest:
@@ -65,7 +65,7 @@ Plugin:
   #Not enough parameters
   argsNotEnough: '&cInsufficient parameters, please use &7/asw help'
   #Admin notice
-  noticeOperator: '&f[&bASW&7Notify&f]&7Player &c%player% &7failed anti-swear check(%type%)(Message: %message%)'
+  noticeOperator: '&f[&bASW&7Notify&f]&7Player &c%player% &7failed anti-swear check(%type%)(Message: %message%)List: %censored_list%'
   database:
     #Player info
     playerInfo: |-
