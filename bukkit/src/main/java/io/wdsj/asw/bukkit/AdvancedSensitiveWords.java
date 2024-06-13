@@ -112,18 +112,10 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
                 PacketEvents.getAPI().init();
             } else {
                 LOGGER.warning("Cannot use packetevents, using event mode instead.");
-                getServer().getPluginManager().registerEvents(new ChatListener(), this);
-                getServer().getPluginManager().registerEvents(new CommandListener(), this);
-                if (settingsManager.getProperty(PluginSettings.ENABLE_BOOK_EDIT_CHECK)) {
-                    getServer().getPluginManager().registerEvents(new BookListener(), this);
-                }
+                registerEventBasedListener();
             }
         } else {
-            getServer().getPluginManager().registerEvents(new ChatListener(), this);
-            getServer().getPluginManager().registerEvents(new CommandListener(), this);
-            if (settingsManager.getProperty(PluginSettings.ENABLE_BOOK_EDIT_CHECK)) {
-                getServer().getPluginManager().registerEvents(new BookListener(), this);
-            }
+            registerEventBasedListener();
         }
         Objects.requireNonNull(getCommand("advancedsensitivewords")).setExecutor(new ConstructCommandExecutor());
         Objects.requireNonNull(getCommand("asw")).setExecutor(new ConstructCommandExecutor());
@@ -232,5 +224,13 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         Objects.requireNonNull(getCommand("asw")).setTabCompleter(null);
         databaseManager.closeDataSource();
         LOGGER.info("AdvancedSensitiveWords is disabled!");
+    }
+
+    private void registerEventBasedListener() {
+        getServer().getPluginManager().registerEvents(new ChatListener(), this);
+        getServer().getPluginManager().registerEvents(new CommandListener(), this);
+        if (settingsManager.getProperty(PluginSettings.ENABLE_BOOK_EDIT_CHECK)) {
+            getServer().getPluginManager().registerEvents(new BookListener(), this);
+        }
     }
 }
