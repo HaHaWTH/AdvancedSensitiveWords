@@ -76,9 +76,10 @@ public class Utils {
         }
 
     }
-
     public static boolean canUsePE() {
         Plugin protocolLib = Bukkit.getPluginManager().getPlugin("ProtocolLib");
+        Plugin packetevents = Bukkit.getPluginManager().getPlugin("packetevents");
+        if (packetevents == null) return false;
         if (protocolLib != null && protocolLib.isEnabled()) {
             // ProtocolLib is loaded
             try {

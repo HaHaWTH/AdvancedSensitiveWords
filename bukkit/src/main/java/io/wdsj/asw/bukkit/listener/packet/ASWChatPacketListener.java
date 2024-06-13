@@ -35,8 +35,8 @@ import static io.wdsj.asw.bukkit.util.Utils.*;
  * @author HaHaWTH & HeyWTF_IS_That and 0D00_0721
  * Made with ❤
  */
-public class ASWPacketListener extends PacketListenerAbstract {
-    public ASWPacketListener() {
+public class ASWChatPacketListener extends PacketListenerAbstract {
+    public ASWChatPacketListener() {
         super(PacketListenerPriority.LOW);
     }
 
@@ -89,8 +89,8 @@ public class ASWPacketListener extends PacketListenerAbstract {
                 }
                 long endTime = System.currentTimeMillis();
                 addProcessStatistic(endTime, startTime);
-                getScheduler().runTask(()-> {
-                    if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.CHAT, originalMessage, censoredWords);
+                if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.CHAT, originalMessage, censoredWords);
+                getScheduler().runTask(() -> {
                     if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) Punishment.punish(player);
                 });
                 return;
@@ -173,8 +173,8 @@ public class ASWPacketListener extends PacketListenerAbstract {
                 }
                 long endTime = System.currentTimeMillis();
                 addProcessStatistic(endTime, startTime);
+                if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.CHAT, originalCommand, censoredWords);
                 getScheduler().runTask(()-> {
-                    if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.CHAT, originalCommand, censoredWords);
                     if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) Punishment.punish(player);
                 });
             }

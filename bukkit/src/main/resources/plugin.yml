@@ -10,11 +10,7 @@ authors:
 description: Ultimate AntiSwear plugin for Minecraft
 softdepend:
   - ProtocolLib
-  - ProtocolSupport
-  - ViaVersion
-  - ViaBackwards
-  - ViaRewind
-  - Geyser-Spigot
+  - packetevents
   - floodgate
   - PlaceholderAPI
   - AuthMe

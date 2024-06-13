@@ -86,6 +86,18 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.4.1</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <paperweight-mappings-namespace>mojang</paperweight-mappings-namespace>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.6.0</version>
                 <executions>
@@ -99,10 +111,6 @@
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <relocations>
                                 <relocation>
-                                    <pattern>com.github.retrooper.packetevents</pattern>
-                                    <shadedPattern>io.wdsj.asw.bukkit.libs.packetevents.impl</shadedPattern>
-                                </relocation>
-                                <relocation>
                                     <pattern>com.github.houbb</pattern>
                                     <shadedPattern>io.wdsj.asw.bukkit.libs.lib</shadedPattern>
                                 </relocation>
@@ -111,20 +119,12 @@
                                     <shadedPattern>io.wdsj.asw.bukkit.libs.java.util.internal</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>io.github.retrooper.packetevents</pattern>
-                                    <shadedPattern>io.wdsj.asw.bukkit.libs.packetevents.api</shadedPattern>
-                                </relocation>
-                                <relocation>
                                     <pattern>com.github.Anon8281.universalScheduler</pattern>
                                     <shadedPattern>io.wdsj.asw.bukkit.libs.universalScheduler</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.bstats</pattern>
                                     <shadedPattern>io.wdsj.asw.bukkit.libs.bstats</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>net.kyori</pattern>
-                                    <shadedPattern>io.wdsj.asw.bukkit.libs.packetevents.kyori</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.jetbrains.annotations</pattern>
@@ -244,29 +244,7 @@
             <groupId>com.github.retrooper</groupId>
             <artifactId>packetevents-spigot</artifactId>
             <version>2.3.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <!-- ProtocolLib, don't update to 5.0+, because we only need it for 4.x and older compatibility -->
-        <dependency>
-            <groupId>com.comphenix.protocol</groupId>
-            <artifactId>ProtocolLib</artifactId>
-            <version>4.8.0</version>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>cglib-nodep</artifactId>
-                    <groupId>cglib</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>BukkitExecutors</artifactId>
-                    <groupId>com.comphenix.executors</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>byte-buddy</artifactId>
-                    <groupId>net.bytebuddy</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- Folia supported schedulers -->
@@ -315,6 +293,12 @@
             <artifactId>HikariCP</artifactId>
             <version>4.0.3</version>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- JDBC drivers -->

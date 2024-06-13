@@ -74,8 +74,8 @@ public class ChatListener implements Listener {
             }
             long endTime = System.currentTimeMillis();
             TimingUtils.addProcessStatistic(endTime, startTime);
-            getScheduler().runTask(()-> {
-                if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.CHAT, originalMessage, censoredWordList);
+            if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.CHAT, originalMessage, censoredWordList);
+            getScheduler().runTask(() -> {
                 if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) Punishment.punish(player);
             });
             return;
@@ -116,8 +116,8 @@ public class ChatListener implements Listener {
                 }
                 long endTime = System.currentTimeMillis();
                 addProcessStatistic(endTime, startTime);
+                if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.CHAT, originalContext, censoredContextList);
                 getScheduler().runTask(()-> {
-                    if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.CHAT, originalContext, censoredContextList);
                     if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) Punishment.punish(player);
                 });
             }

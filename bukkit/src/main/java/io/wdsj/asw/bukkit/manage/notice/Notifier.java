@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import java.util.Collection;
 import java.util.List;
 
+import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.getScheduler;
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.messagesManager;
 
 public class Notifier {
@@ -21,13 +22,15 @@ public class Notifier {
      * @param censoredList censored list
      */
     public static void notice(Player violatedPlayer, EventType eventType, String originalMessage, List<String> censoredList) {
-        Collection<? extends Player> players = Bukkit.getOnlinePlayers();
-        String message = ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.ADMIN_REMINDER).replace("%player%", violatedPlayer.getName()).replace("%type%", eventType.toString()).replace("%message%", originalMessage).replace("%censored_list%", censoredList.toString()));
-        for (Player player : players) {
-            if (player.hasPermission(Permissions.NOTICE)) {
-                player.sendMessage(message);
+        getScheduler().runTask(() -> {
+            Collection<? extends Player> players = Bukkit.getOnlinePlayers();
+            String message = ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.ADMIN_REMINDER).replace("%player%", violatedPlayer.getName()).replace("%type%", eventType.toString()).replace("%message%", originalMessage).replace("%censored_list%", censoredList.toString()));
+            for (Player player : players) {
+                if (player.hasPermission(Permissions.NOTICE)) {
+                    player.sendMessage(message);
+                }
             }
-        }
+        });
     }
 
     /**

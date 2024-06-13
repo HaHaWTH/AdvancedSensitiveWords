@@ -12,13 +12,12 @@ import com.github.houbb.sensitive.word.support.deny.WordDenys;
 import com.github.houbb.sensitive.word.support.resultcondition.WordResultConditions;
 import com.github.houbb.sensitive.word.support.tag.WordTags;
 import com.github.retrooper.packetevents.PacketEvents;
-import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import io.wdsj.asw.bukkit.command.ConstructCommandExecutor;
 import io.wdsj.asw.bukkit.command.ConstructTabCompleter;
 import io.wdsj.asw.bukkit.datasource.DatabaseManager;
 import io.wdsj.asw.bukkit.listener.*;
-import io.wdsj.asw.bukkit.listener.packet.ASWPacketListener;
-import io.wdsj.asw.bukkit.listener.packet.ProtocolLibListener;
+import io.wdsj.asw.bukkit.listener.packet.ASWBookPacketListener;
+import io.wdsj.asw.bukkit.listener.packet.ASWChatPacketListener;
 import io.wdsj.asw.bukkit.integration.placeholder.ASWExpansion;
 import io.wdsj.asw.bukkit.manage.punish.PlayerShadowController;
 import io.wdsj.asw.bukkit.method.*;
@@ -87,12 +86,10 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
                 .useDefaultMigrationService()
                 .create();
         databaseManager = new DatabaseManager();
-        if (!canUsePE() ||
-                settingsManager.getProperty(PluginSettings.DETECTION_MODE).equalsIgnoreCase("event")) return;
-        USE_PE = true;
-        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
-        PacketEvents.getAPI().getSettings().reEncodeByDefault(true).checkForUpdates(false).bStats(false);
-        PacketEvents.getAPI().load();
+        if (canUsePE() &&
+                !settingsManager.getProperty(PluginSettings.DETECTION_MODE).equalsIgnoreCase("event")) {
+            USE_PE = true;
+        }
     }
 
     @Override
@@ -106,15 +103,27 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         if (settingsManager.getProperty(PluginSettings.PURGE_LOG_FILE)) purgeLog();
         if (!settingsManager.getProperty(PluginSettings.DETECTION_MODE).equalsIgnoreCase("event")) {
             if (USE_PE) {
-                PacketEvents.getAPI().getEventManager().registerListener(new ASWPacketListener());
+                try {
+                    PacketEvents.getAPI().getEventManager().registerListener(ASWChatPacketListener.class.getConstructor().newInstance());
+                    if (settingsManager.getProperty(PluginSettings.ENABLE_BOOK_EDIT_CHECK)) {
+                        PacketEvents.getAPI().getEventManager().registerListener(ASWBookPacketListener.class.getConstructor().newInstance());
+                    }
+                } catch (Exception ignored) {}
                 PacketEvents.getAPI().init();
             } else {
-                LOGGER.info("ProtocolLib v4 or older detected, enabling compatibility mode.");
-                ProtocolLibListener.addAlternateListener();
+                LOGGER.warning("Cannot use packetevents, using event mode instead.");
+                getServer().getPluginManager().registerEvents(new ChatListener(), this);
+                getServer().getPluginManager().registerEvents(new CommandListener(), this);
+                if (settingsManager.getProperty(PluginSettings.ENABLE_BOOK_EDIT_CHECK)) {
+                    getServer().getPluginManager().registerEvents(new BookListener(), this);
+                }
             }
         } else {
             getServer().getPluginManager().registerEvents(new ChatListener(), this);
             getServer().getPluginManager().registerEvents(new CommandListener(), this);
+            if (settingsManager.getProperty(PluginSettings.ENABLE_BOOK_EDIT_CHECK)) {
+                getServer().getPluginManager().registerEvents(new BookListener(), this);
+            }
         }
         Objects.requireNonNull(getCommand("advancedsensitivewords")).setExecutor(new ConstructCommandExecutor());
         Objects.requireNonNull(getCommand("asw")).setExecutor(new ConstructCommandExecutor());
@@ -123,7 +132,6 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         int pluginId = 20661;
         Metrics metrics = new Metrics(this, pluginId);
         metrics.addCustomChart(new SimplePie("default_list", () -> String.valueOf(settingsManager.getProperty(PluginSettings.ENABLE_DEFAULT_WORDS))));
-        metrics.addCustomChart(new SimplePie("mode", () -> settingsManager.getProperty(PluginSettings.DETECTION_MODE).equalsIgnoreCase("event") ? "Event" : canUsePE() ? "Fast" : "Compatibility"));
         metrics.addCustomChart(new SimplePie("java_vendor", TimingUtils::getJvmVendor));
         getServer().getPluginManager().registerEvents(new ShadowListener(), this);
         if (settingsManager.getProperty(PluginSettings.ENABLE_SIGN_EDIT_CHECK)) {
@@ -131,9 +139,6 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         }
         if (settingsManager.getProperty(PluginSettings.ENABLE_ANVIL_EDIT_CHECK)) {
             getServer().getPluginManager().registerEvents(new AnvilListener(), this);
-        }
-        if (settingsManager.getProperty(PluginSettings.ENABLE_BOOK_EDIT_CHECK)) {
-            getServer().getPluginManager().registerEvents(new BookListener(), this);
         }
         if (settingsManager.getProperty(PluginSettings.ENABLE_PLAYER_NAME_CHECK)) {
             getServer().getPluginManager().registerEvents(new PlayerLoginListener(), this);
@@ -206,8 +211,6 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         if (!settingsManager.getProperty(PluginSettings.DETECTION_MODE).equalsIgnoreCase("event")) {
             if (USE_PE) {
                 PacketEvents.getAPI().terminate();
-            } else {
-                com.comphenix.protocol.ProtocolLibrary.getProtocolManager().removePacketListeners(this);
             }
         }
         if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD) ||

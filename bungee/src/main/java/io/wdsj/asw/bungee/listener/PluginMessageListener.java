@@ -9,8 +9,7 @@ import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
-import static io.wdsj.asw.bungee.AdvancedSensitiveWords.BUNGEE_CHANNEL;
-import static io.wdsj.asw.bungee.AdvancedSensitiveWords.SUB_CHANNEL;
+import static io.wdsj.asw.bungee.AdvancedSensitiveWords.*;
 
 public class PluginMessageListener implements Listener {
 
@@ -33,7 +32,7 @@ public class PluginMessageListener implements Listener {
                     }
                 });
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.severe("An error occurred while sending plugin message " + e.getMessage());
             }
         }
     }
