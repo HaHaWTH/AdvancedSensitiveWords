@@ -19,6 +19,7 @@ import io.wdsj.asw.bukkit.listener.*;
 import io.wdsj.asw.bukkit.listener.packet.ASWBookPacketListener;
 import io.wdsj.asw.bukkit.listener.packet.ASWChatPacketListener;
 import io.wdsj.asw.bukkit.integration.placeholder.ASWExpansion;
+import io.wdsj.asw.bukkit.listener.ChatListener;
 import io.wdsj.asw.bukkit.manage.punish.PlayerShadowController;
 import io.wdsj.asw.bukkit.method.*;
 import io.wdsj.asw.bukkit.proxy.bungee.BungeeCordChannel;
