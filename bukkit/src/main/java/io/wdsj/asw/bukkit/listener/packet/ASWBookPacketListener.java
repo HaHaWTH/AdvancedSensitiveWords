@@ -63,8 +63,8 @@ public class ASWBookPacketListener extends PacketListenerAbstract {
                 if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) originalPage = originalPage.replaceAll(Utils.getPreProcessRegex(), "");
                 boolean isBookCached = BookCache.isBookCached(originalPage);
                 List<String> censoredWordList = isBookCached && isCacheEnabled ? BookCache.getCachedBookSensitiveWordList(originalPage) : AdvancedSensitiveWords.sensitiveWordBs.findAll(originalPage);
+                String processedPage = isBookCached && isCacheEnabled ? BookCache.getCachedProcessedBookContent(originalPage) : AdvancedSensitiveWords.sensitiveWordBs.replace(originalPage);
                 if (!censoredWordList.isEmpty()) {
-                    String processedPage = isBookCached && isCacheEnabled ? BookCache.getCachedProcessedBookContent(originalPage) : AdvancedSensitiveWords.sensitiveWordBs.replace(originalPage);
                     if (!isBookCached && isCacheEnabled) BookCache.addToBookCache(originalPage, processedPage, censoredWordList);
                     if (isCancelMode) {
                         event.setCancelled(true);
@@ -79,8 +79,8 @@ public class ASWBookPacketListener extends PacketListenerAbstract {
                     outMessage = originalPage;
                     outList = censoredWordList;
                     processedOutMessage = processedPage;
-                    processedPages.add(processedPage);
                 }
+                processedPages.add(processedPage);
             }
             if (!isCancelMode && shouldSendMessage) {
                 wrapper.setPages(processedPages);
