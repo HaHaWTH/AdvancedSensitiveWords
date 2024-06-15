@@ -59,6 +59,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     private static AdvancedSensitiveWords instance;
     private static boolean USE_PE = false;
     private static TaskScheduler scheduler;
+    private static boolean isEventMode = false;
     public static Logger LOGGER;
     public static TaskScheduler getScheduler() {
         return scheduler;
@@ -87,8 +88,9 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
                 .useDefaultMigrationService()
                 .create();
         databaseManager = new DatabaseManager();
+        isEventMode = settingsManager.getProperty(PluginSettings.DETECTION_MODE).equalsIgnoreCase("event");
         if (canUsePE() &&
-                !settingsManager.getProperty(PluginSettings.DETECTION_MODE).equalsIgnoreCase("event")) {
+                !isEventMode) {
             USE_PE = true;
         }
     }
@@ -102,7 +104,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         scheduler = UniversalScheduler.getScheduler(this);
         doInitTasks();
         if (settingsManager.getProperty(PluginSettings.PURGE_LOG_FILE)) purgeLog();
-        if (!settingsManager.getProperty(PluginSettings.DETECTION_MODE).equalsIgnoreCase("event")) {
+        if (!isEventMode) {
             if (USE_PE) {
                 try {
                     PacketEvents.getAPI().getEventManager().registerListener(ASWChatPacketListener.class.getConstructor().newInstance());
@@ -201,7 +203,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (!settingsManager.getProperty(PluginSettings.DETECTION_MODE).equalsIgnoreCase("event")) {
+        if (!isEventMode) {
             if (USE_PE) {
                 PacketEvents.getAPI().terminate();
             }
