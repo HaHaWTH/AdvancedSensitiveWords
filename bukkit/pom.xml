@@ -131,6 +131,10 @@
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <relocations>
                                 <relocation>
+                                    <pattern>kotlin</pattern>
+                                    <shadedPattern>io.wdsj.asw.bukkit.libs.kt.stdlib</shadedPattern>
+                                </relocation>
+                                <relocation>
                                     <pattern>com.github.houbb</pattern>
                                     <shadedPattern>io.wdsj.asw.bukkit.libs.lib</shadedPattern>
                                 </relocation>

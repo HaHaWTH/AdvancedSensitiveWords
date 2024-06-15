@@ -9,7 +9,6 @@ authors:
   - 0D00_0721
 description: Ultimate AntiSwear plugin for Minecraft
 softdepend:
-  - ProtocolLib
   - packetevents
   - floodgate
   - PlaceholderAPI
