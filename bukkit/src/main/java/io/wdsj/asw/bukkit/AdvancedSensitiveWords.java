@@ -138,6 +138,9 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         if (settingsManager.getProperty(PluginSettings.ENABLE_PLAYER_NAME_CHECK)) {
             getServer().getPluginManager().registerEvents(new PlayerLoginListener(), this);
         }
+        if (settingsManager.getProperty(PluginSettings.ENABLE_PLAYER_ITEM_CHECK)) {
+            getServer().getPluginManager().registerEvents(new PlayerItemListener(), this);
+        }
         if (settingsManager.getProperty(PluginSettings.CHAT_BROADCAST_CHECK)) {
             if (isClassLoaded("org.bukkit.event.server.BroadcastMessageEvent")) {
                 getServer().getPluginManager().registerEvents(new BroadCastListener(), this);
