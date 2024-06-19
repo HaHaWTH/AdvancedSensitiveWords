@@ -116,7 +116,11 @@ class ASWBookPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                 if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) {
                     Notifier.notice(player, EventType.BOOK, outMessage, outList)
                 }
-                if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.BOOK_PUNISH)) Punishment.punish(player)
+                if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.BOOK_PUNISH)) {
+                    AdvancedSensitiveWords.getScheduler().runTask {
+                        Punishment.punish(player)
+                    }
+                }
                 if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.BOOK_SEND_MESSAGE)) {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', AdvancedSensitiveWords.messagesManager.getProperty(PluginMessages.MESSAGE_ON_BOOK)))
                 }

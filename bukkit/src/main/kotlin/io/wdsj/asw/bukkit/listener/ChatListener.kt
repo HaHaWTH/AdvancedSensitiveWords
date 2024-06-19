@@ -110,8 +110,10 @@ class ChatListener : Listener {
                 val endTime = System.currentTimeMillis()
                 TimingUtils.addProcessStatistic(endTime, startTime)
                 if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.CHAT, originalContext, censoredContextList)
-                AdvancedSensitiveWords.getScheduler().runTask {
-                    if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) Punishment.punish(player)
+                if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) {
+                    AdvancedSensitiveWords.getScheduler().runTask {
+                        Punishment.punish(player)
+                    }
                 }
             }
         }
