@@ -33,6 +33,9 @@ class AltsListener : Listener {
             return
         }
         val player = event.player
+        if (PlayerUtils.isNpc(player)) {
+            return
+        }
         val ip = Utils.getPlayerIp(player)
         PlayerAltController.removeFromAlts(ip, player)
     }
