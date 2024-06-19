@@ -80,7 +80,9 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"*是否启用玩家物品检测",
             "*Whether to enable player item check"})
     public static final Property<Boolean> ENABLE_PLAYER_ITEM_CHECK = newProperty("Plugin.enableItemCheck", false);
-
+    @Comment({"*是否开启小号检测",
+            "*Whether to enable alts detection"})
+    public static final Property<Boolean> ENABLE_ALTS_CHECK = newProperty("Plugin.enableAltsCheck", false);
     @Comment({"*是否在玩家退出时清理相关数据缓存?",
             "*Should we flush player data cache on they quit?"})
     public static final Property<Boolean> FLUSH_PLAYER_DATA_CACHE = newProperty("Plugin.flushPlayerDataCache", false);

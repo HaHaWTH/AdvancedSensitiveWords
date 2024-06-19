@@ -7,6 +7,7 @@ import io.wdsj.asw.bukkit.event.ASWFilterEvent
 import io.wdsj.asw.bukkit.event.EventType
 import io.wdsj.asw.bukkit.manage.notice.Notifier
 import io.wdsj.asw.bukkit.manage.permission.Permissions
+import io.wdsj.asw.bukkit.manage.punish.PlayerAltController
 import io.wdsj.asw.bukkit.manage.punish.Punishment
 import io.wdsj.asw.bukkit.proxy.bungee.BungeeSender
 import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender
@@ -40,6 +41,13 @@ class ChatListener : Listener {
                 if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.CHAT_FAKE_MESSAGE_ON_CANCEL)) {
                     val players: MutableCollection<Player> = event.recipients
                     players.clear()
+                    if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_ALTS_CHECK) && PlayerAltController.hasAlt(player)) {
+                        val alts = PlayerAltController.getAlts(player)
+                        for (alt in alts) {
+                            val altPlayer = Bukkit.getPlayer(alt)
+                            altPlayer?.let { players.add(it) }
+                        }
+                    }
                     players.add(player)
                 } else {
                     event.isCancelled = true
@@ -87,6 +95,13 @@ class ChatListener : Listener {
                 if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.CHAT_FAKE_MESSAGE_ON_CANCEL)) {
                     val players: MutableCollection<Player> = event.recipients
                     players.clear()
+                    if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_ALTS_CHECK) && PlayerAltController.hasAlt(player)) {
+                        val alts = PlayerAltController.getAlts(player)
+                        for (alt in alts) {
+                            val altPlayer = Bukkit.getPlayer(alt)
+                            altPlayer?.let { players.add(it) }
+                        }
+                    }
                     players.add(player)
                 }
                 if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.CHAT_SEND_MESSAGE)) {
