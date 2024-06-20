@@ -6,7 +6,7 @@
 
     <groupId>io.wdsj</groupId>
     <artifactId>AdvancedSensitiveWords</artifactId>
-    <version>Reflex</version>
+    <version>X</version>
     <packaging>pom</packaging>
 
     <name>AdvancedSensitiveWords</name>
