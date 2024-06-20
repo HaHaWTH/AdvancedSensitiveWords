@@ -69,6 +69,9 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     public static AdvancedSensitiveWords getInstance() {
         return instance;
     }
+    public static boolean isEventMode() {
+        return isEventMode;
+    }
     @Override
     public void onLoad() {
         LOGGER = getLogger();
