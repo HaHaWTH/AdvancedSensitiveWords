@@ -31,6 +31,7 @@ public class PluginMessageListener implements Listener {
                         server.sendData(BUNGEE_CHANNEL, out.toByteArray());
                     }
                 });
+                event.setCancelled(true);
             } catch (Exception e) {
                 LOGGER.severe("An error occurred while sending plugin message " + e.getMessage());
             }
