@@ -95,8 +95,10 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                 val endTime = System.currentTimeMillis()
                 TimingUtils.addProcessStatistic(endTime, startTime)
                 if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, EventType.CHAT, originalMessage, censoredWords)
-                AdvancedSensitiveWords.getScheduler().runTask {
-                    if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) Punishment.punish(player)
+                if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) {
+                    AdvancedSensitiveWords.getScheduler().runTask {
+                        Punishment.punish(player)
+                    }
                 }
                 return
             }
@@ -145,9 +147,7 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                     val endTime = System.currentTimeMillis()
                     TimingUtils.addProcessStatistic(endTime, startTime)
                     if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) {
-                        AdvancedSensitiveWords.getScheduler().runTask {
-                            Notifier.notice(player, EventType.CHAT, originalContext, censoredContextList)
-                        }
+                        Notifier.notice(player, EventType.CHAT, originalContext, censoredContextList)
                     }
                     if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) {
                         AdvancedSensitiveWords.getScheduler().runTask {
