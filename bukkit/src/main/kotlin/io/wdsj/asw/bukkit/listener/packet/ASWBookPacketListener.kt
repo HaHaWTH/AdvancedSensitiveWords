@@ -28,10 +28,10 @@ class ASWBookPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
         if (!AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_BOOK_EDIT_CHECK)) return
         val packetType = event.packetType
         val user = event.user
-        val player = event.player as Player
-        if (player.hasPermission(Permissions.BYPASS)) return
         val userName = user.name
         if (packetType === PacketType.Play.Client.EDIT_BOOK) {
+            val player = event.player as Player
+            if (player.hasPermission(Permissions.BYPASS)) return
             var processedOutMessage: String? = ""
             var outMessage = ""
             var outList: List<String?> = ArrayList()

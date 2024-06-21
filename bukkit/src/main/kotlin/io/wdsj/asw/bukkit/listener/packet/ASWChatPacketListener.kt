@@ -35,10 +35,10 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
     override fun onPacketReceive(event: PacketReceiveEvent) {
         val packetType = event.packetType
         val user = event.user
-        val player = event.player as Player
         val userName = user.name
         val isCancelMode = AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.CHAT_METHOD).equals("cancel", ignoreCase = true)
         if (packetType === PacketType.Play.Client.CHAT_MESSAGE) {
+            val player = event.player as Player
             val wrapperPlayClientChatMessage = WrapperPlayClientChatMessage(event)
             val originalMessage = if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.PRE_PROCESS)) wrapperPlayClientChatMessage.message.replace(Utils.getPreProcessRegex().toRegex(), "") else wrapperPlayClientChatMessage.message
             if (shouldNotProcess(player, originalMessage)) return
@@ -157,6 +157,7 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                 }
             }
         } else if (packetType === PacketType.Play.Client.CHAT_COMMAND) {
+            val player = event.player as Player
             val wrapperPlayClientChatCommand = WrapperPlayClientChatCommand(event)
             val originalCommand = if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.PRE_PROCESS)) wrapperPlayClientChatCommand.command.replace(Utils.getPreProcessRegex().toRegex(), "") else wrapperPlayClientChatCommand.command
             if (shouldNotProcess(player, "/$originalCommand")) return
