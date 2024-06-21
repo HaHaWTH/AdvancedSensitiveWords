@@ -55,14 +55,14 @@ Logo designed by GPT-4
 
 ```mermaid
 graph TD
-    Z[Player Interaction] --> A[Event Listeners]
-    A --> B[Player Packet]
-    B --> C[Packet Listeners]
-    C --> D[Regex Preprocess]
-    D --> E[DFA Match]
-    E -->|Matched| F[Result: Replace or Cancel]
-    E -->|Not Matched| G[AI Processor]
-    G --> H[Result]
+    A[Player Interaction] --> B[Event Listeners]
+    C[Player Packet] --> D[Packet Listeners]
+    B --> E[Regex Preprocess]
+    D --> E[Regex Preprocess]
+    E --> F[DFA Match]
+    F -->|Matched| G[Result: Replace or Cancel]
+    F -->|Not Matched| H[AI Processor (WIP)]
+    H --> I[Result]
 ```
 
 ## Commands
