@@ -51,6 +51,20 @@ Logo designed by GPT-4
 
 **Features above make us unique in the anti-swear plugins!**
 
+## How does this plugin work?
+
+```mermaid
+graph TD
+    Z[Player Interaction] --> A[Event Listeners]
+    A --> B[Player Packet]
+    B --> C[Packet Listeners]
+    C --> D[Regex Preprocess]
+    D --> E[DFA Match]
+    E -->|Matched| F[Result: Replace or Cancel]
+    E -->|Not Matched| G[AI Processor]
+    G --> H[Result]
+```
+
 ## Commands
 
 `/asw help` - Show help message
