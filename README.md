@@ -61,7 +61,7 @@ graph TD
     D --> E[Regex Preprocess]
     E --> F[DFA Match]
     F -->|Matched| G[Result: Replace or Cancel]
-    F -->|Not Matched| H[AI Processor (WIP)]
+    F -->|Not Matched| H[AI Processor]
     H --> I[Result]
 ```
 
