@@ -7,13 +7,14 @@ import java.net.URL;
 import java.util.Scanner;
 
 public class Updater {
-    private final String currentVersion;
-    private String latestVersion;
+    private static String currentVersion;
+    private static String latestVersion;
     private static boolean isUpdateAvailable = false;
+    public static final String DOWNLOAD_URL = "https://modrinth.com/plugin/advancedsensitivewords";
     private static final String UPDATE_URL = "https://api.github.com/repos/HaHaWTH/AdvancedSensitiveWords/releases/latest";
 
-    public Updater(String currentVersion) {
-        this.currentVersion = currentVersion;
+    public Updater(String current) {
+        currentVersion = current;
     }
 
 
@@ -32,23 +33,23 @@ public class Updater {
             Scanner scanner = new Scanner(conn.getInputStream());
             String response = scanner.useDelimiter("\\Z").next();
             scanner.close();
-            String latestVersion = response.substring(response.indexOf("tag_name") + 11);
-            latestVersion = latestVersion.substring(0, latestVersion.indexOf("\""));
-            this.latestVersion = latestVersion;
+            String latest = response.substring(response.indexOf("tag_name") + 11);
+            latest = latest.substring(0, latestVersion.indexOf("\""));
+            latestVersion = latest;
             isUpdateAvailable = !currentVersion.equals(latestVersion);
             return isUpdateAvailable;
         } catch (IOException ignored) {
-            this.latestVersion = null;
+            latestVersion = null;
             isUpdateAvailable = false;
             return false;
         }
     }
 
-    public String getLatestVersion() {
+    public static String getLatestVersion() {
         return latestVersion;
     }
 
-    public String getCurrentVersion() {
+    public static String getCurrentVersion() {
         return currentVersion;
     }
 

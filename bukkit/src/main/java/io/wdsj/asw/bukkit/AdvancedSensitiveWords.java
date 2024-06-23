@@ -176,6 +176,9 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
             getServer().getMessenger().registerOutgoingPluginChannel(this, BungeeCordChannel.BUNGEE_CHANNEL);
             getServer().getMessenger().registerIncomingPluginChannel(this, BungeeCordChannel.BUNGEE_CHANNEL, new BungeeReceiver());
         }
+        if (settingsManager.getProperty(PluginSettings.CHECK_FOR_UPDATE)) {
+            getServer().getPluginManager().registerEvents(new JoinUpdateNotifier(), this);
+        }
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") &&
             settingsManager.getProperty(PluginSettings.ENABLE_PLACEHOLDER)) {
             new ASWExpansion().register();
@@ -187,8 +190,8 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
             getScheduler().runTaskAsynchronously(() -> {
                 Updater updater = new Updater(getDescription().getVersion());
                 if (updater.isUpdateAvailable()) {
-                    LOGGER.warning("There is a new version available: " + updater.getLatestVersion() +
-                            ", you're on: " + updater.getCurrentVersion());
+                    LOGGER.warning("There is a new version available: " + Updater.getLatestVersion() +
+                            ", you're on: " + Updater.getCurrentVersion());
                 }
             });
         }
