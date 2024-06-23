@@ -1,8 +1,7 @@
 package io.wdsj.asw.bukkit.listener
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
-import io.wdsj.asw.bukkit.event.ASWFilterEvent
-import io.wdsj.asw.bukkit.event.EventType
+import io.wdsj.asw.bukkit.type.ModuleType
 import io.wdsj.asw.bukkit.manage.notice.Notifier
 import io.wdsj.asw.bukkit.manage.permission.Permissions
 import io.wdsj.asw.bukkit.manage.punish.Punishment
@@ -69,23 +68,11 @@ class PlayerLoginListener : Listener {
             if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
                 Utils.logViolation(player.name + "(IP: " + playerIp + ")(Name)", playerName + censoredWordList)
             }
-            if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_API)) {
-                Bukkit.getPluginManager().callEvent(
-                    ASWFilterEvent(
-                        player,
-                        playerName,
-                        processedPlayerName,
-                        censoredWordList,
-                        EventType.NAME,
-                        false
-                    )
-                )
-            }
             if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
-                VelocitySender.send(player, EventType.NAME, playerName, censoredWordList)
+                VelocitySender.send(player, ModuleType.NAME, playerName, censoredWordList)
             }
             if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
-                BungeeSender.send(player, EventType.NAME, playerName, censoredWordList)
+                BungeeSender.send(player, ModuleType.NAME, playerName, censoredWordList)
             }
             if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
                 AdvancedSensitiveWords.databaseManager.checkAndUpdatePlayer(playerName)
@@ -94,7 +81,7 @@ class PlayerLoginListener : Listener {
             TimingUtils.addProcessStatistic(endTime, startTime)
             if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(
                 player,
-                EventType.NAME,
+                ModuleType.NAME,
                 playerName,
                 censoredWordList
             )

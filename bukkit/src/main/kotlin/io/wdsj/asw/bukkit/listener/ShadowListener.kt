@@ -8,7 +8,8 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.AsyncPlayerChatEvent
 
 class ShadowListener : Listener {
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun onChat(event: AsyncPlayerChatEvent) {
         val player = event.player
         if (PlayerShadowController.isShadowed(player)) {

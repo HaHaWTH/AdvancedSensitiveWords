@@ -1,5 +1,8 @@
 package io.wdsj.asw.bukkit.manage.permission;
 
+/**
+ * Permission constants
+ */
 public class Permissions {
     private Permissions() {
     }

@@ -31,7 +31,7 @@ class BroadCastListener : Listener {
                 event.message = processedMessage
             }
             if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
-                Utils.logViolation("Broadcast(IP: None)(Chat)(BroadCast)", originalMessage + censoredWordList)
+                Utils.logViolation("Broadcast(IP: None)(BroadCast)", originalMessage + censoredWordList)
             }
             val endTime = System.currentTimeMillis()
             TimingUtils.addProcessStatistic(endTime, startTime)

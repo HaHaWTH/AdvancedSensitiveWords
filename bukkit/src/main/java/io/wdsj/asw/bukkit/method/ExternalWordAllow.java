@@ -27,7 +27,7 @@ public class ExternalWordAllow implements IWordAllow {
             try {
                 Files.createDirectories(dataFolder.toPath());
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.severe("Error occurred while creating external allow directory: " + e.getMessage());
             }
         }
         try (Stream<Path> paths = Files.walk(dataFolder.toPath())) {
@@ -42,7 +42,7 @@ public class ExternalWordAllow implements IWordAllow {
             }
             if (!files.isEmpty()) LOGGER.info("Loaded " + files.size() + " external allow file(s).");
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.severe("Error occurred while loading external allow files: " + e.getMessage());
             return Collections.emptyList();
         }
         return totalList;

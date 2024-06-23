@@ -48,7 +48,7 @@ permissions:
     description: Show the Advanced Sensitive Words filter help.
     default: op
   advancedsensitivewords.notice:
-    description: Retrive the notice message when player violated.
+    description: Retrieve the notice message when player violated.
     default: op
   advancedsensitivewords.info:
     description: Get the player info.

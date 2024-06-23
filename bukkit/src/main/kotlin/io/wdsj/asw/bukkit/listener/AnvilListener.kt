@@ -1,8 +1,7 @@
 package io.wdsj.asw.bukkit.listener
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
-import io.wdsj.asw.bukkit.event.ASWFilterEvent
-import io.wdsj.asw.bukkit.event.EventType
+import io.wdsj.asw.bukkit.type.ModuleType
 import io.wdsj.asw.bukkit.manage.notice.Notifier
 import io.wdsj.asw.bukkit.manage.permission.Permissions
 import io.wdsj.asw.bukkit.manage.punish.Punishment
@@ -12,7 +11,6 @@ import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.util.TimingUtils
 import io.wdsj.asw.bukkit.util.Utils
-import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -70,25 +68,12 @@ class AnvilListener : Listener {
                                 )
                             }
 
-                            if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_API)) {
-                                Bukkit.getPluginManager().callEvent(
-                                    ASWFilterEvent(
-                                        player,
-                                        originalItemName,
-                                        processedItemName,
-                                        censoredWords,
-                                        EventType.ANVIL,
-                                        false
-                                    )
-                                )
-                            }
-
                             if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
-                                VelocitySender.send(player, EventType.ANVIL, originalItemName, censoredWords)
+                                VelocitySender.send(player, ModuleType.ANVIL, originalItemName, censoredWords)
                             }
 
                             if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
-                                BungeeSender.send(player, EventType.ANVIL, originalItemName, censoredWords)
+                                BungeeSender.send(player, ModuleType.ANVIL, originalItemName, censoredWords)
                             }
 
                             if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
@@ -99,7 +84,7 @@ class AnvilListener : Listener {
                             TimingUtils.addProcessStatistic(endTime, startTime)
                             if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(
                                 player,
-                                EventType.ANVIL,
+                                ModuleType.ANVIL,
                                 originalItemName,
                                 censoredWords
                             )

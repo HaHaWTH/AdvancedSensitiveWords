@@ -12,14 +12,14 @@ import com.github.houbb.sensitive.word.support.deny.WordDenys;
 import com.github.houbb.sensitive.word.support.resultcondition.WordResultConditions;
 import com.github.houbb.sensitive.word.support.tag.WordTags;
 import com.github.retrooper.packetevents.PacketEvents;
+import io.wdsj.asw.bukkit.ai.OllamaProcessor;
 import io.wdsj.asw.bukkit.command.ConstructCommandExecutor;
 import io.wdsj.asw.bukkit.command.ConstructTabCompleter;
 import io.wdsj.asw.bukkit.datasource.DatabaseManager;
+import io.wdsj.asw.bukkit.integration.placeholder.ASWExpansion;
 import io.wdsj.asw.bukkit.listener.*;
 import io.wdsj.asw.bukkit.listener.packet.ASWBookPacketListener;
 import io.wdsj.asw.bukkit.listener.packet.ASWChatPacketListener;
-import io.wdsj.asw.bukkit.integration.placeholder.ASWExpansion;
-import io.wdsj.asw.bukkit.listener.ChatListener;
 import io.wdsj.asw.bukkit.manage.punish.PlayerAltController;
 import io.wdsj.asw.bukkit.manage.punish.PlayerShadowController;
 import io.wdsj.asw.bukkit.method.*;
@@ -33,6 +33,7 @@ import io.wdsj.asw.bukkit.update.Updater;
 import io.wdsj.asw.bukkit.util.TimingUtils;
 import io.wdsj.asw.bukkit.util.cache.BookCache;
 import io.wdsj.asw.bukkit.util.context.ChatContext;
+import io.wdsj.asw.bukkit.util.context.SignContext;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
@@ -62,12 +63,16 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     private static TaskScheduler scheduler;
     private static boolean isEventMode = false;
     public static Logger LOGGER;
+    private static final OllamaProcessor OLLAMA_PROCESSOR = new OllamaProcessor();
     public static TaskScheduler getScheduler() {
         return scheduler;
     }
 
     public static AdvancedSensitiveWords getInstance() {
         return instance;
+    }
+    public static OllamaProcessor getOllamaProcessor() {
+        return OLLAMA_PROCESSOR;
     }
     public static boolean isEventMode() {
         return isEventMode;
@@ -115,7 +120,11 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
                     if (settingsManager.getProperty(PluginSettings.ENABLE_BOOK_EDIT_CHECK)) {
                         PacketEvents.getAPI().getEventManager().registerListener(ASWBookPacketListener.class.getConstructor().newInstance());
                     }
-                } catch (Exception ignored) {}
+                } catch (Exception e) {
+                    LOGGER.severe("Failed to register packetevents listener." +
+                            " This should not happen, please report to the author");
+                    e.printStackTrace();
+                }
                 PacketEvents.getAPI().init();
             } else {
                 LOGGER.warning("Cannot use packetevents, using event mode instead.");
@@ -134,6 +143,9 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         metrics.addCustomChart(new SimplePie("java_vendor", TimingUtils::getJvmVendor));
         getServer().getPluginManager().registerEvents(new ShadowListener(), this);
         getServer().getPluginManager().registerEvents(new AltsListener(), this);
+        if (settingsManager.getProperty(PluginSettings.ENABLE_AI_MODEL_CHECK)) {
+            OLLAMA_PROCESSOR.initService(settingsManager.getProperty(PluginSettings.AI_API_ADDRESS), settingsManager.getProperty(PluginSettings.AI_MODEL_NAME), settingsManager.getProperty(PluginSettings.AI_MODEL_TIMEOUT), settingsManager.getProperty(PluginSettings.AI_DEBUG_LOG));
+        }
         if (settingsManager.getProperty(PluginSettings.ENABLE_SIGN_EDIT_CHECK)) {
             getServer().getPluginManager().registerEvents(new SignListener(), this);
         }
@@ -154,7 +166,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
             }
         }
         if (settingsManager.getProperty(PluginSettings.FLUSH_PLAYER_DATA_CACHE)) {
-            getServer().getPluginManager().registerEvents(new PlayerQuitListener(), this);
+            getServer().getPluginManager().registerEvents(new QuitDataFlusher(), this);
         }
         if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
             getServer().getMessenger().registerOutgoingPluginChannel(this, VelocityChannel.CHANNEL);
@@ -221,15 +233,17 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
             getServer().getMessenger().unregisterOutgoingPluginChannel(this);
             getServer().getMessenger().unregisterIncomingPluginChannel(this);
         }
+        HandlerList.unregisterAll(this);
         TimingUtils.cleanStatisticCache();
         ChatContext.forceClearContext();
+        SignContext.forceClearContext();
         PlayerShadowController.clear();
         PlayerAltController.clear();
+        OLLAMA_PROCESSOR.shutdown();
         if (settingsManager.getProperty(PluginSettings.BOOK_CACHE)) {
             BookCache.invalidateAll();
         }
         if (isInitialized) sensitiveWordBs.destroy();
-        HandlerList.unregisterAll(this);
         Objects.requireNonNull(getCommand("advancedsensitivewords")).setExecutor(null);
         Objects.requireNonNull(getCommand("asw")).setExecutor(null);
         Objects.requireNonNull(getCommand("advancedsensitivewords")).setTabCompleter(null);

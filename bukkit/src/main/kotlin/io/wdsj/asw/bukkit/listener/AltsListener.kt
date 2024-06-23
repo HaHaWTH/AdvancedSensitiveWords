@@ -1,6 +1,6 @@
 package io.wdsj.asw.bukkit.listener
 
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords
+import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
 import io.wdsj.asw.bukkit.manage.punish.PlayerAltController
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.util.PlayerUtils
@@ -14,7 +14,7 @@ class AltsListener : Listener {
 
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {
-        if (!AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_ALTS_CHECK)) {
+        if (!settingsManager.getProperty(PluginSettings.ENABLE_ALTS_CHECK)) {
             return
         }
         val player = event.player
@@ -29,7 +29,7 @@ class AltsListener : Listener {
 
     @EventHandler
     fun onPlayerQuit(event: PlayerQuitEvent) {
-        if (!AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_ALTS_CHECK)) {
+        if (!settingsManager.getProperty(PluginSettings.ENABLE_ALTS_CHECK)) {
             return
         }
         val player = event.player

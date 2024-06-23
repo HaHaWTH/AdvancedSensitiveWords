@@ -108,25 +108,5 @@ graph TD
 
 [![](https://img.shields.io/bstats/players/20661?label=Online%20Players&style=for-the-badge)](https://bstats.org/plugin/bukkit/AdvancedSensitiveWords/20661)
 
-## For developers
-AdvancedSensitiveWords offers a [simple event](./src/main/java/io/wdsj/asw/event/ASWFilterEvent.java) for developers.
-
-To use this, you just need to import the plugin binary file as a dependency in your pom.xml
-```xml
-<repository>
-    <id>jitpack.io</id>
-    <url>https://jitpack.io</url>
-</repository>
-```
-
-```xml
-<dependency>
-    <groupId>com.github.HaHaWTH</groupId>
-    <artifactId>AdvancedSensitiveWords</artifactId>
-    <version>LATEST</version>
-    <scope>provided</scope>
-</dependency>
-```
-
 ## Sponsor
 If you like this project, you can sponsor me on [Afdian](https://afdian.net/a/114514woxiuyuan).

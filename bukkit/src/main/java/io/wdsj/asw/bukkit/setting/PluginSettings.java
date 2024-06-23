@@ -80,16 +80,12 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"*是否启用玩家物品检测",
             "*Whether to enable player item check"})
     public static final Property<Boolean> ENABLE_PLAYER_ITEM_CHECK = newProperty("Plugin.enableItemCheck", false);
-    @Comment({"*是否开启小号检测",
-            "*Whether to enable alts detection"})
+    @Comment({"*是否开启小号检测(基于IP地址)",
+            "*Whether to enable alts detection(Based on IP address)"})
     public static final Property<Boolean> ENABLE_ALTS_CHECK = newProperty("Plugin.enableAltsCheck", false);
     @Comment({"*是否在玩家退出时清理相关数据缓存?",
             "*Should we flush player data cache on they quit?"})
     public static final Property<Boolean> FLUSH_PLAYER_DATA_CACHE = newProperty("Plugin.flushPlayerDataCache", false);
-
-    @Comment({"是否启用API接口(非必要请勿关闭)",
-            "Whether to enable API (do not disable unless necessary)"})
-    public static final Property<Boolean> ENABLE_API = newProperty("Plugin.enableApi", true);
 
     @Comment({"是否启用数据库记录玩家违规次数",
             "Whether to enable database to log violations"})
@@ -102,6 +98,36 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"*数据库名称",
             "*Database name"})
     public static final Property<String> DATABASE_NAME = newProperty("Plugin.database.databaseName", "data.db");
+
+    @Comment({"*模型请求超时时长(单位: 秒)",
+            "*Maximum request time before time out(in seconds)"})
+    public static final Property<Integer> AI_MODEL_TIMEOUT = newProperty("Plugin.ai.timeOutSeconds", 20);
+
+    @Comment({"模型提示词",
+            "Model prompt"})
+    public static final Property<String> AI_MODEL_PROMPT = newProperty("Plugin.ai.prompt", "You are a Minecraft server operator, what you need to do is determine whether" +
+            "the player is swearing/cursing. You ONLY need to give a rating to the message without commenting and any other words, ONLY reply a number, from 1 to 100, higher means the player is saying more cursed words." +
+            "You focus on rating. The following characters are messages: ");
+
+    @Comment({"*模型API地址",
+            "*Model API address"})
+    public static final Property<String> AI_API_ADDRESS = newProperty("Plugin.ai.apiAddress", "http://localhost:11434/");
+
+    @Comment({"*模型名称",
+            "*Model name"})
+    public static final Property<String> AI_MODEL_NAME = newProperty("Plugin.ai.modelName", "mistral:instruct");
+
+    @Comment({"*是否启用调试日志",
+            "*Whether to enable debug logging"})
+    public static final Property<Boolean> AI_DEBUG_LOG = newProperty("Plugin.ai.debugLogging", false);
+
+    @Comment({"判定为敏感词阈值(1~100, 越高越宽松)",
+            "Sensitive word threshold(1~100)"})
+    public static final Property<Integer> AI_SENSITIVE_THRESHOLD = newProperty("Plugin.ai.threshold", 76);
+
+    @Comment({"*是否启用AI模型检测(需自行部署或使用公共API)",
+            "*Whether to enable AI model checks"})
+    public static final Property<Boolean> ENABLE_AI_MODEL_CHECK = newProperty("Plugin.ai.enableAiModelCheck", false);
 
     @Comment({"*是否启用占位符(需要PlaceholderAPI)",
             "*Whether to enable placeholders"})
@@ -244,6 +270,10 @@ public class PluginSettings implements SettingsHolder {
             "Whether to skip newline characters"})
     public static final Property<Boolean> BOOK_IGNORE_NEWLINE = newProperty("Book.ignoreNewLine", true);
 
+    @Comment({"是否启用跨页检测(仅取消)",
+            "Whether to enable cross-page checks?(Cancel mode only)"})
+    public static final Property<Boolean> BOOK_CROSS_PAGE = newProperty("Book.crossPageCheck", false);
+
     @Comment({"存在敏感词时是否发送消息提醒",
             "Whether to send a message alert when sensitive words are found"})
     public static final Property<Boolean> BOOK_SEND_MESSAGE = newProperty("Book.sendMessage", true);
@@ -274,6 +304,18 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"是否启用跨行检测",
             "Whether to enable multi-line check"})
     public static final Property<Boolean> SIGN_MULTI_LINE_CHECK = newProperty("Sign.multiLineCheck", true);
+
+    @Comment({"是否启用告示牌上下文检测(Beta)(仅取消模式)",
+            "Whether to enable sign context checks?(Beta)(Cancel mode only)"})
+    public static final Property<Boolean> SIGN_CONTEXT_CHECK = newProperty("Sign.contextCheck", false);
+
+    @Comment({"最大检测上下文大小",
+            "Maximum context size"})
+    public static final Property<Integer> SIGN_CONTEXT_MAX_SIZE = newProperty("Sign.contextMaxSize", 4);
+
+    @Comment({"最大检测上下文时间(单位: 秒)",
+            "Maximum context time(seconds)"})
+    public static final Property<Integer> SIGN_CONTEXT_TIME_LIMIT = newProperty("Sign.contextMaxTime", 120);
 
     @Comment({"存在敏感词时是否发送消息提醒",
             "Whether to send a message alert when sensitive words are found"})

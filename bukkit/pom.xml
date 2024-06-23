@@ -170,6 +170,14 @@
                                     <pattern>com.zaxxer.hikari</pattern>
                                     <shadedPattern>io.wdsj.asw.bukkit.libs.com.zaxxer.hikari</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>io.github</pattern>
+                                    <shadedPattern>io.wdsj.asw.bukkit.libs.io.github</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.fasterxml</pattern>
+                                    <shadedPattern>io.wdsj.asw.bukkit.libs.com.fasterxml</shadedPattern>
+                                </relocation>
                             </relocations>
                             <filters>
                                 <filter>
@@ -180,6 +188,8 @@
                                         <exclude>*.md</exclude>
                                         <exclude>META-INF/maven/**</exclude>
                                         <exclude>com/google/gson/**</exclude>
+                                        <exclude>sample-db-prompt-template.txt</exclude>
+                                        <exclude>LICENSE</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
@@ -268,6 +278,14 @@
             <groupId>com.github.houbb</groupId>
             <artifactId>sensitive-word</artifactId>
             <version>0.17.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- ollama4j fork -->
+        <dependency>
+            <groupId>com.github.HaHaWTH</groupId>
+            <artifactId>ollama4j-j8</artifactId>
+            <version>8ce2ad8840</version>
             <scope>compile</scope>
         </dependency>
 

@@ -30,7 +30,7 @@ public class OnlineWordDeny implements IWordDeny {
             URL url = uri.toURL();
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setConnectTimeout(4000);
-            connection.setReadTimeout(5000);
+            connection.setReadTimeout(6000);
             try (Scanner scanner = new Scanner(connection.getInputStream(), charset)) {
                 while (scanner.hasNextLine()) {
                     lines.add(scanner.nextLine());

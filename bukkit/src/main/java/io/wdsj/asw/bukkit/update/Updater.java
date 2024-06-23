@@ -57,6 +57,7 @@ public class Updater {
      * Must be called after {@link Updater#isUpdateAvailable()}
      * @return A boolean indicating whether there is an update available
      */
+    @SuppressWarnings("unused")
     public static boolean hasUpdate() {
         return isUpdateAvailable;
     }

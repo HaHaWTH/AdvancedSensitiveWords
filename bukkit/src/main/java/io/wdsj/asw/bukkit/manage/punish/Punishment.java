@@ -56,17 +56,17 @@ public class Punishment {
                     if (potionEffect == null) throw new IllegalArgumentException("Unknown potion effect");
                     switch (normalPunish.length) {
                         case 2:
-                            SchedulingUtils.runSyncIfFolia(player,() -> player.addPotionEffect(new PotionEffect(potionEffect, 10, 0)));
+                            SchedulingUtils.runSyncIfFolia(player, () -> player.addPotionEffect(new PotionEffect(potionEffect, 10, 0)));
                             break;
                         case 3:
                             int duration_3 = Integer.parseInt(normalPunish[2]);
-                            SchedulingUtils.runSyncIfFolia(player,() -> player.addPotionEffect(new PotionEffect(potionEffect, duration_3 * 20, 0)));
+                            SchedulingUtils.runSyncIfFolia(player, () -> player.addPotionEffect(new PotionEffect(potionEffect, duration_3 * 20, 0)));
                             break;
                         case 4:
                         default:
                             int duration_4 = Integer.parseInt(normalPunish[2]);
                             int amplifier = Integer.parseInt(normalPunish[3]);
-                            SchedulingUtils.runSyncIfFolia(player,() -> player.addPotionEffect(new PotionEffect(potionEffect, duration_4 * 20, amplifier)));
+                            SchedulingUtils.runSyncIfFolia(player, () -> player.addPotionEffect(new PotionEffect(potionEffect, duration_4 * 20, amplifier)));
                             break;
                     }
                     break;

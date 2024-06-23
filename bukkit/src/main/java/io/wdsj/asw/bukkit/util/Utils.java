@@ -53,7 +53,7 @@ public class Utils {
             try {
                 logFile.createNewFile();
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.severe("Failed to create violations.log file: " + e.getMessage());
                 return;
             }
         }
