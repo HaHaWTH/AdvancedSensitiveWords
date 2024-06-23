@@ -115,7 +115,7 @@ class ChatListener : Listener {
         if (settingsManager.getProperty(PluginSettings.CHAT_CONTEXT_CHECK)) {
             ChatContext.addMessage(player, originalMessage)
             val queue = ChatContext.getHistory(player)
-            val originalContext = java.lang.String.join("", queue)
+            val originalContext = queue.joinToString("")
             val censoredContextList = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalContext)
             if (censoredContextList.isNotEmpty()) {
                 ChatContext.pollPlayerContext(player)
