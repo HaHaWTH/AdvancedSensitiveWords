@@ -39,7 +39,7 @@ public class Updater {
             isUpdateAvailable = !currentVersion.equals(latestVersion);
             return isUpdateAvailable;
         } catch (IOException ignored) {
-            latestVersion = null;
+            latestVersion = "ERROR";
             isUpdateAvailable = false;
             return false;
         }
