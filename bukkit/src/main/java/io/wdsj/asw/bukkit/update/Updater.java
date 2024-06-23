@@ -34,12 +34,12 @@ public class Updater {
             String response = scanner.useDelimiter("\\Z").next();
             scanner.close();
             String latest = response.substring(response.indexOf("tag_name") + 11);
-            latest = latest.substring(0, latestVersion.indexOf("\""));
+            latest = latest.substring(0, latest.indexOf("\""));
             latestVersion = latest;
-            isUpdateAvailable = !currentVersion.equals(latestVersion);
+            isUpdateAvailable = !currentVersion.equals(latest);
             return isUpdateAvailable;
         } catch (IOException ignored) {
-            latestVersion = "ERROR";
+            latestVersion = null;
             isUpdateAvailable = false;
             return false;
         }
@@ -58,7 +58,6 @@ public class Updater {
      * Must be called after {@link Updater#isUpdateAvailable()}
      * @return A boolean indicating whether there is an update available
      */
-    @SuppressWarnings("unused")
     public static boolean hasUpdate() {
         return isUpdateAvailable;
     }
