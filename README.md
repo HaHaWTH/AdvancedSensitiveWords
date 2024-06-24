@@ -60,9 +60,12 @@ graph TD
     B --> E[Regex Preprocess]
     D --> E[Regex Preprocess]
     E --> F[DFA Match]
-    F -->|Matched| G[Result: Replace or Cancel]
+    F -->|Matched| G[Result]
+    G --> J[Replace]
+    G --> K[Cancel]
     F -->|Not Matched| H[AI Processor]
-    H --> I[Result]
+    H -->|LLMs| I[Rating]
+    I --> L[Punish]
 ```
 
 ## Commands
@@ -92,6 +95,8 @@ graph TD
 `advancedsensitivewords.notice` - Retrieve the notification when players swore
 
 `advancedsensitivewords.info` - Ability to use /asw info command
+
+`advancedsensitivewords.update` - Receive update notifications
 
 **For more info, please visit [our Wiki](https://github.com/HaHaWTH/AdvancedSensitiveWords/wiki)**
 
