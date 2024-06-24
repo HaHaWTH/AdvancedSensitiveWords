@@ -13,6 +13,7 @@ import com.github.houbb.sensitive.word.support.resultcondition.WordResultConditi
 import com.github.houbb.sensitive.word.support.tag.WordTags;
 import com.github.retrooper.packetevents.PacketEvents;
 import io.wdsj.asw.bukkit.ai.OllamaProcessor;
+import io.wdsj.asw.bukkit.ai.OpenAIProcessor;
 import io.wdsj.asw.bukkit.command.ConstructCommandExecutor;
 import io.wdsj.asw.bukkit.command.ConstructTabCompleter;
 import io.wdsj.asw.bukkit.datasource.DatabaseManager;
@@ -64,6 +65,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     private static boolean isEventMode = false;
     public static Logger LOGGER;
     private static final OllamaProcessor OLLAMA_PROCESSOR = new OllamaProcessor();
+    private static final OpenAIProcessor OPENAI_PROCESSOR = new OpenAIProcessor();
     public static TaskScheduler getScheduler() {
         return scheduler;
     }
@@ -73,6 +75,9 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     }
     public static OllamaProcessor getOllamaProcessor() {
         return OLLAMA_PROCESSOR;
+    }
+    public static OpenAIProcessor getOpenAIProcessor() {
+        return OPENAI_PROCESSOR;
     }
     public static boolean isEventMode() {
         return isEventMode;
@@ -143,8 +148,11 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         metrics.addCustomChart(new SimplePie("java_vendor", TimingUtils::getJvmVendor));
         getServer().getPluginManager().registerEvents(new ShadowListener(), this);
         getServer().getPluginManager().registerEvents(new AltsListener(), this);
-        if (settingsManager.getProperty(PluginSettings.ENABLE_AI_MODEL_CHECK)) {
-            OLLAMA_PROCESSOR.initService(settingsManager.getProperty(PluginSettings.AI_API_ADDRESS), settingsManager.getProperty(PluginSettings.AI_MODEL_NAME), settingsManager.getProperty(PluginSettings.AI_MODEL_TIMEOUT), settingsManager.getProperty(PluginSettings.AI_DEBUG_LOG));
+        if (settingsManager.getProperty(PluginSettings.ENABLE_OLLAMA_AI_MODEL_CHECK)) {
+            OLLAMA_PROCESSOR.initService(settingsManager.getProperty(PluginSettings.OLLAMA_AI_API_ADDRESS), settingsManager.getProperty(PluginSettings.OLLAMA_AI_MODEL_NAME), settingsManager.getProperty(PluginSettings.AI_MODEL_TIMEOUT), settingsManager.getProperty(PluginSettings.OLLAMA_AI_DEBUG_LOG));
+        }
+        if (settingsManager.getProperty(PluginSettings.ENABLE_OPENAI_AI_MODEL_CHECK)) {
+            OPENAI_PROCESSOR.initService(settingsManager.getProperty(PluginSettings.OPENAI_API_KEY), settingsManager.getProperty(PluginSettings.OPENAI_DEBUG_LOG));
         }
         if (settingsManager.getProperty(PluginSettings.ENABLE_SIGN_EDIT_CHECK)) {
             getServer().getPluginManager().registerEvents(new SignListener(), this);
@@ -243,6 +251,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         PlayerShadowController.clear();
         PlayerAltController.clear();
         OLLAMA_PROCESSOR.shutdown();
+        OPENAI_PROCESSOR.shutdown();
         if (settingsManager.getProperty(PluginSettings.BOOK_CACHE)) {
             BookCache.invalidateAll();
         }

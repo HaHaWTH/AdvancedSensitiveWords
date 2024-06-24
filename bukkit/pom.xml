@@ -135,6 +135,22 @@
                                     <shadedPattern>io.wdsj.asw.bukkit.libs.kt.stdlib</shadedPattern>
                                 </relocation>
                                 <relocation>
+                                    <pattern>retrofit2</pattern>
+                                    <shadedPattern>io.wdsj.asw.bukkit.libs.retrofit2</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>okio</pattern>
+                                    <shadedPattern>io.wdsj.asw.bukkit.libs.okio</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>okhttp3</pattern>
+                                    <shadedPattern>io.wdsj.asw.bukkit.libs.okhttp3</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>dev.ai4j.openai4j</pattern>
+                                    <shadedPattern>io.wdsj.asw.bukkit.libs.dev.ai4j.openai4j</shadedPattern>
+                                </relocation>
+                                <relocation>
                                     <pattern>com.github.houbb</pattern>
                                     <shadedPattern>io.wdsj.asw.bukkit.libs.lib</shadedPattern>
                                 </relocation>
@@ -286,6 +302,14 @@
             <groupId>com.github.HaHaWTH</groupId>
             <artifactId>ollama4j-j8</artifactId>
             <version>8ce2ad8840</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- OpenAI4j -->
+        <dependency>
+            <groupId>dev.ai4j</groupId>
+            <artifactId>openai4j</artifactId>
+            <version>0.17.0</version>
             <scope>compile</scope>
         </dependency>
 

@@ -25,7 +25,6 @@ public class OllamaProcessor extends AIProcessorAbstract {
         THREAD_POOL = VTUtils.getVTExecutorServiceOrProvided(Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("ASW-OllamaProcessor-%d").build()));
     }
 
-    @Override
     public void initService(String modelAddress, String modelName, int timeOut, boolean debug) {
         this.modelName = modelName;
         api = new OllamaAPI(modelAddress);
@@ -56,7 +55,6 @@ public class OllamaProcessor extends AIProcessorAbstract {
         isOllamaInit = false;
     }
 
-    @Override
     public CompletableFuture<String> process(String inputMessage) {
         if (!isOllamaInit) {
             throw new IllegalStateException("OllamaProcessor is not initialized");

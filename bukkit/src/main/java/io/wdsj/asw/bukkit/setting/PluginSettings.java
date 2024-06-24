@@ -101,34 +101,70 @@ public class PluginSettings implements SettingsHolder {
 
     @Comment({"*模型请求超时时长(单位: 秒)",
             "*Maximum request time before time out(in seconds)"})
-    public static final Property<Integer> AI_MODEL_TIMEOUT = newProperty("Plugin.ai.timeOutSeconds", 20);
+    public static final Property<Integer> AI_MODEL_TIMEOUT = newProperty("Plugin.ai.ollama.timeOutSeconds", 20);
 
     @Comment({"模型提示词",
             "Model prompt"})
-    public static final Property<String> AI_MODEL_PROMPT = newProperty("Plugin.ai.prompt", "You are a Minecraft server operator, what you need to do is determine whether" +
+    public static final Property<String> AI_MODEL_PROMPT = newProperty("Plugin.ai.ollama.prompt", "You are a Minecraft server operator, what you need to do is determine whether" +
             "the player is swearing/cursing. You ONLY need to give a rating to the message without commenting and any other words, ONLY reply a number, from 1 to 100, higher means the player is saying more cursed words." +
             "You focus on rating. The following characters are messages: ");
 
     @Comment({"*模型API地址",
             "*Model API address"})
-    public static final Property<String> AI_API_ADDRESS = newProperty("Plugin.ai.apiAddress", "http://localhost:11434/");
+    public static final Property<String> OLLAMA_AI_API_ADDRESS = newProperty("Plugin.ai.ollama.apiAddress", "http://localhost:11434/");
 
     @Comment({"*模型名称",
             "*Model name"})
-    public static final Property<String> AI_MODEL_NAME = newProperty("Plugin.ai.modelName", "mistral:instruct");
+    public static final Property<String> OLLAMA_AI_MODEL_NAME = newProperty("Plugin.ai.ollama.modelName", "mistral:instruct");
 
     @Comment({"*是否启用调试日志",
             "*Whether to enable debug logging"})
-    public static final Property<Boolean> AI_DEBUG_LOG = newProperty("Plugin.ai.debugLogging", false);
+    public static final Property<Boolean> OLLAMA_AI_DEBUG_LOG = newProperty("Plugin.ai.ollama.debugLogging", false);
 
     @Comment({"判定为敏感词阈值(1~100, 越高越宽松)",
             "Sensitive word threshold(1~100)"})
-    public static final Property<Integer> AI_SENSITIVE_THRESHOLD = newProperty("Plugin.ai.threshold", 76);
+    public static final Property<Integer> OLLAMA_AI_SENSITIVE_THRESHOLD = newProperty("Plugin.ai.ollama.threshold", 76);
 
-    @Comment({"*是否启用AI模型检测(需自行部署或使用公共API)",
-            "*Whether to enable AI model checks"})
-    public static final Property<Boolean> ENABLE_AI_MODEL_CHECK = newProperty("Plugin.ai.enableAiModelCheck", false);
+    @Comment({"*是否启用Ollama AI模型检测(需自行部署或使用公共API)",
+            "*Whether to enable ollama AI model checks"})
+    public static final Property<Boolean> ENABLE_OLLAMA_AI_MODEL_CHECK = newProperty("Plugin.ai.ollama.enableAiModelCheck", false);
 
+    @Comment({"*你的OpenAI API 密钥",
+            "*Enter your OpenAI API Key"})
+    public static final Property<String> OPENAI_API_KEY = newProperty("Plugin.ai.openai.apiKey", "YOUR_API_KEY");
+    @Comment({"*是否开启调试日志",
+            "*Whether to enable debug logging"})
+    public static final Property<Boolean> OPENAI_DEBUG_LOG = newProperty("Plugin.ai.openai.debugLogging", false);
+    @Comment({"*是否启用HTTP代理",
+            "*Whether to enable HTTP proxy"})
+    public static final Property<Boolean> OPENAI_ENABLE_HTTP_PROXY = newProperty("Plugin.ai.openai.enableHttpProxy", false);
+    @Comment({"*HTTP代理设置(IP)",
+            "*HTTP Proxy address"})
+    public static final Property<String> OPENAI_HTTP_PROXY_ADDRESS = newProperty("Plugin.ai.openai.proxy.httpProxyAddress", "127.0.0.1");
+    @Comment({"*HTTP代理设置(端口)",
+            "*HTTP Proxy port"})
+    public static final Property<Integer> OPENAI_HTTP_PROXY_PORT = newProperty("Plugin.ai.openai.proxy.httpProxyPort", 1080);
+    @Comment({"是否检测威胁类消息",
+            "Whether to detect hate threatening"})
+    public static final Property<Boolean> OPENAI_ENABLE_HATE_THREATENING_CHECK = newProperty("Plugin.ai.openai.detection.enableHateThreateningCheck", true);
+    @Comment({"是否检测仇恨类消息",
+            "Whether to detect hate"})
+    public static final Property<Boolean> OPENAI_ENABLE_HATE_CHECK = newProperty("Plugin.ai.openai.detection.enableHateCheck", true);
+    @Comment({"是否检测自残类消息",
+            "Whether to detect self-harming"})
+    public static final Property<Boolean> OPENAI_ENABLE_SELF_HARM_CHECK = newProperty("Plugin.ai.openai.detection.enableSelfHarmCheck", true);
+    @Comment({"是否检测色情类消息",
+            "Whether to detect sexual"})
+    public static final Property<Boolean> OPENAI_ENABLE_SEXUAL_CONTENT_CHECK = newProperty("Plugin.ai.openai.detection.enableSexualContentCheck", true);
+    @Comment({"是否检测儿童色情类消息",
+            "Whether to detect sexual-minors"})
+    public static final Property<Boolean> OPENAI_ENABLE_SEXUAL_MINORS_CHECK = newProperty("Plugin.ai.openai.detection.enableSexualMinorsCheck", true);
+    @Comment({"是否检测暴力类消息",
+            "Whether to detect violence"})
+    public static final Property<Boolean> OPENAI_ENABLE_VIOLENCE_CHECK = newProperty("Plugin.ai.openai.detection.enableViolenceCheck", true);
+    @Comment({"*是否启用OpenAI模型检测(需APIKEY)",
+            "*Whether to enable OpenAI model checks"})
+    public static final Property<Boolean> ENABLE_OPENAI_AI_MODEL_CHECK = newProperty("Plugin.ai.openai.enableAiModelCheck", false);
     @Comment({"*是否启用占位符(需要PlaceholderAPI)",
             "*Whether to enable placeholders"})
     public static final Property<Boolean> ENABLE_PLACEHOLDER = newProperty("Plugin.enablePlaceholder", false);
