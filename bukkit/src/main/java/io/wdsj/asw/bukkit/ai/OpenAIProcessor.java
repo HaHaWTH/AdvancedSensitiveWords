@@ -43,7 +43,7 @@ public class OpenAIProcessor extends AIProcessorAbstract {
         if (isOpenAiInit && client != null) {
             client.shutdown();
         }
-        THREAD_POOL.shutdown();
+        THREAD_POOL.shutdownNow();
         isOpenAiInit = false;
     }
 

@@ -102,54 +102,62 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                     }
                 }
                 return
-            } else if (settingsManager.getProperty(PluginSettings.ENABLE_OLLAMA_AI_MODEL_CHECK)
-                && AdvancedSensitiveWords.getOllamaProcessor().isOllamaInit && Utils.isNotCommand(originalMessage)) {
-                val processor = AdvancedSensitiveWords.getOllamaProcessor()
-                processor.process(originalMessage)
-                    .thenAccept {
-                        try {
-                            val rating = it?.toInt() ?: 0
-                            if (rating > settingsManager.getProperty(PluginSettings.OLLAMA_AI_SENSITIVE_THRESHOLD)) {
-                                val unsupportedList = Collections.singletonList("Unsupported")
-                                Utils.messagesFilteredNum.getAndIncrement()
-                                if (settingsManager.getProperty(PluginSettings.CHAT_SEND_MESSAGE)) {
-                                    player.sendMessage(
-                                        ChatColor.translateAlternateColorCodes(
-                                            '&',
-                                            AdvancedSensitiveWords.messagesManager.getProperty(PluginMessages.MESSAGE_ON_CHAT)
-                                                .replace("%integrated_player%", player.name)
-                                                .replace("%integrated_message%", originalMessage)
+            } else {
+                if (settingsManager.getProperty(PluginSettings.ENABLE_OLLAMA_AI_MODEL_CHECK)
+                    && AdvancedSensitiveWords.getOllamaProcessor().isOllamaInit && Utils.isNotCommand(originalMessage)) {
+                    val processor = AdvancedSensitiveWords.getOllamaProcessor()
+                    processor.process(originalMessage)
+                        .thenAccept {
+                            try {
+                                val rating = it?.toInt() ?: 0
+                                if (rating > settingsManager.getProperty(PluginSettings.OLLAMA_AI_SENSITIVE_THRESHOLD)) {
+                                    val unsupportedList = Collections.singletonList("Unsupported")
+                                    Utils.messagesFilteredNum.getAndIncrement()
+                                    if (settingsManager.getProperty(PluginSettings.CHAT_SEND_MESSAGE)) {
+                                        player.sendMessage(
+                                            ChatColor.translateAlternateColorCodes(
+                                                '&',
+                                                AdvancedSensitiveWords.messagesManager.getProperty(PluginMessages.MESSAGE_ON_CHAT)
+                                                    .replace("%integrated_player%", player.name)
+                                                    .replace("%integrated_message%", originalMessage)
+                                            )
                                         )
-                                    )
+                                    }
+                                    if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
+                                        Utils.logViolation(
+                                            player.name + "(IP: " + user.address.address.hostAddress + ")(Chat AI)(LLM output: $it)",
+                                            originalMessage + unsupportedList
+                                        )
+                                    }
+                                    if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
+                                        VelocitySender.send(
+                                            player,
+                                            ModuleType.CHAT_AI,
+                                            originalMessage,
+                                            unsupportedList
+                                        )
+                                    }
+                                    if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
+                                        BungeeSender.send(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
+                                    }
+                                    if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
+                                        AdvancedSensitiveWords.databaseManager.checkAndUpdatePlayer(player.name)
+                                    }
+                                    if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) {
+                                        Notifier.notice(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
+                                    }
+                                    if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) {
+                                        AdvancedSensitiveWords.getScheduler().runTask { Punishment.punish(player) }
+                                    }
                                 }
-                                if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
-                                    Utils.logViolation(
-                                        player.name + "(IP: " + user.address.address.hostAddress + ")(Chat AI)(LLM output: $it)",
-                                        originalMessage + unsupportedList
-                                    )
-                                }
-                                if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
-                                    VelocitySender.send(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
-                                }
-                                if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
-                                    BungeeSender.send(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
-                                }
-                                if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
-                                    AdvancedSensitiveWords.databaseManager.checkAndUpdatePlayer(player.name)
-                                }
-                                if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) {
-                                    Notifier.notice(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
-                                }
-                                if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) {
-                                    AdvancedSensitiveWords.getScheduler().runTask { Punishment.punish(player) }
-                                }
+                            } catch (e: NumberFormatException) {
+                                LOGGER.severe("Failed to parse Ollama output to a number: $it")
                             }
-                        } catch (e: NumberFormatException) {
-                            LOGGER.severe("Failed to parse Ollama output to a number: $it")
                         }
-                    }
-            } else if (settingsManager.getProperty(PluginSettings.ENABLE_OPENAI_AI_MODEL_CHECK)
-                && AdvancedSensitiveWords.getOpenAIProcessor().isOpenAiInit && Utils.isNotCommand(originalMessage)) {
+                }
+
+                if (settingsManager.getProperty(PluginSettings.ENABLE_OPENAI_AI_MODEL_CHECK)
+                    && AdvancedSensitiveWords.getOpenAIProcessor().isOpenAiInit && Utils.isNotCommand(originalMessage)) {
                     val processor = AdvancedSensitiveWords.getOpenAIProcessor()
                     val consumerOnResponse =
                         Consumer { response: ModerationResponse ->
@@ -216,6 +224,7 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
 
                     processor.process(originalMessage, consumerOnResponse, consumerOnError)
                 }
+            }
 
             // Context check
             if (settingsManager.getProperty(PluginSettings.CHAT_CONTEXT_CHECK) && Utils.isNotCommand(originalMessage)) {

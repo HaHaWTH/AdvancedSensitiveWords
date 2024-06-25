@@ -400,7 +400,7 @@ public class PluginSettings implements SettingsHolder {
         conf.setComment("", "AdvancedSensitiveWords 配置文件", "所有配置项均支持重载(标*的配置项仅支持重载关闭)");
         conf.setComment("Plugin", "插件总配置");
         conf.setComment("Plugin.compatibility", "插件兼容配置");
-        conf.setComment("Plugin.ai", "AI辅助检测配置(无法同时开启)");
+        conf.setComment("Plugin.ai", "AI辅助检测配置");
         conf.setComment("Chat", "聊天检测配置");
         conf.setComment("Book", "书检测配置");
         conf.setComment("Book.cache", "书检测缓存配置");

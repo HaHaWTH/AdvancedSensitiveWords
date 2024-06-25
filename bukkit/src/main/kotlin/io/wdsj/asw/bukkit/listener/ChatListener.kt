@@ -81,73 +81,22 @@ class ChatListener : Listener {
                 if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) Punishment.punish(player)
             }
             return
-        } else if (settingsManager.getProperty(PluginSettings.ENABLE_OLLAMA_AI_MODEL_CHECK)
-            && AdvancedSensitiveWords.getOllamaProcessor().isOllamaInit) {
-            val processor = AdvancedSensitiveWords.getOllamaProcessor()
-            processor.process(originalMessage)
-                .thenAccept {
-                    try {
-                        val rating = it?.toInt() ?: 0
-                        if (rating > settingsManager.getProperty(PluginSettings.OLLAMA_AI_SENSITIVE_THRESHOLD)) {
-                            val unsupportedList = Collections.singletonList("Unsupported")
-                            Utils.messagesFilteredNum.getAndIncrement()
-                            if (settingsManager.getProperty(PluginSettings.CHAT_SEND_MESSAGE)) {
-                                player.sendMessage(ChatColor.translateAlternateColorCodes('&', AdvancedSensitiveWords.messagesManager.getProperty(PluginMessages.MESSAGE_ON_CHAT).replace("%integrated_player%", player.name).replace("%integrated_message%", originalMessage)))
-                            }
-                            if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
-                                Utils.logViolation(player.name + "(IP: " + Utils.getPlayerIp(player) + ")(Chat AI)(LLM output: $it)", originalMessage + unsupportedList)
-                            }
-                            if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
-                                VelocitySender.send(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
-                            }
-                            if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
-                                BungeeSender.send(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
-                            }
-                            if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
-                                AdvancedSensitiveWords.databaseManager.checkAndUpdatePlayer(player.name)
-                            }
-                            if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) {
-                                Notifier.notice(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
-                            }
-                            if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) {
-                                AdvancedSensitiveWords.getScheduler().runTask { Punishment.punish(player) }
-                            }
-                        }
-                    } catch (e: NumberFormatException) {
-                        LOGGER.severe("Failed to parse Ollama output to a number: $it")
-                    }
-                }
-        } else if (settingsManager.getProperty(PluginSettings.ENABLE_OPENAI_AI_MODEL_CHECK)
-            && AdvancedSensitiveWords.getOpenAIProcessor().isOpenAiInit) {
-            val processor = AdvancedSensitiveWords.getOpenAIProcessor()
-            val consumerOnResponse =
-                Consumer { response: ModerationResponse ->
-                    val results = response.results() ?: return@Consumer
-                    for (result in results) {
-                        if (result.isFlagged) {
-                            val categories = result.categories()
-                            var isViolated = false
-                            if (categories.hateThreatening() && settingsManager.getProperty(PluginSettings.OPENAI_ENABLE_HATE_THREATENING_CHECK)) {
-                                isViolated = true
-                            } else if (categories.hate() && settingsManager.getProperty(PluginSettings.OPENAI_ENABLE_HATE_CHECK)) {
-                                isViolated = true
-                            } else if (categories.selfHarm() && settingsManager.getProperty(PluginSettings.OPENAI_ENABLE_SELF_HARM_CHECK)) {
-                                isViolated = true
-                            } else if (categories.sexual() && settingsManager.getProperty(PluginSettings.OPENAI_ENABLE_SEXUAL_CONTENT_CHECK)) {
-                                isViolated = true
-                            } else if (categories.sexualMinors() && settingsManager.getProperty(PluginSettings.OPENAI_ENABLE_SEXUAL_MINORS_CHECK)) {
-                                isViolated = true
-                            } else if (categories.violence() && settingsManager.getProperty(PluginSettings.OPENAI_ENABLE_VIOLENCE_CHECK)) {
-                                isViolated = true
-                            }
-                            if (isViolated) {
+        } else {
+            if (settingsManager.getProperty(PluginSettings.ENABLE_OLLAMA_AI_MODEL_CHECK)
+                    && AdvancedSensitiveWords.getOllamaProcessor().isOllamaInit) {
+                val processor = AdvancedSensitiveWords.getOllamaProcessor()
+                processor.process(originalMessage)
+                    .thenAccept {
+                        try {
+                            val rating = it?.toInt() ?: 0
+                            if (rating > settingsManager.getProperty(PluginSettings.OLLAMA_AI_SENSITIVE_THRESHOLD)) {
                                 val unsupportedList = Collections.singletonList("Unsupported")
                                 Utils.messagesFilteredNum.getAndIncrement()
                                 if (settingsManager.getProperty(PluginSettings.CHAT_SEND_MESSAGE)) {
                                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', AdvancedSensitiveWords.messagesManager.getProperty(PluginMessages.MESSAGE_ON_CHAT).replace("%integrated_player%", player.name).replace("%integrated_message%", originalMessage)))
                                 }
                                 if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
-                                    Utils.logViolation(player.name + "(IP: " + Utils.getPlayerIp(player) + ")(Chat AI)(OPENAI)", originalMessage + unsupportedList)
+                                    Utils.logViolation(player.name + "(IP: " + Utils.getPlayerIp(player) + ")(Chat AI)(LLM output: $it)", originalMessage + unsupportedList)
                                 }
                                 if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
                                     VelocitySender.send(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
@@ -165,15 +114,69 @@ class ChatListener : Listener {
                                     AdvancedSensitiveWords.getScheduler().runTask { Punishment.punish(player) }
                                 }
                             }
+                        } catch (e: NumberFormatException) {
+                            LOGGER.severe("Failed to parse Ollama output to a number: $it")
                         }
                     }
-                }
-            val consumerOnError =
-                Consumer { throwable: Throwable ->
-                    LOGGER.warning("OpenAI Moderation error: " + throwable.message)
-                }
+            }
+            if (settingsManager.getProperty(PluginSettings.ENABLE_OPENAI_AI_MODEL_CHECK)
+                && AdvancedSensitiveWords.getOpenAIProcessor().isOpenAiInit) {
+                val processor = AdvancedSensitiveWords.getOpenAIProcessor()
+                val consumerOnResponse =
+                    Consumer { response: ModerationResponse ->
+                        val results = response.results() ?: return@Consumer
+                        for (result in results) {
+                            if (result.isFlagged) {
+                                val categories = result.categories()
+                                var isViolated = false
+                                if (categories.hateThreatening() && settingsManager.getProperty(PluginSettings.OPENAI_ENABLE_HATE_THREATENING_CHECK)) {
+                                    isViolated = true
+                                } else if (categories.hate() && settingsManager.getProperty(PluginSettings.OPENAI_ENABLE_HATE_CHECK)) {
+                                    isViolated = true
+                                } else if (categories.selfHarm() && settingsManager.getProperty(PluginSettings.OPENAI_ENABLE_SELF_HARM_CHECK)) {
+                                    isViolated = true
+                                } else if (categories.sexual() && settingsManager.getProperty(PluginSettings.OPENAI_ENABLE_SEXUAL_CONTENT_CHECK)) {
+                                    isViolated = true
+                                } else if (categories.sexualMinors() && settingsManager.getProperty(PluginSettings.OPENAI_ENABLE_SEXUAL_MINORS_CHECK)) {
+                                    isViolated = true
+                                } else if (categories.violence() && settingsManager.getProperty(PluginSettings.OPENAI_ENABLE_VIOLENCE_CHECK)) {
+                                    isViolated = true
+                                }
+                                if (isViolated) {
+                                    val unsupportedList = Collections.singletonList("Unsupported")
+                                    Utils.messagesFilteredNum.getAndIncrement()
+                                    if (settingsManager.getProperty(PluginSettings.CHAT_SEND_MESSAGE)) {
+                                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', AdvancedSensitiveWords.messagesManager.getProperty(PluginMessages.MESSAGE_ON_CHAT).replace("%integrated_player%", player.name).replace("%integrated_message%", originalMessage)))
+                                    }
+                                    if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
+                                        Utils.logViolation(player.name + "(IP: " + Utils.getPlayerIp(player) + ")(Chat AI)(OPENAI)", originalMessage + unsupportedList)
+                                    }
+                                    if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
+                                        VelocitySender.send(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
+                                    }
+                                    if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
+                                        BungeeSender.send(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
+                                    }
+                                    if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
+                                        AdvancedSensitiveWords.databaseManager.checkAndUpdatePlayer(player.name)
+                                    }
+                                    if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) {
+                                        Notifier.notice(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
+                                    }
+                                    if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) {
+                                        AdvancedSensitiveWords.getScheduler().runTask { Punishment.punish(player) }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                val consumerOnError =
+                    Consumer { throwable: Throwable ->
+                        LOGGER.warning("OpenAI Moderation error: " + throwable.message)
+                    }
 
-            processor.process(originalMessage, consumerOnResponse, consumerOnError)
+                processor.process(originalMessage, consumerOnResponse, consumerOnError)
+            }
         }
 
         if (settingsManager.getProperty(PluginSettings.CHAT_CONTEXT_CHECK)) {
