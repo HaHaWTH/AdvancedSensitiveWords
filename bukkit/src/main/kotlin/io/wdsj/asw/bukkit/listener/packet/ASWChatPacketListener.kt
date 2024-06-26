@@ -7,7 +7,6 @@ import com.github.retrooper.packetevents.event.PacketReceiveEvent
 import com.github.retrooper.packetevents.protocol.packettype.PacketType
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientChatCommand
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientChatMessage
-import dev.ai4j.openai4j.moderation.ModerationResponse
 import fr.xephi.authme.api.v3.AuthMeApi
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER
@@ -29,7 +28,6 @@ import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import java.util.*
-import java.util.function.Consumer
 
 /**
  * @author HaHaWTH & HeyWTF_IS_That and 0D00_0721
@@ -159,9 +157,9 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                 if (settingsManager.getProperty(PluginSettings.ENABLE_OPENAI_AI_MODEL_CHECK)
                     && AdvancedSensitiveWords.getOpenAIProcessor().isOpenAiInit && Utils.isNotCommand(originalMessage)) {
                     val processor = AdvancedSensitiveWords.getOpenAIProcessor()
-                    val consumerOnResponse =
-                        Consumer { response: ModerationResponse ->
-                            val results = response.results() ?: return@Consumer
+                    processor.process(originalMessage)
+                        .thenAccept {
+                            val results = it.results() ?: return@thenAccept
                             for (result in results) {
                                 if (result.isFlagged) {
                                     val categories = result.categories()
@@ -199,16 +197,31 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                                             )
                                         }
                                         if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
-                                            VelocitySender.send(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
+                                            VelocitySender.send(
+                                                player,
+                                                ModuleType.CHAT_AI,
+                                                originalMessage,
+                                                unsupportedList
+                                            )
                                         }
                                         if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
-                                            BungeeSender.send(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
+                                            BungeeSender.send(
+                                                player,
+                                                ModuleType.CHAT_AI,
+                                                originalMessage,
+                                                unsupportedList
+                                            )
                                         }
                                         if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
                                             AdvancedSensitiveWords.databaseManager.checkAndUpdatePlayer(player.name)
                                         }
                                         if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) {
-                                            Notifier.notice(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
+                                            Notifier.notice(
+                                                player,
+                                                ModuleType.CHAT_AI,
+                                                originalMessage,
+                                                unsupportedList
+                                            )
                                         }
                                         if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) {
                                             AdvancedSensitiveWords.getScheduler().runTask { Punishment.punish(player) }
@@ -217,12 +230,6 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                                 }
                             }
                         }
-                    val consumerOnError =
-                        Consumer { throwable: Throwable ->
-                            LOGGER.warning("OpenAI Moderation error: " + throwable.message)
-                        }
-
-                    processor.process(originalMessage, consumerOnResponse, consumerOnError)
                 }
             }
 

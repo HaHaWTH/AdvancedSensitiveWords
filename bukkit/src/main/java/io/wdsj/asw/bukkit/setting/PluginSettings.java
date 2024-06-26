@@ -129,8 +129,8 @@ public class PluginSettings implements SettingsHolder {
             "*Whether to enable ollama AI model checks"})
     public static final Property<Boolean> ENABLE_OLLAMA_AI_MODEL_CHECK = newProperty("Plugin.ai.ollama.enableAiModelCheck", false);
 
-    @Comment({"*你的OpenAI API 密钥",
-            "*Enter your OpenAI API Key"})
+    @Comment({"*你的OpenAI API 密钥(Text Moderation)",
+            "*Enter your OpenAI API Key(Text Moderation)"})
     public static final Property<String> OPENAI_API_KEY = newProperty("Plugin.ai.openai.apiKey", "YOUR_API_KEY");
     @Comment({"*是否开启调试日志",
             "*Whether to enable debug logging"})

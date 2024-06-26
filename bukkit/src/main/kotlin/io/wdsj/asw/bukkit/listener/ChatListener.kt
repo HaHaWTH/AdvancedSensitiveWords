@@ -1,7 +1,6 @@
 package io.wdsj.asw.bukkit.listener
 
 import cc.baka9.catseedlogin.bukkit.CatSeedLoginAPI
-import dev.ai4j.openai4j.moderation.ModerationResponse
 import fr.xephi.authme.api.v3.AuthMeApi
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER
@@ -26,7 +25,6 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import java.util.*
-import java.util.function.Consumer
 
 @Suppress("unused")
 class ChatListener : Listener {
@@ -122,9 +120,9 @@ class ChatListener : Listener {
             if (settingsManager.getProperty(PluginSettings.ENABLE_OPENAI_AI_MODEL_CHECK)
                 && AdvancedSensitiveWords.getOpenAIProcessor().isOpenAiInit) {
                 val processor = AdvancedSensitiveWords.getOpenAIProcessor()
-                val consumerOnResponse =
-                    Consumer { response: ModerationResponse ->
-                        val results = response.results() ?: return@Consumer
+                processor.process(originalMessage)
+                    .thenAccept {
+                        val results = it.results() ?: return@thenAccept
                         for (result in results) {
                             if (result.isFlagged) {
                                 val categories = result.categories()
@@ -170,12 +168,6 @@ class ChatListener : Listener {
                             }
                         }
                     }
-                val consumerOnError =
-                    Consumer { throwable: Throwable ->
-                        LOGGER.warning("OpenAI Moderation error: " + throwable.message)
-                    }
-
-                processor.process(originalMessage, consumerOnResponse, consumerOnError)
             }
         }
 
