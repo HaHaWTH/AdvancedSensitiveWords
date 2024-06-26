@@ -47,6 +47,7 @@ public class OpenAIProcessor extends AIProcessorAbstract {
         isOpenAiInit = false;
     }
 
+    @Override
     public CompletableFuture<ModerationResponse> process(String inputMessage) {
         if (!isOpenAiInit) {
             throw new IllegalStateException("OpenAI Moderation Processor is not initialized");

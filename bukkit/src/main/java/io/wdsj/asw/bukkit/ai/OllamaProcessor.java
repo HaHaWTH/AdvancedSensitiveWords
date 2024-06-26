@@ -55,6 +55,7 @@ public class OllamaProcessor extends AIProcessorAbstract {
         isOllamaInit = false;
     }
 
+    @Override
     public CompletableFuture<String> process(String inputMessage) {
         if (!isOllamaInit) {
             throw new IllegalStateException("OllamaProcessor is not initialized");
