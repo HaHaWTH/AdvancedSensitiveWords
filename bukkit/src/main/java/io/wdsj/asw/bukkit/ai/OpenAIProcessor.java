@@ -15,7 +15,7 @@ import static dev.ai4j.openai4j.moderation.ModerationModel.TEXT_MODERATION_LATES
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER;
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
 
-public class OpenAIProcessor extends AIProcessorAbstract {
+public class OpenAIProcessor implements AIProcessor {
     public boolean isOpenAiInit = false;
     private OpenAiClient client;
     private final ExecutorService THREAD_POOL;

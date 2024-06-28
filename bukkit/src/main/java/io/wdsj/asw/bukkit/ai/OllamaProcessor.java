@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER;
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
 
-public class OllamaProcessor extends AIProcessorAbstract {
+public class OllamaProcessor implements AIProcessor {
     public boolean isOllamaInit = false;
     private PromptBuilder promptBuilder;
     private final ExecutorService THREAD_POOL;
