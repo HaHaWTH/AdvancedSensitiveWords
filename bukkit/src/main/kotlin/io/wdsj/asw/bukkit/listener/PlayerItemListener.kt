@@ -1,8 +1,7 @@
 package io.wdsj.asw.bukkit.listener
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
-import io.wdsj.asw.bukkit.event.ASWFilterEvent
-import io.wdsj.asw.bukkit.event.EventType
+import io.wdsj.asw.bukkit.type.ModuleType
 import io.wdsj.asw.bukkit.manage.notice.Notifier
 import io.wdsj.asw.bukkit.manage.permission.Permissions
 import io.wdsj.asw.bukkit.manage.punish.Punishment
@@ -12,7 +11,6 @@ import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.util.TimingUtils
 import io.wdsj.asw.bukkit.util.Utils
-import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -62,23 +60,11 @@ class PlayerItemListener : Listener {
                             originalName + censoredWordList
                         )
                     }
-                    if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_API)) {
-                        Bukkit.getPluginManager().callEvent(
-                            ASWFilterEvent(
-                                player,
-                                originalName,
-                                processedName,
-                                censoredWordList,
-                                EventType.ITEM,
-                                false
-                            )
-                        )
-                    }
                     if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
-                        BungeeSender.send(player, EventType.ITEM, originalName, censoredWordList)
+                        BungeeSender.send(player, ModuleType.ITEM, originalName, censoredWordList)
                     }
                     if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
-                        VelocitySender.send(player, EventType.ITEM, originalName, censoredWordList)
+                        VelocitySender.send(player, ModuleType.ITEM, originalName, censoredWordList)
                     }
                     if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
                         AdvancedSensitiveWords.databaseManager.checkAndUpdatePlayer(player.name)
@@ -87,7 +73,7 @@ class PlayerItemListener : Listener {
                     TimingUtils.addProcessStatistic(endTime, startTime)
                     if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(
                         player,
-                        EventType.ITEM,
+                        ModuleType.ITEM,
                         originalName,
                         censoredWordList
                     )
@@ -140,23 +126,11 @@ class PlayerItemListener : Listener {
                             originalName + censoredWordList
                         )
                     }
-                    if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_API)) {
-                        Bukkit.getPluginManager().callEvent(
-                            ASWFilterEvent(
-                                player,
-                                originalName,
-                                processedName,
-                                censoredWordList,
-                                EventType.ITEM,
-                                false
-                            )
-                        )
-                    }
                     if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
-                        VelocitySender.send(player, EventType.ITEM, originalName, censoredWordList)
+                        VelocitySender.send(player, ModuleType.ITEM, originalName, censoredWordList)
                     }
                     if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
-                        BungeeSender.send(player, EventType.ITEM, originalName, censoredWordList)
+                        BungeeSender.send(player, ModuleType.ITEM, originalName, censoredWordList)
                     }
                     if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
                         AdvancedSensitiveWords.databaseManager.checkAndUpdatePlayer(player.name)
@@ -165,7 +139,7 @@ class PlayerItemListener : Listener {
                     TimingUtils.addProcessStatistic(endTime, startTime)
                     if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(
                         player,
-                        EventType.ITEM,
+                        ModuleType.ITEM,
                         originalName,
                         censoredWordList
                     )

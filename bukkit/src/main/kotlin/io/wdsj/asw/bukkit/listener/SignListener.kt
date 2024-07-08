@@ -2,8 +2,6 @@ package io.wdsj.asw.bukkit.listener
 
 import com.github.houbb.heaven.util.lang.StringUtil
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
-import io.wdsj.asw.bukkit.event.ASWFilterEvent
-import io.wdsj.asw.bukkit.event.EventType
 import io.wdsj.asw.bukkit.manage.notice.Notifier
 import io.wdsj.asw.bukkit.manage.permission.Permissions
 import io.wdsj.asw.bukkit.manage.punish.Punishment
@@ -11,9 +9,10 @@ import io.wdsj.asw.bukkit.proxy.bungee.BungeeSender
 import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
+import io.wdsj.asw.bukkit.type.ModuleType
 import io.wdsj.asw.bukkit.util.TimingUtils
 import io.wdsj.asw.bukkit.util.Utils
-import org.bukkit.Bukkit
+import io.wdsj.asw.bukkit.util.context.SignContext
 import org.bukkit.ChatColor
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -31,12 +30,12 @@ class SignListener : Listener {
         if (!AdvancedSensitiveWords.isInitialized) return
         if (!AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_SIGN_EDIT_CHECK)) return
         val player = event.player
-        if (player.hasPermission(Permissions.BYPASS)) return
+        if (player.hasPermission(Permissions.BYPASS) || event.lines.isEmpty()) return
         var shouldSendMessage = false
         val startTime = System.currentTimeMillis()
         val indexList: MutableList<Int> = ArrayList()
         val originalMultiMessages = StringBuilder()
-        for (line in 0..3) {
+        for (line in 0 until event.lines.size) {
             var originalMessage = event.getLine(line)
             if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.PRE_PROCESS) && originalMessage != null) originalMessage =
                 originalMessage.replace(
@@ -52,9 +51,7 @@ class SignListener : Listener {
                 if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.SIGN_METHOD)
                         .equals("cancel", ignoreCase = true)
                 ) {
-                    shouldSendMessage = true
                     event.isCancelled = true
-                    break
                 }
                 event.setLine(line, processedMessage)
                 shouldSendMessage = true
@@ -85,9 +82,21 @@ class SignListener : Listener {
             }
         }
 
-        if (shouldSendMessage && AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_API)) {
-            Bukkit.getPluginManager()
-                .callEvent(ASWFilterEvent(player, outMessage, outProcessedMessage, outList, EventType.SIGN, false))
+        // Sign context check
+        if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.SIGN_CONTEXT_CHECK) && !shouldSendMessage) {
+            val originalAllMessage = event.lines.joinToString("")
+            SignContext.addMessage(player, originalAllMessage)
+            val originalContext = SignContext.getHistory(player).joinToString("")
+            val censoredContextList = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalContext)
+            if (censoredContextList.isNotEmpty()) {
+                SignContext.pollPlayerContext(player)
+                val processedContext = AdvancedSensitiveWords.sensitiveWordBs.replace(originalContext)
+                shouldSendMessage = true
+                event.isCancelled = true
+                outMessage = originalContext
+                outProcessedMessage = processedContext
+                outList = censoredContextList
+            }
         }
 
         if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.SIGN_SEND_MESSAGE) && shouldSendMessage) {
@@ -100,15 +109,17 @@ class SignListener : Listener {
         }
 
         if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.LOG_VIOLATION) && shouldSendMessage) {
-            Utils.logViolation(player.name + "(IP: " + Utils.getPlayerIp(player) + ")(Sign)", outMessage + outList)
+            val location = event.block.location
+            val locationLog = "World: ${location.world?.name ?: "Unknown"}, X: ${location.x}, Y: ${location.y}, Z: ${location.z}"
+            Utils.logViolation(player.name + "(IP: " + Utils.getPlayerIp(player) + ")(Sign)(" + locationLog + ")", outMessage + outList)
         }
 
         if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_VELOCITY) && shouldSendMessage) {
-            VelocitySender.send(player, EventType.SIGN, outMessage, outList)
+            VelocitySender.send(player, ModuleType.SIGN, outMessage, outList)
         }
 
         if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
-            BungeeSender.send(player, EventType.SIGN, outMessage, outList)
+            BungeeSender.send(player, ModuleType.SIGN, outMessage, outList)
         }
 
         if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
@@ -121,7 +132,7 @@ class SignListener : Listener {
             TimingUtils.addProcessStatistic(endTime, startTime)
             if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(
                 player,
-                EventType.SIGN,
+                ModuleType.SIGN,
                 outMessage,
                 outList
             )

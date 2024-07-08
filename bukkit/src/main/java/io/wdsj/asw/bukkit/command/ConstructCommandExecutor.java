@@ -20,7 +20,8 @@ import static com.github.houbb.heaven.util.util.OsUtil.is64;
 import static com.github.houbb.heaven.util.util.OsUtil.isUnix;
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.*;
 import static io.wdsj.asw.bukkit.util.TimingUtils.*;
-import static io.wdsj.asw.bukkit.util.Utils.*;
+import static io.wdsj.asw.bukkit.util.Utils.getMinecraftVersion;
+import static io.wdsj.asw.bukkit.util.Utils.messagesFilteredNum;
 
 public class ConstructCommandExecutor implements CommandExecutor {
     @Override
@@ -38,7 +39,7 @@ public class ConstructCommandExecutor implements CommandExecutor {
                 }
                 messagesManager.reload();
                 sensitiveWordBs.destroy();
-                AdvancedSensitiveWords.getInstance().doInitTasks();
+                getInstance().doInitTasks();
                 if (settingsManager.getProperty(PluginSettings.BOOK_CACHE_CLEAR_ON_RELOAD) &&
                         settingsManager.getProperty(PluginSettings.BOOK_CACHE)) BookCache.invalidateAll();
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_RELOAD)));
@@ -49,7 +50,7 @@ public class ConstructCommandExecutor implements CommandExecutor {
                 return true;
             }
             if (args[0].equalsIgnoreCase("status") && (sender.hasPermission(Permissions.STATUS) || sender instanceof ConsoleCommandSender)) {
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_STATUS).replace("%num%", String.valueOf(messagesFilteredNum.get())).replace("%mode%", isEventMode() ? "Event" : "Packet").replace("%init%", isInitialized ? "true" : "false").replace("%ms%", getProcessAverage() + "ms").replace("%version%", AdvancedSensitiveWords.getInstance().getDescription().getVersion()).replace("%mc_version%", getMinecraftVersion()).replace("%platform%", OsUtil.isWindows() ? "Windows" : (OsUtil.isMac() ? "Mac" : isUnix() ? "Linux" : "Unknown")).replace("%bit%", is64() ? "64bit" : "32bit").replace("%java_version%", getJvmVersion()).replace("%java_vendor%", getJvmVendor()).replace("%api_status%", settingsManager.getProperty(PluginSettings.ENABLE_API) ? "enabled" : "disabled")));
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_STATUS).replace("%num%", String.valueOf(messagesFilteredNum.get())).replace("%mode%", isEventMode() ? "Event" : "Packet").replace("%init%", isInitialized ? "true" : "false").replace("%ms%", getProcessAverage() + "ms").replace("%version%", AdvancedSensitiveWords.getInstance().getDescription().getVersion()).replace("%mc_version%", getMinecraftVersion()).replace("%platform%", OsUtil.isWindows() ? "Windows" : (OsUtil.isMac() ? "Mac" : isUnix() ? "Linux" : "Unknown")).replace("%bit%", is64() ? "64bit" : "32bit").replace("%java_version%", getJvmVersion()).replace("%java_vendor%", getJvmVendor())));
                 return true;
             }
             if (args[0].equalsIgnoreCase("status")) {

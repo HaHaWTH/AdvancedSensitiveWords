@@ -1,9 +1,11 @@
 package io.wdsj.asw.bukkit.integration.placeholder;
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
+import io.wdsj.asw.bukkit.manage.punish.PlayerShadowController;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.databaseManager;
@@ -64,6 +66,14 @@ public class ASWExpansion extends PlaceholderExpansion {
                     return String.valueOf(databaseManager.getPlayerViolations(playerName));
                 } else {
                     return "disabled";
+                }
+            }
+        }
+        if (params.equalsIgnoreCase("is_shadow")) {
+            if (player != null) {
+                Player onlinePlayer = player.getPlayer();
+                if (onlinePlayer != null) {
+                    return String.valueOf(PlayerShadowController.isShadowed(onlinePlayer));
                 }
             }
         }

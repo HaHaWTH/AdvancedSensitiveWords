@@ -43,7 +43,6 @@ Plugin:
     &bAdvancedSensitiveWords&r---&b Plugin Status(%version%)(MC %mc_version%)
     &7 System Information: &b%platform% %bit% (Java %java_version% -- %java_vendor%)
     &7 Initialization: %init%
-    &7 API status: %api_status%
     &7 Current mode: %mode%
     &7 Number of filtered messages: %num%
     &7 Average time spent on nearly 20 processes: %ms%
@@ -66,6 +65,10 @@ Plugin:
   argsNotEnough: '&cInsufficient parameters, please use &7/asw help'
   #Admin notice
   noticeOperator: '&f[&bASW&7Notify&f]&7Player &c%player% &7failed anti-swear check(%type%)(Message: %message%)List: %censored_list%'
+  #Admin notice(Proxy)
+  noticeOperatorProxy: '&f[&bASW&7Notify&f]&7Player &c%player% (Server: %server_name%) &7failed anti-swear check(%type%)(Message: %message%)List: %censored_list%'
+  #Update is available
+  updateAvailable: '&f[&bASW&7Notify&f]&7A new version is available, please update. (Latest: %latest_version%, Current: %current_version%) Download from: %url%'
   database:
     #Player info
     playerInfo: |-

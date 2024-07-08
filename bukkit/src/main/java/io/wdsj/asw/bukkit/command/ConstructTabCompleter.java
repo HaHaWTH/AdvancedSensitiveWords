@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,6 +48,6 @@ public class ConstructTabCompleter implements TabCompleter {
                         .collect(Collectors.toList());
             }
         }
-        return new ArrayList<>(); // Must return empty list, if null paper will supply player names
+        return Collections.emptyList(); // Must return empty list, if null paper will supply player names
     }
 }

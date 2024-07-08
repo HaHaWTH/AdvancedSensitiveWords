@@ -25,7 +25,7 @@ import org.spongepowered.plugin.builtin.jvm.Plugin;
 /**
  * The main class of your Sponge plugin.
  *
- * <p>All methods are optional -- some common event registrations are included as a jumping-off point.</p>
+ * <p>All methods are optional -- some common type registrations are included as a jumping-off point.</p>
  */
 @Plugin("AdvancedSensitiveWords")
 public class AdvancedSensitiveWords {
@@ -61,7 +61,7 @@ public class AdvancedSensitiveWords {
     @Listener
     public void onRegisterCommands(final RegisterCommandEvent<Command.Parameterized> event) {
         // Register a simple command
-        // When possible, all commands should be registered within a command register event
+        // When possible, all commands should be registered within a command register type
         final Parameter.Value<String> nameParam = Parameter.string().key("name").build();
         event.register(this.container, Command.builder()
                 .addParameter(nameParam)

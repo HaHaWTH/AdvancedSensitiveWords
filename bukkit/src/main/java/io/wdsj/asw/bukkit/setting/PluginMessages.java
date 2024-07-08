@@ -29,7 +29,7 @@ public class PluginMessages implements SettingsHolder {
     @Comment("插件帮助菜单")
     public static final Property<String> MESSAGE_ON_COMMAND_HELP = newProperty("Plugin.messageOnCommandHelp", "&bAdvancedSensitiveWords&r---&b帮助菜单\n   &7/asw reload&7: &a重新加载过滤词库和插件配置\n   &7/asw status&7: &a显示插件状态菜单\n   &7/asw test <待测消息>: &a运行敏感词测试\n   &7/asw help&7: &a显示帮助信息\n   &7/asw info <玩家名称>: &a获取玩家违规次数");
     @Comment("插件状态菜单")
-    public static final Property<String> MESSAGE_ON_COMMAND_STATUS = newProperty("Plugin.messageOnCommandStatus", "&bAdvancedSensitiveWords&r---&b插件状态(%version%)(MC %mc_version%)\n   &7系统信息: &b%platform% %bit% (Java %java_version% -- %java_vendor%)\n   &7初始化: %init%\n   &7API状态: %api_status%\n   &7当前模式: %mode%\n   &7已过滤消息数: &a%num%\n   &7近20次处理平均耗时: %ms%");
+    public static final Property<String> MESSAGE_ON_COMMAND_STATUS = newProperty("Plugin.messageOnCommandStatus", "&bAdvancedSensitiveWords&r---&b插件状态(%version%)(MC %mc_version%)\n   &7系统信息: &b%platform% %bit% (Java %java_version% -- %java_vendor%)\n   &7初始化: %init%\n   &7当前模式: %mode%\n   &7已过滤消息数: &a%num%\n   &7近20次处理平均耗时: %ms%");
     @Comment("敏感词测试返回")
     public static final Property<String> MESSAGE_ON_COMMAND_TEST = newProperty("Plugin.commandTest.testResultTrue", "&b一眼丁真, 鉴定为敏感词(鉴定报告)\n   &7原消息: &c%original_msg%\n   &7过滤后消息: &a%processed_msg%\n   &7敏感词列表: &b%censored_list%");
     @Comment("敏感词测试通过")
@@ -44,6 +44,10 @@ public class PluginMessages implements SettingsHolder {
     public static final Property<String> NOT_ENOUGH_ARGS = newProperty("Plugin.argsNotEnough", "&c参数不足, 请使用 &7/asw help");
     @Comment("管理员提醒消息")
     public static final Property<String> ADMIN_REMINDER = newProperty("Plugin.noticeOperator", "&f[&bASW&7Notify&f]&7玩家 &c%player% &7触发了敏感词检测(%type%)(原消息: %message%)");
+    @Comment("跨服提醒消息")
+    public static final Property<String> ADMIN_REMINDER_PROXY = newProperty("Plugin.noticeOperatorProxy", "&f[&bASW&7Notify&f]&7玩家 &c%player% (服务器: %server_name%) &7触发了敏感词检测(%type%)(原消息: %message%)");
+    @Comment("更新可用")
+    public static final Property<String> UPDATE_AVAILABLE = newProperty("Plugin.updateAvailable", "&f[&bASW&7Notify&f]&7插件有可用更新(%latest_version%), 当前正在运行: &b%current_version%, 请前往 &b%url% &7下载新版本.");
     @Comment("获取到玩家信息")
     public static final Property<String> MESSAGE_ON_PLAYER_INFO = newProperty("Plugin.database.playerInfo", "&bAdvancedSensitiveWords&r---&b玩家信息\n   &7玩家名称: &b%player%\n   &7违规次数: &a%num%");
     @Comment("获取玩家信息失败")

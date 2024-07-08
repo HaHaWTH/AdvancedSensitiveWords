@@ -135,6 +135,22 @@
                                     <shadedPattern>io.wdsj.asw.bukkit.libs.kt.stdlib</shadedPattern>
                                 </relocation>
                                 <relocation>
+                                    <pattern>retrofit2</pattern>
+                                    <shadedPattern>io.wdsj.asw.bukkit.libs.retrofit2</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>okio</pattern>
+                                    <shadedPattern>io.wdsj.asw.bukkit.libs.okio</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>okhttp3</pattern>
+                                    <shadedPattern>io.wdsj.asw.bukkit.libs.okhttp3</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>dev.ai4j.openai4j</pattern>
+                                    <shadedPattern>io.wdsj.asw.bukkit.libs.dev.ai4j.openai4j</shadedPattern>
+                                </relocation>
+                                <relocation>
                                     <pattern>com.github.houbb</pattern>
                                     <shadedPattern>io.wdsj.asw.bukkit.libs.lib</shadedPattern>
                                 </relocation>
@@ -170,6 +186,14 @@
                                     <pattern>com.zaxxer.hikari</pattern>
                                     <shadedPattern>io.wdsj.asw.bukkit.libs.com.zaxxer.hikari</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>io.github</pattern>
+                                    <shadedPattern>io.wdsj.asw.bukkit.libs.io.github</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.fasterxml</pattern>
+                                    <shadedPattern>io.wdsj.asw.bukkit.libs.com.fasterxml</shadedPattern>
+                                </relocation>
                             </relocations>
                             <filters>
                                 <filter>
@@ -180,6 +204,8 @@
                                         <exclude>*.md</exclude>
                                         <exclude>META-INF/maven/**</exclude>
                                         <exclude>com/google/gson/**</exclude>
+                                        <exclude>sample-db-prompt-template.txt</exclude>
+                                        <exclude>LICENSE</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
@@ -271,11 +297,27 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- ollama4j fork -->
+        <dependency>
+            <groupId>com.github.HaHaWTH</groupId>
+            <artifactId>ollama4j-j8</artifactId>
+            <version>8ce2ad8840</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- OpenAI4j -->
+        <dependency>
+            <groupId>dev.ai4j</groupId>
+            <artifactId>openai4j</artifactId>
+            <version>0.17.0</version>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- PacketEvents, follow the latest version -->
         <dependency>
             <groupId>com.github.retrooper</groupId>
             <artifactId>packetevents-spigot</artifactId>
-            <version>2.4.0</version>
+            <version>2.4.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 

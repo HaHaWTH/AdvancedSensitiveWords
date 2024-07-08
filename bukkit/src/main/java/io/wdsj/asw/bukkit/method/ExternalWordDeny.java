@@ -42,7 +42,7 @@ public class ExternalWordDeny implements IWordDeny {
             }
             if (!files.isEmpty()) LOGGER.info("Loaded " + files.size() + " external deny file(s).");
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.severe("Error occurred while loading external deny files: " + e.getMessage());
             return Collections.emptyList();
         }
         return totalList;

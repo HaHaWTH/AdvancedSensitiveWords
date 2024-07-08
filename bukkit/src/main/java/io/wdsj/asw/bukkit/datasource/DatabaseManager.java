@@ -29,6 +29,9 @@ public class DatabaseManager {
 
     private HikariDataSource dataSource;
 
+    /**
+     * Set up the data source.
+     */
     public void setupDataSource() {
         HikariConfig config = new HikariConfig();
         config.setDriverClassName("org.sqlite.JDBC");
@@ -43,16 +46,26 @@ public class DatabaseManager {
         initializeDatabase();
     }
 
+    /**
+     * Close the data source.
+     */
     public void closeDataSource() {
         if (dataSource != null && !dataSource.isClosed()) {
             dataSource.close();
         }
     }
 
+    /**
+     * Get the data source.
+     * @return The data source.
+     */
     public HikariDataSource getDataSource() {
         return dataSource;
     }
 
+    /**
+     * Initialize the database.
+     */
     private void initializeDatabase() {
         try (Connection conn = dataSource.getConnection();
              Statement stmt = conn.createStatement()) {
@@ -68,6 +81,11 @@ public class DatabaseManager {
         }
     }
 
+    /**
+     * Get the player violations.
+     * @param playerName The player name.
+     * @return The player violations, null if not found.
+     */
     @Nullable
     public String getPlayerViolations(String playerName) {
         String loweredPlayerName = playerName.toLowerCase(Locale.ROOT);
@@ -94,6 +112,10 @@ public class DatabaseManager {
         return null;
     }
 
+    /**
+     * Get the total violations in the database.
+     * @return The total violations.
+     */
     public long getTotalViolations() {
         String query = "SELECT SUM(violations) AS total_violations FROM AdvancedSensitiveWords";
         long totalViolations = 0;
@@ -111,6 +133,10 @@ public class DatabaseManager {
         return totalViolations;
     }
 
+    /**
+     * Check and update the player violations.
+     * @param playerName The player name.
+     */
     public void checkAndUpdatePlayer(String playerName) {
         String loweredPlayerName = playerName.toLowerCase(Locale.ROOT);
         String query = "SELECT violations FROM AdvancedSensitiveWords WHERE player_name = ?";

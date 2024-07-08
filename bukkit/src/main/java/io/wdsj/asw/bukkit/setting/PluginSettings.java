@@ -80,16 +80,12 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"*是否启用玩家物品检测",
             "*Whether to enable player item check"})
     public static final Property<Boolean> ENABLE_PLAYER_ITEM_CHECK = newProperty("Plugin.enableItemCheck", false);
-    @Comment({"*是否开启小号检测",
-            "*Whether to enable alts detection"})
+    @Comment({"*是否开启小号检测(基于IP地址)",
+            "*Whether to enable alts detection(Based on IP address)"})
     public static final Property<Boolean> ENABLE_ALTS_CHECK = newProperty("Plugin.enableAltsCheck", false);
     @Comment({"*是否在玩家退出时清理相关数据缓存?",
             "*Should we flush player data cache on they quit?"})
     public static final Property<Boolean> FLUSH_PLAYER_DATA_CACHE = newProperty("Plugin.flushPlayerDataCache", false);
-
-    @Comment({"是否启用API接口(非必要请勿关闭)",
-            "Whether to enable API (do not disable unless necessary)"})
-    public static final Property<Boolean> ENABLE_API = newProperty("Plugin.enableApi", true);
 
     @Comment({"是否启用数据库记录玩家违规次数",
             "Whether to enable database to log violations"})
@@ -103,6 +99,72 @@ public class PluginSettings implements SettingsHolder {
             "*Database name"})
     public static final Property<String> DATABASE_NAME = newProperty("Plugin.database.databaseName", "data.db");
 
+    @Comment({"*模型请求超时时长(单位: 秒)",
+            "*Maximum request time before time out(in seconds)"})
+    public static final Property<Integer> AI_MODEL_TIMEOUT = newProperty("Plugin.ai.ollama.timeOutSeconds", 20);
+
+    @Comment({"模型提示词",
+            "Model prompt"})
+    public static final Property<String> AI_MODEL_PROMPT = newProperty("Plugin.ai.ollama.prompt", "You are a Minecraft server operator, what you need to do is determine whether" +
+            "the player is swearing/cursing. You ONLY need to give a rating to the message without commenting and any other words, ONLY reply a number, from 1 to 100, higher means the player is saying more cursed words." +
+            "You focus on rating. The following characters are messages: ");
+
+    @Comment({"*模型API地址",
+            "*Model API address"})
+    public static final Property<String> OLLAMA_AI_API_ADDRESS = newProperty("Plugin.ai.ollama.apiAddress", "http://localhost:11434/");
+
+    @Comment({"*模型名称",
+            "*Model name"})
+    public static final Property<String> OLLAMA_AI_MODEL_NAME = newProperty("Plugin.ai.ollama.modelName", "qwen2:7b");
+
+    @Comment({"*是否启用调试日志",
+            "*Whether to enable debug logging"})
+    public static final Property<Boolean> OLLAMA_AI_DEBUG_LOG = newProperty("Plugin.ai.ollama.debugLogging", false);
+
+    @Comment({"判定为敏感词阈值(1~100, 越高越宽松)",
+            "Sensitive word threshold(1~100)"})
+    public static final Property<Integer> OLLAMA_AI_SENSITIVE_THRESHOLD = newProperty("Plugin.ai.ollama.threshold", 76);
+
+    @Comment({"*是否启用Ollama AI模型检测(需自行部署或使用公共API)",
+            "*Whether to enable ollama AI model checks"})
+    public static final Property<Boolean> ENABLE_OLLAMA_AI_MODEL_CHECK = newProperty("Plugin.ai.ollama.enableAiModelCheck", false);
+
+    @Comment({"*你的OpenAI API 密钥(Text Moderation)",
+            "*Enter your OpenAI API Key(Text Moderation)"})
+    public static final Property<String> OPENAI_API_KEY = newProperty("Plugin.ai.openai.apiKey", "YOUR_API_KEY");
+    @Comment({"*是否开启调试日志",
+            "*Whether to enable debug logging"})
+    public static final Property<Boolean> OPENAI_DEBUG_LOG = newProperty("Plugin.ai.openai.debugLogging", false);
+    @Comment({"*是否启用HTTP代理",
+            "*Whether to enable HTTP proxy"})
+    public static final Property<Boolean> OPENAI_ENABLE_HTTP_PROXY = newProperty("Plugin.ai.openai.enableHttpProxy", false);
+    @Comment({"*HTTP代理设置(IP)",
+            "*HTTP Proxy address"})
+    public static final Property<String> OPENAI_HTTP_PROXY_ADDRESS = newProperty("Plugin.ai.openai.proxy.httpProxyAddress", "127.0.0.1");
+    @Comment({"*HTTP代理设置(端口)",
+            "*HTTP Proxy port"})
+    public static final Property<Integer> OPENAI_HTTP_PROXY_PORT = newProperty("Plugin.ai.openai.proxy.httpProxyPort", 1080);
+    @Comment({"是否检测威胁类消息",
+            "Whether to detect hate threatening"})
+    public static final Property<Boolean> OPENAI_ENABLE_HATE_THREATENING_CHECK = newProperty("Plugin.ai.openai.detection.enableHateThreateningCheck", true);
+    @Comment({"是否检测仇恨类消息",
+            "Whether to detect hate"})
+    public static final Property<Boolean> OPENAI_ENABLE_HATE_CHECK = newProperty("Plugin.ai.openai.detection.enableHateCheck", true);
+    @Comment({"是否检测自残类消息",
+            "Whether to detect self-harming"})
+    public static final Property<Boolean> OPENAI_ENABLE_SELF_HARM_CHECK = newProperty("Plugin.ai.openai.detection.enableSelfHarmCheck", true);
+    @Comment({"是否检测色情类消息",
+            "Whether to detect sexual"})
+    public static final Property<Boolean> OPENAI_ENABLE_SEXUAL_CONTENT_CHECK = newProperty("Plugin.ai.openai.detection.enableSexualContentCheck", true);
+    @Comment({"是否检测儿童色情类消息",
+            "Whether to detect sexual-minors"})
+    public static final Property<Boolean> OPENAI_ENABLE_SEXUAL_MINORS_CHECK = newProperty("Plugin.ai.openai.detection.enableSexualMinorsCheck", true);
+    @Comment({"是否检测暴力类消息",
+            "Whether to detect violence"})
+    public static final Property<Boolean> OPENAI_ENABLE_VIOLENCE_CHECK = newProperty("Plugin.ai.openai.detection.enableViolenceCheck", true);
+    @Comment({"*是否启用OpenAI模型检测(需APIKEY)",
+            "*Whether to enable OpenAI model checks"})
+    public static final Property<Boolean> ENABLE_OPENAI_AI_MODEL_CHECK = newProperty("Plugin.ai.openai.enableAiModelCheck", false);
     @Comment({"*是否启用占位符(需要PlaceholderAPI)",
             "*Whether to enable placeholders"})
     public static final Property<Boolean> ENABLE_PLACEHOLDER = newProperty("Plugin.enablePlaceholder", false);
@@ -244,6 +306,10 @@ public class PluginSettings implements SettingsHolder {
             "Whether to skip newline characters"})
     public static final Property<Boolean> BOOK_IGNORE_NEWLINE = newProperty("Book.ignoreNewLine", true);
 
+    @Comment({"是否启用跨页检测(仅取消)",
+            "Whether to enable cross-page checks?(Cancel mode only)"})
+    public static final Property<Boolean> BOOK_CROSS_PAGE = newProperty("Book.crossPageCheck", false);
+
     @Comment({"存在敏感词时是否发送消息提醒",
             "Whether to send a message alert when sensitive words are found"})
     public static final Property<Boolean> BOOK_SEND_MESSAGE = newProperty("Book.sendMessage", true);
@@ -274,6 +340,18 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"是否启用跨行检测",
             "Whether to enable multi-line check"})
     public static final Property<Boolean> SIGN_MULTI_LINE_CHECK = newProperty("Sign.multiLineCheck", true);
+
+    @Comment({"是否启用告示牌上下文检测(Beta)(仅取消模式)",
+            "Whether to enable sign context checks?(Beta)(Cancel mode only)"})
+    public static final Property<Boolean> SIGN_CONTEXT_CHECK = newProperty("Sign.contextCheck", false);
+
+    @Comment({"最大检测上下文大小",
+            "Maximum context size"})
+    public static final Property<Integer> SIGN_CONTEXT_MAX_SIZE = newProperty("Sign.contextMaxSize", 4);
+
+    @Comment({"最大检测上下文时间(单位: 秒)",
+            "Maximum context time(seconds)"})
+    public static final Property<Integer> SIGN_CONTEXT_TIME_LIMIT = newProperty("Sign.contextMaxTime", 120);
 
     @Comment({"存在敏感词时是否发送消息提醒",
             "Whether to send a message alert when sensitive words are found"})
@@ -322,6 +400,7 @@ public class PluginSettings implements SettingsHolder {
         conf.setComment("", "AdvancedSensitiveWords 配置文件", "所有配置项均支持重载(标*的配置项仅支持重载关闭)");
         conf.setComment("Plugin", "插件总配置");
         conf.setComment("Plugin.compatibility", "插件兼容配置");
+        conf.setComment("Plugin.ai", "AI辅助检测配置");
         conf.setComment("Chat", "聊天检测配置");
         conf.setComment("Book", "书检测配置");
         conf.setComment("Book.cache", "书检测缓存配置");

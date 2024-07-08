@@ -1,8 +1,7 @@
 package io.wdsj.asw.bukkit.listener
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
-import io.wdsj.asw.bukkit.event.ASWFilterEvent
-import io.wdsj.asw.bukkit.event.EventType
+import io.wdsj.asw.bukkit.type.ModuleType
 import io.wdsj.asw.bukkit.manage.notice.Notifier
 import io.wdsj.asw.bukkit.manage.permission.Permissions
 import io.wdsj.asw.bukkit.manage.punish.Punishment
@@ -13,7 +12,6 @@ import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.util.TimingUtils
 import io.wdsj.asw.bukkit.util.Utils
 import io.wdsj.asw.bukkit.util.cache.BookCache
-import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -31,7 +29,6 @@ class BookListener : Listener {
         val skipReturnLine = AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.BOOK_IGNORE_NEWLINE)
         val isCancelMode = AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.BOOK_METHOD).equals("cancel", ignoreCase = true)
         var outMessage = ""
-        var processedOutMessage: String? = ""
         var outList: List<String?> = ArrayList()
         val originalPages = event.newBookMeta.pages
         var shouldSendMessage = false
@@ -66,7 +63,6 @@ class BookListener : Listener {
                         shouldSendMessage = true
                         outMessage = originalPage
                         outList = censoredWordList
-                        processedOutMessage = processedPage
                         break
                     }
 
@@ -74,10 +70,29 @@ class BookListener : Listener {
                     shouldSendMessage = true
                     outMessage = originalPage
                     outList = censoredWordList
-                    processedOutMessage = processedPage
+                }
+            }
+
+            // Cross page check
+            if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.BOOK_CROSS_PAGE) && !shouldSendMessage) {
+                var originalPageCrossed = originalPages.joinToString("").replace("\n", "").replace("§0", "")
+                if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.PRE_PROCESS)) {
+                    originalPageCrossed =
+                        originalPageCrossed.replace(
+                            Utils.getPreProcessRegex().toRegex(), ""
+                        )
+                }
+                val censoredWordListCrossed = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalPageCrossed)
+                if (censoredWordListCrossed.isNotEmpty()) {
+                    event.isCancelled = true
+                    outList = censoredWordListCrossed
+                    outMessage = originalPageCrossed
+                    shouldSendMessage = true
                 }
             }
         }
+
+        // Author check
         var originalAuthor = event.newBookMeta.author
         if (originalAuthor != null) {
             if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.PRE_PROCESS)) originalAuthor =
@@ -95,7 +110,6 @@ class BookListener : Listener {
                 shouldSendMessage = true
                 outMessage = originalAuthor
                 outList = censoredWordListAuthor
-                processedOutMessage = processedAuthor
             }
         }
 
@@ -117,22 +131,17 @@ class BookListener : Listener {
                 shouldSendMessage = true
                 outMessage = originalTitle
                 outList = censoredWordListTitle
-                processedOutMessage = processedTitle
             }
         }
 
         if (shouldSendMessage) {
             event.newBookMeta = bookMeta
             Utils.messagesFilteredNum.getAndIncrement()
-            if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_API)) {
-                Bukkit.getPluginManager()
-                    .callEvent(ASWFilterEvent(player, outMessage, processedOutMessage, outList, EventType.BOOK, false))
-            }
             if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
-                VelocitySender.send(player, EventType.BOOK, outMessage, outList)
+                VelocitySender.send(player, ModuleType.BOOK, outMessage, outList)
             }
             if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
-                BungeeSender.send(player, EventType.BOOK, outMessage, outList)
+                BungeeSender.send(player, ModuleType.BOOK, outMessage, outList)
             }
             if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
                 AdvancedSensitiveWords.databaseManager.checkAndUpdatePlayer(player.name)
@@ -141,7 +150,7 @@ class BookListener : Listener {
             TimingUtils.addProcessStatistic(endTime, startTime)
             if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(
                 player,
-                EventType.BOOK,
+                ModuleType.BOOK,
                 outMessage,
                 outList
             )
