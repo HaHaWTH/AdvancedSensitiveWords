@@ -319,6 +319,12 @@
             <artifactId>packetevents-spigot</artifactId>
             <version>2.4.1-SNAPSHOT</version>
             <scope>provided</scope>
+            <repositories>
+                <repository>
+                    <id>codemc-pe</id>
+                    <url>https://repo.codemc.io/repository/maven-public/</url>
+                </repository>
+            </repositories>
         </dependency>
 
         <!-- Folia supported schedulers -->
