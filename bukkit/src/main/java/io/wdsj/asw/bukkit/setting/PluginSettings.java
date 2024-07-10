@@ -291,12 +291,12 @@ public class PluginSettings implements SettingsHolder {
 
     @Comment({"是否反转指令白名单为黑名单",
             "Whether to invert the command whitelist to a blacklist"})
-    public static final Property<Boolean> CHAT_INVERT_WHITELIST = newProperty("Chat.invertCommandWhiteList", false);
+    public static final Property<Boolean> CHAT_INVERT_WHITELIST = newProperty("Chat.invertCommandWhiteList", true);
 
     @Comment({"指令白名单(白名单的指令如含敏感词不会被检测)",
             "Command whitelist (commands on the whitelist will not be checked for sensitive words)"})
-    public static final Property<List<String>> CHAT_COMMAND_WHITE_LIST = newListProperty("Chat.commandWhiteList", "/asw", "/reload", "/help", "/ban",
-            "/mute", "/unmute", "/kick", "/unban", "/res", "/sethome", "/home", "/l", "/tp", "/tpa", "/login", "/log", "/register", "/reg", "/lp");
+    public static final Property<List<String>> CHAT_COMMAND_WHITE_LIST = newListProperty("Chat.commandWhiteList", "/tell", "/msg", "/normal", "/message",
+                                                                                        "/private", "/msg", "/w", "/whisper", "/m");
 
     @Comment({"替换还是取消(replace/cancel)",
             "Replace or cancel (replace/cancel)"})
