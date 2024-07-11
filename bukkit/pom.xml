@@ -148,7 +148,7 @@
                                 </relocation>
                                 <relocation>
                                     <pattern>dev.ai4j.openai4j</pattern>
-                                    <shadedPattern>io.wdsj.asw.bukkit.libs.dev.ai4j.openai4j</shadedPattern>
+                                    <shadedPattern>io.wdsj.asw.bukkit.libs.ai</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>com.github.houbb</pattern>
@@ -176,15 +176,15 @@
                                 </relocation>
                                 <relocation>
                                     <pattern>org.apiguardian.api</pattern>
-                                    <shadedPattern>io.wdsj.asw.bukkit.libs.org.apiguardian.api</shadedPattern>
+                                    <shadedPattern>io.wdsj.asw.bukkit.libs.api</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>ch.jalu.configme</pattern>
-                                    <shadedPattern>io.wdsj.asw.bukkit.libs.ch.jalu.configme</shadedPattern>
+                                    <shadedPattern>io.wdsj.asw.bukkit.libs.config</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>com.zaxxer.hikari</pattern>
-                                    <shadedPattern>io.wdsj.asw.bukkit.libs.com.zaxxer.hikari</shadedPattern>
+                                    <shadedPattern>io.wdsj.asw.bukkit.libs.cp</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>io.github</pattern>
@@ -269,6 +269,9 @@
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
     </repositories>
 
