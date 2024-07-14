@@ -2,13 +2,14 @@ package io.wdsj.asw.bukkit.manage.punish;
 
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Player shadow controller
  */
 public class PlayerShadowController {
-    private static final HashMap<Player, StartAndDuration> SHADOWED_PLAYERS = new HashMap<>();
+    private static final Map<Player, StartAndDuration> SHADOWED_PLAYERS = new ConcurrentHashMap<>();
 
     /**
      * Add player to shadowed players
