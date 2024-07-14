@@ -168,7 +168,9 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"*是否启用占位符(需要PlaceholderAPI)",
             "*Whether to enable placeholders"})
     public static final Property<Boolean> ENABLE_PLACEHOLDER = newProperty("Plugin.enablePlaceholder", false);
-
+    @Comment({"*是否启用简单语音聊天支持",
+            "*Whether to hook into SimpleVoiceChat"})
+    public static final Property<Boolean> HOOK_SIMPLE_VOICE_CHAT = newProperty("Plugin.hookSimpleVoiceChat", false);
     @Comment({"*是否启用Velocity支持",
             "*Whether to enable Velocity support"})
     public static final Property<Boolean> HOOK_VELOCITY = newProperty("Plugin.hookVelocity", false);
