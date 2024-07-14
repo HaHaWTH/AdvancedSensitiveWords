@@ -26,7 +26,6 @@ class JoinUpdateNotifier : Listener {
                 messagesManager.getProperty(PluginMessages.UPDATE_AVAILABLE)
                     .replace("%current_version%", Updater.getCurrentVersion())
                     .replace("%latest_version%", Updater.getLatestVersion())
-                    .replace("%url%", Updater.DOWNLOAD_URL)
             ))
         }
     }

@@ -10,7 +10,6 @@ public class Updater {
     private static String currentVersion;
     private static String latestVersion;
     private static boolean isUpdateAvailable = false;
-    public static final String DOWNLOAD_URL = "https://modrinth.com/plugin/advancedsensitivewords";
     private static final String UPDATE_URL = "https://api.github.com/repos/HaHaWTH/AdvancedSensitiveWords/releases/latest";
 
     public Updater(String current) {

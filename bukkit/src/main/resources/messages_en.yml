@@ -68,7 +68,7 @@ Plugin:
   #Admin notice(Proxy)
   noticeOperatorProxy: '&f[&bASW&7Notify&f]&7Player &c%player% (Server: %server_name%) &7failed anti-swear check(%type%)(Message: %message%)List: %censored_list%'
   #Update is available
-  updateAvailable: '&f[&bASW&7Notify&f]&7A new version is available, please update. (Latest: %latest_version%, Current: %current_version%) Download from: %url%'
+  updateAvailable: '&f[&bASW&7Notify&f]&7A new version is available, please update. (Latest: %latest_version%, Current: %current_version%)'
   database:
     #Player info
     playerInfo: |-
