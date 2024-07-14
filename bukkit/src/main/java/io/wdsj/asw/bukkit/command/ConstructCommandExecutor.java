@@ -3,14 +3,17 @@ package io.wdsj.asw.bukkit.command;
 import com.github.houbb.heaven.util.util.OsUtil;
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 import io.wdsj.asw.bukkit.manage.permission.Permissions;
+import io.wdsj.asw.bukkit.manage.punish.Punishment;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
 import io.wdsj.asw.bukkit.util.cache.BookCache;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -112,6 +115,40 @@ public class ConstructCommandExecutor implements CommandExecutor {
                 return true;
             }
             if (args[0].equalsIgnoreCase("info")) {
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.NO_PERMISSION)));
+                return true;
+            }
+            if (args[0].equalsIgnoreCase("punish") && (sender.hasPermission(Permissions.PUNISH) || sender instanceof ConsoleCommandSender)) {
+                if (args.length >= 2) {
+                    String playerName = args[1];
+                    Player player = Bukkit.getPlayer(playerName);
+                    if (player != null) {
+                        if (args.length >= 3) {
+                            StringBuilder method = new StringBuilder(args[2]);
+                            if (args.length >= 4) {
+                                for (int i = 3; i <= args.length - 1; i++) {
+                                    method.append(" ").append(args[i]);
+                                }
+                            }
+                            try {
+                                Punishment.processSinglePunish(player, method.toString().trim());
+                                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_PUNISH_SUCCESS).replace("%player%", player.getName())));
+                            } catch (Exception e) {
+                                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_PUNISH_PARSE_ERROR)));
+                            }
+                        } else {
+                            Punishment.punish(player);
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_PUNISH_SUCCESS).replace("%player%", player.getName())));
+                        }
+                    } else {
+                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.PLAYER_NOT_FOUND)));
+                    }
+                } else {
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.NOT_ENOUGH_ARGS)));
+                }
+                return true;
+            }
+            if (args[0].equalsIgnoreCase("punish")) {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.NO_PERMISSION)));
                 return true;
             }

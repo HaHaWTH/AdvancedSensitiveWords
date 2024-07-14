@@ -25,63 +25,71 @@ public class Punishment {
         List<String> punishList = settingsManager.getProperty(PluginSettings.PUNISHMENT);
         if (punishList.isEmpty()) return;
         for (String punish : punishList) {
-            String[] normalPunish = punish.split("\\|");
-            PunishmentType punishMethod = PunishmentType.valueOf(normalPunish[0].toUpperCase(Locale.ROOT));
-            switch (punishMethod) {
-                case DAMAGE:
-                    try {
-                        double damageAmount = (normalPunish.length >= 2) ? Double.parseDouble(normalPunish[1]) : 1.0D;
-                        SchedulingUtils.runSyncIfFolia(player, () -> player.damage(damageAmount));
-                    } catch (NumberFormatException e) {
-                        SchedulingUtils.runSyncIfFolia(player, () -> player.damage(1.0D));
-                    }
-                    break;
-                case HOSTILE:
-                    try {
-                        double radius = (normalPunish.length >= 2) ? Double.parseDouble(normalPunish[1]) : 10D;
-                        makeHostileTowardsPlayer(player, radius);
-                    } catch (NumberFormatException e) {
-                        makeHostileTowardsPlayer(player, 10D);
-                    }
-                    break;
-                case COMMAND:
-                    if (normalPunish.length < 2) throw new IllegalArgumentException("Not enough args");
-                    String command = normalPunish[1].replace("%player%", player.getName()).replace("%PLAYER%", player.getName());
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
-                    break;
-                case EFFECT:
-                    if (normalPunish.length < 2) throw new IllegalArgumentException("Not enough args");
-                    String effect = normalPunish[1];
-                    PotionEffectType potionEffect = PotionEffectType.getByName(effect.toUpperCase(Locale.ROOT));
-                    if (potionEffect == null) throw new IllegalArgumentException("Unknown potion effect");
-                    switch (normalPunish.length) {
-                        case 2:
-                            SchedulingUtils.runSyncIfFolia(player, () -> player.addPotionEffect(new PotionEffect(potionEffect, 10, 0)));
-                            break;
-                        case 3:
-                            int duration_3 = Integer.parseInt(normalPunish[2]);
-                            SchedulingUtils.runSyncIfFolia(player, () -> player.addPotionEffect(new PotionEffect(potionEffect, duration_3 * 20, 0)));
-                            break;
-                        case 4:
-                        default:
-                            int duration_4 = Integer.parseInt(normalPunish[2]);
-                            int amplifier = Integer.parseInt(normalPunish[3]);
-                            SchedulingUtils.runSyncIfFolia(player, () -> player.addPotionEffect(new PotionEffect(potionEffect, duration_4 * 20, amplifier)));
-                            break;
-                    }
-                    break;
-                case SHADOW:
-                    try {
-                        long duration = normalPunish.length >= 2 ? Long.parseLong(normalPunish[1]) : 30L;
-                        PlayerShadowController.shadowPlayer(player, System.currentTimeMillis(), duration);
-                    } catch (NumberFormatException e) {
-                        PlayerShadowController.shadowPlayer(player, System.currentTimeMillis(), 30L);
-                    }
-                    break;
-                default:
-                    LOGGER.warning("Unknown punishment type");
-                    break;
+            try {
+                processSinglePunish(player, punish);
+            } catch (IllegalArgumentException e) {
+                LOGGER.warning("Invalid punishment method: " + punish);
             }
+        }
+    }
+
+    public static void processSinglePunish(Player player, String method) throws IllegalArgumentException {
+        String[] normalPunish = method.split("\\|");
+        PunishmentType punishMethod = PunishmentType.valueOf(normalPunish[0].toUpperCase(Locale.ROOT));
+        switch (punishMethod) {
+            case DAMAGE:
+                try {
+                    double damageAmount = (normalPunish.length >= 2) ? Double.parseDouble(normalPunish[1]) : 1.0D;
+                    SchedulingUtils.runSyncIfFolia(player, () -> player.damage(damageAmount));
+                } catch (NumberFormatException e) {
+                    SchedulingUtils.runSyncIfFolia(player, () -> player.damage(1.0D));
+                }
+                break;
+            case HOSTILE:
+                try {
+                    double radius = (normalPunish.length >= 2) ? Double.parseDouble(normalPunish[1]) : 10D;
+                    makeHostileTowardsPlayer(player, radius);
+                } catch (NumberFormatException e) {
+                    makeHostileTowardsPlayer(player, 10D);
+                }
+                break;
+            case COMMAND:
+                if (normalPunish.length < 2) throw new IllegalArgumentException("Not enough args");
+                String command = normalPunish[1].replace("%player%", player.getName()).replace("%PLAYER%", player.getName());
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+                break;
+            case EFFECT:
+                if (normalPunish.length < 2) throw new IllegalArgumentException("Not enough args");
+                String effect = normalPunish[1];
+                PotionEffectType potionEffect = PotionEffectType.getByName(effect.toUpperCase(Locale.ROOT));
+                if (potionEffect == null) throw new IllegalArgumentException("Unknown potion effect");
+                switch (normalPunish.length) {
+                    case 2:
+                        SchedulingUtils.runSyncIfFolia(player, () -> player.addPotionEffect(new PotionEffect(potionEffect, 10, 0)));
+                        break;
+                    case 3:
+                        int duration_3 = Integer.parseInt(normalPunish[2]);
+                        SchedulingUtils.runSyncIfFolia(player, () -> player.addPotionEffect(new PotionEffect(potionEffect, duration_3 * 20, 0)));
+                        break;
+                    case 4:
+                    default:
+                        int duration_4 = Integer.parseInt(normalPunish[2]);
+                        int amplifier = Integer.parseInt(normalPunish[3]);
+                        SchedulingUtils.runSyncIfFolia(player, () -> player.addPotionEffect(new PotionEffect(potionEffect, duration_4 * 20, amplifier)));
+                        break;
+                }
+                break;
+            case SHADOW:
+                try {
+                    long duration = normalPunish.length >= 2 ? Long.parseLong(normalPunish[1]) : 30L;
+                    PlayerShadowController.shadowPlayer(player, System.currentTimeMillis(), duration);
+                } catch (NumberFormatException e) {
+                    PlayerShadowController.shadowPlayer(player, System.currentTimeMillis(), 30L);
+                }
+                break;
+            default:
+                LOGGER.warning("Unknown punishment type");
+                break;
         }
     }
 

@@ -30,19 +30,28 @@ public class ConstructTabCompleter implements TabCompleter {
                 tabComplete.add("help");
             } else if (sender.hasPermission(Permissions.INFO) && args[0].startsWith("i")) {
                 tabComplete.add("info");
+            } else if (sender.hasPermission(Permissions.PUNISH) && args[0].startsWith("p")) {
+                tabComplete.add("punish");
             } else if (sender.hasPermission(Permissions.RELOAD) ||
                     sender.hasPermission(Permissions.STATUS) || sender.hasPermission(Permissions.TEST) ||
-                    sender.hasPermission(Permissions.HELP) || sender.hasPermission(Permissions.INFO)) {
+                    sender.hasPermission(Permissions.HELP) || sender.hasPermission(Permissions.INFO) ||
+                    sender.hasPermission(Permissions.PUNISH)) {
                 tabComplete.add("help");
                 tabComplete.add("reload");
                 tabComplete.add("status");
                 tabComplete.add("test");
+                tabComplete.add("punish");
                 tabComplete.add("info");
             }
             return tabComplete;
         }
         if (args.length == 2) {
             if (args[0].equalsIgnoreCase("info") && (sender.hasPermission(Permissions.INFO) || sender instanceof ConsoleCommandSender)) {
+                return sender.getServer().getOnlinePlayers().stream()
+                        .map(Player::getName)
+                        .collect(Collectors.toList());
+            }
+            if (args[0].equalsIgnoreCase("punish") && (sender.hasPermission(Permissions.PUNISH) || sender instanceof ConsoleCommandSender)) {
                 return sender.getServer().getOnlinePlayers().stream()
                         .map(Player::getName)
                         .collect(Collectors.toList());
