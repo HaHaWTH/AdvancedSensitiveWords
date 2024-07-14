@@ -12,14 +12,13 @@ import com.github.houbb.sensitive.word.support.deny.WordDenys;
 import com.github.houbb.sensitive.word.support.resultcondition.WordResultConditions;
 import com.github.houbb.sensitive.word.support.tag.WordTags;
 import com.github.retrooper.packetevents.PacketEvents;
-import de.maxhenkel.voicechat.api.BukkitVoicechatService;
 import io.wdsj.asw.bukkit.ai.OllamaProcessor;
 import io.wdsj.asw.bukkit.ai.OpenAIProcessor;
 import io.wdsj.asw.bukkit.command.ConstructCommandExecutor;
 import io.wdsj.asw.bukkit.command.ConstructTabCompleter;
 import io.wdsj.asw.bukkit.datasource.DatabaseManager;
 import io.wdsj.asw.bukkit.integration.placeholder.ASWExpansion;
-import io.wdsj.asw.bukkit.integration.voicechat.VoiceChatExtension;
+import io.wdsj.asw.bukkit.integration.voicechat.VoiceChatHookService;
 import io.wdsj.asw.bukkit.listener.*;
 import io.wdsj.asw.bukkit.listener.packet.ASWBookPacketListener;
 import io.wdsj.asw.bukkit.listener.packet.ASWChatPacketListener;
@@ -68,7 +67,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     public static Logger LOGGER;
     private static final OllamaProcessor OLLAMA_PROCESSOR = new OllamaProcessor();
     private static final OpenAIProcessor OPENAI_PROCESSOR = new OpenAIProcessor();
-    private VoiceChatExtension voiceChatExtension;
+    private VoiceChatHookService voiceChatHookService;
     public static TaskScheduler getScheduler() {
         return scheduler;
     }
@@ -197,14 +196,8 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         }
         if (Bukkit.getPluginManager().isPluginEnabled("voicechat") &&
             settingsManager.getProperty(PluginSettings.HOOK_SIMPLE_VOICE_CHAT)) {
-            BukkitVoicechatService service = getServer().getServicesManager().load(BukkitVoicechatService.class);
-            if (service != null) {
-                voiceChatExtension = new VoiceChatExtension();
-                service.registerPlugin(voiceChatExtension);
-                LOGGER.info("Successfully hooked into voicechat.");
-            } else {
-                LOGGER.warning("Failed to hook into voicechat.");
-            }
+            voiceChatHookService = new VoiceChatHookService(this);
+            voiceChatHookService.register();
         }
         long endTime = System.currentTimeMillis();
         LOGGER.info("AdvancedSensitiveWords is enabled!(took " + (endTime - startTime) + "ms)");
@@ -266,8 +259,8 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         PlayerAltController.clear();
         OLLAMA_PROCESSOR.shutdown();
         OPENAI_PROCESSOR.shutdown();
-        if (voiceChatExtension != null) {
-            getServer().getServicesManager().unregister(voiceChatExtension);
+        if (voiceChatHookService != null) {
+            voiceChatHookService.unregister();
         }
         if (settingsManager.getProperty(PluginSettings.BOOK_CACHE)) {
             BookCache.invalidateAll();
