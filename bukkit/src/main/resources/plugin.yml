@@ -1,0 +1,65 @@
+name: AdvancedSensitiveWords
+version: ${project.version}
+main: io.wdsj.asw.bukkit.AdvancedSensitiveWords
+api-version: '1.13'
+website: https://github.com/HaHaWTH/AdvancedSensitiveWords
+authors:
+  - HeyWTF_IS_That
+  - HaHaWTH
+  - 0D00_0721
+description: Ultimate AntiSwear plugin for Minecraft
+softdepend:
+  - packetevents
+  - floodgate
+  - PlaceholderAPI
+  - AuthMe
+  - CatSeedLogin
+  - voicechat
+folia-supported: true
+commands:
+  advancedsensitivewords:
+    description: Advanced Sensitive Words main command.
+    usage: /asw <reload|status|test|help|info|punish>
+    aliases: [asw]
+permissions:
+  advancedsensitivewords.*:
+    description: All permissions of Advanced Sensitive Words.
+    default: false
+    children:
+      advancedsensitivewords.bypass: true
+      advancedsensitivewords.reload: true
+      advancedsensitivewords.status: true
+      advancedsensitivewords.test: true
+      advancedsensitivewords.help: true
+      advancedsensitivewords.notice: true
+      advancedsensitivewords.info: true
+      advancedsensitivewords.update: true
+      advancedsensitivewords.punish: true
+  advancedsensitivewords.bypass:
+    description: Bypass the Advanced Sensitive Words filter.
+    default: false
+  advancedsensitivewords.reload:
+    description: Reload the Advanced Sensitive Words filter.
+    default: op
+  advancedsensitivewords.status:
+    description: Show the Advanced Sensitive Words filter status.
+    default: op
+  advancedsensitivewords.test:
+    description: Test the Advanced Sensitive Words filter.
+    default: op
+  advancedsensitivewords.help:
+    description: Show the Advanced Sensitive Words filter help.
+    default: op
+  advancedsensitivewords.notice:
+    description: Retrieve the notice message when player violated.
+    default: op
+  advancedsensitivewords.update:
+    description: Retrieve the update message.
+    default: op
+  advancedsensitivewords.info:
+    description: Get the player info.
+    default: op
+  advancedsensitivewords.punish:
+    description: Punish the player.
+    default: op
+# Love you
