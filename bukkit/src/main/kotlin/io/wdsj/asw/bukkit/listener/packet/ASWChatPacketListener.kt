@@ -35,6 +35,7 @@ import java.util.*
  */
 class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW) {
     override fun onPacketReceive(event: PacketReceiveEvent) {
+        if (!settingsManager.getProperty(PluginSettings.ENABLE_CHAT_CHECK)) return
         val packetType = event.packetType
         val user = event.user
         val userName = user.name

@@ -62,6 +62,10 @@ public class PluginSettings implements SettingsHolder {
             "Predefined replacements (need to be added to blacklist first) (If there are identical sensitive words, place the longer one first) (Use '|' to separate sensitive words and their replacements)"})
     public static final Property<List<String>> DEFINED_REPLACEMENT = newListProperty("Plugin.definedReplacement", "fuck|love");
 
+    @Comment({"*是否启用聊天&指令检测",
+            "*Whether to enable chat & command checks"})
+    public static final Property<Boolean> ENABLE_CHAT_CHECK = newProperty("Plugin.enableChatCheck", true);
+
     @Comment({"*是否启用告示牌检测",
             "*Whether to enable sign edit checks"})
     public static final Property<Boolean> ENABLE_SIGN_EDIT_CHECK = newProperty("Plugin.enableSignEditCheck", true);

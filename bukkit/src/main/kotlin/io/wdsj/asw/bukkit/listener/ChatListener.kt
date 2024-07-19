@@ -30,6 +30,7 @@ import java.util.*
 class ChatListener : Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     fun onChat(event: AsyncPlayerChatEvent) {
+        if (!settingsManager.getProperty(PluginSettings.ENABLE_CHAT_CHECK)) return
         val player = event.player
         if (shouldNotProcess(player)) return
         val isCancelMode = settingsManager.getProperty(PluginSettings.CHAT_METHOD).equals("cancel", ignoreCase = true)

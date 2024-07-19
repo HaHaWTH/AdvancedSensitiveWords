@@ -123,7 +123,9 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         if (!isEventMode) {
             if (USE_PE) {
                 try {
-                    PacketEvents.getAPI().getEventManager().registerListener(ASWChatPacketListener.class.getConstructor().newInstance());
+                    if (settingsManager.getProperty(PluginSettings.ENABLE_CHAT_CHECK)) {
+                        PacketEvents.getAPI().getEventManager().registerListener(ASWChatPacketListener.class.getConstructor().newInstance());
+                    }
                     if (settingsManager.getProperty(PluginSettings.ENABLE_BOOK_EDIT_CHECK)) {
                         PacketEvents.getAPI().getEventManager().registerListener(ASWBookPacketListener.class.getConstructor().newInstance());
                     }
@@ -275,8 +277,10 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     }
 
     private void registerEventBasedListener() {
-        getServer().getPluginManager().registerEvents(new ChatListener(), this);
-        getServer().getPluginManager().registerEvents(new CommandListener(), this);
+        if (settingsManager.getProperty(PluginSettings.ENABLE_CHAT_CHECK)) {
+            getServer().getPluginManager().registerEvents(new ChatListener(), this);
+            getServer().getPluginManager().registerEvents(new CommandListener(), this);
+        }
         if (settingsManager.getProperty(PluginSettings.ENABLE_BOOK_EDIT_CHECK)) {
             getServer().getPluginManager().registerEvents(new BookListener(), this);
         }

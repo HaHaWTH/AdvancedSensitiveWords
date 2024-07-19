@@ -3,6 +3,7 @@ package io.wdsj.asw.bukkit.listener
 import cc.baka9.catseedlogin.bukkit.CatSeedLoginAPI
 import fr.xephi.authme.api.v3.AuthMeApi
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
+import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
 import io.wdsj.asw.bukkit.type.ModuleType
 import io.wdsj.asw.bukkit.manage.notice.Notifier
 import io.wdsj.asw.bukkit.manage.permission.Permissions
@@ -24,9 +25,10 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent
 class CommandListener : Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     fun onCommand(event: PlayerCommandPreprocessEvent) {
+        if (!settingsManager.getProperty(PluginSettings.ENABLE_CHAT_CHECK)) return
         val player = event.player
         val originalCommand =
-            if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.PRE_PROCESS)) event.message.replace(
+            if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) event.message.replace(
                 Utils.getPreProcessRegex().toRegex(), ""
             ) else event.message
         if (shouldNotProcess(player, originalCommand)) return
@@ -35,7 +37,7 @@ class CommandListener : Listener {
         if (censoredWordList.isNotEmpty()) {
             Utils.messagesFilteredNum.getAndIncrement()
             val processedCommand = AdvancedSensitiveWords.sensitiveWordBs.replace(originalCommand)
-            if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.CHAT_METHOD)
+            if (settingsManager.getProperty(PluginSettings.CHAT_METHOD)
                     .equals("cancel", ignoreCase = true)
             ) {
                 event.isCancelled = true
@@ -46,7 +48,7 @@ class CommandListener : Listener {
                     event.message = "/$processedCommand"
                 }
             }
-            if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.CHAT_SEND_MESSAGE)) {
+            if (settingsManager.getProperty(PluginSettings.CHAT_SEND_MESSAGE)) {
                 player.sendMessage(
                     ChatColor.translateAlternateColorCodes(
                         '&',
@@ -56,39 +58,39 @@ class CommandListener : Listener {
                     )
                 )
             }
-            if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
+            if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
                 Utils.logViolation(
                     player.name + "(IP: " + Utils.getPlayerIp(player) + ")(Chat)",
                     originalCommand + censoredWordList
                 )
             }
-            if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
+            if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
                 VelocitySender.send(player, ModuleType.CHAT, originalCommand, censoredWordList)
             }
-            if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
+            if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
                 BungeeSender.send(player, ModuleType.CHAT, originalCommand, censoredWordList)
             }
-            if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
+            if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
                 AdvancedSensitiveWords.databaseManager.checkAndUpdatePlayer(player.name)
             }
             val endTime = System.currentTimeMillis()
             TimingUtils.addProcessStatistic(endTime, startTime)
-            if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(
+            if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(
                 player,
                 ModuleType.CHAT,
                 originalCommand,
                 censoredWordList
             )
-            if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) Punishment.punish(player)
+            if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) Punishment.punish(player)
         }
     }
 
     private fun shouldNotProcess(player: Player, message: String): Boolean {
         if (AdvancedSensitiveWords.isInitialized && !player.hasPermission(Permissions.BYPASS) && !Utils.isCommandAndWhiteListed(message)) {
-            if (AdvancedSensitiveWords.isAuthMeAvailable && AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_AUTHME_COMPATIBILITY)) {
+            if (AdvancedSensitiveWords.isAuthMeAvailable && settingsManager.getProperty(PluginSettings.ENABLE_AUTHME_COMPATIBILITY)) {
                 if (!AuthMeApi.getInstance().isAuthenticated(player)) return true
             }
-            if (AdvancedSensitiveWords.isCslAvailable && AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_CSL_COMPATIBILITY)) {
+            if (AdvancedSensitiveWords.isCslAvailable && settingsManager.getProperty(PluginSettings.ENABLE_CSL_COMPATIBILITY)) {
                 return !CatSeedLoginAPI.isLogin(player.name) || !CatSeedLoginAPI.isRegister(player.name)
             }
             return false
