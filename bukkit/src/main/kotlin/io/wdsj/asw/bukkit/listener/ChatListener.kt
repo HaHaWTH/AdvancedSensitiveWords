@@ -27,7 +27,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent
 import java.util.*
 
 class ChatListener : Listener {
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST)
     fun onChat(event: AsyncPlayerChatEvent) {
         if (!settingsManager.getProperty(PluginSettings.ENABLE_CHAT_CHECK)) return
         val player = event.player
