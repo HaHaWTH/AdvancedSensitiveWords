@@ -18,12 +18,12 @@ import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
 public class OpenAIProcessor implements AIProcessor {
     public boolean isOpenAiInit = false;
     private OpenAiClient client;
-    private final ExecutorService THREAD_POOL;
+    private ExecutorService THREAD_POOL;
     public OpenAIProcessor() {
-        THREAD_POOL = VTUtils.getVTExecutorServiceOrProvided(Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("ASW-OpenAIProcessor-%d").build()));
     }
 
     public void initService(String apikey, boolean debug) {
+        THREAD_POOL = VTUtils.getVTExecutorServiceOrProvided(Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("ASW-OpenAIProcessor-%d").build()));
         @SuppressWarnings("rawtypes")
         OpenAiClient.Builder builder = OpenAiClient.builder()
                         .openAiApiKey(apikey);

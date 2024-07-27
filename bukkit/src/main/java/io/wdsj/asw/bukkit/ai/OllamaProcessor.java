@@ -18,14 +18,14 @@ import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
 public class OllamaProcessor implements AIProcessor {
     public boolean isOllamaInit = false;
     private PromptBuilder promptBuilder;
-    private final ExecutorService THREAD_POOL;
+    private ExecutorService THREAD_POOL;
     private OllamaAPI api;
     private String modelName;
     public OllamaProcessor() {
-        THREAD_POOL = VTUtils.getVTExecutorServiceOrProvided(Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("ASW-OllamaProcessor-%d").build()));
     }
 
     public void initService(String modelAddress, String modelName, int timeOut, boolean debug) {
+        THREAD_POOL = VTUtils.getVTExecutorServiceOrProvided(Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("ASW-OllamaProcessor-%d").build()));
         this.modelName = modelName;
         api = new OllamaAPI(modelAddress);
         api.setRequestTimeoutSeconds(timeOut);
