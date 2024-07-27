@@ -21,7 +21,6 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
 
-@Suppress("unused")
 class CommandListener : Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     fun onCommand(event: PlayerCommandPreprocessEvent) {
