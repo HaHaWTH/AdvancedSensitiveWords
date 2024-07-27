@@ -41,7 +41,7 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
         val userName = user.name
         val isCancelMode = settingsManager.getProperty(PluginSettings.CHAT_METHOD).equals("cancel", ignoreCase = true)
         if (packetType === PacketType.Play.Client.CHAT_MESSAGE) {
-            val player = event.player as Player
+            val player = event.getPlayer() as Player
             val wrapperPlayClientChatMessage = WrapperPlayClientChatMessage(event)
             val originalMessage = if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) wrapperPlayClientChatMessage.message.replace(Utils.getPreProcessRegex().toRegex(), "") else wrapperPlayClientChatMessage.message
             if (shouldNotProcess(player, originalMessage)) return
@@ -284,7 +284,7 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                 }
             }
         } else if (packetType === PacketType.Play.Client.CHAT_COMMAND) {
-            val player = event.player as Player
+            val player = event.getPlayer() as Player
             val wrapperPlayClientChatCommand = WrapperPlayClientChatCommand(event)
             val originalCommand = if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) wrapperPlayClientChatCommand.command.replace(Utils.getPreProcessRegex().toRegex(), "") else wrapperPlayClientChatCommand.command
             if (shouldNotProcess(player, "/$originalCommand")) return

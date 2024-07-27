@@ -28,7 +28,7 @@ class ASWBookPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
         val user = event.user
         val userName = user.name
         if (packetType === PacketType.Play.Client.EDIT_BOOK) {
-            val player = event.player as Player
+            val player = event.getPlayer() as Player
             if (player.hasPermission(Permissions.BYPASS)) return
             var outMessage = ""
             var outList: List<String?> = ArrayList()
