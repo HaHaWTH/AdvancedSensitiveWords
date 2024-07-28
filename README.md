@@ -119,7 +119,8 @@ graph TD
 ## Open-source projects used
 - **[Ollama4j(Modified to support Java 8)](https://github.com/ollama4j/ollama4j)**
 - **[OpenAI4j](https://github.com/ai-for-java/openai4j)**
-- **[HikariCP](https://github.com/brettwooldridge/HikariCP)]**
+- **[HikariCP](https://github.com/brettwooldridge/HikariCP)**
+- **[packetevents(Used for handling chat & book packets)](https://github.com/retrooper/packetevents)**
 
 ## Sponsor
 If you like this project, you can sponsor me on [Ko-fi](https://ko-fi.com/1919810).
