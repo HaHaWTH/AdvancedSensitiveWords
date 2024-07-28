@@ -43,6 +43,7 @@ Logo designed by GPT-4
 22. Custom punishments (Effect, command, hostile, etc.)
 23. Fake message support (Inspired by [Bilibili Avalon System](https://github.com/freedom-introvert/Research-on-Avalon-System-in-Bilibili-Comment-Area))
 24. PlaceHolder API expansion support
+25. AI powered moderation system
 
 **Features above make us unique in the anti-swear plugins!**
 
@@ -101,8 +102,8 @@ graph TD
 
 ## Supported Platforms
 - Spigot(stable)
-- Velocity(experimental)
-- BungeeCord(experimental)
+- Velocity(stable)
+- BungeeCord(stable)
 - Sponge(WIP)
 - Fabric(Planned)
 - Forge/NeoForge(Coming s∞n)
@@ -114,6 +115,11 @@ graph TD
 [![](https://img.shields.io/bstats/servers/20661?label=Spigot%20Servers&style=for-the-badge)](https://bstats.org/plugin/bukkit/AdvancedSensitiveWords/20661)
 
 [![](https://img.shields.io/bstats/players/20661?label=Online%20Players&style=for-the-badge)](https://bstats.org/plugin/bukkit/AdvancedSensitiveWords/20661)
+
+## Open-source projects used
+- **[Ollama4j(Modified to support Java 8)](https://github.com/ollama4j/ollama4j)**
+- **[OpenAI4j](https://github.com/ai-for-java/openai4j)**
+- **[HikariCP](https://github.com/brettwooldridge/HikariCP)]**
 
 ## Sponsor
 If you like this project, you can sponsor me on [Ko-fi](https://ko-fi.com/1919810).
