@@ -29,6 +29,7 @@ import io.wdsj.asw.bukkit.proxy.bungee.BungeeCordChannel;
 import io.wdsj.asw.bukkit.proxy.bungee.BungeeReceiver;
 import io.wdsj.asw.bukkit.proxy.velocity.VelocityChannel;
 import io.wdsj.asw.bukkit.proxy.velocity.VelocityReceiver;
+import io.wdsj.asw.bukkit.service.BukkitLibraryService;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
 import io.wdsj.asw.bukkit.update.Updater;
@@ -65,6 +66,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     private static TaskScheduler scheduler;
     private static boolean isEventMode = false;
     public static Logger LOGGER;
+    private BukkitLibraryService libraryService;
     private static final OllamaProcessor OLLAMA_PROCESSOR = new OllamaProcessor();
     private static final OpenAIProcessor OPENAI_PROCESSOR = new OpenAIProcessor();
     private VoiceChatHookService voiceChatHookService;
@@ -104,6 +106,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
                 .useDefaultMigrationService()
                 .create();
         databaseManager = new DatabaseManager();
+        libraryService = new BukkitLibraryService(this);
         isEventMode = settingsManager.getProperty(PluginSettings.DETECTION_MODE).equalsIgnoreCase("event");
         if (canUsePE() &&
                 !isEventMode) {
@@ -113,6 +116,8 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        LOGGER.info("Loading libraries...");
+        libraryService.load();
         LOGGER.info("Initializing DFA dict...");
         long startTime = System.currentTimeMillis();
         if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) databaseManager.setupDataSource();

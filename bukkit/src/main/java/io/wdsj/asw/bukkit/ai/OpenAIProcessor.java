@@ -43,7 +43,9 @@ public class OpenAIProcessor implements AIProcessor {
         if (isOpenAiInit && client != null) {
             client.shutdown();
         }
-        THREAD_POOL.shutdownNow();
+        if (THREAD_POOL != null) {
+            THREAD_POOL.shutdownNow();
+        }
         isOpenAiInit = false;
     }
 
@@ -61,7 +63,7 @@ public class OpenAIProcessor implements AIProcessor {
                 return client.moderation(request)
                         .execute();
             } catch (Exception e) {
-                LOGGER.severe("OpenAI Moderation error: " + e.getMessage());
+                LOGGER.warning("OpenAI Moderation error: " + e.getMessage());
                 return null;
             }
         }, THREAD_POOL);

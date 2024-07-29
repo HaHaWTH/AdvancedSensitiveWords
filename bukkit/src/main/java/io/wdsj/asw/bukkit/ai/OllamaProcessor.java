@@ -50,7 +50,9 @@ public class OllamaProcessor implements AIProcessor {
 
     @Override
     public void shutdown() {
-        THREAD_POOL.shutdownNow();
+        if (THREAD_POOL != null) {
+            THREAD_POOL.shutdownNow();
+        }
         api = null;
         isOllamaInit = false;
     }
