@@ -88,8 +88,8 @@ public class PluginSettings implements SettingsHolder {
             "*Whether to enable alts detection(Based on IP address)"})
     public static final Property<Boolean> ENABLE_ALTS_CHECK = newProperty("Plugin.enableAltsCheck", false);
     @Comment({"*是否在玩家退出时清理相关数据缓存?",
-            "*Should we flush player data cache on they quit?"})
-    public static final Property<Boolean> FLUSH_PLAYER_DATA_CACHE = newProperty("Plugin.flushPlayerDataCache", false);
+            "*Should we clean player data cache on they quit?"})
+    public static final Property<Boolean> CLEAN_PLAYER_DATA_CACHE = newProperty("Plugin.cleanPlayerDataCache", false);
 
     @Comment({"是否启用数据库记录玩家违规次数",
             "Whether to enable database to log violations"})
@@ -403,17 +403,17 @@ public class PluginSettings implements SettingsHolder {
 
     @Override
     public void registerComments(CommentsConfiguration conf) {
-        conf.setComment("", "AdvancedSensitiveWords 配置文件", "所有配置项均支持重载(标*的配置项仅支持重载关闭)");
-        conf.setComment("Plugin", "插件总配置");
-        conf.setComment("Plugin.compatibility", "插件兼容配置");
-        conf.setComment("Plugin.ai", "AI辅助检测配置");
-        conf.setComment("Chat", "聊天检测配置");
-        conf.setComment("Book", "书检测配置");
-        conf.setComment("Book.cache", "书检测缓存配置");
-        conf.setComment("Sign", "告示牌检测配置");
-        conf.setComment("Anvil", "铁砧重命名检测配置");
-        conf.setComment("Name", "玩家名检测配置");
-        conf.setComment("Item", "物品检测配置");
+        conf.setComment("", "AdvancedSensitiveWords-Pro Configuration", "所有配置项均支持重载(标*的配置项仅支持重载关闭)");
+        conf.setComment("Plugin", "General setting");
+        conf.setComment("Plugin.compatibility", "Plugin compatibility setting");
+        conf.setComment("Plugin.ai", "AI assist detection");
+        conf.setComment("Chat", "Chat detection");
+        conf.setComment("Book", "Book detection");
+        conf.setComment("Book.cache", "Book detection cache config");
+        conf.setComment("Sign", "Sign detection");
+        conf.setComment("Anvil", "Anvil rename detection");
+        conf.setComment("Name", "Player name detection");
+        conf.setComment("Item", "Item detection");
     }
 
     // Do not instantiate.

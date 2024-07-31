@@ -9,15 +9,15 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerQuitEvent
 
-class QuitDataFlusher : Listener {
+class QuitDataCleaner : Listener {
     @EventHandler
     fun onQuit(event: PlayerQuitEvent) {
-        if (!AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.FLUSH_PLAYER_DATA_CACHE)) return
+        if (!AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.CLEAN_PLAYER_DATA_CACHE)) return
         val player = event.player
-        doFlushTask(player)
+        doCleanTask(player)
     }
 
-    private fun doFlushTask(player: Player) {
+    private fun doCleanTask(player: Player) {
         ChatContext.clearPlayerContext(player)
         SignContext.clearPlayerContext(player)
     }

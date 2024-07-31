@@ -137,7 +137,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
                 } catch (Exception e) {
                     LOGGER.severe("Failed to register packetevents listener." +
                             " This should not happen, please report to the author");
-                    e.printStackTrace();
+                    LOGGER.severe(e.getMessage());
                 }
                 PacketEvents.getAPI().init();
             } else {
@@ -182,8 +182,8 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
                 LOGGER.info("BroadcastMessage is not available, please disable chat broadcast check in config.yml");
             }
         }
-        if (settingsManager.getProperty(PluginSettings.FLUSH_PLAYER_DATA_CACHE)) {
-            getServer().getPluginManager().registerEvents(new QuitDataFlusher(), this);
+        if (settingsManager.getProperty(PluginSettings.CLEAN_PLAYER_DATA_CACHE)) {
+            getServer().getPluginManager().registerEvents(new QuitDataCleaner(), this);
         }
         if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
             getServer().getMessenger().registerOutgoingPluginChannel(this, VelocityChannel.CHANNEL);
