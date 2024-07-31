@@ -131,7 +131,7 @@ class ASWBookPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', AdvancedSensitiveWords.messagesManager.getProperty(PluginMessages.MESSAGE_ON_BOOK)))
                 }
                 if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
-                    Utils.logViolation(userName + "(IP: " + user.address.address.hostAddress + ")(Book)", outMessage + outList)
+                    Utils.logViolation(userName + "(IP: " + Utils.getPlayerIp(player) + ")(Book)", outMessage + outList)
                 }
             }
         }

@@ -263,7 +263,7 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                         user.sendMessage(ChatColor.translateAlternateColorCodes('&', AdvancedSensitiveWords.messagesManager.getProperty(PluginMessages.MESSAGE_ON_CHAT).replace("%integrated_player%", userName).replace("%integrated_message%", originalMessage)))
                     }
                     if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
-                        Utils.logViolation(userName + "(IP: " + user.address.address.hostAddress + ")(Chat)(Context)", originalContext + censoredContextList)
+                        Utils.logViolation(userName + "(IP: " + Utils.getPlayerIp(player) + ")(Chat)(Context)", originalContext + censoredContextList)
                     }
                     if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
                         VelocitySender.send(player, ModuleType.CHAT, originalContext, censoredContextList)
@@ -307,7 +307,7 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                     user.sendMessage(ChatColor.translateAlternateColorCodes('&', AdvancedSensitiveWords.messagesManager.getProperty(PluginMessages.MESSAGE_ON_CHAT).replace("%integrated_player%", userName).replace("%integrated_message%", originalCommand)))
                 }
                 if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
-                    Utils.logViolation(userName + "(IP: " + user.address.address.hostAddress + ")(Chat)", "/$originalCommand$censoredWords")
+                    Utils.logViolation(userName + "(IP: " + Utils.getPlayerIp(player) + ")(Chat)", "/$originalCommand$censoredWords")
                 }
                 if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
                     VelocitySender.send(player, ModuleType.CHAT, originalCommand, censoredWords)
