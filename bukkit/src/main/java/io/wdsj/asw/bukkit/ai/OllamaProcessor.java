@@ -1,16 +1,12 @@
 package io.wdsj.asw.bukkit.ai;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.github.amithkoujalgi.ollama4j.core.OllamaAPI;
 import io.github.amithkoujalgi.ollama4j.core.models.OllamaResult;
 import io.github.amithkoujalgi.ollama4j.core.utils.OptionsBuilder;
 import io.github.amithkoujalgi.ollama4j.core.utils.PromptBuilder;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
-import io.wdsj.asw.bukkit.util.VTUtils;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER;
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
@@ -18,14 +14,12 @@ import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
 public class OllamaProcessor implements AIProcessor {
     public boolean isOllamaInit = false;
     private PromptBuilder promptBuilder;
-    private ExecutorService THREAD_POOL;
     private OllamaAPI api;
     private String modelName;
     public OllamaProcessor() {
     }
 
     public void initService(String modelAddress, String modelName, int timeOut, boolean debug) {
-        THREAD_POOL = VTUtils.getVTExecutorServiceOrProvided(Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("ASW-OllamaProcessor-%d").build()));
         this.modelName = modelName;
         api = new OllamaAPI(modelAddress);
         api.setRequestTimeoutSeconds(timeOut);
@@ -50,7 +44,7 @@ public class OllamaProcessor implements AIProcessor {
 
     @Override
     public void shutdown() {
-        if (THREAD_POOL != null) {
+        if (!THREAD_POOL.isShutdown()) {
             THREAD_POOL.shutdownNow();
         }
         api = null;

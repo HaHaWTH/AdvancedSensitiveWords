@@ -1,15 +1,12 @@
 package io.wdsj.asw.bukkit.ai;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import dev.ai4j.openai4j.OpenAiClient;
-import dev.ai4j.openai4j.moderation.*;
+import dev.ai4j.openai4j.moderation.ModerationRequest;
+import dev.ai4j.openai4j.moderation.ModerationResponse;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
-import io.wdsj.asw.bukkit.util.VTUtils;
 
 import java.net.Proxy;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static dev.ai4j.openai4j.moderation.ModerationModel.TEXT_MODERATION_LATEST;
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER;
@@ -18,12 +15,10 @@ import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
 public class OpenAIProcessor implements AIProcessor {
     public boolean isOpenAiInit = false;
     private OpenAiClient client;
-    private ExecutorService THREAD_POOL;
     public OpenAIProcessor() {
     }
 
     public void initService(String apikey, boolean debug) {
-        THREAD_POOL = VTUtils.getVTExecutorServiceOrProvided(Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("ASW-OpenAIProcessor-%d").build()));
         @SuppressWarnings("rawtypes")
         OpenAiClient.Builder builder = OpenAiClient.builder()
                         .openAiApiKey(apikey);
@@ -43,7 +38,7 @@ public class OpenAIProcessor implements AIProcessor {
         if (isOpenAiInit && client != null) {
             client.shutdown();
         }
-        if (THREAD_POOL != null) {
+        if (!THREAD_POOL.isShutdown()) {
             THREAD_POOL.shutdownNow();
         }
         isOpenAiInit = false;
