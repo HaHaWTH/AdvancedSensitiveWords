@@ -17,13 +17,15 @@ public class BungeeReceiver implements PluginMessageListener {
             ByteArrayDataInput input = ByteStreams.newDataInput(message);
             String subChannel = input.readUTF();
             if (subChannel.equals(BungeeCordChannel.SUB_CHANNEL)) {
-                String playerName = input.readUTF();
-                String moduleType = input.readUTF();
-                String originalMessage = input.readUTF();
-                String censoredWordList = input.readUTF();
-                String serverName = input.readUTF();
-                if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) {
-                    Notifier.noticeFromProxy(playerName, serverName, moduleType, originalMessage, censoredWordList);
+                if (input.readUTF().equalsIgnoreCase(BungeeCordChannel.DataType.NOTICE)) {
+                    String playerName = input.readUTF();
+                    String moduleType = input.readUTF();
+                    String originalMessage = input.readUTF();
+                    String censoredWordList = input.readUTF();
+                    String serverName = input.readUTF();
+                    if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) {
+                        Notifier.noticeFromProxy(playerName, serverName, moduleType, originalMessage, censoredWordList);
+                    }
                 }
             }
         }

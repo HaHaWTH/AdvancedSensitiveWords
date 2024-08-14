@@ -1,5 +1,6 @@
 package io.wdsj.asw.velocity;
 
+import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
@@ -16,6 +17,7 @@ import io.wdsj.asw.velocity.template.PomData;
 import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 
+import java.util.Locale;
 import java.util.Optional;
 
 @Plugin(
@@ -47,16 +49,25 @@ public class AdvancedSensitiveWords {
             if (!(event.getSource() instanceof ServerConnection)) return;
             Optional<ServerConnection> conn = ((ServerConnection) event.getSource()).getPlayer().getCurrentServer();
             byte[] message = event.getData();
-            server.getAllServers().forEach(server -> conn.ifPresent(source -> {
-                if (!server.getServerInfo().equals(source.getServerInfo()) && !server.getPlayersConnected().isEmpty()) {
-                    ByteArrayDataOutput out = ByteStreams.newDataOutput();
-                    out.write(message);
-                    out.writeUTF(source.getServerInfo().getName());
-                    server.sendPluginMessage(CHANNEL, out.toByteArray());
-                    server.sendPluginMessage(LEGACY_CHANNEL, out.toByteArray());
-                    logger.debug("Send message to " + server.getServerInfo().getName());
-                }
-            }));
+            ByteArrayDataInput input = ByteStreams.newDataInput(message);
+            switch (input.readUTF().toLowerCase(Locale.ROOT)) {
+                case ChannelData.NOTICE:
+                    server.getAllServers().forEach(server -> conn.ifPresent(source -> {
+                        if (!server.getServerInfo().equals(source.getServerInfo()) && !server.getPlayersConnected().isEmpty()) {
+                            ByteArrayDataOutput out = ByteStreams.newDataOutput();
+                            out.write(message);
+                            out.writeUTF(source.getServerInfo().getName());
+                            server.sendPluginMessage(CHANNEL, out.toByteArray());
+                            server.sendPluginMessage(LEGACY_CHANNEL, out.toByteArray());
+                            logger.debug("Send notice message to " + server.getServerInfo().getName());
+                        }
+                    }));
+                    break;
+                case ChannelData.COMMAND_PROXY:
+                    String command = input.readUTF();
+                    server.getCommandManager().executeAsync(server.getConsoleCommandSource(), command);
+                    break;
+            }
             event.setResult(PluginMessageEvent.ForwardResult.handled());
         }
     }

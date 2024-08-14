@@ -7,7 +7,6 @@ import io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
 import io.wdsj.asw.bukkit.manage.notice.Notifier
 import io.wdsj.asw.bukkit.manage.permission.Permissions
-import io.wdsj.asw.bukkit.manage.punish.PlayerAltController
 import io.wdsj.asw.bukkit.manage.punish.Punishment
 import io.wdsj.asw.bukkit.proxy.bungee.BungeeSender
 import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender
@@ -17,7 +16,6 @@ import io.wdsj.asw.bukkit.type.ModuleType
 import io.wdsj.asw.bukkit.util.TimingUtils
 import io.wdsj.asw.bukkit.util.Utils
 import io.wdsj.asw.bukkit.util.context.ChatContext
-import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -41,16 +39,7 @@ class ChatListener : Listener {
             val processedMessage = AdvancedSensitiveWords.sensitiveWordBs.replace(originalMessage)
             if (isCancelMode) {
                 if (settingsManager.getProperty(PluginSettings.CHAT_FAKE_MESSAGE_ON_CANCEL)) {
-                    val players: MutableCollection<Player> = event.recipients
-                    players.clear()
-                    if (settingsManager.getProperty(PluginSettings.ENABLE_ALTS_CHECK) && PlayerAltController.hasAlt(player)) {
-                        val alts = PlayerAltController.getAlts(player)
-                        for (alt in alts) {
-                            val altPlayer = Bukkit.getPlayer(alt)
-                            altPlayer?.let { players.add(it) }
-                        }
-                    }
-                    players.add(player)
+                    FakeMessageExecutor.selfIncrement(player)
                 } else {
                     event.isCancelled = true
                 }
@@ -179,18 +168,10 @@ class ChatListener : Listener {
             if (censoredContextList.isNotEmpty()) {
                 ChatContext.pollPlayerContext(player)
                 Utils.messagesFilteredNum.getAndIncrement()
-                event.isCancelled = true
                 if (settingsManager.getProperty(PluginSettings.CHAT_FAKE_MESSAGE_ON_CANCEL)) {
-                    val players: MutableCollection<Player> = event.recipients
-                    players.clear()
-                    if (settingsManager.getProperty(PluginSettings.ENABLE_ALTS_CHECK) && PlayerAltController.hasAlt(player)) {
-                        val alts = PlayerAltController.getAlts(player)
-                        for (alt in alts) {
-                            val altPlayer = Bukkit.getPlayer(alt)
-                            altPlayer?.let { players.add(it) }
-                        }
-                    }
-                    players.add(player)
+                    FakeMessageExecutor.selfIncrement(player)
+                } else {
+                    event.isCancelled = true
                 }
                 if (settingsManager.getProperty(PluginSettings.CHAT_SEND_MESSAGE)) {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', AdvancedSensitiveWords.messagesManager.getProperty(PluginMessages.MESSAGE_ON_CHAT).replace("%integrated_player%", player.name).replace("%integrated_message%", originalMessage)))

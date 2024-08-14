@@ -285,6 +285,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         if (settingsManager.getProperty(PluginSettings.ENABLE_CHAT_CHECK)) {
             getServer().getPluginManager().registerEvents(new ChatListener(), this);
             getServer().getPluginManager().registerEvents(new CommandListener(), this);
+            getServer().getPluginManager().registerEvents(new FakeMessageExecutor(), this);
         }
         if (settingsManager.getProperty(PluginSettings.ENABLE_BOOK_EDIT_CHECK)) {
             getServer().getPluginManager().registerEvents(new BookListener(), this);

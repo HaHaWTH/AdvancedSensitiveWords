@@ -15,13 +15,15 @@ public class VelocityReceiver implements PluginMessageListener {
     public void onPluginMessageReceived(String channel, @NotNull Player player, @NotNull byte[] message) {
         if (channel.equals(VelocityChannel.CHANNEL)) {
             ByteArrayDataInput input = ByteStreams.newDataInput(message);
-            String playerName = input.readUTF();
-            String moduleType = input.readUTF();
-            String originalMsg = input.readUTF();
-            String censoredWordList = input.readUTF();
-            String serverName = input.readUTF();
-            if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) {
-                Notifier.noticeFromProxy(playerName, serverName, moduleType, originalMsg, censoredWordList);
+            if (input.readUTF().equalsIgnoreCase(VelocityChannel.DataType.NOTICE)) {
+                String playerName = input.readUTF();
+                String moduleType = input.readUTF();
+                String originalMsg = input.readUTF();
+                String censoredWordList = input.readUTF();
+                String serverName = input.readUTF();
+                if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) {
+                    Notifier.noticeFromProxy(playerName, serverName, moduleType, originalMsg, censoredWordList);
+                }
             }
         }
     }

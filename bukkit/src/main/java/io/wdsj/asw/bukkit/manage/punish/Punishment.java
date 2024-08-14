@@ -1,5 +1,7 @@
 package io.wdsj.asw.bukkit.manage.punish;
 
+import io.wdsj.asw.bukkit.proxy.bungee.BungeeSender;
+import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
 import io.wdsj.asw.bukkit.util.SchedulingUtils;
 import org.bukkit.Bukkit;
@@ -57,6 +59,16 @@ public class Punishment {
                 if (normalPunish.length < 2) throw new IllegalArgumentException("Not enough args");
                 String command = normalPunish[1].replace("%player%", player.getName()).replace("%PLAYER%", player.getName());
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+                break;
+            case COMMAND_PROXY:
+                if (normalPunish.length < 2) throw new IllegalArgumentException("Not enough args");
+                String command_proxy = normalPunish[1].replace("%player%", player.getName()).replace("%PLAYER%", player.getName());
+                if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
+                    BungeeSender.executeBungeeCommand(player, command_proxy);
+                }
+                if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
+                    VelocitySender.executeVelocityCommand(player, command_proxy);
+                }
                 break;
             case EFFECT:
                 if (normalPunish.length < 2) throw new IllegalArgumentException("Not enough args");
