@@ -121,6 +121,3 @@ graph TD
 - **[OpenAI4j](https://github.com/ai-for-java/openai4j)**
 - **[HikariCP](https://github.com/brettwooldridge/HikariCP)**
 - **[packetevents(Used for handling chat & book packets)](https://github.com/retrooper/packetevents)**
-
-## Sponsor
-If you like this project, you can sponsor me on [Ko-fi](https://ko-fi.com/1919810).
