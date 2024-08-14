@@ -26,7 +26,7 @@ public class Utils {
     public static String getPlayerIp(Player player) {
         InetSocketAddress address = player.getAddress();
         if (address != null && address.getAddress() != null) return address.getAddress().getHostAddress();
-        return "null";
+        throw new IllegalStateException("Player address is null");
     }
 
     public static boolean isClassLoaded(String className) {
