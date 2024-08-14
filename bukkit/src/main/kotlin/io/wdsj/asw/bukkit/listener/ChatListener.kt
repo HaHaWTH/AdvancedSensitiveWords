@@ -53,10 +53,10 @@ class ChatListener : Listener {
                 Utils.logViolation(player.name + "(IP: " + Utils.getPlayerIp(player) + ")(Chat)", originalMessage + censoredWordList)
             }
             if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
-                VelocitySender.send(player, ModuleType.CHAT, originalMessage, censoredWordList)
+                VelocitySender.sendNotifyMessage(player, ModuleType.CHAT, originalMessage, censoredWordList)
             }
             if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
-                BungeeSender.send(player, ModuleType.CHAT, originalMessage, censoredWordList)
+                BungeeSender.sendNotifyMessage(player, ModuleType.CHAT, originalMessage, censoredWordList)
             }
             if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
                 AdvancedSensitiveWords.databaseManager.checkAndUpdatePlayer(player.name)
@@ -86,10 +86,10 @@ class ChatListener : Listener {
                                     Utils.logViolation(player.name + "(IP: " + Utils.getPlayerIp(player) + ")(Chat AI)(LLM output: $it)", originalMessage + unsupportedList)
                                 }
                                 if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
-                                    VelocitySender.send(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
+                                    VelocitySender.sendNotifyMessage(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
                                 }
                                 if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
-                                    BungeeSender.send(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
+                                    BungeeSender.sendNotifyMessage(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
                                 }
                                 if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
                                     AdvancedSensitiveWords.databaseManager.checkAndUpdatePlayer(player.name)
@@ -139,10 +139,10 @@ class ChatListener : Listener {
                                         Utils.logViolation(player.name + "(IP: " + Utils.getPlayerIp(player) + ")(Chat AI)(OPENAI)", originalMessage + unsupportedList)
                                     }
                                     if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
-                                        VelocitySender.send(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
+                                        VelocitySender.sendNotifyMessage(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
                                     }
                                     if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
-                                        BungeeSender.send(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
+                                        BungeeSender.sendNotifyMessage(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
                                     }
                                     if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
                                         AdvancedSensitiveWords.databaseManager.checkAndUpdatePlayer(player.name)
@@ -180,10 +180,10 @@ class ChatListener : Listener {
                     Utils.logViolation(player.name + "(IP: " + Utils.getPlayerIp(player) + ")(Chat)(Context)", originalContext + censoredContextList)
                 }
                 if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
-                    VelocitySender.send(player, ModuleType.CHAT, originalContext, censoredContextList)
+                    VelocitySender.sendNotifyMessage(player, ModuleType.CHAT, originalContext, censoredContextList)
                 }
                 if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
-                    BungeeSender.send(player, ModuleType.CHAT, originalContext, censoredContextList)
+                    BungeeSender.sendNotifyMessage(player, ModuleType.CHAT, originalContext, censoredContextList)
                 }
                 if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
                     AdvancedSensitiveWords.databaseManager.checkAndUpdatePlayer(player.name)

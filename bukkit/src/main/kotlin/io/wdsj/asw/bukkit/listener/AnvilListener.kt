@@ -1,7 +1,6 @@
 package io.wdsj.asw.bukkit.listener
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
-import io.wdsj.asw.bukkit.type.ModuleType
 import io.wdsj.asw.bukkit.manage.notice.Notifier
 import io.wdsj.asw.bukkit.manage.permission.Permissions
 import io.wdsj.asw.bukkit.manage.punish.Punishment
@@ -9,6 +8,7 @@ import io.wdsj.asw.bukkit.proxy.bungee.BungeeSender
 import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
+import io.wdsj.asw.bukkit.type.ModuleType
 import io.wdsj.asw.bukkit.util.TimingUtils
 import io.wdsj.asw.bukkit.util.Utils
 import org.bukkit.ChatColor
@@ -69,11 +69,11 @@ class AnvilListener : Listener {
                             }
 
                             if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
-                                VelocitySender.send(player, ModuleType.ANVIL, originalItemName, censoredWords)
+                                VelocitySender.sendNotifyMessage(player, ModuleType.ANVIL, originalItemName, censoredWords)
                             }
 
                             if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
-                                BungeeSender.send(player, ModuleType.ANVIL, originalItemName, censoredWords)
+                                BungeeSender.sendNotifyMessage(player, ModuleType.ANVIL, originalItemName, censoredWords)
                             }
 
                             if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {

@@ -50,6 +50,9 @@ public class AdvancedSensitiveWords {
             Optional<ServerConnection> conn = ((ServerConnection) event.getSource()).getPlayer().getCurrentServer();
             byte[] message = event.getData();
             ByteArrayDataInput input = ByteStreams.newDataInput(message);
+            if (!input.readUTF().equals(PomData.VERSION)) {
+                logger.warn("Plugin version mismatch! Things may not work properly.");
+            }
             switch (input.readUTF().toLowerCase(Locale.ROOT)) {
                 case ChannelData.NOTICE:
                     server.getAllServers().forEach(server -> conn.ifPresent(source -> {

@@ -4,7 +4,6 @@ import cc.baka9.catseedlogin.bukkit.CatSeedLoginAPI
 import fr.xephi.authme.api.v3.AuthMeApi
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
-import io.wdsj.asw.bukkit.type.ModuleType
 import io.wdsj.asw.bukkit.manage.notice.Notifier
 import io.wdsj.asw.bukkit.manage.permission.Permissions
 import io.wdsj.asw.bukkit.manage.punish.Punishment
@@ -12,6 +11,7 @@ import io.wdsj.asw.bukkit.proxy.bungee.BungeeSender
 import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
+import io.wdsj.asw.bukkit.type.ModuleType
 import io.wdsj.asw.bukkit.util.TimingUtils
 import io.wdsj.asw.bukkit.util.Utils
 import org.bukkit.ChatColor
@@ -64,10 +64,10 @@ class CommandListener : Listener {
                 )
             }
             if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
-                VelocitySender.send(player, ModuleType.CHAT, originalCommand, censoredWordList)
+                VelocitySender.sendNotifyMessage(player, ModuleType.CHAT, originalCommand, censoredWordList)
             }
             if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
-                BungeeSender.send(player, ModuleType.CHAT, originalCommand, censoredWordList)
+                BungeeSender.sendNotifyMessage(player, ModuleType.CHAT, originalCommand, censoredWordList)
             }
             if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
                 AdvancedSensitiveWords.databaseManager.checkAndUpdatePlayer(player.name)

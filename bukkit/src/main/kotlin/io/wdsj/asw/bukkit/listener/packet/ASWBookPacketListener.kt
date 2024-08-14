@@ -6,7 +6,6 @@ import com.github.retrooper.packetevents.event.PacketReceiveEvent
 import com.github.retrooper.packetevents.protocol.packettype.PacketType
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientEditBook
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
-import io.wdsj.asw.bukkit.type.ModuleType
 import io.wdsj.asw.bukkit.manage.notice.Notifier
 import io.wdsj.asw.bukkit.manage.permission.Permissions
 import io.wdsj.asw.bukkit.manage.punish.Punishment
@@ -14,6 +13,7 @@ import io.wdsj.asw.bukkit.proxy.bungee.BungeeSender
 import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
+import io.wdsj.asw.bukkit.type.ModuleType
 import io.wdsj.asw.bukkit.util.TimingUtils
 import io.wdsj.asw.bukkit.util.Utils
 import io.wdsj.asw.bukkit.util.cache.BookCache
@@ -109,10 +109,10 @@ class ASWBookPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
             if (shouldSendMessage) {
                 Utils.messagesFilteredNum.getAndIncrement()
                 if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
-                    VelocitySender.send(player, ModuleType.BOOK, outMessage, outList)
+                    VelocitySender.sendNotifyMessage(player, ModuleType.BOOK, outMessage, outList)
                 }
                 if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
-                    BungeeSender.send(player, ModuleType.BOOK, outMessage, outList)
+                    BungeeSender.sendNotifyMessage(player, ModuleType.BOOK, outMessage, outList)
                 }
                 if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
                     AdvancedSensitiveWords.databaseManager.checkAndUpdatePlayer(player.name)

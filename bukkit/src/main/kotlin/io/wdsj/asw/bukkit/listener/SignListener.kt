@@ -115,11 +115,11 @@ class SignListener : Listener {
         }
 
         if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_VELOCITY) && shouldSendMessage) {
-            VelocitySender.send(player, ModuleType.SIGN, outMessage, outList)
+            VelocitySender.sendNotifyMessage(player, ModuleType.SIGN, outMessage, outList)
         }
 
         if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
-            BungeeSender.send(player, ModuleType.SIGN, outMessage, outList)
+            BungeeSender.sendNotifyMessage(player, ModuleType.SIGN, outMessage, outList)
         }
 
         if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {

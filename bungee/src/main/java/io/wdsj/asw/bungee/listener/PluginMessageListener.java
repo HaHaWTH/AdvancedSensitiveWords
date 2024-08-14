@@ -24,6 +24,9 @@ public class PluginMessageListener implements Listener {
         }
         ByteArrayDataInput in = ByteStreams.newDataInput(event.getData());
         if (in.readUTF().equals(SUB_CHANNEL)) {
+            if (!in.readUTF().equals(PLUGIN_VERSION)) {
+                LOGGER.warning("Plugin version mismatch! Things may not work properly.");
+            }
             switch (in.readUTF().toLowerCase(Locale.ROOT)) {
                 case ChannelData.NOTICE:
                     try {
