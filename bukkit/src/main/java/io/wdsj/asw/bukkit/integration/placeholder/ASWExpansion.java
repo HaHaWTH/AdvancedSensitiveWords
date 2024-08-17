@@ -13,7 +13,7 @@ import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
 import static io.wdsj.asw.bukkit.util.Utils.messagesFilteredNum;
 
 public class ASWExpansion extends PlaceholderExpansion {
-    private long databaseCachedTotal = 0L;
+    private long databaseLastTotal = 0L;
     private long databaseTotalLastRequestTime = System.currentTimeMillis();
     private final AdvancedSensitiveWords plugin = AdvancedSensitiveWords.getInstance();
     @Override
@@ -49,10 +49,10 @@ public class ASWExpansion extends PlaceholderExpansion {
                 if ((System.currentTimeMillis() - databaseTotalLastRequestTime) / 1000 > settingsManager.getProperty(PluginSettings.DATABASE_CACHE_TIME)) {
                     databaseTotalLastRequestTime = System.currentTimeMillis();
                     long total = databaseManager.getTotalViolations();
-                    databaseCachedTotal = total;
+                    databaseLastTotal = total;
                     return String.valueOf(total);
                 } else {
-                    return String.valueOf(databaseCachedTotal);
+                    return String.valueOf(databaseLastTotal);
                 }
             } else {
                 return "disabled";

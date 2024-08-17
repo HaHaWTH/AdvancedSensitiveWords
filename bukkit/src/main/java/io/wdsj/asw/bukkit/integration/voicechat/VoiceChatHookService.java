@@ -21,8 +21,7 @@ public class VoiceChatHookService {
                 LOGGER.info("Successfully hooked into voicechat.");
             } catch (Exception e) {
                 LOGGER.severe("Failed to register voicechat listener." +
-                        " This should not happen, please report to the author");
-                e.printStackTrace();
+                        " This should not happen, please report to the author" + e.getMessage());
             }
         } else {
             LOGGER.warning("Failed to hook into voicechat.");

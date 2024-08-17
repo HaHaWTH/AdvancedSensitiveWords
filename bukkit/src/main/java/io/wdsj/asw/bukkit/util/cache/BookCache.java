@@ -5,7 +5,7 @@ import com.google.common.cache.CacheBuilder;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
 
 import java.util.List;
-import java.util.Objects;
+import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
@@ -29,23 +29,29 @@ public class BookCache {
 
     /**
      * Retrieves the processed book content from the cache.
-     * Warning: This method should only be called after checking if the book is cached.
+     * Warning: This method is only safely called after checking if the book is cached.
      * @param content The content of the book.
      * @return The processed book content.
      */
-    public static String getCachedProcessedBookContent(String content) {
-        BookCacheEntry entry = Objects.requireNonNull(cache.getIfPresent(content));
+    public static String getCachedProcessedBookContent(String content) throws NoSuchElementException {
+        final BookCacheEntry entry = cache.getIfPresent(content);
+        if (entry == null) {
+            throw new NoSuchElementException("Book not found in cache");
+        }
         return entry.getProcessedContent();
     }
 
     /**
      * Retrieves the list of sensitive words from the cache.
-     * Warning: This method should only be called after checking if the book is cached.
+     * Warning: This method is only safely called after checking if the book is cached.
      * @param content The content of the book.
      * @return The list of sensitive words.
      */
-    public static List<String> getCachedBookSensitiveWordList(String content) {
-        BookCacheEntry entry = Objects.requireNonNull(cache.getIfPresent(content));
+    public static List<String> getCachedBookSensitiveWordList(String content) throws NoSuchElementException {
+        final BookCacheEntry entry = cache.getIfPresent(content);
+        if (entry == null) {
+            throw new NoSuchElementException("Book not found in cache");
+        }
         return entry.getSensitiveWordList();
     }
 

@@ -3,7 +3,7 @@ package io.wdsj.asw.bukkit.proxy.bungee;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
-import io.wdsj.asw.bukkit.proxy.ChannelDataType;
+import io.wdsj.asw.bukkit.proxy.ChannelDataConstant;
 import io.wdsj.asw.bukkit.type.ModuleType;
 import org.bukkit.entity.Player;
 
@@ -14,7 +14,7 @@ public class BungeeSender {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF(BungeeCordChannel.SUB_CHANNEL);
         out.writeUTF(AdvancedSensitiveWords.PLUGIN_VERSION);
-        out.writeUTF(ChannelDataType.NOTICE);
+        out.writeUTF(ChannelDataConstant.NOTICE);
         out.writeUTF(violatedPlayer.getName());
         out.writeUTF(moduleType.toString());
         out.writeUTF(originalMessage);
@@ -27,7 +27,7 @@ public class BungeeSender {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF(BungeeCordChannel.SUB_CHANNEL);
         out.writeUTF(AdvancedSensitiveWords.PLUGIN_VERSION);
-        out.writeUTF(ChannelDataType.COMMAND_PROXY);
+        out.writeUTF(ChannelDataConstant.COMMAND_PROXY);
         out.writeUTF(command);
         byte[] data = out.toByteArray();
         violatedPlayer.sendPluginMessage(AdvancedSensitiveWords.getInstance(), BungeeCordChannel.BUNGEE_CHANNEL, data);

@@ -4,7 +4,7 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 import io.wdsj.asw.bukkit.manage.notice.Notifier;
-import io.wdsj.asw.bukkit.proxy.ChannelDataType;
+import io.wdsj.asw.bukkit.proxy.ChannelDataConstant;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
@@ -24,7 +24,7 @@ public class VelocityReceiver implements PluginMessageListener {
                 LOGGER.warning("Plugin version mismatch! Things may not work properly.");
             }
             switch (input.readUTF().toLowerCase(Locale.ROOT)) { // Use switch for future updates
-                case ChannelDataType.NOTICE:
+                case ChannelDataConstant.NOTICE:
                     String playerName = input.readUTF();
                     String moduleType = input.readUTF();
                     String originalMsg = input.readUTF();
