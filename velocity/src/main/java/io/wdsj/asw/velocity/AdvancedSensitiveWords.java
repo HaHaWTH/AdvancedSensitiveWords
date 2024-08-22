@@ -13,6 +13,7 @@ import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
+import io.wdsj.asw.common.constant.ChannelDataConstant;
 import io.wdsj.asw.velocity.template.PomData;
 import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
@@ -54,7 +55,7 @@ public class AdvancedSensitiveWords {
                 logger.warn("Plugin version mismatch! Things may not work properly.");
             }
             switch (input.readUTF().toLowerCase(Locale.ROOT)) {
-                case ChannelData.NOTICE:
+                case ChannelDataConstant.NOTICE:
                     server.getAllServers().forEach(server -> conn.ifPresent(source -> {
                         if (!server.getServerInfo().equals(source.getServerInfo()) && !server.getPlayersConnected().isEmpty()) {
                             ByteArrayDataOutput out = ByteStreams.newDataOutput();
@@ -66,7 +67,7 @@ public class AdvancedSensitiveWords {
                         }
                     }));
                     break;
-                case ChannelData.COMMAND_PROXY:
+                case ChannelDataConstant.COMMAND_PROXY:
                     String command = input.readUTF();
                     server.getCommandManager().executeAsync(server.getConsoleCommandSource(), command);
                     break;

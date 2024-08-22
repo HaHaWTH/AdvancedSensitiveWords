@@ -3,8 +3,8 @@ package io.wdsj.asw.bukkit.proxy.velocity;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
-import io.wdsj.asw.bukkit.proxy.ChannelDataConstant;
 import io.wdsj.asw.bukkit.type.ModuleType;
+import io.wdsj.asw.common.constant.ChannelDataConstant;
 import org.bukkit.entity.Player;
 
 import java.util.List;

@@ -1,6 +1,6 @@
-package io.wdsj.asw.velocity;
+package io.wdsj.asw.common.constant;
 
-public class ChannelData {
+public class ChannelDataConstant {
     public static final String NOTICE = "notice";
     public static final String COMMAND_PROXY = "command_proxy";
 }

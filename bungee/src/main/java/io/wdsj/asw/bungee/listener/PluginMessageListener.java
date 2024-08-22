@@ -4,7 +4,7 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import io.wdsj.asw.bungee.AdvancedSensitiveWords;
-import io.wdsj.asw.bungee.data.ChannelData;
+import io.wdsj.asw.common.constant.ChannelDataConstant;
 import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -28,7 +28,7 @@ public class PluginMessageListener implements Listener {
                 LOGGER.warning("Plugin version mismatch! Things may not work properly.");
             }
             switch (in.readUTF().toLowerCase(Locale.ROOT)) {
-                case ChannelData.NOTICE:
+                case ChannelDataConstant.NOTICE:
                     try {
                         String serverName = ((Server) event.getSender()).getInfo().getName();
                         ByteArrayDataOutput out = ByteStreams.newDataOutput();
@@ -44,7 +44,7 @@ public class PluginMessageListener implements Listener {
                         LOGGER.severe("An error occurred while sending plugin message " + e.getMessage());
                     }
                     break;
-                case ChannelData.COMMAND_PROXY:
+                case ChannelDataConstant.COMMAND_PROXY:
                     String command = in.readUTF();
                     AdvancedSensitiveWords.getInstance().getProxy().getPluginManager().dispatchCommand(AdvancedSensitiveWords.getInstance().getProxy().getConsole(), command);
                     event.setCancelled(true);
