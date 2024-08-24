@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 public final class AdvancedSensitiveWords extends Plugin {
     public static final String BUNGEE_CHANNEL = "BungeeCord";
     public static final String SUB_CHANNEL = "asw";
-    public static final String PLUGIN_VERSION = "X";
+    public static final String PLUGIN_VERSION = "1.0";
     public static Logger LOGGER;
 
     private static AdvancedSensitiveWords instance;

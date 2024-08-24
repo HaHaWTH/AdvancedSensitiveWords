@@ -61,7 +61,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     public static SettingsManager settingsManager;
     public static SettingsManager messagesManager;
     public static DatabaseManager databaseManager;
-    public static final String PLUGIN_VERSION = "X";
+    public static final String PLUGIN_VERSION = "1.0";
     private static AdvancedSensitiveWords instance;
     private static boolean USE_PE = false;
     private static TaskScheduler scheduler;

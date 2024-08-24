@@ -6,7 +6,7 @@
 
     <groupId>io.wdsj</groupId>
     <artifactId>AdvancedSensitiveWords</artifactId>
-    <version>X</version>
+    <version>1.0</version>
     <packaging>pom</packaging>
 
     <name>AdvancedSensitiveWords</name>
@@ -17,10 +17,10 @@
     </properties>
 
     <modules>
+        <module>common</module>
         <module>bukkit</module>
         <module>velocity</module>
         <module>bungee</module>
-        <module>common</module>
     </modules>
 
 </project>
