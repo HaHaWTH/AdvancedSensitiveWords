@@ -30,7 +30,7 @@ public class SignContext {
         return tsHistory.stream()
                 .filter(timedString -> (System.currentTimeMillis() - timedString.getTime()) / 1000 < settingsManager.getProperty(PluginSettings.SIGN_CONTEXT_TIME_LIMIT))
                 .map(TimedString::getString)
-                .collect(ArrayDeque::new, ArrayDeque::add, ArrayDeque::addAll);
+                .collect(ArrayDeque::new, ArrayDeque::offerLast, ArrayDeque::addAll);
     }
 
     public static void clearPlayerContext(Player player) {

@@ -30,7 +30,7 @@ public class ChatContext {
         return tsHistory.stream()
                 .filter(timedString -> (System.currentTimeMillis() - timedString.getTime()) / 1000 < settingsManager.getProperty(PluginSettings.CHAT_CONTEXT_TIME_LIMIT))
                 .map(TimedString::getString)
-                .collect(ArrayDeque::new, ArrayDeque::add, ArrayDeque::addAll);
+                .collect(ArrayDeque::new, ArrayDeque::offerLast, ArrayDeque::addAll);
     }
 
     public static void clearPlayerContext(Player player) {

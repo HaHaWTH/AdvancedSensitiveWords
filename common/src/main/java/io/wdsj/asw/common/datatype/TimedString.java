@@ -26,20 +26,39 @@ public class TimedString {
         this.time = time;
     }
 
+    /**
+     * Returns the string.
+     * @return the string
+     */
     public String getString() {
         return str;
     }
 
+    /**
+     * Returns the timestamp.
+     * @return the timestamp
+     */
     public long getTime() {
         return time;
     }
 
+    /**
+     * Returns a new TimedString instance.
+     * @param str the string
+     * @param time the timestamp
+     * @return a new TimedString instance
+     */
     public static TimedString of(String str, long time) {
         Objects.requireNonNull(str, "String cannot be null");
         if (time < 0) throw new IllegalArgumentException("Time cannot be negative");
         return new TimedString(str, time);
     }
 
+    /**
+     * Returns a new TimedString instance with the current timestamp.
+     * @param str the string
+     * @return a new TimedString instance
+     */
     public static TimedString of(String str) {
         return of(str, System.currentTimeMillis());
     }
