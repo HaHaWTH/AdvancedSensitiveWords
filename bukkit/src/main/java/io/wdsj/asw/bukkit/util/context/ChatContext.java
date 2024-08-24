@@ -1,7 +1,7 @@
 package io.wdsj.asw.bukkit.util.context;
 
 import io.wdsj.asw.bukkit.setting.PluginSettings;
-import io.wdsj.asw.bukkit.type.TimedString;
+import io.wdsj.asw.common.datatype.TimedString;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayDeque;
@@ -22,14 +22,14 @@ public class ChatContext {
             history.pollFirst();
         }
         if (message.trim().isEmpty()) return;
-        history.offerLast(new TimedString(message.trim(), System.currentTimeMillis()));
+        history.offerLast(TimedString.of(message.trim()));
     }
 
     public static Deque<String> getHistory(Player player) {
         Deque<TimedString> tsHistory = chatHistory.getOrDefault(player, new ArrayDeque<>());
         return tsHistory.stream()
                 .filter(timedString -> (System.currentTimeMillis() - timedString.getTime()) / 1000 < settingsManager.getProperty(PluginSettings.CHAT_CONTEXT_TIME_LIMIT))
-                .map(TimedString::getMessage)
+                .map(TimedString::getString)
                 .collect(ArrayDeque::new, ArrayDeque::add, ArrayDeque::addAll);
     }
 

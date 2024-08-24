@@ -19,7 +19,7 @@ public class SchedulingUtils {
         }
     }
 
-    public static void runSyncIfFolia(Entity entity, Runnable runnable) {
+    public static void runSyncAtEntityIfFolia(Entity entity, Runnable runnable) {
         if (isFolia) {
             AdvancedSensitiveWords.getScheduler().runTask(entity, runnable);
         } else {
@@ -27,7 +27,7 @@ public class SchedulingUtils {
         }
     }
 
-    public static void runSyncIfFolia(Location location, Runnable runnable) {
+    public static void runSyncAtLocationIfFolia(Location location, Runnable runnable) {
         if (isFolia) {
             AdvancedSensitiveWords.getScheduler().runTask(location, runnable);
         } else {

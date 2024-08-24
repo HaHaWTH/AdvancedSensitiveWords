@@ -42,9 +42,9 @@ public class Punishment {
             case DAMAGE:
                 try {
                     double damageAmount = (normalPunish.length >= 2) ? Double.parseDouble(normalPunish[1]) : 1.0D;
-                    SchedulingUtils.runSyncIfFolia(player, () -> player.damage(damageAmount));
+                    SchedulingUtils.runSyncAtEntityIfFolia(player, () -> player.damage(damageAmount));
                 } catch (NumberFormatException e) {
-                    SchedulingUtils.runSyncIfFolia(player, () -> player.damage(1.0D));
+                    SchedulingUtils.runSyncAtEntityIfFolia(player, () -> player.damage(1.0D));
                 }
                 break;
             case HOSTILE:
@@ -77,17 +77,17 @@ public class Punishment {
                 if (potionEffect == null) throw new IllegalArgumentException("Unknown potion effect");
                 switch (normalPunish.length) {
                     case 2:
-                        SchedulingUtils.runSyncIfFolia(player, () -> player.addPotionEffect(new PotionEffect(potionEffect, 10, 0)));
+                        SchedulingUtils.runSyncAtEntityIfFolia(player, () -> player.addPotionEffect(new PotionEffect(potionEffect, 10, 0)));
                         break;
                     case 3:
                         int duration_3 = Integer.parseInt(normalPunish[2]);
-                        SchedulingUtils.runSyncIfFolia(player, () -> player.addPotionEffect(new PotionEffect(potionEffect, duration_3 * 20, 0)));
+                        SchedulingUtils.runSyncAtEntityIfFolia(player, () -> player.addPotionEffect(new PotionEffect(potionEffect, duration_3 * 20, 0)));
                         break;
                     case 4:
                     default:
                         int duration_4 = Integer.parseInt(normalPunish[2]);
                         int amplifier = Integer.parseInt(normalPunish[3]);
-                        SchedulingUtils.runSyncIfFolia(player, () -> player.addPotionEffect(new PotionEffect(potionEffect, duration_4 * 20, amplifier)));
+                        SchedulingUtils.runSyncAtEntityIfFolia(player, () -> player.addPotionEffect(new PotionEffect(potionEffect, duration_4 * 20, amplifier)));
                         break;
                 }
                 break;
@@ -111,10 +111,10 @@ public class Punishment {
      * @param radius 敌对生物的搜索半径
      */
     private static void makeHostileTowardsPlayer(Player target, double radius) {
-        SchedulingUtils.runSyncIfFolia(target, () -> {
+        SchedulingUtils.runSyncAtEntityIfFolia(target, () -> {
             List<Entity> entities = target.getNearbyEntities(radius, radius, radius);
             for (Entity entity : entities) {
-                SchedulingUtils.runSyncIfFolia(entity, () -> {
+                SchedulingUtils.runSyncAtEntityIfFolia(entity, () -> {
                     if (entity instanceof Mob && !entity.hasMetadata("NPC")) {
                         Mob mob = (Mob) entity;
                         mob.setTarget(target);
