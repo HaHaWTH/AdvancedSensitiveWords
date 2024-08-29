@@ -49,7 +49,6 @@ class FakeMessageExecutor : Listener {
 
         @JvmStatic
         fun selfIncrement(player: Player) {
-            FAKE_MESSAGE_NUM.getOrPut(player) { 0 } + 1
-        }
+            FAKE_MESSAGE_NUM[player] = FAKE_MESSAGE_NUM.getOrPut(player) { 0 } + 1        }
     }
 }
