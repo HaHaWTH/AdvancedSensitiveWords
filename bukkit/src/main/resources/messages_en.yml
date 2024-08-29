@@ -34,6 +34,9 @@ Plugin:
   messageOnCommandHelp: |-
     &bAdvancedSensitiveWords&r---&b Help Menu
     &7/asw reload: &areload filter dictionary and plugin configuration
+    &7/asw reloadconfig: &areload plugin config
+    &7/asw add <word>: &aAdd word to filter dictionary
+    &7/asw remove <word>: &aremove word from filter dictionary
     &7/asw status: &ashow plug-in status menu
     &7/asw test <text to be tested>: &arun sensitive word test
     &7/asw help: &ashow help information
@@ -64,6 +67,18 @@ Plugin:
     parseError: '&cFailed to parse the punish method, please check the syntax.'
     #Successfully punished
     success: '&aSuccessfully punished player %player%!'
+  #Add command
+  commandAdd:
+    #Add success
+    success: '&aSuccessfully added to filter dictionary!'
+    #Busy
+    busy: '&cFilter dictionary is busy, please try again later.'
+  #Remove command
+  commandRemove:
+    #Remove success
+    success: '&aSuccessfully removed from filter dictionary!'
+    #Busy
+    busy: '&cFilter dictionary is busy, please try again later.'
   #No permission
   noPermission: '&cYou do not have permission to execute the command.'
   #Unknown command

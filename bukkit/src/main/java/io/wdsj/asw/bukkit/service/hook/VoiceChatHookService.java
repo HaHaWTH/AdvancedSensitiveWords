@@ -1,7 +1,8 @@
-package io.wdsj.asw.bukkit.integration.voicechat;
+package io.wdsj.asw.bukkit.service.hook;
 
 import de.maxhenkel.voicechat.api.BukkitVoicechatService;
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
+import io.wdsj.asw.bukkit.integration.voicechat.VoiceChatExtension;
 
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER;
 

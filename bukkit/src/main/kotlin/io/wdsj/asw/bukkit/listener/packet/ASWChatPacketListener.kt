@@ -20,6 +20,7 @@ import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.type.ModuleType
+import io.wdsj.asw.bukkit.util.LoggingUtils
 import io.wdsj.asw.bukkit.util.TimingUtils
 import io.wdsj.asw.bukkit.util.Utils
 import io.wdsj.asw.bukkit.util.context.ChatContext
@@ -81,7 +82,7 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                 }
 
                 if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
-                    Utils.logViolation(userName + "(IP: " + user.address.address.hostAddress + ")(Chat)", originalMessage + censoredWords)
+                    LoggingUtils.logViolation(userName + "(IP: " + user.address.address.hostAddress + ")(Chat)", originalMessage + censoredWords)
                 }
                 if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
                     VelocitySender.sendNotifyMessage(player, ModuleType.CHAT, originalMessage, censoredWords)
@@ -123,7 +124,7 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                                         )
                                     }
                                     if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
-                                        Utils.logViolation(
+                                        LoggingUtils.logViolation(
                                             player.name + "(IP: " + user.address.address.hostAddress + ")(Chat AI)(LLM output: $it)",
                                             originalMessage + unsupportedList
                                         )
@@ -192,7 +193,7 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                                             )
                                         }
                                         if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
-                                            Utils.logViolation(
+                                            LoggingUtils.logViolation(
                                                 player.name + "(IP: " + user.address.address.hostAddress + ")(Chat AI)(OPENAI)",
                                                 originalMessage + unsupportedList
                                             )
@@ -263,7 +264,7 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                         user.sendMessage(ChatColor.translateAlternateColorCodes('&', AdvancedSensitiveWords.messagesManager.getProperty(PluginMessages.MESSAGE_ON_CHAT).replace("%integrated_player%", userName).replace("%integrated_message%", originalMessage)))
                     }
                     if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
-                        Utils.logViolation(userName + "(IP: " + Utils.getPlayerIp(player) + ")(Chat)(Context)", originalContext + censoredContextList)
+                        LoggingUtils.logViolation(userName + "(IP: " + Utils.getPlayerIp(player) + ")(Chat)(Context)", originalContext + censoredContextList)
                     }
                     if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
                         VelocitySender.sendNotifyMessage(player, ModuleType.CHAT, originalContext, censoredContextList)
@@ -307,7 +308,7 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                     user.sendMessage(ChatColor.translateAlternateColorCodes('&', AdvancedSensitiveWords.messagesManager.getProperty(PluginMessages.MESSAGE_ON_CHAT).replace("%integrated_player%", userName).replace("%integrated_message%", originalCommand)))
                 }
                 if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
-                    Utils.logViolation(userName + "(IP: " + Utils.getPlayerIp(player) + ")(Chat)", "/$originalCommand$censoredWords")
+                    LoggingUtils.logViolation(userName + "(IP: " + Utils.getPlayerIp(player) + ")(Chat)", "/$originalCommand$censoredWords")
                 }
                 if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
                     VelocitySender.sendNotifyMessage(player, ModuleType.CHAT, originalCommand, censoredWords)

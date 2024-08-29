@@ -12,6 +12,7 @@ import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.type.ModuleType
+import io.wdsj.asw.bukkit.util.LoggingUtils
 import io.wdsj.asw.bukkit.util.TimingUtils
 import io.wdsj.asw.bukkit.util.Utils
 import org.bukkit.ChatColor
@@ -58,7 +59,7 @@ class CommandListener : Listener {
                 )
             }
             if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
-                Utils.logViolation(
+                LoggingUtils.logViolation(
                     player.name + "(IP: " + Utils.getPlayerIp(player) + ")(Chat)",
                     originalCommand + censoredWordList
                 )

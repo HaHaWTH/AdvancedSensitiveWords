@@ -18,7 +18,6 @@ import io.wdsj.asw.bukkit.command.ConstructCommandExecutor;
 import io.wdsj.asw.bukkit.command.ConstructTabCompleter;
 import io.wdsj.asw.bukkit.datasource.DatabaseManager;
 import io.wdsj.asw.bukkit.integration.placeholder.ASWExpansion;
-import io.wdsj.asw.bukkit.integration.voicechat.VoiceChatHookService;
 import io.wdsj.asw.bukkit.listener.*;
 import io.wdsj.asw.bukkit.listener.packet.ASWBookPacketListener;
 import io.wdsj.asw.bukkit.listener.packet.ASWChatPacketListener;
@@ -30,6 +29,7 @@ import io.wdsj.asw.bukkit.proxy.bungee.BungeeReceiver;
 import io.wdsj.asw.bukkit.proxy.velocity.VelocityChannel;
 import io.wdsj.asw.bukkit.proxy.velocity.VelocityReceiver;
 import io.wdsj.asw.bukkit.service.BukkitLibraryService;
+import io.wdsj.asw.bukkit.service.hook.VoiceChatHookService;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
 import io.wdsj.asw.bukkit.update.Updater;
@@ -211,7 +211,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         LOGGER.info("AdvancedSensitiveWords is enabled!(took " + (endTime - startTime) + "ms)");
         if (settingsManager.getProperty(PluginSettings.CHECK_FOR_UPDATE)) {
             getScheduler().runTaskAsynchronously(() -> {
-                Updater updater = new Updater(getDescription().getVersion());
+                Updater updater = new Updater(PLUGIN_VERSION);
                 if (updater.isUpdateAvailable()) {
                     LOGGER.warning("There is a new version available: " + Updater.getLatestVersion() +
                             ", you're on: " + Updater.getCurrentVersion());
@@ -254,11 +254,8 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
                 PacketEvents.getAPI().terminate();
             }
         }
-        if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD) ||
-                settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
-            getServer().getMessenger().unregisterOutgoingPluginChannel(this);
-            getServer().getMessenger().unregisterIncomingPluginChannel(this);
-        }
+        getServer().getMessenger().unregisterOutgoingPluginChannel(this);
+        getServer().getMessenger().unregisterIncomingPluginChannel(this);
         HandlerList.unregisterAll(this);
         TimingUtils.cleanStatisticCache();
         ChatContext.forceClearContext();

@@ -1,5 +1,7 @@
 package io.wdsj.asw.common.datatype;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 /**
@@ -48,7 +50,7 @@ public class TimedString {
      * @param time the timestamp
      * @return a new TimedString instance
      */
-    public static TimedString of(String str, long time) {
+    public static TimedString of(@NotNull String str, long time) {
         Objects.requireNonNull(str, "String cannot be null");
         if (time < 0) throw new IllegalArgumentException("Time cannot be negative");
         return new TimedString(str, time);
@@ -59,7 +61,7 @@ public class TimedString {
      * @param str the string
      * @return a new TimedString instance
      */
-    public static TimedString of(String str) {
+    public static TimedString of(@NotNull String str) {
         return of(str, System.currentTimeMillis());
     }
 

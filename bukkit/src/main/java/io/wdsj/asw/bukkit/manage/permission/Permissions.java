@@ -9,6 +9,8 @@ public class Permissions {
 
     public static final String BYPASS = "advancedsensitivewords.bypass";
     public static final String RELOAD = "advancedsensitivewords.reload";
+    public static final String ADD = "advancedsensitivewords.add";
+    public static final String REMOVE = "advancedsensitivewords.remove";
     public static final String STATUS = "advancedsensitivewords.status";
     public static final String TEST = "advancedsensitivewords.test";
     public static final String HELP = "advancedsensitivewords.help";

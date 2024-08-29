@@ -27,7 +27,7 @@ public class PluginMessages implements SettingsHolder {
     @Comment("插件重载消息")
     public static final Property<String> MESSAGE_ON_COMMAND_RELOAD = newProperty("Plugin.messageOnCommandReload", "&aAdvancedSensitiveWords has been reloaded.");
     @Comment("插件帮助菜单")
-    public static final Property<String> MESSAGE_ON_COMMAND_HELP = newProperty("Plugin.messageOnCommandHelp", "&bAdvancedSensitiveWords&r---&b帮助菜单\n   &7/asw reload&7: &a重新加载过滤词库和插件配置\n   &7/asw status: &a显示插件状态菜单\n   &7/asw test <待测消息>: &a运行敏感词测试\n   &7/asw help: &a显示帮助信息\n   &7/asw info <玩家名称>: &a获取玩家违规次数\n   &7/asw punish <玩家名称> [惩罚]: &a手动惩罚玩家, 不填惩罚将使用配置文件内容");
+    public static final Property<String> MESSAGE_ON_COMMAND_HELP = newProperty("Plugin.messageOnCommandHelp", "&bAdvancedSensitiveWords&r---&b帮助菜单\n   &7/asw reload&7: &a重新加载过滤词库和插件配置\n   &7/asw reloadconfig: &a重新加载插件配置\n   &7/asw add <敏感词>: &a添加敏感词\n   &7/asw remove <敏感词>: &a移除敏感词\n   &7/asw status: &a显示插件状态菜单\n   &7/asw test <待测消息>: &a运行敏感词测试\n   &7/asw help: &a显示帮助信息\n   &7/asw info <玩家名称>: &a获取玩家违规次数\n   &7/asw punish <玩家名称> [惩罚]: &a手动惩罚玩家, 不填惩罚将使用配置文件内容");
     @Comment("插件状态菜单")
     public static final Property<String> MESSAGE_ON_COMMAND_STATUS = newProperty("Plugin.messageOnCommandStatus", "&bAdvancedSensitiveWords&r---&b插件状态(%version%)(MC %mc_version%)\n   &7系统信息: &b%platform% %bit% (Java %java_version% -- %java_vendor%)\n   &7初始化: %init%\n   &7当前模式: %mode%\n   &7已过滤消息数: &a%num%\n   &7近20次处理平均耗时: %ms%");
     @Comment("敏感词测试返回")
@@ -40,6 +40,14 @@ public class PluginMessages implements SettingsHolder {
     public static final Property<String> MESSAGE_ON_COMMAND_PUNISH_PARSE_ERROR = newProperty("Plugin.commandPunish.parseError", "&c解析方法出错, 请检查指令格式.");
     @Comment("已惩罚")
     public static final Property<String> MESSAGE_ON_COMMAND_PUNISH_SUCCESS = newProperty("Plugin.commandPunish.success", "&a成功惩罚玩家 %player%.");
+    @Comment("敏感词添加成功")
+    public static final Property<String> MESSAGE_ON_COMMAND_ADD_SUCCESS = newProperty("Plugin.commandAdd.success", "&a敏感词添加成功.");
+    @Comment("操作繁忙")
+    public static final Property<String> MESSAGE_ON_COMMAND_ADD_BUSY = newProperty("Plugin.commandAdd.busy", "&c操作繁忙, 请稍后再试");
+    @Comment("敏感词移除成功")
+    public static final Property<String> MESSAGE_ON_COMMAND_REMOVE_SUCCESS = newProperty("Plugin.commandRemove.success", "&a敏感词移除成功.");
+    @Comment("操作繁忙")
+    public static final Property<String> MESSAGE_ON_COMMAND_REMOVE_BUSY = newProperty("Plugin.commandRemove.busy", "&c操作繁忙, 请稍后再试");
     @Comment("没有权限执行该指令")
     public static final Property<String> NO_PERMISSION = newProperty("Plugin.noPermission", "&c你没有权限执行该指令.");
     @Comment("未知命令")
@@ -68,6 +76,8 @@ public class PluginMessages implements SettingsHolder {
         conf.setComment("Plugin", "插件消息");
         conf.setComment("Plugin.commandTest", "敏感词测试消息(不计入已过滤消息)");
         conf.setComment("Plugin.commandPunish", "惩罚消息");
+        conf.setComment("Plugin.commandAdd", "Add 指令相关");
+        conf.setComment("Plugin.commandRemove", "Remove 指令相关");
         conf.setComment("Chat", "聊天检测消息");
         conf.setComment("Book", "书检测消息");
         conf.setComment("Sign", "告示牌检测消息");

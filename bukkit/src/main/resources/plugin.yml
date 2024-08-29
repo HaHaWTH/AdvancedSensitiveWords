@@ -1,13 +1,13 @@
 name: AdvancedSensitiveWords
 version: ${project.version}
-main: io.wdsj.asw.bukkit.AdvancedSensitiveWords
+main: ${plugin.mainClass}
 api-version: '1.13'
-website: https://github.com/HaHaWTH/AdvancedSensitiveWords
+website: ${plugin.website}
 authors:
   - HeyWTF_IS_That
   - HaHaWTH
   - 0D00_0721
-description: Ultimate AntiSwear plugin for Minecraft
+description: ${plugin.description}
 softdepend:
   - packetevents
   - floodgate
@@ -19,7 +19,7 @@ folia-supported: true
 commands:
   advancedsensitivewords:
     description: Advanced Sensitive Words main command.
-    usage: /asw <reload|status|test|help|info|punish>
+    usage: /asw <reload|status|test|help|info|punish|add|remove>
     aliases: [asw]
 permissions:
   advancedsensitivewords.*:
@@ -35,6 +35,8 @@ permissions:
       advancedsensitivewords.info: true
       advancedsensitivewords.update: true
       advancedsensitivewords.punish: true
+      advancedsensitivewords.add: true
+      advancedsensitivewords.remove: true
   advancedsensitivewords.bypass:
     description: Bypass the Advanced Sensitive Words filter.
     default: false
@@ -61,5 +63,11 @@ permissions:
     default: op
   advancedsensitivewords.punish:
     description: Punish the player.
+    default: op
+  advancedsensitivewords.add:
+    description: Add a sensitive word.
+    default: op
+  advancedsensitivewords.remove:
+    description: Remove a sensitive word.
     default: op
 # Love you

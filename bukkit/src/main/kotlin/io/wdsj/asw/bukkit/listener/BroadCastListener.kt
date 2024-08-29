@@ -2,6 +2,7 @@ package io.wdsj.asw.bukkit.listener
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.setting.PluginSettings
+import io.wdsj.asw.bukkit.util.LoggingUtils
 import io.wdsj.asw.bukkit.util.TimingUtils
 import io.wdsj.asw.bukkit.util.Utils
 import org.bukkit.event.EventHandler
@@ -31,7 +32,7 @@ class BroadCastListener : Listener {
                 event.message = processedMessage
             }
             if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
-                Utils.logViolation("Broadcast(IP: None)(BroadCast)", originalMessage + censoredWordList)
+                LoggingUtils.logViolation("Broadcast(IP: None)(BroadCast)", originalMessage + censoredWordList)
             }
             val endTime = System.currentTimeMillis()
             TimingUtils.addProcessStatistic(endTime, startTime)

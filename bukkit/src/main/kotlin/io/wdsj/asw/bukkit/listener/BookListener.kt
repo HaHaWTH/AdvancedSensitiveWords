@@ -9,6 +9,7 @@ import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.type.ModuleType
+import io.wdsj.asw.bukkit.util.LoggingUtils
 import io.wdsj.asw.bukkit.util.TimingUtils
 import io.wdsj.asw.bukkit.util.Utils
 import io.wdsj.asw.bukkit.util.cache.BookCache
@@ -167,7 +168,7 @@ class BookListener : Listener {
         }
 
         if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.LOG_VIOLATION) && shouldSendMessage) {
-            Utils.logViolation(player.name + "(IP: " + Utils.getPlayerIp(player) + ")(Book)", outMessage + outList)
+            LoggingUtils.logViolation(player.name + "(IP: " + Utils.getPlayerIp(player) + ")(Book)", outMessage + outList)
         }
     }
 }

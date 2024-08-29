@@ -34,6 +34,9 @@ Plugin:
   messageOnCommandHelp: |-
     &bAdvancedSensitiveWords&r---&b帮助菜单
        &7/asw reload: &a重新加载过滤词库和插件配置
+       &7/asw reloadconfig: &a重新加载插件配置
+       &7/asw add <敏感词>: &a添加敏感词
+       &7/asw remove <敏感词>: &a移除敏感词
        &7/asw status: &a显示插件状态菜单
        &7/asw test <待测消息>: &a运行敏感词测试
        &7/asw help: &a显示帮助信息
@@ -65,6 +68,18 @@ Plugin:
     parseError: '&c解析方法出错, 请检查指令格式.'
     # 已惩罚
     success: '&a成功惩罚玩家 %player%.'
+  # Add 指令相关
+  commandAdd:
+    # 敏感词添加成功
+    success: '&a敏感词添加成功.'
+    # 操作繁忙
+    busy: '&c操作繁忙, 请稍后再试'
+  # Remove 指令相关
+  commandRemove:
+    # 敏感词移除成功
+    success: '&a敏感词移除成功.'
+    # 操作繁忙
+    busy: '&c操作繁忙, 请稍后再试'
   # 没有权限执行该指令
   noPermission: '&c你没有权限执行该指令.'
   # 未知命令
@@ -76,7 +91,7 @@ Plugin:
   # 管理员提醒消息
   noticeOperator: '&f[&bASW&7Notify&f]&7玩家 &c%player% &7触发了敏感词检测(%type%)(原消息: %message%) 敏感词列表: &b%censored_list%'
   # 跨服提醒消息
-  noticeOperatorProxy: '&f[&bASW&7Notify&f]&7玩家 &c%player% (服务器: %server_na me%) &7触发了敏感词检测(%type%)(原消息: %message%) 敏感词列表: &b%censored_list%'
+  noticeOperatorProxy: '&f[&bASW&7Notify&f]&7玩家 &c%player% (服务器: %server_name%) &7触发了敏感词检测(%type%)(原消息: %message%) 敏感词列表: &b%censored_list%'
   # 更新可用
   updateAvailable: '&f[&bASW&7Notify&f]&7插件有可用更新(%latest_version%), 当前正在运行: &b%current_version%.'
   database:

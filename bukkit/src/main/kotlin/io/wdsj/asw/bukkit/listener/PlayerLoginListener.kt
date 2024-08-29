@@ -9,6 +9,7 @@ import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.type.ModuleType
+import io.wdsj.asw.bukkit.util.LoggingUtils
 import io.wdsj.asw.bukkit.util.PlayerUtils
 import io.wdsj.asw.bukkit.util.TimingUtils
 import io.wdsj.asw.bukkit.util.Utils
@@ -66,7 +67,7 @@ class PlayerLoginListener : Listener {
                 )
             }
             if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
-                Utils.logViolation(player.name + "(IP: " + playerIp + ")(Name)", playerName + censoredWordList)
+                LoggingUtils.logViolation(player.name + "(IP: " + playerIp + ")(Name)", playerName + censoredWordList)
             }
             if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
                 VelocitySender.sendNotifyMessage(player, ModuleType.NAME, playerName, censoredWordList)

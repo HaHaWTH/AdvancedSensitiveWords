@@ -22,6 +22,11 @@ public class ConstructTabCompleter implements TabCompleter {
             List<String> tabComplete = new ArrayList<>();
             if (sender.hasPermission(Permissions.RELOAD) && args[0].startsWith("r")) {
                 tabComplete.add("reload");
+                tabComplete.add("reloadconfig");
+            } else if (sender.hasPermission(Permissions.ADD) && args[0].startsWith("a")) {
+                tabComplete.add("add");
+            } else if (sender.hasPermission(Permissions.REMOVE) && args[0].startsWith("r")) {
+                tabComplete.add("remove");
             } else if (sender.hasPermission(Permissions.STATUS) && args[0].startsWith("s")) {
                 tabComplete.add("status");
             } else if (sender.hasPermission(Permissions.TEST) && args[0].startsWith("t")) {
@@ -35,9 +40,13 @@ public class ConstructTabCompleter implements TabCompleter {
             } else if (sender.hasPermission(Permissions.RELOAD) ||
                     sender.hasPermission(Permissions.STATUS) || sender.hasPermission(Permissions.TEST) ||
                     sender.hasPermission(Permissions.HELP) || sender.hasPermission(Permissions.INFO) ||
-                    sender.hasPermission(Permissions.PUNISH)) {
+                    sender.hasPermission(Permissions.PUNISH) || sender.hasPermission(Permissions.ADD) ||
+                    sender.hasPermission(Permissions.REMOVE)) {
                 tabComplete.add("help");
                 tabComplete.add("reload");
+                tabComplete.add("reloadconfig");
+                tabComplete.add("add");
+                tabComplete.add("remove");
                 tabComplete.add("status");
                 tabComplete.add("test");
                 tabComplete.add("punish");

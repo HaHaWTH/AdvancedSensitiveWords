@@ -15,15 +15,14 @@ import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
  * @author HaHaWTH & HeyWTF_IS_That and 0D00_0721
  */
 public class BookCache {
-    private static final Cache<String, BookCacheEntry> cache = CacheBuilder.newBuilder()
-            .maximumSize(settingsManager.getProperty(PluginSettings.BOOK_MAXIMUM_CACHE_SIZE))
-            .expireAfterWrite(settingsManager.getProperty(PluginSettings.BOOK_CACHE_EXPIRE_TIME), TimeUnit.MINUTES)
-            .build();
+    private static Cache<String, BookCacheEntry> cache;
     public static boolean isBookCached(String content) {
+        initIfNull();
         return cache.getIfPresent(content) != null;
     }
 
     public static void addToBookCache(String content, String processedContent, List<String> sensitiveWordList) {
+        initIfNull();
         cache.put(content, new BookCacheEntry(processedContent, sensitiveWordList));
     }
 
@@ -34,6 +33,7 @@ public class BookCache {
      * @return The processed book content.
      */
     public static String getCachedProcessedBookContent(String content) throws NoSuchElementException {
+        initIfNull();
         final BookCacheEntry entry = cache.getIfPresent(content);
         if (entry == null) {
             throw new NoSuchElementException("Book not found in cache");
@@ -48,6 +48,7 @@ public class BookCache {
      * @return The list of sensitive words.
      */
     public static List<String> getCachedBookSensitiveWordList(String content) throws NoSuchElementException {
+        initIfNull();
         final BookCacheEntry entry = cache.getIfPresent(content);
         if (entry == null) {
             throw new NoSuchElementException("Book not found in cache");
@@ -56,7 +57,17 @@ public class BookCache {
     }
 
     public static void invalidateAll() {
+        initIfNull();
         cache.invalidateAll();
+    }
+
+    private static void initIfNull() {
+        if (cache == null) {
+            cache = CacheBuilder.newBuilder()
+                    .maximumSize(settingsManager.getProperty(PluginSettings.BOOK_MAXIMUM_CACHE_SIZE))
+                    .expireAfterWrite(settingsManager.getProperty(PluginSettings.BOOK_CACHE_EXPIRE_TIME), TimeUnit.MINUTES)
+                    .build();
+        }
     }
 
 

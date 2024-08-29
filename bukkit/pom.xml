@@ -17,6 +17,9 @@
     <name>bukkit</name>
 
     <properties>
+        <plugin.mainClass>io.wdsj.asw.bukkit.AdvancedSensitiveWords</plugin.mainClass>
+        <plugin.website>https://github.com/HaHaWTH/AdvancedSensitiveWords</plugin.website>
+        <plugin.description>Ultimate chat moderation solution for Minecraft</plugin.description>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>

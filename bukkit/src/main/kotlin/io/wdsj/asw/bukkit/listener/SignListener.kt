@@ -10,6 +10,7 @@ import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.type.ModuleType
+import io.wdsj.asw.bukkit.util.LoggingUtils
 import io.wdsj.asw.bukkit.util.TimingUtils
 import io.wdsj.asw.bukkit.util.Utils
 import io.wdsj.asw.bukkit.util.context.SignContext
@@ -23,7 +24,6 @@ class SignListener : Listener {
     private var outMessage: String? = ""
     private var outList: List<String> = ArrayList()
     private var outProcessedMessage = ""
-
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     fun onSign(event: SignChangeEvent) {
@@ -111,7 +111,7 @@ class SignListener : Listener {
         if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.LOG_VIOLATION) && shouldSendMessage) {
             val location = event.block.location
             val locationLog = "World: ${location.world?.name ?: "Unknown"}, X: ${location.x}, Y: ${location.y}, Z: ${location.z}"
-            Utils.logViolation(player.name + "(IP: " + Utils.getPlayerIp(player) + ")(Sign)(" + locationLog + ")", outMessage + outList)
+            LoggingUtils.logViolation(player.name + "(IP: " + Utils.getPlayerIp(player) + ")(Sign)(" + locationLog + ")", outMessage + outList)
         }
 
         if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_VELOCITY) && shouldSendMessage) {
