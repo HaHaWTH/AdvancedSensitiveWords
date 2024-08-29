@@ -66,6 +66,19 @@ public class TimedString {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TimedString that = (TimedString) o;
+        return time == that.time && str.equals(that.str);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(str, time);
+    }
+
+    @Override
     public String toString() {
         return "TimedString{" +
                 "str='" + str + '\'' +

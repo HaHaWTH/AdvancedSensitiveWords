@@ -1,6 +1,7 @@
 package io.wdsj.asw.bukkit.listener
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
+import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
 import io.wdsj.asw.bukkit.manage.notice.Notifier
 import io.wdsj.asw.bukkit.manage.permission.Permissions
 import io.wdsj.asw.bukkit.manage.punish.Punishment
@@ -22,7 +23,7 @@ import org.bukkit.event.player.PlayerItemHeldEvent
 class PlayerItemListener : Listener {
     @EventHandler(priority = EventPriority.LOW)
     fun onPlayerHeldItem(event: PlayerItemHeldEvent) {
-        if (!AdvancedSensitiveWords.isInitialized || !AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_PLAYER_ITEM_CHECK)) return
+        if (!AdvancedSensitiveWords.isInitialized || !settingsManager.getProperty(PluginSettings.ENABLE_PLAYER_ITEM_CHECK)) return
         val player = event.player
         if (player.hasPermission(Permissions.BYPASS)) return
         val item = player.inventory.getItem(event.newSlot)
@@ -31,7 +32,7 @@ class PlayerItemListener : Listener {
             if (meta != null && meta.hasDisplayName()) {
                 var originalName = meta.displayName
                 val startTime = System.currentTimeMillis()
-                if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.PRE_PROCESS)) originalName =
+                if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) originalName =
                     originalName.replace(
                         Utils.getPreProcessRegex().toRegex(), ""
                     )
@@ -39,7 +40,7 @@ class PlayerItemListener : Listener {
                 if (censoredWordList.isNotEmpty()) {
                     Utils.messagesFilteredNum.getAndIncrement()
                     val processedName = AdvancedSensitiveWords.sensitiveWordBs.replace(originalName)
-                    if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ITEM_METHOD)
+                    if (settingsManager.getProperty(PluginSettings.ITEM_METHOD)
                             .equals("cancel", ignoreCase = true)
                     ) {
                         event.isCancelled = true
@@ -47,7 +48,7 @@ class PlayerItemListener : Listener {
                         meta.setDisplayName(processedName)
                         item.setItemMeta(meta)
                     }
-                    if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ITEM_SEND_MESSAGE)) {
+                    if (settingsManager.getProperty(PluginSettings.ITEM_SEND_MESSAGE)) {
                         player.sendMessage(
                             ChatColor.translateAlternateColorCodes(
                                 '&',
@@ -55,30 +56,30 @@ class PlayerItemListener : Listener {
                             )
                         )
                     }
-                    if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
+                    if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
                         LoggingUtils.logViolation(
                             player.name + "(IP: " + Utils.getPlayerIp(player) + ")(Item)",
                             originalName + censoredWordList
                         )
                     }
-                    if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
+                    if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
                         BungeeSender.sendNotifyMessage(player, ModuleType.ITEM, originalName, censoredWordList)
                     }
-                    if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
+                    if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
                         VelocitySender.sendNotifyMessage(player, ModuleType.ITEM, originalName, censoredWordList)
                     }
-                    if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
+                    if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
                         AdvancedSensitiveWords.databaseManager.checkAndUpdatePlayer(player.name)
                     }
                     val endTime = System.currentTimeMillis()
                     TimingUtils.addProcessStatistic(endTime, startTime)
-                    if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(
+                    if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(
                         player,
                         ModuleType.ITEM,
                         originalName,
                         censoredWordList
                     )
-                    if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ITEM_PUNISH)) Punishment.punish(
+                    if (settingsManager.getProperty(PluginSettings.ITEM_PUNISH)) Punishment.punish(
                         player
                     )
                 }
@@ -88,7 +89,7 @@ class PlayerItemListener : Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     fun onDrop(event: PlayerDropItemEvent) {
-        if (!AdvancedSensitiveWords.isInitialized || !AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_PLAYER_ITEM_CHECK)) return
+        if (!AdvancedSensitiveWords.isInitialized || !settingsManager.getProperty(PluginSettings.ENABLE_PLAYER_ITEM_CHECK)) return
         val player = event.player
         if (player.hasPermission(Permissions.BYPASS)) return
         val item = event.itemDrop.itemStack
@@ -97,7 +98,7 @@ class PlayerItemListener : Listener {
             if (meta != null && meta.hasDisplayName()) {
                 var originalName = meta.displayName
                 val startTime = System.currentTimeMillis()
-                if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.PRE_PROCESS)) originalName =
+                if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) originalName =
                     originalName.replace(
                         Utils.getPreProcessRegex().toRegex(), ""
                     )
@@ -105,7 +106,7 @@ class PlayerItemListener : Listener {
                 if (censoredWordList.isNotEmpty()) {
                     Utils.messagesFilteredNum.getAndIncrement()
                     val processedName = AdvancedSensitiveWords.sensitiveWordBs.replace(originalName)
-                    if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ITEM_METHOD)
+                    if (settingsManager.getProperty(PluginSettings.ITEM_METHOD)
                             .equals("cancel", ignoreCase = true)
                     ) {
                         event.isCancelled = true
@@ -113,7 +114,7 @@ class PlayerItemListener : Listener {
                         meta.setDisplayName(processedName)
                         item.setItemMeta(meta)
                     }
-                    if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ITEM_SEND_MESSAGE)) {
+                    if (settingsManager.getProperty(PluginSettings.ITEM_SEND_MESSAGE)) {
                         player.sendMessage(
                             ChatColor.translateAlternateColorCodes(
                                 '&',
@@ -121,30 +122,30 @@ class PlayerItemListener : Listener {
                             )
                         )
                     }
-                    if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
+                    if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
                         LoggingUtils.logViolation(
                             player.name + "(IP: " + Utils.getPlayerIp(player) + ")(Item)",
                             originalName + censoredWordList
                         )
                     }
-                    if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
+                    if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
                         VelocitySender.sendNotifyMessage(player, ModuleType.ITEM, originalName, censoredWordList)
                     }
-                    if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
+                    if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
                         BungeeSender.sendNotifyMessage(player, ModuleType.ITEM, originalName, censoredWordList)
                     }
-                    if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
+                    if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
                         AdvancedSensitiveWords.databaseManager.checkAndUpdatePlayer(player.name)
                     }
                     val endTime = System.currentTimeMillis()
                     TimingUtils.addProcessStatistic(endTime, startTime)
-                    if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(
+                    if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(
                         player,
                         ModuleType.ITEM,
                         originalName,
                         censoredWordList
                     )
-                    if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ITEM_PUNISH)) Punishment.punish(
+                    if (settingsManager.getProperty(PluginSettings.ITEM_PUNISH)) Punishment.punish(
                         player
                     )
                 }

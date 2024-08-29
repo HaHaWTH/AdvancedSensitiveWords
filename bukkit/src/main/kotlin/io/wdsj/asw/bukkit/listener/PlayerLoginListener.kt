@@ -1,6 +1,7 @@
 package io.wdsj.asw.bukkit.listener
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
+import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
 import io.wdsj.asw.bukkit.manage.notice.Notifier
 import io.wdsj.asw.bukkit.manage.permission.Permissions
 import io.wdsj.asw.bukkit.manage.punish.Punishment
@@ -24,12 +25,12 @@ import org.geysermc.floodgate.api.FloodgateApi
 class PlayerLoginListener : Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     fun onLogin(event: PlayerLoginEvent) {
-        if (!AdvancedSensitiveWords.isInitialized || !AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_PLAYER_NAME_CHECK)) return
+        if (!AdvancedSensitiveWords.isInitialized || !settingsManager.getProperty(PluginSettings.ENABLE_PLAYER_NAME_CHECK)) return
         val player = event.player
         if (player.hasPermission(Permissions.BYPASS)) return
-        if (PlayerUtils.isNpc(player) && AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.NAME_IGNORE_NPC)) return
+        if (PlayerUtils.isNpc(player) && settingsManager.getProperty(PluginSettings.NAME_IGNORE_NPC)) return
         if (Bukkit.getPluginManager()
-                .getPlugin("floodgate") != null && AdvancedSensitiveWords.settingsManager.getProperty(
+                .getPlugin("floodgate") != null && settingsManager.getProperty(
                 PluginSettings.NAME_IGNORE_BEDROCK
             )
         ) {
@@ -42,12 +43,12 @@ class PlayerLoginListener : Listener {
             val processedPlayerName = AdvancedSensitiveWords.sensitiveWordBs.replace(playerName)
             val playerIp = event.address.hostAddress
             Utils.messagesFilteredNum.getAndIncrement()
-            if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.NAME_METHOD)
+            if (settingsManager.getProperty(PluginSettings.NAME_METHOD)
                     .equals("replace", ignoreCase = true)
             ) {
                 player.setDisplayName(processedPlayerName)
                 player.setPlayerListName(processedPlayerName)
-                if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.NAME_SEND_MESSAGE)) {
+                if (settingsManager.getProperty(PluginSettings.NAME_SEND_MESSAGE)) {
                     AdvancedSensitiveWords.getScheduler().runTaskLater({
                         player.sendMessage(
                             ChatColor.translateAlternateColorCodes(
@@ -66,27 +67,27 @@ class PlayerLoginListener : Listener {
                     )
                 )
             }
-            if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
+            if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
                 LoggingUtils.logViolation(player.name + "(IP: " + playerIp + ")(Name)", playerName + censoredWordList)
             }
-            if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
+            if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
                 VelocitySender.sendNotifyMessage(player, ModuleType.NAME, playerName, censoredWordList)
             }
-            if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
+            if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
                 BungeeSender.sendNotifyMessage(player, ModuleType.NAME, playerName, censoredWordList)
             }
-            if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
+            if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
                 AdvancedSensitiveWords.databaseManager.checkAndUpdatePlayer(playerName)
             }
             val endTime = System.currentTimeMillis()
             TimingUtils.addProcessStatistic(endTime, startTime)
-            if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(
+            if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(
                 player,
                 ModuleType.NAME,
                 playerName,
                 censoredWordList
             )
-            if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.NAME_PUNISH)) Punishment.punish(player)
+            if (settingsManager.getProperty(PluginSettings.NAME_PUNISH)) Punishment.punish(player)
         }
     }
 }

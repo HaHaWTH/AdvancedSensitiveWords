@@ -1,6 +1,6 @@
 package io.wdsj.asw.bukkit.listener
 
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords
+import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.util.context.ChatContext
 import io.wdsj.asw.bukkit.util.context.SignContext
@@ -12,7 +12,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 class QuitDataCleaner : Listener {
     @EventHandler
     fun onQuit(event: PlayerQuitEvent) {
-        if (!AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.CLEAN_PLAYER_DATA_CACHE)) return
+        if (!settingsManager.getProperty(PluginSettings.CLEAN_PLAYER_DATA_CACHE)) return
         val player = event.player
         doCleanTask(player)
     }

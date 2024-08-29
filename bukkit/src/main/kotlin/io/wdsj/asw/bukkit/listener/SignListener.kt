@@ -2,6 +2,7 @@ package io.wdsj.asw.bukkit.listener
 
 import com.github.houbb.heaven.util.lang.StringUtil
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
+import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
 import io.wdsj.asw.bukkit.manage.notice.Notifier
 import io.wdsj.asw.bukkit.manage.permission.Permissions
 import io.wdsj.asw.bukkit.manage.punish.Punishment
@@ -28,7 +29,7 @@ class SignListener : Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     fun onSign(event: SignChangeEvent) {
         if (!AdvancedSensitiveWords.isInitialized) return
-        if (!AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_SIGN_EDIT_CHECK)) return
+        if (!settingsManager.getProperty(PluginSettings.ENABLE_SIGN_EDIT_CHECK)) return
         val player = event.player
         if (player.hasPermission(Permissions.BYPASS) || event.lines.isEmpty()) return
         var shouldSendMessage = false
@@ -37,7 +38,7 @@ class SignListener : Listener {
         val originalMultiMessages = StringBuilder()
         for (line in 0 until event.lines.size) {
             var originalMessage = event.getLine(line)
-            if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.PRE_PROCESS) && originalMessage != null) originalMessage =
+            if (settingsManager.getProperty(PluginSettings.PRE_PROCESS) && originalMessage != null) originalMessage =
                 originalMessage.replace(
                     Utils.getPreProcessRegex().toRegex(), ""
                 )
@@ -48,7 +49,7 @@ class SignListener : Listener {
                 outMessage = originalMessage
                 outProcessedMessage = processedMessage
                 outList = censoredWordList
-                if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.SIGN_METHOD)
+                if (settingsManager.getProperty(PluginSettings.SIGN_METHOD)
                         .equals("cancel", ignoreCase = true)
                 ) {
                     event.isCancelled = true
@@ -60,7 +61,7 @@ class SignListener : Listener {
                 originalMultiMessages.append(originalMessage)
             }
         }
-        if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.SIGN_MULTI_LINE_CHECK) && indexList.isNotEmpty()) {
+        if (settingsManager.getProperty(PluginSettings.SIGN_MULTI_LINE_CHECK) && indexList.isNotEmpty()) {
             val originalMessagesString = originalMultiMessages.toString()
             val censoredWordList = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalMessagesString)
             if (censoredWordList.isNotEmpty()) {
@@ -68,7 +69,7 @@ class SignListener : Listener {
                 outMessage = originalMessagesString
                 outProcessedMessage = processedMessagesString
                 outList = censoredWordList
-                if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.SIGN_METHOD)
+                if (settingsManager.getProperty(PluginSettings.SIGN_METHOD)
                         .equals("cancel", ignoreCase = true)
                 ) {
                     shouldSendMessage = true
@@ -83,7 +84,7 @@ class SignListener : Listener {
         }
 
         // Sign context check
-        if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.SIGN_CONTEXT_CHECK) && !shouldSendMessage) {
+        if (settingsManager.getProperty(PluginSettings.SIGN_CONTEXT_CHECK) && !shouldSendMessage) {
             val originalAllMessage = event.lines.joinToString("")
             SignContext.addMessage(player, originalAllMessage)
             val originalContext = SignContext.getHistory(player).joinToString("")
@@ -99,7 +100,7 @@ class SignListener : Listener {
             }
         }
 
-        if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.SIGN_SEND_MESSAGE) && shouldSendMessage) {
+        if (settingsManager.getProperty(PluginSettings.SIGN_SEND_MESSAGE) && shouldSendMessage) {
             player.sendMessage(
                 ChatColor.translateAlternateColorCodes(
                     '&',
@@ -108,21 +109,21 @@ class SignListener : Listener {
             )
         }
 
-        if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.LOG_VIOLATION) && shouldSendMessage) {
+        if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION) && shouldSendMessage) {
             val location = event.block.location
             val locationLog = "World: ${location.world?.name ?: "Unknown"}, X: ${location.x}, Y: ${location.y}, Z: ${location.z}"
             LoggingUtils.logViolation(player.name + "(IP: " + Utils.getPlayerIp(player) + ")(Sign)(" + locationLog + ")", outMessage + outList)
         }
 
-        if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_VELOCITY) && shouldSendMessage) {
+        if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY) && shouldSendMessage) {
             VelocitySender.sendNotifyMessage(player, ModuleType.SIGN, outMessage, outList)
         }
 
-        if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
+        if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
             BungeeSender.sendNotifyMessage(player, ModuleType.SIGN, outMessage, outList)
         }
 
-        if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
+        if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
             AdvancedSensitiveWords.databaseManager.checkAndUpdatePlayer(player.name)
         }
 
@@ -130,13 +131,13 @@ class SignListener : Listener {
             Utils.messagesFilteredNum.getAndIncrement()
             val endTime = System.currentTimeMillis()
             TimingUtils.addProcessStatistic(endTime, startTime)
-            if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(
+            if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(
                 player,
                 ModuleType.SIGN,
                 outMessage,
                 outList
             )
-            if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.SIGN_PUNISH)) Punishment.punish(player)
+            if (settingsManager.getProperty(PluginSettings.SIGN_PUNISH)) Punishment.punish(player)
         }
     }
 }

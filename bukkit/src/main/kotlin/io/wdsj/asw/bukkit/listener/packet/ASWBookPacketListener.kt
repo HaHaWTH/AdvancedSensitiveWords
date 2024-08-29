@@ -6,6 +6,7 @@ import com.github.retrooper.packetevents.event.PacketReceiveEvent
 import com.github.retrooper.packetevents.protocol.packettype.PacketType
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientEditBook
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
+import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
 import io.wdsj.asw.bukkit.manage.notice.Notifier
 import io.wdsj.asw.bukkit.manage.permission.Permissions
 import io.wdsj.asw.bukkit.manage.punish.Punishment
@@ -24,7 +25,7 @@ import org.bukkit.entity.Player
 class ASWBookPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW) {
     override fun onPacketReceive(event: PacketReceiveEvent) {
         if (!AdvancedSensitiveWords.isInitialized) return
-        if (!AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_BOOK_EDIT_CHECK)) return
+        if (!settingsManager.getProperty(PluginSettings.ENABLE_BOOK_EDIT_CHECK)) return
         val packetType = event.packetType
         val user = event.user
         val userName = user.name
@@ -33,10 +34,10 @@ class ASWBookPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
             if (player.hasPermission(Permissions.BYPASS)) return
             var outMessage = ""
             var outList: List<String?> = ArrayList()
-            val skipReturnLine = AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.BOOK_IGNORE_NEWLINE)
-            val isCacheEnabled = AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.BOOK_CACHE)
+            val skipReturnLine = settingsManager.getProperty(PluginSettings.BOOK_IGNORE_NEWLINE)
+            val isCacheEnabled = settingsManager.getProperty(PluginSettings.BOOK_CACHE)
             var shouldSendMessage = false
-            val isCancelMode = AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.BOOK_METHOD).equals("cancel", ignoreCase = true)
+            val isCancelMode = settingsManager.getProperty(PluginSettings.BOOK_METHOD).equals("cancel", ignoreCase = true)
             val wrapper = WrapperPlayClientEditBook(event)
             val originalPages = wrapper.pages
 
@@ -48,7 +49,7 @@ class ASWBookPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                 if (skipReturnLine) {
                     originalPage = originalPage.replace("\n", "").replace("§0", "")
                 }
-                if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.PRE_PROCESS)) originalPage = originalPage.replace(Utils.getPreProcessRegex().toRegex(), "")
+                if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) originalPage = originalPage.replace(Utils.getPreProcessRegex().toRegex(), "")
                 val isBookCached = BookCache.isBookCached(originalPage)
                 val censoredWordList = if (isBookCached && isCacheEnabled) BookCache.getCachedBookSensitiveWordList(originalPage) else AdvancedSensitiveWords.sensitiveWordBs.findAll(originalPage)
                 if (censoredWordList.isNotEmpty()) {
@@ -75,9 +76,9 @@ class ASWBookPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
             }
 
             // Cross page check
-            if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.BOOK_CROSS_PAGE) && !shouldSendMessage) {
+            if (settingsManager.getProperty(PluginSettings.BOOK_CROSS_PAGE) && !shouldSendMessage) {
                 var crossPageListString = originalPages.joinToString("").replace("\n", "").replace("§0", "")
-                if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.PRE_PROCESS)) {
+                if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) {
                     crossPageListString = crossPageListString.replace(Utils.getPreProcessRegex().toRegex(), "")
                 }
                 val censoredWordListCrossPage = AdvancedSensitiveWords.sensitiveWordBs.findAll(crossPageListString)
@@ -92,7 +93,7 @@ class ASWBookPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
             // Book title check
             var originalTitle = wrapper.title
             if (originalTitle != null) {
-                if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.PRE_PROCESS)) originalTitle = originalTitle.replace(Utils.getPreProcessRegex().toRegex(), "")
+                if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) originalTitle = originalTitle.replace(Utils.getPreProcessRegex().toRegex(), "")
                 val censoredWordListTitle = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalTitle)
                 if (censoredWordListTitle.isNotEmpty()) {
                     val processedTitle = AdvancedSensitiveWords.sensitiveWordBs.replace(originalTitle)
@@ -109,29 +110,29 @@ class ASWBookPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
 
             if (shouldSendMessage) {
                 Utils.messagesFilteredNum.getAndIncrement()
-                if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
+                if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
                     VelocitySender.sendNotifyMessage(player, ModuleType.BOOK, outMessage, outList)
                 }
-                if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
+                if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
                     BungeeSender.sendNotifyMessage(player, ModuleType.BOOK, outMessage, outList)
                 }
-                if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
+                if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
                     AdvancedSensitiveWords.databaseManager.checkAndUpdatePlayer(player.name)
                 }
                 val endTime = System.currentTimeMillis()
                 TimingUtils.addProcessStatistic(endTime, startTime)
-                if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) {
+                if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) {
                     Notifier.notice(player, ModuleType.BOOK, outMessage, outList)
                 }
-                if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.BOOK_PUNISH)) {
+                if (settingsManager.getProperty(PluginSettings.BOOK_PUNISH)) {
                     AdvancedSensitiveWords.getScheduler().runTask {
                         Punishment.punish(player)
                     }
                 }
-                if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.BOOK_SEND_MESSAGE)) {
+                if (settingsManager.getProperty(PluginSettings.BOOK_SEND_MESSAGE)) {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', AdvancedSensitiveWords.messagesManager.getProperty(PluginMessages.MESSAGE_ON_BOOK)))
                 }
-                if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
+                if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
                     LoggingUtils.logViolation(userName + "(IP: " + Utils.getPlayerIp(player) + ")(Book)", outMessage + outList)
                 }
             }
