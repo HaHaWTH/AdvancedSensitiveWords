@@ -23,7 +23,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
 
 class CommandListener : Listener {
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST)
     fun onCommand(event: PlayerCommandPreprocessEvent) {
         if (!settingsManager.getProperty(PluginSettings.ENABLE_CHAT_CHECK)) return
         val player = event.player

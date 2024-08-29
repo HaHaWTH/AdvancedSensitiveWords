@@ -26,7 +26,7 @@ class SignListener : Listener {
     private var outList: List<String> = ArrayList()
     private var outProcessedMessage = ""
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOW)
     fun onSign(event: SignChangeEvent) {
         if (!AdvancedSensitiveWords.isInitialized) return
         if (!settingsManager.getProperty(PluginSettings.ENABLE_SIGN_EDIT_CHECK)) return

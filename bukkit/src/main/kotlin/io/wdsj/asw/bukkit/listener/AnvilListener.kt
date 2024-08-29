@@ -22,7 +22,7 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryType
 
 class AnvilListener : Listener {
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     fun onAnvil(event: InventoryClickEvent) {
         if (!AdvancedSensitiveWords.isInitialized) return
         if (!settingsManager.getProperty(PluginSettings.ENABLE_ANVIL_EDIT_CHECK)) return

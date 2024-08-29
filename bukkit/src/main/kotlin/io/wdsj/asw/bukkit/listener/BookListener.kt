@@ -21,7 +21,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerEditBookEvent
 
 class BookListener : Listener {
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     fun onBook(event: PlayerEditBookEvent) {
         if (!AdvancedSensitiveWords.isInitialized) return
         if (!settingsManager.getProperty(PluginSettings.ENABLE_BOOK_EDIT_CHECK)) return
