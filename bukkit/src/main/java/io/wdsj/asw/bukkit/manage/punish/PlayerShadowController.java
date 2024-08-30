@@ -3,13 +3,14 @@ package io.wdsj.asw.bukkit.manage.punish;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Player shadow controller
  */
 public class PlayerShadowController {
-    private static final Map<Player, StartAndDuration> SHADOWED_PLAYERS = new ConcurrentHashMap<>();
+    private static final Map<UUID, StartAndDuration> SHADOWED_PLAYERS = new ConcurrentHashMap<>();
 
     /**
      * Add player to shadowed players
@@ -18,7 +19,7 @@ public class PlayerShadowController {
      * @param duration Duration, in seconds
      */
     public static void shadowPlayer(Player player, long start, long duration) {
-        SHADOWED_PLAYERS.put(player, new StartAndDuration(start, duration));
+        SHADOWED_PLAYERS.put(player.getUniqueId(), new StartAndDuration(start, duration));
     }
 
     /**
@@ -26,7 +27,11 @@ public class PlayerShadowController {
      * @param player to unshadow
      */
     public static void unshadowPlayer(Player player) {
-        SHADOWED_PLAYERS.remove(player);
+        SHADOWED_PLAYERS.remove(player.getUniqueId());
+    }
+
+    private static void unshadowPlayer(UUID uuid) {
+        SHADOWED_PLAYERS.remove(uuid);
     }
 
     /**
@@ -35,11 +40,12 @@ public class PlayerShadowController {
      * @return true if player is shadowed, false otherwise
      */
     public static boolean isShadowed(Player player) {
-        if (!SHADOWED_PLAYERS.containsKey(player)) return false;
-        StartAndDuration startAndDuration = SHADOWED_PLAYERS.get(player);
+        UUID uuid = player.getUniqueId();
+        if (!SHADOWED_PLAYERS.containsKey(uuid)) return false;
+        StartAndDuration startAndDuration = SHADOWED_PLAYERS.get(uuid);
         long currentTime = System.currentTimeMillis();
         if (currentTime - startAndDuration.getStart() > startAndDuration.getDuration() * 1000) {
-            unshadowPlayer(player);
+            unshadowPlayer(uuid);
             return false;
         } else {
             return true;

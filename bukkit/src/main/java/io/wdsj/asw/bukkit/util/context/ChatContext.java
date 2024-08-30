@@ -6,18 +6,20 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
 
 public class ChatContext {
-    private static final ConcurrentHashMap<Player, Deque<TimedString>> chatHistory = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<UUID, Deque<TimedString>> chatHistory = new ConcurrentHashMap<>();
     /**
      * Add player message to history
      */
     public static void addMessage(Player player, String message) {
-        chatHistory.computeIfAbsent(player, k -> new ArrayDeque<>());
-        Deque<TimedString> history = chatHistory.get(player);
+        final UUID uuid = player.getUniqueId();
+        chatHistory.computeIfAbsent(uuid, k -> new ArrayDeque<>());
+        Deque<TimedString> history = chatHistory.get(uuid);
         while (history.size() >= settingsManager.getProperty(PluginSettings.CHAT_CONTEXT_MAX_SIZE)) {
             history.pollFirst();
         }
@@ -26,7 +28,8 @@ public class ChatContext {
     }
 
     public static Deque<String> getHistory(Player player) {
-        Deque<TimedString> tsHistory = chatHistory.getOrDefault(player, new ArrayDeque<>());
+        final UUID uuid = player.getUniqueId();
+        Deque<TimedString> tsHistory = chatHistory.getOrDefault(uuid, new ArrayDeque<>());
         return tsHistory.stream()
                 .filter(timedString -> (System.currentTimeMillis() - timedString.getTime()) / 1000 < settingsManager.getProperty(PluginSettings.CHAT_CONTEXT_TIME_LIMIT))
                 .map(TimedString::getString)
@@ -34,12 +37,14 @@ public class ChatContext {
     }
 
     public static void clearPlayerContext(Player player) {
-        if (chatHistory.get(player) == null) return;
-        chatHistory.remove(player);
+        final UUID uuid = player.getUniqueId();
+        if (chatHistory.get(uuid) == null) return;
+        chatHistory.remove(uuid);
     }
 
     public static void pollPlayerContext(Player player) {
-        Deque<TimedString> history = chatHistory.get(player);
+        final UUID uuid = player.getUniqueId();
+        Deque<TimedString> history = chatHistory.get(uuid);
         if (history != null) history.pollLast();
     }
     public static void forceClearContext() {
