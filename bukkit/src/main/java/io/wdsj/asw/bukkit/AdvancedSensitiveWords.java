@@ -144,6 +144,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
             } else {
                 LOGGER.warning("Cannot use packetevents, using event mode instead.");
                 registerEventBasedListener();
+                isEventMode = true;
             }
         } else {
             registerEventBasedListener();
