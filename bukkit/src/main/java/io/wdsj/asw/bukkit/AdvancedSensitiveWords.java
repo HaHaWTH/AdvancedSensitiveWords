@@ -4,6 +4,7 @@ import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.SettingsManagerBuilder;
 import com.github.Anon8281.universalScheduler.UniversalScheduler;
 import com.github.Anon8281.universalScheduler.scheduling.schedulers.TaskScheduler;
+import com.github.Anon8281.universalScheduler.scheduling.tasks.MyScheduledTask;
 import com.github.houbb.sensitive.word.api.IWordAllow;
 import com.github.houbb.sensitive.word.api.IWordDeny;
 import com.github.houbb.sensitive.word.bs.SensitiveWordBs;
@@ -23,6 +24,7 @@ import io.wdsj.asw.bukkit.listener.packet.ASWBookPacketListener;
 import io.wdsj.asw.bukkit.listener.packet.ASWChatPacketListener;
 import io.wdsj.asw.bukkit.manage.punish.PlayerAltController;
 import io.wdsj.asw.bukkit.manage.punish.PlayerShadowController;
+import io.wdsj.asw.bukkit.manage.punish.ViolationCounter;
 import io.wdsj.asw.bukkit.method.*;
 import io.wdsj.asw.bukkit.proxy.bungee.BungeeCordChannel;
 import io.wdsj.asw.bukkit.proxy.bungee.BungeeReceiver;
@@ -32,7 +34,9 @@ import io.wdsj.asw.bukkit.service.BukkitLibraryService;
 import io.wdsj.asw.bukkit.service.hook.VoiceChatHookService;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
+import io.wdsj.asw.bukkit.task.punish.ViolationResetTask;
 import io.wdsj.asw.bukkit.update.Updater;
+import io.wdsj.asw.bukkit.util.SchedulingUtils;
 import io.wdsj.asw.bukkit.util.TimingUtils;
 import io.wdsj.asw.bukkit.util.cache.BookCache;
 import io.wdsj.asw.bukkit.util.context.ChatContext;
@@ -53,7 +57,7 @@ import static io.wdsj.asw.bukkit.util.Utils.*;
 
 
 public final class AdvancedSensitiveWords extends JavaPlugin {
-    public static boolean isInitialized = false;
+    public static volatile boolean isInitialized = false;
     public static SensitiveWordBs sensitiveWordBs;
     private final File CONFIG_FILE = new File(getDataFolder(), "config.yml");
     public static boolean isAuthMeAvailable;
@@ -87,6 +91,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     public static boolean isEventMode() {
         return isEventMode;
     }
+    private MyScheduledTask violationResetTask;
     @Override
     public void onLoad() {
         LOGGER = getLogger();
@@ -208,6 +213,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
             voiceChatHookService = new VoiceChatHookService(this);
             voiceChatHookService.register();
         }
+        violationResetTask = new ViolationResetTask().runTaskTimerAsynchronously(this, settingsManager.getProperty(PluginSettings.VIOLATION_RESET_TIME) * 1200L, settingsManager.getProperty(PluginSettings.VIOLATION_RESET_TIME) * 1200L);
         long endTime = System.currentTimeMillis();
         LOGGER.info("AdvancedSensitiveWords is enabled!(took " + (endTime - startTime) + "ms)");
         if (settingsManager.getProperty(PluginSettings.CHECK_FOR_UPDATE)) {
@@ -271,6 +277,8 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         if (settingsManager.getProperty(PluginSettings.BOOK_CACHE)) {
             BookCache.invalidateAll();
         }
+        ViolationCounter.resetAllViolations();
+        SchedulingUtils.cancelTaskSafely(violationResetTask);
         if (isInitialized) sensitiveWordBs.destroy();
         Objects.requireNonNull(getCommand("advancedsensitivewords")).setExecutor(null);
         Objects.requireNonNull(getCommand("asw")).setExecutor(null);

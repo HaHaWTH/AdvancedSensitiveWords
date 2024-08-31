@@ -50,6 +50,9 @@ public class PluginSettings implements SettingsHolder {
             "Punishment after player swore",
             "Visit https://github.com/HaHaWTH/AdvancedSensitiveWords/wiki/ for more detail"})
     public static final Property<List<String>> PUNISHMENT = newListProperty("Plugin.punishment");
+    @Comment({"*玩家违规重置时间(分钟)",
+            "*Violation reset time(in minutes)"})
+    public static final Property<Long> VIOLATION_RESET_TIME = newProperty("Plugin.violationResetTime", 20L);
     @Comment({"是否在插件启动时自动清除旧的日志文件",
             "Whether to automatically clear old log files on plugin startup"})
     public static final Property<Boolean> PURGE_LOG_FILE = newProperty("Plugin.purgeLogFile", false);

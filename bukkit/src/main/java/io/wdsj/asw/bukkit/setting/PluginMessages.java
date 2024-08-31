@@ -25,7 +25,9 @@ public class PluginMessages implements SettingsHolder {
     @Comment("玩家物品包含敏感词时的消息")
     public static final Property<String> MESSAGE_ON_ITEM = newProperty("Item.messageOnItem", "&c您的物品包含敏感词.");
     @Comment("插件重载消息")
-    public static final Property<String> MESSAGE_ON_COMMAND_RELOAD = newProperty("Plugin.messageOnCommandReload", "&aAdvancedSensitiveWords has been reloaded.");
+    public static final Property<String> MESSAGE_ON_COMMAND_RELOAD = newProperty("Plugin.messageOnCommandReload", "&aAdvancedSensitiveWords 已重新加载.");
+    @Comment("违规次数重置消息")
+    public static final Property<String> MESSAGE_ON_VIOLATION_RESET = newProperty("Plugin.messageOnViolationReset", "&a&l已重置所有玩家的违规次数!");
     @Comment("插件帮助菜单")
     public static final Property<String> MESSAGE_ON_COMMAND_HELP = newProperty("Plugin.messageOnCommandHelp", "&bAdvancedSensitiveWords&r---&b帮助菜单\n   &7/asw reload&7: &a重新加载过滤词库和插件配置\n   &7/asw reloadconfig: &a重新加载插件配置\n   &7/asw add <敏感词>: &a添加敏感词\n   &7/asw remove <敏感词>: &a移除敏感词\n   &7/asw status: &a显示插件状态菜单\n   &7/asw test <待测消息>: &a运行敏感词测试\n   &7/asw help: &a显示帮助信息\n   &7/asw info <玩家名称>: &a获取玩家违规次数\n   &7/asw punish <玩家名称> [惩罚]: &a手动惩罚玩家, 不填惩罚将使用配置文件内容");
     @Comment("插件状态菜单")

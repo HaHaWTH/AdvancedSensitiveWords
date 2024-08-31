@@ -1,8 +1,8 @@
 package io.wdsj.asw.bukkit.manage.notice;
 
-import io.wdsj.asw.bukkit.type.ModuleType;
 import io.wdsj.asw.bukkit.manage.permission.Permissions;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
+import io.wdsj.asw.bukkit.type.ModuleType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -25,6 +25,17 @@ public class Notifier {
         getScheduler().runTask(() -> {
             Collection<? extends Player> players = Bukkit.getOnlinePlayers();
             String message = ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.ADMIN_REMINDER).replace("%player%", violatedPlayer.getName()).replace("%type%", moduleType.toString()).replace("%message%", originalMessage).replace("%censored_list%", censoredList.toString()));
+            for (Player player : players) {
+                if (player.hasPermission(Permissions.NOTICE)) {
+                    player.sendMessage(message);
+                }
+            }
+        });
+    }
+
+    public static void normalNotice(String message) {
+        getScheduler().runTask(() -> {
+            Collection<? extends Player> players = Bukkit.getOnlinePlayers();
             for (Player player : players) {
                 if (player.hasPermission(Permissions.NOTICE)) {
                     player.sendMessage(message);

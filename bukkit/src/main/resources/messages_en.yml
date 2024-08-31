@@ -30,6 +30,8 @@ Item:
 Plugin:
   #Reload command
   messageOnCommandReload: '&aAdvancedSensitiveWords has been reloaded.'
+  #Violation reset message
+  messageOnViolationReset: '&a&lViolation for all players has been reset.'
   #Help command
   messageOnCommandHelp: |-
     &bAdvancedSensitiveWords&r---&b Help Menu

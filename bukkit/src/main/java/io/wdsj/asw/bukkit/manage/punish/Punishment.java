@@ -24,6 +24,7 @@ public class Punishment {
      * @param player 要惩罚的玩家
      */
     public static void punish(Player player) {
+        ViolationCounter.incrementViolationCount(player);
         List<String> punishList = settingsManager.getProperty(PluginSettings.PUNISHMENT);
         if (punishList.isEmpty()) return;
         for (String punish : punishList) {
@@ -38,6 +39,13 @@ public class Punishment {
     public static void processSinglePunish(Player player, String method) throws IllegalArgumentException {
         String[] normalPunish = method.split("\\|");
         PunishmentType punishMethod = PunishmentType.valueOf(normalPunish[0].toUpperCase(Locale.ROOT));
+        long violationCount = ViolationCounter.getViolationCount(player);
+        if (normalPunish.length > 2 && normalPunish[normalPunish.length - 1].startsWith("VL") && normalPunish[normalPunish.length - 1].length() > 2) {
+            String vlCondition = normalPunish[normalPunish.length - 1].substring(2);
+            if (!checkViolationCondition(vlCondition, violationCount)) {
+                return;
+            }
+        }
         switch (punishMethod) {
             case DAMAGE:
                 try {
@@ -122,5 +130,25 @@ public class Punishment {
                 });
             }
         });
+    }
+
+    private static boolean checkViolationCondition(String vlCondition, long violationCount) {
+        try {
+            if (vlCondition.startsWith("=")) {
+                long targetCount = Long.parseLong(vlCondition.substring(1));
+                return violationCount == targetCount;
+            } else if (vlCondition.startsWith(">")) {
+                long targetCount = Long.parseLong(vlCondition.substring(1));
+                return violationCount > targetCount;
+            } else if (vlCondition.startsWith("<")) {
+                long targetCount = Long.parseLong(vlCondition.substring(1));
+                return violationCount < targetCount;
+            } else {
+                return true;
+            }
+        } catch (NumberFormatException e) {
+            LOGGER.warning("Invalid violation condition: " + vlCondition);
+            return false;
+        }
     }
 }

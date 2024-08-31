@@ -2,6 +2,7 @@ package io.wdsj.asw.bukkit.util;
 
 
 import com.github.Anon8281.universalScheduler.UniversalScheduler;
+import com.github.Anon8281.universalScheduler.scheduling.tasks.MyScheduledTask;
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -32,6 +33,13 @@ public class SchedulingUtils {
             AdvancedSensitiveWords.getScheduler().runTask(location, runnable);
         } else {
             runnable.run();
+        }
+    }
+
+    public static void cancelTaskSafely(MyScheduledTask task) {
+        if (task == null) return;
+        if (!task.isCancelled()) {
+            task.cancel();
         }
     }
 

@@ -30,6 +30,8 @@ Item:
 Plugin:
   # 插件重载消息
   messageOnCommandReload: '&aAdvancedSensitiveWords 已重新加载.'
+  # 违规次数重置消息
+  messageOnViolationReset: '&a&l已重置所有玩家的违规次数!'
   # 插件帮助菜单
   messageOnCommandHelp: |-
     &bAdvancedSensitiveWords&r---&b帮助菜单
