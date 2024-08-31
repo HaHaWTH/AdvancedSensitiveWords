@@ -11,7 +11,6 @@ import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 
 class AltsListener : Listener {
-
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {
         if (!settingsManager.getProperty(PluginSettings.ENABLE_ALTS_CHECK)) {

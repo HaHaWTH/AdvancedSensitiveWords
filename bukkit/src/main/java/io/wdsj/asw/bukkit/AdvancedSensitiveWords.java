@@ -213,7 +213,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
             voiceChatHookService = new VoiceChatHookService(this);
             voiceChatHookService.register();
         }
-        violationResetTask = new ViolationResetTask().runTaskTimerAsynchronously(this, settingsManager.getProperty(PluginSettings.VIOLATION_RESET_TIME) * 1200L, settingsManager.getProperty(PluginSettings.VIOLATION_RESET_TIME) * 1200L);
+        violationResetTask = new ViolationResetTask().runTaskTimerAsynchronously(this, settingsManager.getProperty(PluginSettings.VIOLATION_RESET_TIME) * 20L * 60L, settingsManager.getProperty(PluginSettings.VIOLATION_RESET_TIME) * 20L * 60L);
         long endTime = System.currentTimeMillis();
         LOGGER.info("AdvancedSensitiveWords is enabled!(took " + (endTime - startTime) + "ms)");
         if (settingsManager.getProperty(PluginSettings.CHECK_FOR_UPDATE)) {
