@@ -1,9 +1,6 @@
 # AdvancedSensitiveWords-Pro 插件消息配置
 # 聊天检测消息
 Chat:
-  # 玩家发送敏感消息时候回复的假消息(只有玩家本人能看见)
-  # 内置变量%integrated_player% %integrated_message% (支持PlaceHolderAPI)
-  fakeMessage: <%integrated_player%> %integrated_message%
   # 玩家发送敏感消息时候的提示
   messageOnChat: '&c请勿在聊天中发送敏感词汇.'
 # 告示牌检测消息

@@ -11,9 +11,9 @@ import fr.xephi.authme.api.v3.AuthMeApi
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
+import io.wdsj.asw.bukkit.listener.FakeMessageExecutor
 import io.wdsj.asw.bukkit.manage.notice.Notifier
 import io.wdsj.asw.bukkit.manage.permission.Permissions
-import io.wdsj.asw.bukkit.manage.punish.PlayerAltController
 import io.wdsj.asw.bukkit.manage.punish.Punishment
 import io.wdsj.asw.bukkit.proxy.bungee.BungeeSender
 import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender
@@ -24,8 +24,6 @@ import io.wdsj.asw.bukkit.util.LoggingUtils
 import io.wdsj.asw.bukkit.util.TimingUtils
 import io.wdsj.asw.bukkit.util.Utils
 import io.wdsj.asw.bukkit.util.context.ChatContext
-import me.clip.placeholderapi.PlaceholderAPI
-import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import java.util.*
@@ -53,21 +51,10 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                 Utils.messagesFilteredNum.getAndIncrement()
                 val processedMessage = AdvancedSensitiveWords.sensitiveWordBs.replace(originalMessage)
                 if (isCancelMode) {
-                    event.isCancelled = true
                     if (settingsManager.getProperty(PluginSettings.CHAT_FAKE_MESSAGE_ON_CANCEL) && Utils.isNotCommand(originalMessage)) {
-                        val fakeMessage = if (Bukkit.getServer().pluginManager.isPluginEnabled("PlaceholderAPI")) PlaceholderAPI.setPlaceholders(player, AdvancedSensitiveWords.messagesManager.getProperty(PluginMessages.CHAT_FAKE_MESSAGE)).replace("%integrated_player%", userName).replace("%integrated_message%", originalMessage) else AdvancedSensitiveWords.messagesManager.getProperty(PluginMessages.CHAT_FAKE_MESSAGE).replace("%integrated_player%", userName).replace("%integrated_message%", originalMessage)
-                        user.sendMessage(ChatColor.translateAlternateColorCodes('&', fakeMessage))
-                        if (settingsManager.getProperty(PluginSettings.ENABLE_ALTS_CHECK) && PlayerAltController.hasAlt(player)) {
-                            val alts = PlayerAltController.getAlts(player)
-                            for (alt in alts) {
-                                Bukkit.getPlayer(alt)?.sendMessage(
-                                    ChatColor.translateAlternateColorCodes(
-                                        '&',
-                                        fakeMessage
-                                    )
-                                )
-                            }
-                        }
+                        FakeMessageExecutor.selfIncrement(player)
+                    } else if (!settingsManager.getProperty(PluginSettings.CHAT_FAKE_MESSAGE_ON_CANCEL)) {
+                        event.isCancelled = true
                     }
                 } else {
                     val maxLength = 256
@@ -244,21 +231,10 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                 if (censoredContextList.isNotEmpty()) {
                     ChatContext.pollPlayerContext(player)
                     Utils.messagesFilteredNum.getAndIncrement()
-                    event.isCancelled = true
                     if (settingsManager.getProperty(PluginSettings.CHAT_FAKE_MESSAGE_ON_CANCEL)) {
-                        val fakeMessage = if (Bukkit.getServer().pluginManager.isPluginEnabled("PlaceholderAPI")) PlaceholderAPI.setPlaceholders(player, AdvancedSensitiveWords.messagesManager.getProperty(PluginMessages.CHAT_FAKE_MESSAGE)).replace("%integrated_player%", userName).replace("%integrated_message%", originalMessage) else AdvancedSensitiveWords.messagesManager.getProperty(PluginMessages.CHAT_FAKE_MESSAGE).replace("%integrated_player%", userName).replace("%integrated_message%", originalMessage)
-                        user.sendMessage(ChatColor.translateAlternateColorCodes('&', fakeMessage))
-                        if (settingsManager.getProperty(PluginSettings.ENABLE_ALTS_CHECK) && PlayerAltController.hasAlt(player)) {
-                            val alts = PlayerAltController.getAlts(player)
-                            for (alt in alts) {
-                                Bukkit.getPlayer(alt)?.sendMessage(
-                                    ChatColor.translateAlternateColorCodes(
-                                        '&',
-                                        fakeMessage
-                                    )
-                                )
-                            }
-                        }
+                        FakeMessageExecutor.selfIncrement(player)
+                    } else {
+                        event.isCancelled = true
                     }
                     if (settingsManager.getProperty(PluginSettings.CHAT_SEND_MESSAGE)) {
                         user.sendMessage(ChatColor.translateAlternateColorCodes('&', AdvancedSensitiveWords.messagesManager.getProperty(PluginMessages.MESSAGE_ON_CHAT).replace("%integrated_player%", userName).replace("%integrated_message%", originalMessage)))

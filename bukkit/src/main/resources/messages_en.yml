@@ -1,9 +1,6 @@
 #AdvancedSensitiveWords-Pro Messages configuration
 #Chat related messages
 Chat:
-  #Fake messages(Only the player who send the message can see it)
-  #Internal placeholders: %integrated_player% %integrated_message% (PlaceHolderAPI supported)
-  fakeMessage: <%integrated_player%> %integrated_message%
   #Messages on Chat
   messageOnChat: '&cDo not send sensitive words in the chat.'
 #Sign check related messages

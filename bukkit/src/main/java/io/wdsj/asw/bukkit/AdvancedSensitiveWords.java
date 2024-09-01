@@ -164,6 +164,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         metrics.addCustomChart(new SimplePie("java_vendor", TimingUtils::getJvmVendor));
         getServer().getPluginManager().registerEvents(new ShadowListener(), this);
         getServer().getPluginManager().registerEvents(new AltsListener(), this);
+        getServer().getPluginManager().registerEvents(new FakeMessageExecutor(), this);
         if (settingsManager.getProperty(PluginSettings.ENABLE_OLLAMA_AI_MODEL_CHECK)) {
             OLLAMA_PROCESSOR.initService(settingsManager.getProperty(PluginSettings.OLLAMA_AI_API_ADDRESS), settingsManager.getProperty(PluginSettings.OLLAMA_AI_MODEL_NAME), settingsManager.getProperty(PluginSettings.AI_MODEL_TIMEOUT), settingsManager.getProperty(PluginSettings.OLLAMA_AI_DEBUG_LOG));
         }
@@ -274,9 +275,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         if (voiceChatHookService != null) {
             voiceChatHookService.unregister();
         }
-        if (settingsManager.getProperty(PluginSettings.BOOK_CACHE)) {
-            BookCache.invalidateAll();
-        }
+        BookCache.invalidateAll();
         ViolationCounter.resetAllViolations();
         SchedulingUtils.cancelTaskSafely(violationResetTask);
         if (isInitialized) sensitiveWordBs.destroy();
@@ -292,7 +291,6 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         if (settingsManager.getProperty(PluginSettings.ENABLE_CHAT_CHECK)) {
             getServer().getPluginManager().registerEvents(new ChatListener(), this);
             getServer().getPluginManager().registerEvents(new CommandListener(), this);
-            getServer().getPluginManager().registerEvents(new FakeMessageExecutor(), this);
         }
         if (settingsManager.getProperty(PluginSettings.ENABLE_BOOK_EDIT_CHECK)) {
             getServer().getPluginManager().registerEvents(new BookListener(), this);

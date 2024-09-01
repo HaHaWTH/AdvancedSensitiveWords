@@ -8,10 +8,6 @@ import ch.jalu.configme.properties.Property;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 
 public class PluginMessages implements SettingsHolder {
-    @Comment({"玩家发送敏感消息时候回复的假消息(只有玩家本人能看见)",
-            "内置变量%integrated_player% %integrated_message% (支持PlaceHolderAPI)"
-    })
-    public static final Property<String> CHAT_FAKE_MESSAGE = newProperty("Chat.fakeMessage", "<%integrated_player%> %integrated_message%");
     @Comment("玩家发送敏感消息时候的提示")
     public static final Property<String> MESSAGE_ON_CHAT = newProperty("Chat.messageOnChat", "&c请勿在聊天中发送敏感词汇.");
     @Comment("玩家写入敏感消息时的提示")
