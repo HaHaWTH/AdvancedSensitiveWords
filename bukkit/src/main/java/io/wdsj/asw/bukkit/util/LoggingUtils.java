@@ -23,21 +23,10 @@ public class LoggingUtils {
                 return;
             }
         }
-        try {
-            Writer writer = new OutputStreamWriter(new FileOutputStream(logFile, true), StandardCharsets.UTF_8);
-            try {
-                writer.write(logMessage + System.lineSeparator());
-            } catch (Throwable th) {
-                try {
-                    writer.close();
-                } catch (Throwable t) {
-                    th.addSuppressed(t);
-                }
-                throw th;
-            }
-            writer.close();
+        try (Writer writer = new OutputStreamWriter(new FileOutputStream(logFile, true), StandardCharsets.UTF_8)) {
+            writer.write(logMessage + System.lineSeparator());
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.severe("Failed to write to violations.log file: " + e.getMessage());
         }
     }
 }

@@ -197,7 +197,7 @@ public class ConstructCommandExecutor implements CommandExecutor {
                             try {
                                 Punishment.processSinglePunish(player, method.toString().trim());
                                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_PUNISH_SUCCESS).replace("%player%", player.getName())));
-                            } catch (Exception e) {
+                            } catch (IllegalArgumentException e) {
                                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_PUNISH_PARSE_ERROR)));
                             }
                         } else {

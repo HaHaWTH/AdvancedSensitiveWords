@@ -57,7 +57,7 @@ import static io.wdsj.asw.bukkit.util.Utils.*;
 
 
 public final class AdvancedSensitiveWords extends JavaPlugin {
-    public static volatile boolean isInitialized = false;
+    public static boolean isInitialized = false;
     public static SensitiveWordBs sensitiveWordBs;
     private final File CONFIG_FILE = new File(getDataFolder(), "config.yml");
     public static boolean isAuthMeAvailable;
