@@ -17,7 +17,7 @@ public class BukkitLibraryService {
             .groupId("dev{}ai4j")
             .artifactId("openai4j")
             .resolveTransitiveDependencies(true)
-            .version("0.19.0")
+            .version("0.20.0")
             .build();
 
     public BukkitLibraryService(AdvancedSensitiveWords plugin) {
