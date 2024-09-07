@@ -18,6 +18,7 @@ import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
 public class BungeeReceiver implements PluginMessageListener {
     @Override
     public void onPluginMessageReceived(String channel, @NotNull Player player, @NotNull byte[] message) {
+        if (!settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) return;
         if (channel.equals(BungeeCordChannel.BUNGEE_CHANNEL)) {
             ByteArrayDataInput input = ByteStreams.newDataInput(message);
             String subChannel = input.readUTF();

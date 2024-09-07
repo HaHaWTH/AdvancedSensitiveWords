@@ -169,11 +169,11 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"*是否启用简单语音聊天支持",
             "*Whether to hook into SimpleVoiceChat"})
     public static final Property<Boolean> HOOK_SIMPLE_VOICE_CHAT = newProperty("Plugin.hookSimpleVoiceChat", false);
-    @Comment({"*是否启用Velocity支持",
-            "*Whether to enable Velocity support"})
+    @Comment({"是否启用Velocity支持",
+            "Whether to enable Velocity support"})
     public static final Property<Boolean> HOOK_VELOCITY = newProperty("Plugin.hookVelocity", false);
-    @Comment({"*是否启用BungeeCord支持",
-            "*Whether to enable BungeeCord support"})
+    @Comment({"是否启用BungeeCord支持",
+            "Whether to enable BungeeCord support"})
     public static final Property<Boolean> HOOK_BUNGEECORD = newProperty("Plugin.hookBungeeCord", false);
 
     @Comment({"是否启用AuthMe兼容(在玩家未登录时不进行检测, 避免误判)",

@@ -189,14 +189,10 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         if (settingsManager.getProperty(PluginSettings.CLEAN_PLAYER_DATA_CACHE)) {
             getServer().getPluginManager().registerEvents(new QuitDataCleaner(), this);
         }
-        if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
-            getServer().getMessenger().registerOutgoingPluginChannel(this, VelocityChannel.CHANNEL);
-            getServer().getMessenger().registerIncomingPluginChannel(this, VelocityChannel.CHANNEL, new VelocityReceiver());
-        }
-        if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
-            getServer().getMessenger().registerOutgoingPluginChannel(this, BungeeCordChannel.BUNGEE_CHANNEL);
-            getServer().getMessenger().registerIncomingPluginChannel(this, BungeeCordChannel.BUNGEE_CHANNEL, new BungeeReceiver());
-        }
+        getServer().getMessenger().registerOutgoingPluginChannel(this, VelocityChannel.CHANNEL);
+        getServer().getMessenger().registerIncomingPluginChannel(this, VelocityChannel.CHANNEL, new VelocityReceiver());
+        getServer().getMessenger().registerOutgoingPluginChannel(this, BungeeCordChannel.BUNGEE_CHANNEL);
+        getServer().getMessenger().registerIncomingPluginChannel(this, BungeeCordChannel.BUNGEE_CHANNEL, new BungeeReceiver());
         if (settingsManager.getProperty(PluginSettings.CHECK_FOR_UPDATE)) {
             getServer().getPluginManager().registerEvents(new JoinUpdateNotifier(), this);
         }

@@ -18,6 +18,7 @@ import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
 public class VelocityReceiver implements PluginMessageListener {
     @Override
     public void onPluginMessageReceived(String channel, @NotNull Player player, @NotNull byte[] message) {
+        if (!settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) return;
         if (channel.equals(VelocityChannel.CHANNEL)) {
             ByteArrayDataInput input = ByteStreams.newDataInput(message);
             if (!input.readUTF().equals(AdvancedSensitiveWords.PLUGIN_VERSION)) {
