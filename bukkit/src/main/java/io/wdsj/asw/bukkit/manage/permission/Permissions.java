@@ -16,6 +16,7 @@ public class Permissions {
     public static final String HELP = "advancedsensitivewords.help";
     public static final String NOTICE = "advancedsensitivewords.notice";
     public static final String INFO = "advancedsensitivewords.info";
+    public static final String RESET = "advancedsensitivewords.reset";
     public static final String UPDATE = "advancedsensitivewords.update";
     public static final String PUNISH = "advancedsensitivewords.punish";
 }

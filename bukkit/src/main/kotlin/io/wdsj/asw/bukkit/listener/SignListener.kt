@@ -123,10 +123,6 @@ class SignListener : Listener {
             BungeeSender.sendNotifyMessage(player, ModuleType.SIGN, outMessage, outList)
         }
 
-        if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
-            AdvancedSensitiveWords.databaseManager.checkAndUpdatePlayer(player.name)
-        }
-
         if (shouldSendMessage) {
             Utils.messagesFilteredNum.getAndIncrement()
             val endTime = System.currentTimeMillis()

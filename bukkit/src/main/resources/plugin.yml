@@ -19,7 +19,7 @@ folia-supported: true
 commands:
   advancedsensitivewords:
     description: Advanced Sensitive Words main command.
-    usage: /asw <reload|status|test|help|info|punish|add|remove>
+    usage: /asw <reload|status|test|help|info|reset|punish|add|remove>
     aliases: [asw]
 permissions:
   advancedsensitivewords.*:
@@ -37,6 +37,7 @@ permissions:
       advancedsensitivewords.punish: true
       advancedsensitivewords.add: true
       advancedsensitivewords.remove: true
+      advancedsensitivewords.reset: true
   advancedsensitivewords.bypass:
     description: Bypass the Advanced Sensitive Words filter.
     default: false
@@ -60,6 +61,9 @@ permissions:
     default: op
   advancedsensitivewords.info:
     description: Get the player info.
+    default: op
+  advancedsensitivewords.reset:
+    description: Reset the player's violation count.
     default: op
   advancedsensitivewords.punish:
     description: Punish the player.

@@ -116,9 +116,6 @@ class ASWBookPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                 if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
                     BungeeSender.sendNotifyMessage(player, ModuleType.BOOK, outMessage, outList)
                 }
-                if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
-                    AdvancedSensitiveWords.databaseManager.checkAndUpdatePlayer(player.name)
-                }
                 val endTime = System.currentTimeMillis()
                 TimingUtils.addProcessStatistic(endTime, startTime)
                 if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) {

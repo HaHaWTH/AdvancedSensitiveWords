@@ -77,9 +77,6 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                 if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
                     BungeeSender.sendNotifyMessage(player, ModuleType.CHAT, originalMessage, censoredWords)
                 }
-                if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
-                    AdvancedSensitiveWords.databaseManager.checkAndUpdatePlayer(player.name)
-                }
                 val endTime = System.currentTimeMillis()
                 TimingUtils.addProcessStatistic(endTime, startTime)
                 if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, ModuleType.CHAT, originalMessage, censoredWords)
@@ -126,9 +123,6 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                                     }
                                     if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
                                         BungeeSender.sendNotifyMessage(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
-                                    }
-                                    if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
-                                        AdvancedSensitiveWords.databaseManager.checkAndUpdatePlayer(player.name)
                                     }
                                     if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) {
                                         Notifier.notice(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
@@ -200,9 +194,6 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                                                 originalMessage,
                                                 unsupportedList
                                             )
-                                        }
-                                        if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
-                                            AdvancedSensitiveWords.databaseManager.checkAndUpdatePlayer(player.name)
                                         }
                                         if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) {
                                             Notifier.notice(
@@ -291,9 +282,6 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                 }
                 if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
                     BungeeSender.sendNotifyMessage(player, ModuleType.CHAT, originalCommand, censoredWords)
-                }
-                if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
-                    AdvancedSensitiveWords.databaseManager.checkAndUpdatePlayer(player.name)
                 }
                 val endTime = System.currentTimeMillis()
                 TimingUtils.addProcessStatistic(endTime, startTime)

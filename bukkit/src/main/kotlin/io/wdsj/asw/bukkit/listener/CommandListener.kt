@@ -70,9 +70,6 @@ class CommandListener : Listener {
             if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
                 BungeeSender.sendNotifyMessage(player, ModuleType.CHAT, originalCommand, censoredWordList)
             }
-            if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
-                AdvancedSensitiveWords.databaseManager.checkAndUpdatePlayer(player.name)
-            }
             val endTime = System.currentTimeMillis()
             TimingUtils.addProcessStatistic(endTime, startTime)
             if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(

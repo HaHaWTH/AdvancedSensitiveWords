@@ -78,10 +78,6 @@ class AnvilListener : Listener {
                                 BungeeSender.sendNotifyMessage(player, ModuleType.ANVIL, originalItemName, censoredWords)
                             }
 
-                            if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
-                                AdvancedSensitiveWords.databaseManager.checkAndUpdatePlayer(player.name)
-                            }
-
                             val endTime = System.currentTimeMillis()
                             TimingUtils.addProcessStatistic(endTime, startTime)
                             if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(

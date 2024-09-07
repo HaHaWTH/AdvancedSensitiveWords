@@ -55,18 +55,15 @@ public class PluginMessages implements SettingsHolder {
     @Comment("找不到对应玩家")
     public static final Property<String> PLAYER_NOT_FOUND = newProperty("Plugin.noSuchPlayer", "&c找不到对应玩家");
     @Comment("管理员提醒消息")
-    public static final Property<String> ADMIN_REMINDER = newProperty("Plugin.noticeOperator", "&f[&bASW&7Notify&f]&7玩家 &c%player% &7触发了敏感词检测(%type%)(原消息: %message%)");
+    public static final Property<String> ADMIN_REMINDER = newProperty("Plugin.noticeOperator", "&bASW&7Notify >> &7玩家 &c%player% &7触发了敏感词检测(%type%)(VL: %violation%)(原消息: %message%)");
     @Comment("跨服提醒消息")
-    public static final Property<String> ADMIN_REMINDER_PROXY = newProperty("Plugin.noticeOperatorProxy", "&f[&bASW&7Notify&f]&7玩家 &c%player% (服务器: %server_name%) &7触发了敏感词检测(%type%)(原消息: %message%)");
+    public static final Property<String> ADMIN_REMINDER_PROXY = newProperty("Plugin.noticeOperatorProxy", "&bASW&7Notify >> &7玩家 &c%player% (服务器: %server_name%) &7触发了敏感词检测(%type%)(VL: %violation%)(原消息: %message%)");
     @Comment("更新可用")
-    public static final Property<String> UPDATE_AVAILABLE = newProperty("Plugin.updateAvailable", "&f[&bASW&7Notify&f]&7插件有可用更新(%latest_version%), 当前正在运行: &b%current_version%, 请前往 &b%url% &7下载新版本.");
+    public static final Property<String> UPDATE_AVAILABLE = newProperty("Plugin.updateAvailable", "&f[&bASW&7Notify&f]&7插件有可用更新(%latest_version%), 当前正在运行: &b%current_version%.");
     @Comment("获取到玩家信息")
-    public static final Property<String> MESSAGE_ON_PLAYER_INFO = newProperty("Plugin.database.playerInfo", "&bAdvancedSensitiveWords&r---&b玩家信息\n   &7玩家名称: &b%player%\n   &7违规次数: &a%num%");
-    @Comment("获取玩家信息失败")
-    public static final Property<String> MESSAGE_ON_PLAYER_INFO_FAIL = newProperty("Plugin.database.playerInfoFailed", "&c获取玩家信息失败, 请检查玩家名称是否正确");
-    @Comment("玩家信息数据库已关闭")
-    public static final Property<String> MESSAGE_ON_PLAYER_INFO_CLOSE = newProperty("Plugin.database.playerInfoClosed", "&c玩家信息数据库已禁用");
-
+    public static final Property<String> MESSAGE_ON_PLAYER_INFO = newProperty("Plugin.messageOnCommandInfo", "&bAdvancedSensitiveWords&r---&b玩家信息\n   &7玩家名称: &b%player%\n   &7违规次数: &a%violation%");
+    @Comment("重置玩家违规次数")
+    public static final Property<String> MESSAGE_ON_COMMAND_RESET = newProperty("Plugin.messageOnCommandReset", "&a已重置玩家 %player% 的违规次数.");
 
     @Override
     public void registerComments(CommentsConfiguration conf) {

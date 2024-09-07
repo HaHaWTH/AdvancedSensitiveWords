@@ -51,9 +51,9 @@ public class Notifier {
      * @param originalMessage the original message sent by the player
      * @param censoredList censored list
      */
-    public static void noticeFromProxy(String violatedPlayer, String serverName, String eventType, String originalMessage, String censoredList) {
+    public static void noticeFromProxy(String violatedPlayer, String serverName, String eventType, String violationCount, String originalMessage, String censoredList) {
         Collection<? extends Player> players = Bukkit.getOnlinePlayers();
-        String message = ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.ADMIN_REMINDER_PROXY).replace("%player%", violatedPlayer).replace("%type%", eventType).replace("%message%", originalMessage).replace("%censored_list%", censoredList).replace("%server_name%", serverName));
+        String message = ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.ADMIN_REMINDER_PROXY).replace("%player%", violatedPlayer).replace("%type%", eventType).replace("%message%", originalMessage).replace("%censored_list%", censoredList).replace("%server_name%", serverName).replace("%violation%", violationCount));
         for (Player player : players) {
             if (player.hasPermission(Permissions.NOTICE)) {
                 player.sendMessage(message);

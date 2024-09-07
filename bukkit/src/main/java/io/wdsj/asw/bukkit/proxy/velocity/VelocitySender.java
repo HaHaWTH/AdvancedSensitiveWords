@@ -3,6 +3,7 @@ package io.wdsj.asw.bukkit.proxy.velocity;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
+import io.wdsj.asw.bukkit.manage.punish.ViolationCounter;
 import io.wdsj.asw.bukkit.type.ModuleType;
 import io.wdsj.asw.common.constant.ChannelDataConstant;
 import org.bukkit.entity.Player;
@@ -16,6 +17,7 @@ public class VelocitySender {
         out.writeUTF(ChannelDataConstant.NOTICE);
         out.writeUTF(violatedPlayer.getName());
         out.writeUTF(moduleType.toString());
+        out.writeUTF(String.valueOf(ViolationCounter.getViolationCount(violatedPlayer)));
         out.writeUTF(originalMessage);
         out.writeUTF(censoredList.toString());
         byte[] data = out.toByteArray();

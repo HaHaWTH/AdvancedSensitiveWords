@@ -6,8 +6,6 @@ One-stop-shop **ultimate** anti-swear solution for your Minecraft server!
 
 [![Available on SpigotMC](https://img.shields.io/badge/Available%20on%20SpigotMC-orange?style=for-the-badge&logo=SpigotMC&logoColor=FFFFFF)](https://www.spigotmc.org/resources/advancedsensitivewords.115484/)
 
-[English](https://github.com/hahawth/AdvancedSensitiveWords)
-[简体中文](https://github.com/hahawth/AdvancedSensitiveWords/blob/main/README_zh.md)
 <p align="center">
   <img src="logo.webp" alt="logo" width="128" height="128"/>
 </p>
@@ -119,5 +117,4 @@ graph TD
 ## Open-source projects used
 - **[Ollama4j(Modified to support Java 8)](https://github.com/ollama4j/ollama4j)**
 - **[OpenAI4j](https://github.com/ai-for-java/openai4j)**
-- **[HikariCP](https://github.com/brettwooldridge/HikariCP)**
 - **[packetevents(Used for handling chat & book packets)](https://github.com/retrooper/packetevents)**

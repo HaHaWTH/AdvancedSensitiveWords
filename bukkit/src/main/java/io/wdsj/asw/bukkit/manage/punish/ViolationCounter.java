@@ -26,7 +26,7 @@ public class ViolationCounter {
     }
 
     public static boolean hasViolation(Player player) {
-        return violationCountMap.containsKey(player.getUniqueId());
+        return violationCountMap.containsKey(player.getUniqueId()) && violationCountMap.get(player.getUniqueId()) > 0L;
     }
 
     public static void resetAllViolations() {

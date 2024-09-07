@@ -17,7 +17,6 @@ import io.wdsj.asw.bukkit.ai.OllamaProcessor;
 import io.wdsj.asw.bukkit.ai.OpenAIProcessor;
 import io.wdsj.asw.bukkit.command.ConstructCommandExecutor;
 import io.wdsj.asw.bukkit.command.ConstructTabCompleter;
-import io.wdsj.asw.bukkit.datasource.DatabaseManager;
 import io.wdsj.asw.bukkit.integration.placeholder.ASWExpansion;
 import io.wdsj.asw.bukkit.listener.*;
 import io.wdsj.asw.bukkit.listener.packet.ASWBookPacketListener;
@@ -64,7 +63,6 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     public static boolean isCslAvailable;
     public static SettingsManager settingsManager;
     public static SettingsManager messagesManager;
-    public static DatabaseManager databaseManager;
     public static final String PLUGIN_VERSION = "1.0";
     private static AdvancedSensitiveWords instance;
     private static boolean USE_PE = false;
@@ -111,7 +109,6 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
                 .configurationData(PluginMessages.class)
                 .useDefaultMigrationService()
                 .create();
-        databaseManager = new DatabaseManager();
         libraryService = new BukkitLibraryService(this);
         isEventMode = settingsManager.getProperty(PluginSettings.DETECTION_MODE).equalsIgnoreCase("event");
         if (canUsePE() &&
@@ -126,7 +123,6 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         long startTime = System.currentTimeMillis();
         libraryService.load();
         LOGGER.info("Initializing DFA system...");
-        if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) databaseManager.setupDataSource();
         cleanStatisticCache();
         scheduler = UniversalScheduler.getScheduler(this);
         doInitTasks();
@@ -236,10 +232,6 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         AtomicReference<IWordDeny> wD = new AtomicReference<>();
         isInitialized = false;
         sensitiveWordBs = null;
-        if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE) &&
-                (databaseManager.getDataSource() == null || databaseManager.getDataSource().isClosed())) {
-            databaseManager.setupDataSource();
-        }
         getScheduler().runTaskAsynchronously(() -> {
             if (settingsManager.getProperty(PluginSettings.ENABLE_DEFAULT_WORDS) && settingsManager.getProperty(PluginSettings.ENABLE_ONLINE_WORDS)) {
                 wD.set(WordDenys.chains(WordDenys.defaults(), new WordDeny(), new OnlineWordDeny(), new ExternalWordDeny()));
@@ -283,7 +275,6 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         Objects.requireNonNull(getCommand("asw")).setExecutor(null);
         Objects.requireNonNull(getCommand("advancedsensitivewords")).setTabCompleter(null);
         Objects.requireNonNull(getCommand("asw")).setTabCompleter(null);
-        databaseManager.closeDataSource();
         LOGGER.info("AdvancedSensitiveWords is disabled!");
     }
 

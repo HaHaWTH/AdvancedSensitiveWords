@@ -29,11 +29,12 @@ public class BungeeReceiver implements PluginMessageListener {
                     case ChannelDataConstant.NOTICE:
                         String playerName = input.readUTF();
                         String moduleType = input.readUTF();
+                        String violationCount = input.readUTF();
                         String originalMessage = input.readUTF();
                         String censoredWordList = input.readUTF();
                         String serverName = input.readUTF();
                         if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) {
-                            Notifier.noticeFromProxy(playerName, serverName, moduleType, originalMessage, censoredWordList);
+                            Notifier.noticeFromProxy(playerName, serverName, moduleType, violationCount, originalMessage, censoredWordList);
                         }
                         break;
                 }

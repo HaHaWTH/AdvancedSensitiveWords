@@ -27,11 +27,12 @@ public class VelocityReceiver implements PluginMessageListener {
                 case ChannelDataConstant.NOTICE:
                     String playerName = input.readUTF();
                     String moduleType = input.readUTF();
+                    String violationCount = input.readUTF();
                     String originalMsg = input.readUTF();
                     String censoredWordList = input.readUTF();
                     String serverName = input.readUTF();
                     if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) {
-                        Notifier.noticeFromProxy(playerName, serverName, moduleType, originalMsg, censoredWordList);
+                        Notifier.noticeFromProxy(playerName, serverName, moduleType, violationCount, originalMsg, censoredWordList);
                     }
                     break;
             }

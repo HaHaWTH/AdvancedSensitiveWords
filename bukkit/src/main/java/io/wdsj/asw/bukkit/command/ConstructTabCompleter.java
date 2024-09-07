@@ -20,13 +20,15 @@ public class ConstructTabCompleter implements TabCompleter {
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String s, @NotNull String[] args) {
         if (args.length == 1) {
             List<String> tabComplete = new ArrayList<>();
-            if (sender.hasPermission(Permissions.RELOAD) && args[0].startsWith("r")) {
+            if (sender.hasPermission(Permissions.RELOAD) && args[0].startsWith("rel")) {
                 tabComplete.add("reload");
                 tabComplete.add("reloadconfig");
             } else if (sender.hasPermission(Permissions.ADD) && args[0].startsWith("a")) {
                 tabComplete.add("add");
-            } else if (sender.hasPermission(Permissions.REMOVE) && args[0].startsWith("r")) {
+            } else if (sender.hasPermission(Permissions.REMOVE) && args[0].startsWith("rem")) {
                 tabComplete.add("remove");
+            } else if (sender.hasPermission(Permissions.RESET) && args[0].startsWith("res")) {
+                tabComplete.add("reset");
             } else if (sender.hasPermission(Permissions.STATUS) && args[0].startsWith("s")) {
                 tabComplete.add("status");
             } else if (sender.hasPermission(Permissions.TEST) && args[0].startsWith("t")) {
@@ -51,11 +53,17 @@ public class ConstructTabCompleter implements TabCompleter {
                 tabComplete.add("test");
                 tabComplete.add("punish");
                 tabComplete.add("info");
+                tabComplete.add("reset");
             }
             return tabComplete;
         }
         if (args.length == 2) {
             if (args[0].equalsIgnoreCase("info") && (sender.hasPermission(Permissions.INFO) || sender instanceof ConsoleCommandSender)) {
+                return sender.getServer().getOnlinePlayers().stream()
+                        .map(Player::getName)
+                        .collect(Collectors.toList());
+            }
+            if (args[0].equalsIgnoreCase("reset") && (sender.hasPermission(Permissions.RESET) || sender instanceof ConsoleCommandSender)) {
                 return sender.getServer().getOnlinePlayers().stream()
                         .map(Player::getName)
                         .collect(Collectors.toList());

@@ -4,6 +4,7 @@ import com.github.houbb.heaven.util.util.OsUtil;
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 import io.wdsj.asw.bukkit.manage.permission.Permissions;
 import io.wdsj.asw.bukkit.manage.punish.Punishment;
+import io.wdsj.asw.bukkit.manage.punish.ViolationCounter;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
 import io.wdsj.asw.bukkit.util.cache.BookCache;
@@ -162,23 +163,39 @@ public class ConstructCommandExecutor implements CommandExecutor {
             }
             if (args[0].equalsIgnoreCase("info") && (sender.hasPermission(Permissions.INFO) || sender instanceof ConsoleCommandSender)) {
                 if (args.length > 1) {
-                    if (settingsManager.getProperty(PluginSettings.ENABLE_DATABASE)) {
-                        String playerName = args[1];
-                        String violations = databaseManager.getPlayerViolations(playerName);
-                        if (violations != null) {
-                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_PLAYER_INFO).replace("%player%", playerName).replace("%total_vl%", violations)));
-                        } else {
-                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_PLAYER_INFO_FAIL)));
-                        }
-                    } else {
-                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_PLAYER_INFO_CLOSE)));
+                    String playerName = args[1];
+                    Player target = Bukkit.getPlayer(playerName);
+                    if (target == null) {
+                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.PLAYER_NOT_FOUND)));
+                        return true;
                     }
+                    String violations = String.valueOf(ViolationCounter.getViolationCount(target));
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_PLAYER_INFO).replace("%player%", playerName).replace("%violation%", violations)));
                 } else {
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.NOT_ENOUGH_ARGS)));
                 }
                 return true;
             }
             if (args[0].equalsIgnoreCase("info")) {
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.NO_PERMISSION)));
+                return true;
+            }
+            if (args[0].equalsIgnoreCase("reset") && (sender.hasPermission(Permissions.RESET) || sender instanceof ConsoleCommandSender)) {
+                if (args.length > 1) {
+                    String playerName = args[1];
+                    Player target = Bukkit.getPlayer(playerName);
+                    if (target == null) {
+                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.PLAYER_NOT_FOUND)));
+                        return true;
+                    }
+                    ViolationCounter.resetViolationCount(target);
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_RESET).replace("%player%", playerName)));
+                } else {
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.NOT_ENOUGH_ARGS)));
+                }
+                return true;
+            }
+            if (args[0].equalsIgnoreCase("reset")) {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.NO_PERMISSION)));
                 return true;
             }

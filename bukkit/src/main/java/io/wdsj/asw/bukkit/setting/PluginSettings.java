@@ -53,6 +53,9 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"*玩家违规重置时间(分钟)",
             "*Violation reset time(in minutes)"})
     public static final Property<Long> VIOLATION_RESET_TIME = newProperty("Plugin.violationResetTime", 20L);
+    @Comment({"是否仅清除在线玩家的违规次数",
+            "Only reset violations of online players"})
+    public static final Property<Boolean> ONLY_RESET_ONLINE_PLAYERS = newProperty("Plugin.onlyResetOnlinePlayers", false);
     @Comment({"是否在插件启动时自动清除旧的日志文件",
             "Whether to automatically clear old log files on plugin startup"})
     public static final Property<Boolean> PURGE_LOG_FILE = newProperty("Plugin.purgeLogFile", false);
@@ -93,18 +96,6 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"*是否在玩家退出时清理相关数据缓存?",
             "*Should we clean player data cache on they quit?"})
     public static final Property<Boolean> CLEAN_PLAYER_DATA_CACHE = newProperty("Plugin.cleanPlayerDataCache", false);
-
-    @Comment({"是否启用数据库记录玩家违规次数",
-            "Whether to enable database to log violations"})
-    public static final Property<Boolean> ENABLE_DATABASE = newProperty("Plugin.database.enableDatabase", false);
-
-    @Comment({"*数据库缓存时长(单位: 秒)",
-            "*Database cache time(seconds)"})
-    public static final Property<Integer> DATABASE_CACHE_TIME = newProperty("Plugin.database.databaseCacheTime", 30);
-
-    @Comment({"*数据库名称",
-            "*Database name"})
-    public static final Property<String> DATABASE_NAME = newProperty("Plugin.database.databaseName", "data.db");
 
     @Comment({"*模型请求超时时长(单位: 秒)",
             "*Maximum request time before time out(in seconds)"})
