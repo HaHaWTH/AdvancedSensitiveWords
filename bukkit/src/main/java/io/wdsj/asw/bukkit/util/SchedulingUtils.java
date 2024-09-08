@@ -38,9 +38,7 @@ public class SchedulingUtils {
 
     public static void cancelTaskSafely(MyScheduledTask task) {
         if (task == null) return;
-        if (!task.isCancelled()) {
-            task.cancel();
-        }
+        task.cancel();
     }
 
 }
