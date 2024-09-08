@@ -1,10 +1,13 @@
 package io.wdsj.asw.bukkit.update;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
-import java.util.Scanner;
 
 public class Updater {
     private static String currentVersion;
@@ -15,7 +18,6 @@ public class Updater {
     public Updater(String current) {
         currentVersion = current;
     }
-
 
     /**
      * Check if there is an update available
@@ -29,15 +31,15 @@ public class Updater {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setConnectTimeout(10000);
             conn.setReadTimeout(10000);
-            Scanner scanner = new Scanner(conn.getInputStream());
-            String response = scanner.useDelimiter("\\Z").next();
-            scanner.close();
-            String latest = response.substring(response.indexOf("tag_name") + 11);
-            latest = latest.substring(0, latest.indexOf("\""));
-            latestVersion = latest;
-            isUpdateAvailable = !currentVersion.equals(latest);
-            return isUpdateAvailable;
-        } catch (IOException ignored) {
+            try (InputStreamReader reader = new InputStreamReader(conn.getInputStream())) {
+                JsonObject jsonObject = new JsonParser().parse(reader).getAsJsonObject();
+                String latest = jsonObject.get("tag_name").getAsString();
+                latestVersion = latest;
+                isUpdateAvailable = !currentVersion.equals(latest);
+                reader.close();
+                return isUpdateAvailable;
+            }
+        } catch (IOException e) {
             latestVersion = null;
             isUpdateAvailable = false;
             return false;
