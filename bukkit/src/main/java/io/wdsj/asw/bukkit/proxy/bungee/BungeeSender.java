@@ -6,21 +6,28 @@ import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 import io.wdsj.asw.bukkit.manage.punish.ViolationCounter;
 import io.wdsj.asw.bukkit.type.ModuleType;
 import io.wdsj.asw.common.constant.ChannelDataConstant;
+import io.wdsj.asw.common.datatype.io.LimitedByteArrayDataOutput;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
+import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER;
+
 public class BungeeSender {
     public static void sendNotifyMessage(Player violatedPlayer, ModuleType moduleType, String originalMessage, List<String> censoredList) {
-        ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        out.writeUTF(BungeeCordChannel.SUB_CHANNEL);
-        out.writeUTF(AdvancedSensitiveWords.PLUGIN_VERSION);
-        out.writeUTF(ChannelDataConstant.NOTICE);
-        out.writeUTF(violatedPlayer.getName());
-        out.writeUTF(moduleType.toString());
-        out.writeUTF(String.valueOf(ViolationCounter.getViolationCount(violatedPlayer)));
-        out.writeUTF(originalMessage);
-        out.writeUTF(censoredList.toString());
+        LimitedByteArrayDataOutput out = LimitedByteArrayDataOutput.newDataOutput(32767);
+        try {
+            out.writeUTF(BungeeCordChannel.SUB_CHANNEL);
+            out.writeUTF(AdvancedSensitiveWords.PLUGIN_VERSION);
+            out.writeUTF(ChannelDataConstant.NOTICE);
+            out.writeUTF(violatedPlayer.getName());
+            out.writeUTF(moduleType.toString());
+            out.writeUTF(String.valueOf(ViolationCounter.getViolationCount(violatedPlayer)));
+            out.writeUTF(originalMessage);
+            out.writeUTF(censoredList.toString());
+        } catch (Exception e) {
+            LOGGER.warning("Failed to send message to BungeeCord: " + e.getMessage());
+        }
         byte[] data = out.toByteArray();
         violatedPlayer.sendPluginMessage(AdvancedSensitiveWords.getInstance(), BungeeCordChannel.BUNGEE_CHANNEL, data);
     }

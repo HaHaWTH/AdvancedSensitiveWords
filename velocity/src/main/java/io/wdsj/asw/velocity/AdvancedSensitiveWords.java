@@ -1,7 +1,6 @@
 package io.wdsj.asw.velocity;
 
 import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
@@ -15,6 +14,7 @@ import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import com.velocitypowered.api.proxy.server.ServerInfo;
 import io.wdsj.asw.common.constant.ChannelDataConstant;
+import io.wdsj.asw.common.datatype.io.LimitedByteArrayDataOutput;
 import io.wdsj.asw.velocity.template.PomData;
 import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
@@ -58,9 +58,13 @@ public class AdvancedSensitiveWords {
                 case ChannelDataConstant.NOTICE:
                     server.getAllServers().forEach(server -> {
                         if (!server.getServerInfo().equals(serverInfo) && !server.getPlayersConnected().isEmpty()) {
-                            ByteArrayDataOutput out = ByteStreams.newDataOutput();
-                            out.write(message);
-                            out.writeUTF(serverInfo.getName());
+                            LimitedByteArrayDataOutput out = LimitedByteArrayDataOutput.newDataOutput(32767);
+                            try {
+                                out.write(message);
+                                out.writeUTF(serverInfo.getName());
+                            } catch (Exception e) {
+                                logger.error("Failed to write notice message: " + e.getMessage());
+                            }
                             server.sendPluginMessage(CHANNEL, out.toByteArray());
                             logger.debug("Send notice message to " + server.getServerInfo().getName());
                         }

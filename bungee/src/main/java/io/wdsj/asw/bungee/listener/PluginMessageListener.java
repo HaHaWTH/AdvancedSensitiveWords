@@ -1,10 +1,10 @@
 package io.wdsj.asw.bungee.listener;
 
 import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import io.wdsj.asw.bungee.AdvancedSensitiveWords;
 import io.wdsj.asw.common.constant.ChannelDataConstant;
+import io.wdsj.asw.common.datatype.io.LimitedByteArrayDataOutput;
 import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -31,7 +31,7 @@ public class PluginMessageListener implements Listener {
                 case ChannelDataConstant.NOTICE:
                     try {
                         String serverName = ((Server) event.getSender()).getInfo().getName();
-                        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+                        LimitedByteArrayDataOutput out = LimitedByteArrayDataOutput.newDataOutput(32767);
                         out.write(event.getData());
                         out.writeUTF(serverName);
                         AdvancedSensitiveWords.getInstance().getProxy().getServers().forEach((name, server) -> {
