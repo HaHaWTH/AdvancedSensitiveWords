@@ -70,14 +70,10 @@ Plugin:
   commandAdd:
     #Add success
     success: '&aSuccessfully added to filter dictionary!'
-    #Busy
-    busy: '&cFilter dictionary is busy, please try again later.'
   #Remove command
   commandRemove:
     #Remove success
     success: '&aSuccessfully removed from filter dictionary!'
-    #Busy
-    busy: '&cFilter dictionary is busy, please try again later.'
   #No permission
   noPermission: '&cYou do not have permission to execute the command.'
   #Unknown command

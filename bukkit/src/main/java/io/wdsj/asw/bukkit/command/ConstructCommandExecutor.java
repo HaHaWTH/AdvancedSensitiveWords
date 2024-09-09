@@ -21,8 +21,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import static com.github.houbb.heaven.util.util.OsUtil.is64;
 import static com.github.houbb.heaven.util.util.OsUtil.isUnix;
@@ -32,7 +30,6 @@ import static io.wdsj.asw.bukkit.util.Utils.getMinecraftVersion;
 import static io.wdsj.asw.bukkit.util.Utils.messagesFilteredNum;
 
 public class ConstructCommandExecutor implements CommandExecutor {
-    private final Lock lock = new ReentrantLock();
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (args.length == 1) {
@@ -119,17 +116,9 @@ public class ConstructCommandExecutor implements CommandExecutor {
             }
             if (args[0].equalsIgnoreCase("add") && (sender.hasPermission(PermissionsConstant.ADD) || sender instanceof ConsoleCommandSender)) {
                 if (args.length > 1) {
-                    if (lock.tryLock()) {
-                        try {
-                            List<String> words = new ArrayList<>(Arrays.asList(args).subList(1, args.length));
-                            sensitiveWordBs.addWord(words);
-                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_ADD_SUCCESS)));
-                        } finally {
-                            lock.unlock();
-                        }
-                    } else {
-                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_ADD_BUSY)));
-                    }
+                    List<String> words = new ArrayList<>(Arrays.asList(args).subList(1, args.length));
+                    sensitiveWordBs.addWord(words);
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_ADD_SUCCESS)));
                 } else {
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.NOT_ENOUGH_ARGS)));
                 }
@@ -141,17 +130,9 @@ public class ConstructCommandExecutor implements CommandExecutor {
             }
             if (args[0].equalsIgnoreCase("remove") && (sender.hasPermission(PermissionsConstant.REMOVE) || sender instanceof ConsoleCommandSender)) {
                 if (args.length > 1) {
-                    if (lock.tryLock()) {
-                        try {
-                            List<String> words = new ArrayList<>(Arrays.asList(args).subList(1, args.length));
-                            sensitiveWordBs.removeWord(words);
-                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_REMOVE_SUCCESS)));
-                        } finally {
-                            lock.unlock();
-                        }
-                    } else {
-                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_REMOVE_BUSY)));
-                    }
+                    List<String> words = new ArrayList<>(Arrays.asList(args).subList(1, args.length));
+                    sensitiveWordBs.removeWord(words);
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_REMOVE_SUCCESS)));
                 } else {
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.NOT_ENOUGH_ARGS)));
                 }

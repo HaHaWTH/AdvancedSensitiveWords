@@ -71,14 +71,10 @@ Plugin:
   commandAdd:
     # 敏感词添加成功
     success: '&a敏感词添加成功.'
-    # 操作繁忙
-    busy: '&c操作繁忙, 请稍后再试'
   # Remove 指令相关
   commandRemove:
     # 敏感词移除成功
     success: '&a敏感词移除成功.'
-    # 操作繁忙
-    busy: '&c操作繁忙, 请稍后再试'
   # 没有权限执行该指令
   noPermission: '&c你没有权限执行该指令.'
   # 未知命令

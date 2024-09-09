@@ -40,12 +40,8 @@ public class PluginMessages implements SettingsHolder {
     public static final Property<String> MESSAGE_ON_COMMAND_PUNISH_SUCCESS = newProperty("Plugin.commandPunish.success", "&a成功惩罚玩家 %player%.");
     @Comment("敏感词添加成功")
     public static final Property<String> MESSAGE_ON_COMMAND_ADD_SUCCESS = newProperty("Plugin.commandAdd.success", "&a敏感词添加成功.");
-    @Comment("操作繁忙")
-    public static final Property<String> MESSAGE_ON_COMMAND_ADD_BUSY = newProperty("Plugin.commandAdd.busy", "&c操作繁忙, 请稍后再试");
     @Comment("敏感词移除成功")
     public static final Property<String> MESSAGE_ON_COMMAND_REMOVE_SUCCESS = newProperty("Plugin.commandRemove.success", "&a敏感词移除成功.");
-    @Comment("操作繁忙")
-    public static final Property<String> MESSAGE_ON_COMMAND_REMOVE_BUSY = newProperty("Plugin.commandRemove.busy", "&c操作繁忙, 请稍后再试");
     @Comment("没有权限执行该指令")
     public static final Property<String> NO_PERMISSION = newProperty("Plugin.noPermission", "&c你没有权限执行该指令.");
     @Comment("未知命令")
