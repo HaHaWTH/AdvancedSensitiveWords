@@ -21,6 +21,7 @@ import io.wdsj.asw.bukkit.integration.placeholder.ASWExpansion;
 import io.wdsj.asw.bukkit.listener.*;
 import io.wdsj.asw.bukkit.listener.packet.ASWBookPacketListener;
 import io.wdsj.asw.bukkit.listener.packet.ASWChatPacketListener;
+import io.wdsj.asw.bukkit.manage.permission.cache.CachingPermTool;
 import io.wdsj.asw.bukkit.manage.punish.PlayerAltController;
 import io.wdsj.asw.bukkit.manage.punish.PlayerShadowController;
 import io.wdsj.asw.bukkit.manage.punish.ViolationCounter;
@@ -73,6 +74,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     private static final OllamaProcessor OLLAMA_PROCESSOR = new OllamaProcessor();
     private static final OpenAIProcessor OPENAI_PROCESSOR = new OpenAIProcessor();
     private VoiceChatHookService voiceChatHookService;
+    private CachingPermTool permCache;
     public static TaskScheduler getScheduler() {
         return scheduler;
     }
@@ -125,6 +127,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         LOGGER.info("Initializing DFA system...");
         cleanStatisticCache();
         scheduler = UniversalScheduler.getScheduler(this);
+        permCache = CachingPermTool.enable(this);
         doInitTasks();
         if (settingsManager.getProperty(PluginSettings.PURGE_LOG_FILE)) purgeLog();
         if (!isEventMode) {
@@ -266,6 +269,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         BookCache.invalidateAll();
         ViolationCounter.resetAllViolations();
         SchedulingUtils.cancelTaskSafely(violationResetTask);
+        if (permCache != null) permCache.disable();
         if (isInitialized) sensitiveWordBs.destroy();
         Objects.requireNonNull(getCommand("advancedsensitivewords")).setExecutor(null);
         Objects.requireNonNull(getCommand("asw")).setExecutor(null);

@@ -13,7 +13,8 @@ import io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
 import io.wdsj.asw.bukkit.listener.FakeMessageExecutor
 import io.wdsj.asw.bukkit.manage.notice.Notifier
-import io.wdsj.asw.bukkit.manage.permission.Permissions
+import io.wdsj.asw.bukkit.manage.permission.PermissionsConstant
+import io.wdsj.asw.bukkit.manage.permission.cache.CachingPermTool
 import io.wdsj.asw.bukkit.manage.punish.Punishment
 import io.wdsj.asw.bukkit.manage.punish.ViolationCounter
 import io.wdsj.asw.bukkit.proxy.bungee.BungeeSender
@@ -269,7 +270,7 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                 if (isCancelMode) {
                     event.isCancelled = true
                 } else {
-                    val commandMaxLength = 255 // because there is a slash before the command, so we should minus 1
+                    val commandMaxLength = 256
                     if (processedCommand.length > commandMaxLength) {
                         wrapperPlayClientChatCommand.command = processedCommand.substring(0, commandMaxLength)
                     } else {
@@ -302,7 +303,7 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
     }
 
     private fun shouldNotProcess(player: Player, message: String): Boolean {
-        if (AdvancedSensitiveWords.isInitialized && !player.hasPermission(Permissions.BYPASS) && !Utils.isCommandAndWhiteListed(message)) {
+        if (AdvancedSensitiveWords.isInitialized && !CachingPermTool.hasPermission(PermissionsConstant.BYPASS, player) && !Utils.isCommandAndWhiteListed(message)) {
             if (AdvancedSensitiveWords.isAuthMeAvailable && settingsManager.getProperty(PluginSettings.ENABLE_AUTHME_COMPATIBILITY)) {
                 if (!AuthMeApi.getInstance().isAuthenticated(player)) return true
             }

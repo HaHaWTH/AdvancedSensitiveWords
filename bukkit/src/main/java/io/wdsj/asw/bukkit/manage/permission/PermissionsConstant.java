@@ -3,8 +3,8 @@ package io.wdsj.asw.bukkit.manage.permission;
 /**
  * Permission constants
  */
-public class Permissions {
-    private Permissions() {
+public class PermissionsConstant {
+    private PermissionsConstant() {
     }
 
     public static final String BYPASS = "advancedsensitivewords.bypass";

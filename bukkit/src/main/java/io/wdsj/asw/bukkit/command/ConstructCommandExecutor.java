@@ -2,7 +2,7 @@ package io.wdsj.asw.bukkit.command;
 
 import com.github.houbb.heaven.util.util.OsUtil;
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
-import io.wdsj.asw.bukkit.manage.permission.Permissions;
+import io.wdsj.asw.bukkit.manage.permission.PermissionsConstant;
 import io.wdsj.asw.bukkit.manage.punish.Punishment;
 import io.wdsj.asw.bukkit.manage.punish.ViolationCounter;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
@@ -36,7 +36,7 @@ public class ConstructCommandExecutor implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (args.length == 1) {
-            if (args[0].equalsIgnoreCase("reload") && (sender.hasPermission(Permissions.RELOAD) || sender instanceof ConsoleCommandSender)) {
+            if (args[0].equalsIgnoreCase("reload") && (sender.hasPermission(PermissionsConstant.RELOAD) || sender instanceof ConsoleCommandSender)) {
                 if (!isInitialized) {
                     return true;
                 }
@@ -58,7 +58,7 @@ public class ConstructCommandExecutor implements CommandExecutor {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.NO_PERMISSION)));
                 return true;
             }
-            if (args[0].equalsIgnoreCase("reloadconfig") && (sender.hasPermission(Permissions.RELOAD) || sender instanceof ConsoleCommandSender)) {
+            if (args[0].equalsIgnoreCase("reloadconfig") && (sender.hasPermission(PermissionsConstant.RELOAD) || sender instanceof ConsoleCommandSender)) {
                 settingsManager.reload();
                 File msgFile = new File(getInstance().getDataFolder(), "messages_" + settingsManager.getProperty(PluginSettings.PLUGIN_LANGUAGE) +
                         ".yml");
@@ -73,7 +73,7 @@ public class ConstructCommandExecutor implements CommandExecutor {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.NO_PERMISSION)));
                 return true;
             }
-            if (args[0].equalsIgnoreCase("status") && (sender.hasPermission(Permissions.STATUS) || sender instanceof ConsoleCommandSender)) {
+            if (args[0].equalsIgnoreCase("status") && (sender.hasPermission(PermissionsConstant.STATUS) || sender instanceof ConsoleCommandSender)) {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_STATUS).replace("%num%", String.valueOf(messagesFilteredNum.get())).replace("%mode%", isEventMode() ? "Event" : "Packet").replace("%init%", isInitialized ? "true" : "false").replace("%ms%", getProcessAverage() + "ms").replace("%version%", AdvancedSensitiveWords.PLUGIN_VERSION).replace("%mc_version%", getMinecraftVersion()).replace("%platform%", OsUtil.isWindows() ? "Windows" : (OsUtil.isMac() ? "Mac" : isUnix() ? "Linux" : "Unknown")).replace("%bit%", is64() ? "64bit" : "32bit").replace("%java_version%", getJvmVersion()).replace("%java_vendor%", getJvmVendor())));
                 return true;
             }
@@ -81,7 +81,7 @@ public class ConstructCommandExecutor implements CommandExecutor {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.NO_PERMISSION)));
                 return true;
             }
-            if (args[0].equalsIgnoreCase("help") && (sender.hasPermission(Permissions.HELP) || sender instanceof ConsoleCommandSender)) {
+            if (args[0].equalsIgnoreCase("help") && (sender.hasPermission(PermissionsConstant.HELP) || sender instanceof ConsoleCommandSender)) {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_HELP)));
                 return true;
             }
@@ -91,7 +91,7 @@ public class ConstructCommandExecutor implements CommandExecutor {
             }
         }
         if (args.length >= 1) {
-            if (args[0].equalsIgnoreCase("test") && (sender.hasPermission(Permissions.TEST) || sender instanceof ConsoleCommandSender)) {
+            if (args[0].equalsIgnoreCase("test") && (sender.hasPermission(PermissionsConstant.TEST) || sender instanceof ConsoleCommandSender)) {
                 if (args.length >= 2) {
                     if (isInitialized) {
                         StringBuilder sb = new StringBuilder();
@@ -117,7 +117,7 @@ public class ConstructCommandExecutor implements CommandExecutor {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.NO_PERMISSION)));
                 return true;
             }
-            if (args[0].equalsIgnoreCase("add") && (sender.hasPermission(Permissions.ADD) || sender instanceof ConsoleCommandSender)) {
+            if (args[0].equalsIgnoreCase("add") && (sender.hasPermission(PermissionsConstant.ADD) || sender instanceof ConsoleCommandSender)) {
                 if (args.length > 1) {
                     if (lock.tryLock()) {
                         try {
@@ -139,7 +139,7 @@ public class ConstructCommandExecutor implements CommandExecutor {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.NO_PERMISSION)));
                 return true;
             }
-            if (args[0].equalsIgnoreCase("remove") && (sender.hasPermission(Permissions.REMOVE) || sender instanceof ConsoleCommandSender)) {
+            if (args[0].equalsIgnoreCase("remove") && (sender.hasPermission(PermissionsConstant.REMOVE) || sender instanceof ConsoleCommandSender)) {
                 if (args.length > 1) {
                     if (lock.tryLock()) {
                         try {
@@ -161,7 +161,7 @@ public class ConstructCommandExecutor implements CommandExecutor {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.NO_PERMISSION)));
                 return true;
             }
-            if (args[0].equalsIgnoreCase("info") && (sender.hasPermission(Permissions.INFO) || sender instanceof ConsoleCommandSender)) {
+            if (args[0].equalsIgnoreCase("info") && (sender.hasPermission(PermissionsConstant.INFO) || sender instanceof ConsoleCommandSender)) {
                 if (args.length > 1) {
                     String playerName = args[1];
                     Player target = Bukkit.getPlayer(playerName);
@@ -180,7 +180,7 @@ public class ConstructCommandExecutor implements CommandExecutor {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.NO_PERMISSION)));
                 return true;
             }
-            if (args[0].equalsIgnoreCase("reset") && (sender.hasPermission(Permissions.RESET) || sender instanceof ConsoleCommandSender)) {
+            if (args[0].equalsIgnoreCase("reset") && (sender.hasPermission(PermissionsConstant.RESET) || sender instanceof ConsoleCommandSender)) {
                 if (args.length > 1) {
                     String playerName = args[1];
                     Player target = Bukkit.getPlayer(playerName);
@@ -199,7 +199,7 @@ public class ConstructCommandExecutor implements CommandExecutor {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.NO_PERMISSION)));
                 return true;
             }
-            if (args[0].equalsIgnoreCase("punish") && (sender.hasPermission(Permissions.PUNISH) || sender instanceof ConsoleCommandSender)) {
+            if (args[0].equalsIgnoreCase("punish") && (sender.hasPermission(PermissionsConstant.PUNISH) || sender instanceof ConsoleCommandSender)) {
                 if (args.length >= 2) {
                     String playerName = args[1];
                     Player player = Bukkit.getPlayer(playerName);

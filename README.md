@@ -13,8 +13,7 @@ One-stop-shop **ultimate** anti-swear solution for your Minecraft server!
 Logo designed by GPT-4
 
 [![CodeFactor](https://www.codefactor.io/repository/github/hahawth/advancedsensitivewords/badge)](https://www.codefactor.io/repository/github/hahawth/advancedsensitivewords)
-[![Made with Java](https://img.shields.io/badge/Made%20with-Java-blue.svg)](https://www.java.com/)
-[![Love from Earth](https://img.shields.io/badge/Love%20%E2%9D%A4%EF%B8%8F-red.svg?v=202007241736)](https://github.com/hahawth/AdvancedSensitiveWords/stargazers)
+[![QQ](https://img.shields.io/badge/QQ-361581545-blue)](https://qm.qq.com/q/sC52yJDrGi)
 
 ## Features
 1. Using DFA(Deterministic Finite Automata) algorithm

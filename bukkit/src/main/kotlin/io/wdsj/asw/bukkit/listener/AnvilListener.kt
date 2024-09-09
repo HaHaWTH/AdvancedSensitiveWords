@@ -3,7 +3,8 @@ package io.wdsj.asw.bukkit.listener
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
 import io.wdsj.asw.bukkit.manage.notice.Notifier
-import io.wdsj.asw.bukkit.manage.permission.Permissions
+import io.wdsj.asw.bukkit.manage.permission.PermissionsConstant
+import io.wdsj.asw.bukkit.manage.permission.cache.CachingPermTool
 import io.wdsj.asw.bukkit.manage.punish.Punishment
 import io.wdsj.asw.bukkit.manage.punish.ViolationCounter
 import io.wdsj.asw.bukkit.proxy.bungee.BungeeSender
@@ -29,7 +30,7 @@ class AnvilListener : Listener {
         if (!settingsManager.getProperty(PluginSettings.ENABLE_ANVIL_EDIT_CHECK)) return
         if (event.inventory.type == InventoryType.ANVIL) {
             val player = event.whoClicked as Player
-            if (player.hasPermission(Permissions.BYPASS)) {
+            if (CachingPermTool.hasPermission(PermissionsConstant.BYPASS, player)) {
                 return
             }
             if (event.rawSlot == 2) {

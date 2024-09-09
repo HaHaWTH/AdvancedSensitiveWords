@@ -8,7 +8,8 @@ import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientEd
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
 import io.wdsj.asw.bukkit.manage.notice.Notifier
-import io.wdsj.asw.bukkit.manage.permission.Permissions
+import io.wdsj.asw.bukkit.manage.permission.PermissionsConstant
+import io.wdsj.asw.bukkit.manage.permission.cache.CachingPermTool
 import io.wdsj.asw.bukkit.manage.punish.Punishment
 import io.wdsj.asw.bukkit.manage.punish.ViolationCounter
 import io.wdsj.asw.bukkit.proxy.bungee.BungeeSender
@@ -32,7 +33,7 @@ class ASWBookPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
         val userName = user.name
         if (packetType === PacketType.Play.Client.EDIT_BOOK) {
             val player = event.getPlayer() as Player
-            if (player.hasPermission(Permissions.BYPASS)) return
+            if (CachingPermTool.hasPermission(PermissionsConstant.BYPASS, player)) return
             var outMessage = ""
             var outList: List<String?> = ArrayList()
             val skipReturnLine = settingsManager.getProperty(PluginSettings.BOOK_IGNORE_NEWLINE)
