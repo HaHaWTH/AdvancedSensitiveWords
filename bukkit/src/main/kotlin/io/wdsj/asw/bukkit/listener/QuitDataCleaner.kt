@@ -6,6 +6,7 @@ import io.wdsj.asw.bukkit.util.context.ChatContext
 import io.wdsj.asw.bukkit.util.context.SignContext
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerKickEvent
 import org.bukkit.event.player.PlayerQuitEvent
@@ -18,7 +19,7 @@ class QuitDataCleaner : Listener {
         doCleanTask(player)
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun onKick(event: PlayerKickEvent) {
         if (!settingsManager.getProperty(PluginSettings.CLEAN_PLAYER_DATA_CACHE)) return
         val player = event.player

@@ -6,6 +6,7 @@ import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.util.PlayerUtils
 import io.wdsj.asw.bukkit.util.Utils
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerKickEvent
@@ -40,7 +41,7 @@ class AltsListener : Listener {
         PlayerAltController.removeFromAlts(ip, player)
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun onPlayerKick(event: PlayerKickEvent) {
         if (!settingsManager.getProperty(PluginSettings.ENABLE_ALTS_CHECK)) {
             return
