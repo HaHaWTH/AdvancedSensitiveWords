@@ -4,6 +4,8 @@ import com.alessiodp.libby.BukkitLibraryManager;
 import com.alessiodp.libby.Library;
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 
+import java.util.Locale;
+
 public class BukkitLibraryService {
     private final BukkitLibraryManager libraryManager;
     private static final Library ollama4j = Library.builder()
@@ -23,8 +25,12 @@ public class BukkitLibraryService {
     public BukkitLibraryService(AdvancedSensitiveWords plugin) {
         libraryManager = new BukkitLibraryManager(plugin);
         libraryManager.addJitPack();
-        libraryManager.addSonatype();
-        libraryManager.addMavenCentral();
+        if (Locale.getDefault().getCountry().toUpperCase(Locale.ROOT).equals("CN")) {
+            libraryManager.addRepository("https://maven.aliyun.com/repository/public");
+        } else {
+            libraryManager.addSonatype();
+            libraryManager.addMavenCentral();
+        }
     }
 
     public void load() {
