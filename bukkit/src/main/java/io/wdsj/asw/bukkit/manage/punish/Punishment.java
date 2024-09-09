@@ -24,7 +24,6 @@ public class Punishment {
      * @param player 要惩罚的玩家
      */
     public static void punish(Player player) {
-        ViolationCounter.incrementViolationCount(player);
         List<String> punishList = settingsManager.getProperty(PluginSettings.PUNISHMENT);
         if (punishList.isEmpty()) return;
         for (String punish : punishList) {

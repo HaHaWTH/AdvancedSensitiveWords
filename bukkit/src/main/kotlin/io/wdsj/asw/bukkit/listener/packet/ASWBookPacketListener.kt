@@ -10,6 +10,7 @@ import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
 import io.wdsj.asw.bukkit.manage.notice.Notifier
 import io.wdsj.asw.bukkit.manage.permission.Permissions
 import io.wdsj.asw.bukkit.manage.punish.Punishment
+import io.wdsj.asw.bukkit.manage.punish.ViolationCounter
 import io.wdsj.asw.bukkit.proxy.bungee.BungeeSender
 import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender
 import io.wdsj.asw.bukkit.setting.PluginMessages
@@ -110,6 +111,7 @@ class ASWBookPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
 
             if (shouldSendMessage) {
                 Utils.messagesFilteredNum.getAndIncrement()
+                ViolationCounter.incrementViolationCount(player)
                 if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
                     VelocitySender.sendNotifyMessage(player, ModuleType.BOOK, outMessage, outList)
                 }

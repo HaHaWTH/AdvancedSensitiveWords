@@ -6,6 +6,7 @@ import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
 import io.wdsj.asw.bukkit.manage.notice.Notifier
 import io.wdsj.asw.bukkit.manage.permission.Permissions
 import io.wdsj.asw.bukkit.manage.punish.Punishment
+import io.wdsj.asw.bukkit.manage.punish.ViolationCounter
 import io.wdsj.asw.bukkit.proxy.bungee.BungeeSender
 import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender
 import io.wdsj.asw.bukkit.setting.PluginMessages
@@ -115,11 +116,15 @@ class SignListener : Listener {
             LoggingUtils.logViolation(player.name + "(IP: " + Utils.getPlayerIp(player) + ")(Sign)(" + locationLog + ")", outMessage + outList)
         }
 
+        if (shouldSendMessage) {
+            ViolationCounter.incrementViolationCount(player)
+        }
+
         if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY) && shouldSendMessage) {
             VelocitySender.sendNotifyMessage(player, ModuleType.SIGN, outMessage, outList)
         }
 
-        if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
+        if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD) && shouldSendMessage) {
             BungeeSender.sendNotifyMessage(player, ModuleType.SIGN, outMessage, outList)
         }
 

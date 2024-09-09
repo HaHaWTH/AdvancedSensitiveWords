@@ -5,6 +5,7 @@ import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
 import io.wdsj.asw.bukkit.manage.notice.Notifier
 import io.wdsj.asw.bukkit.manage.permission.Permissions
 import io.wdsj.asw.bukkit.manage.punish.Punishment
+import io.wdsj.asw.bukkit.manage.punish.ViolationCounter
 import io.wdsj.asw.bukkit.proxy.bungee.BungeeSender
 import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender
 import io.wdsj.asw.bukkit.setting.PluginMessages
@@ -70,6 +71,7 @@ class PlayerLoginListener : Listener {
             if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
                 LoggingUtils.logViolation(player.name + "(IP: " + playerIp + ")(Name)", playerName + censoredWordList)
             }
+            ViolationCounter.incrementViolationCount(player)
             if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
                 VelocitySender.sendNotifyMessage(player, ModuleType.NAME, playerName, censoredWordList)
             }
