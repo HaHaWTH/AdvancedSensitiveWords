@@ -26,7 +26,9 @@ public class BukkitLibraryService {
         libraryManager = new BukkitLibraryManager(plugin);
         libraryManager.addJitPack();
         if (Locale.getDefault().getCountry().toUpperCase(Locale.ROOT).equals("CN")) {
-            libraryManager.addRepository("https://maven.aliyun.com/repository/public");
+            libraryManager.addRepository("https://maven.aliyun.com/repository/public/");
+            libraryManager.addRepository("https://mirrors.cloud.tencent.com/nexus/repository/maven-public/");
+            libraryManager.addRepository("https://repo.huaweicloud.com/repository/maven/");
         } else {
             libraryManager.addSonatype();
             libraryManager.addMavenCentral();
