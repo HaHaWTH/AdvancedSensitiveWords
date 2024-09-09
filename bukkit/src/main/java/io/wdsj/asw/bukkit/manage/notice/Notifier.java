@@ -1,6 +1,7 @@
 package io.wdsj.asw.bukkit.manage.notice;
 
 import io.wdsj.asw.bukkit.manage.permission.Permissions;
+import io.wdsj.asw.bukkit.manage.punish.ViolationCounter;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
 import io.wdsj.asw.bukkit.type.ModuleType;
 import org.bukkit.Bukkit;
@@ -24,7 +25,7 @@ public class Notifier {
     public static void notice(Player violatedPlayer, ModuleType moduleType, String originalMessage, List<String> censoredList) {
         getScheduler().runTask(() -> {
             Collection<? extends Player> players = Bukkit.getOnlinePlayers();
-            String message = ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.ADMIN_REMINDER).replace("%player%", violatedPlayer.getName()).replace("%type%", moduleType.toString()).replace("%message%", originalMessage).replace("%censored_list%", censoredList.toString()));
+            String message = ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.ADMIN_REMINDER).replace("%player%", violatedPlayer.getName()).replace("%type%", moduleType.toString()).replace("%message%", originalMessage).replace("%censored_list%", censoredList.toString()).replace("%violation%", String.valueOf(ViolationCounter.getViolationCount(violatedPlayer))));
             for (Player player : players) {
                 if (player.hasPermission(Permissions.NOTICE)) {
                     player.sendMessage(message);
