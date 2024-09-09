@@ -27,6 +27,7 @@ public class BungeeSender {
             out.writeUTF(censoredList.toString());
         } catch (Exception e) {
             LOGGER.warning("Failed to send message to BungeeCord: " + e.getMessage());
+            return;
         }
         byte[] data = out.toByteArray();
         violatedPlayer.sendPluginMessage(AdvancedSensitiveWords.getInstance(), BungeeCordChannel.BUNGEE_CHANNEL, data);

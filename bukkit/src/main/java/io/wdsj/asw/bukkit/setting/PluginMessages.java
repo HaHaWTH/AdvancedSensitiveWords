@@ -23,7 +23,7 @@ public class PluginMessages implements SettingsHolder {
     @Comment("插件重载消息")
     public static final Property<String> MESSAGE_ON_COMMAND_RELOAD = newProperty("Plugin.messageOnCommandReload", "&aAdvancedSensitiveWords 已重新加载.");
     @Comment("违规次数重置消息")
-    public static final Property<String> MESSAGE_ON_VIOLATION_RESET = newProperty("Plugin.messageOnViolationReset", "&a&l已重置所有玩家的违规次数!");
+    public static final Property<String> MESSAGE_ON_VIOLATION_RESET = newProperty("Plugin.messageOnViolationReset", "&bASW&7Notify >> &a已重置所有玩家的违规次数!");
     @Comment("插件帮助菜单")
     public static final Property<String> MESSAGE_ON_COMMAND_HELP = newProperty("Plugin.messageOnCommandHelp", "&bAdvancedSensitiveWords&r---&b帮助菜单\n   &7/asw reload&7: &a重新加载过滤词库和插件配置\n   &7/asw reloadconfig: &a重新加载插件配置\n   &7/asw add <敏感词>: &a添加敏感词\n   &7/asw remove <敏感词>: &a移除敏感词\n   &7/asw status: &a显示插件状态菜单\n   &7/asw test <待测消息>: &a运行敏感词测试\n   &7/asw help: &a显示帮助信息\n   &7/asw info <玩家名称>: &a获取玩家违规次数\n   &7/asw punish <玩家名称> [惩罚]: &a手动惩罚玩家, 不填惩罚将使用配置文件内容");
     @Comment("插件状态菜单")
@@ -59,7 +59,7 @@ public class PluginMessages implements SettingsHolder {
     @Comment("跨服提醒消息")
     public static final Property<String> ADMIN_REMINDER_PROXY = newProperty("Plugin.noticeOperatorProxy", "&bASW&7Notify >> &7玩家 &c%player% (服务器: %server_name%) &7触发了敏感词检测(%type%)(VL: %violation%)(原消息: %message%)");
     @Comment("更新可用")
-    public static final Property<String> UPDATE_AVAILABLE = newProperty("Plugin.updateAvailable", "&f[&bASW&7Notify&f]&7插件有可用更新(%latest_version%), 当前正在运行: &b%current_version%.");
+    public static final Property<String> UPDATE_AVAILABLE = newProperty("Plugin.updateAvailable", "&bASW&7Notify >> &7插件有可用更新(%latest_version%), 当前正在运行: &b%current_version%.");
     @Comment("获取到玩家信息")
     public static final Property<String> MESSAGE_ON_PLAYER_INFO = newProperty("Plugin.messageOnCommandInfo", "&bAdvancedSensitiveWords&r---&b玩家信息\n   &7玩家名称: &b%player%\n   &7违规次数: &a%violation%");
     @Comment("重置玩家违规次数")

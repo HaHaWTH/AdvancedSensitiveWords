@@ -26,6 +26,7 @@ public class VelocitySender {
             out.writeUTF(censoredList.toString());
         } catch (Exception e) {
             LOGGER.warning("Failed to send message to Velocity: " + e.getMessage());
+            return;
         }
         byte[] data = out.toByteArray();
         violatedPlayer.sendPluginMessage(AdvancedSensitiveWords.getInstance(), VelocityChannel.CHANNEL, data);
