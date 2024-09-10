@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 @SuppressWarnings("unused")
-public class LimitedByteArrayDataOutput {
+public final class LimitedByteArrayDataOutput {
     private static final int doubleSize = Double.BYTES;
     private static final int floatSize = Float.BYTES;
     private static final int intSize = Integer.BYTES;
@@ -19,13 +19,16 @@ public class LimitedByteArrayDataOutput {
     private final int maxSize;
     private int currentSize;
 
-    LimitedByteArrayDataOutput(int maxSize) {
+    private LimitedByteArrayDataOutput(int maxSize) {
         this.output = ByteStreams.newDataOutput();
         this.maxSize = maxSize;
         this.currentSize = 0;
     }
 
     public static LimitedByteArrayDataOutput newDataOutput(int maxSize) {
+        if (maxSize < 0) {
+            throw new IllegalArgumentException("Max size must be greater than 0");
+        }
         return new LimitedByteArrayDataOutput(maxSize);
     }
 

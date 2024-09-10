@@ -38,7 +38,7 @@ public final class CachingPermTool implements Listener {
 
     public static boolean hasPermission(String permission, HumanEntity human) {
         Cache<String, Boolean> permCache = permissionCacheMap.computeIfAbsent(human.getUniqueId(),
-                k -> CacheBuilder.newBuilder().expireAfterWrite(5, TimeUnit.SECONDS).build());
+                k -> CacheBuilder.newBuilder().expireAfterWrite(8, TimeUnit.SECONDS).build());
         Boolean hasPermission = permCache.getIfPresent(permission);
         if (hasPermission == null) {
             hasPermission = human.hasPermission(permission);
