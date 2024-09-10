@@ -128,6 +128,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         cleanStatisticCache();
         scheduler = UniversalScheduler.getScheduler(this);
         permCache = CachingPermTool.enable(this);
+        BookCache.initialize();
         doInitTasks();
         if (settingsManager.getProperty(PluginSettings.PURGE_LOG_FILE)) purgeLog();
         if (!isEventMode) {
