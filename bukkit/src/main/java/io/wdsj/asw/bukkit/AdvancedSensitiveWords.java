@@ -36,6 +36,7 @@ import io.wdsj.asw.bukkit.setting.PluginMessages;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
 import io.wdsj.asw.bukkit.task.punish.ViolationResetTask;
 import io.wdsj.asw.bukkit.update.Updater;
+import io.wdsj.asw.bukkit.util.LoggingUtils;
 import io.wdsj.asw.bukkit.util.SchedulingUtils;
 import io.wdsj.asw.bukkit.util.TimingUtils;
 import io.wdsj.asw.bukkit.util.cache.BookCache;
@@ -129,6 +130,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         scheduler = UniversalScheduler.getScheduler(this);
         permCache = CachingPermTool.enable(this);
         BookCache.initialize();
+        LoggingUtils.start();
         doInitTasks();
         if (settingsManager.getProperty(PluginSettings.PURGE_LOG_FILE)) purgeLog();
         if (!isEventMode) {
@@ -272,6 +274,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         SchedulingUtils.cancelTaskSafely(violationResetTask);
         if (permCache != null) permCache.disable();
         if (isInitialized) sensitiveWordBs.destroy();
+        LoggingUtils.stop();
         Objects.requireNonNull(getCommand("advancedsensitivewords")).setExecutor(null);
         Objects.requireNonNull(getCommand("asw")).setExecutor(null);
         Objects.requireNonNull(getCommand("advancedsensitivewords")).setTabCompleter(null);
