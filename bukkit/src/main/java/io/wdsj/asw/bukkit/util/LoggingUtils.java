@@ -37,10 +37,12 @@ public class LoggingUtils {
     }
 
     public static void start() {
-        loggingThreadPool = Executors.newFixedThreadPool(1, new ThreadFactoryBuilder().setNameFormat("ASW-LoggingThread-%d").setDaemon(true).build());
+        loggingThreadPool = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("ASW-LoggingThread-%d").setDaemon(true).build());
     }
     public static void stop() {
-        loggingThreadPool.shutdown();
-        loggingThreadPool = null;
+        if (loggingThreadPool != null) {
+            loggingThreadPool.shutdown();
+            loggingThreadPool = null;
+        }
     }
 }
