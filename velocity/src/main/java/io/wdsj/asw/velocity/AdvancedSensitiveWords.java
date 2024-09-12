@@ -13,9 +13,9 @@ import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import com.velocitypowered.api.proxy.server.ServerInfo;
-import io.wdsj.asw.common.constant.ChannelDataConstant;
+import io.wdsj.asw.common.constant.networking.ChannelDataConstant;
 import io.wdsj.asw.common.datatype.io.LimitedByteArrayDataOutput;
-import io.wdsj.asw.velocity.template.PomData;
+import io.wdsj.asw.common.template.PluginVersionTemplate;
 import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 
@@ -24,7 +24,7 @@ import java.util.Locale;
 @Plugin(
         id = "advancedsensitivewords",
         name = "AdvancedSensitiveWords",
-        version = PomData.VERSION,
+        version = PluginVersionTemplate.VERSION,
         authors = {"HaHaWTH"}
 )
 public class AdvancedSensitiveWords {
@@ -51,7 +51,7 @@ public class AdvancedSensitiveWords {
             ServerInfo serverInfo = ((ServerConnection) event.getSource()).getServerInfo();
             byte[] message = event.getData();
             ByteArrayDataInput input = ByteStreams.newDataInput(message);
-            if (!input.readUTF().equals(PomData.VERSION)) {
+            if (!input.readUTF().equals(PluginVersionTemplate.VERSION)) {
                 logger.warn("Plugin version mismatch! Things may not work properly.");
             }
             switch (input.readUTF().toLowerCase(Locale.ROOT)) {

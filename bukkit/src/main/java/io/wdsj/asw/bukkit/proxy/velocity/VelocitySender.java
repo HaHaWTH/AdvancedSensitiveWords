@@ -5,7 +5,7 @@ import com.google.common.io.ByteStreams;
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 import io.wdsj.asw.bukkit.manage.punish.ViolationCounter;
 import io.wdsj.asw.bukkit.type.ModuleType;
-import io.wdsj.asw.common.constant.ChannelDataConstant;
+import io.wdsj.asw.common.constant.networking.ChannelDataConstant;
 import io.wdsj.asw.common.datatype.io.LimitedByteArrayDataOutput;
 import org.bukkit.entity.Player;
 

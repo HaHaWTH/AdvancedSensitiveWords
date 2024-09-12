@@ -42,6 +42,7 @@ import io.wdsj.asw.bukkit.util.TimingUtils;
 import io.wdsj.asw.bukkit.util.cache.BookCache;
 import io.wdsj.asw.bukkit.util.context.ChatContext;
 import io.wdsj.asw.bukkit.util.context.SignContext;
+import io.wdsj.asw.common.template.PluginVersionTemplate;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
@@ -65,7 +66,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     public static boolean isCslAvailable;
     public static SettingsManager settingsManager;
     public static SettingsManager messagesManager;
-    public static final String PLUGIN_VERSION = "1.0";
+    public static final String PLUGIN_VERSION = PluginVersionTemplate.VERSION;
     private static AdvancedSensitiveWords instance;
     private static boolean USE_PE = false;
     private static TaskScheduler scheduler;

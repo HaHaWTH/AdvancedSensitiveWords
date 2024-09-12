@@ -1,4 +1,4 @@
-package io.wdsj.asw.common.constant;
+package io.wdsj.asw.common.constant.networking;
 
 public class ChannelDataConstant {
     public static final String NOTICE = "notice";
