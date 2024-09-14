@@ -114,19 +114,16 @@ class ChatListener : Listener {
                         for (result in results) {
                             if (result.isFlagged) {
                                 val categories = result.categories()
-                                var isViolated = false
-                                if (categories.hateThreatening() && settingsManager.getProperty(PluginSettings.OPENAI_ENABLE_HATE_THREATENING_CHECK)) {
-                                    isViolated = true
-                                } else if (categories.hate() && settingsManager.getProperty(PluginSettings.OPENAI_ENABLE_HATE_CHECK)) {
-                                    isViolated = true
-                                } else if (categories.selfHarm() && settingsManager.getProperty(PluginSettings.OPENAI_ENABLE_SELF_HARM_CHECK)) {
-                                    isViolated = true
-                                } else if (categories.sexual() && settingsManager.getProperty(PluginSettings.OPENAI_ENABLE_SEXUAL_CONTENT_CHECK)) {
-                                    isViolated = true
-                                } else if (categories.sexualMinors() && settingsManager.getProperty(PluginSettings.OPENAI_ENABLE_SEXUAL_MINORS_CHECK)) {
-                                    isViolated = true
-                                } else if (categories.violence() && settingsManager.getProperty(PluginSettings.OPENAI_ENABLE_VIOLENCE_CHECK)) {
-                                    isViolated = true
+                                val categoryChecks = listOf(
+                                    categories.hateThreatening() to settingsManager.getProperty(PluginSettings.OPENAI_ENABLE_HATE_THREATENING_CHECK),
+                                    categories.hate() to settingsManager.getProperty(PluginSettings.OPENAI_ENABLE_HATE_CHECK),
+                                    categories.selfHarm() to settingsManager.getProperty(PluginSettings.OPENAI_ENABLE_SELF_HARM_CHECK),
+                                    categories.sexual() to settingsManager.getProperty(PluginSettings.OPENAI_ENABLE_SEXUAL_CONTENT_CHECK),
+                                    categories.sexualMinors() to settingsManager.getProperty(PluginSettings.OPENAI_ENABLE_SEXUAL_MINORS_CHECK),
+                                    categories.violence() to settingsManager.getProperty(PluginSettings.OPENAI_ENABLE_VIOLENCE_CHECK)
+                                )
+                                val isViolated = categoryChecks.any { (categoryResult, setting) ->
+                                    categoryResult && setting
                                 }
                                 if (isViolated) {
                                     val unsupportedList = Collections.singletonList("Unsupported")
