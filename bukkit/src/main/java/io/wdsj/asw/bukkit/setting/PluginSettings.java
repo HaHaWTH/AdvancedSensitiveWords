@@ -123,6 +123,10 @@ public class PluginSettings implements SettingsHolder {
             "Sensitive word threshold(1~100)"})
     public static final Property<Integer> OLLAMA_AI_SENSITIVE_THRESHOLD = newProperty("Plugin.ai.ollama.threshold", 76);
 
+    @Comment({"是否启用惩罚(需该项和下方检测惩罚同时开启)",
+            "Whether to enable punish for ollama checks"})
+    public static final Property<Boolean> OLLAMA_AI_PUNISH = newProperty("Plugin.ai.ollama.punish", false);
+
     @Comment({"*是否启用Ollama AI模型检测(需自行部署或使用公共API)",
             "*Whether to enable ollama AI model checks"})
     public static final Property<Boolean> ENABLE_OLLAMA_AI_MODEL_CHECK = newProperty("Plugin.ai.ollama.enableAiModelCheck", false);
@@ -160,6 +164,9 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"是否检测暴力类消息",
             "Whether to detect violence"})
     public static final Property<Boolean> OPENAI_ENABLE_VIOLENCE_CHECK = newProperty("Plugin.ai.openai.detection.enableViolenceCheck", true);
+    @Comment({"是否启用惩罚(需该项和下方检测惩罚同时开启)",
+            "Whether to enable punish for openai checks"})
+    public static final Property<Boolean> OPENAI_AI_PUNISH = newProperty("Plugin.ai.openai.punish", false);
     @Comment({"*是否启用OpenAI模型检测(需APIKEY)",
             "*Whether to enable OpenAI model checks"})
     public static final Property<Boolean> ENABLE_OPENAI_AI_MODEL_CHECK = newProperty("Plugin.ai.openai.enableAiModelCheck", false);

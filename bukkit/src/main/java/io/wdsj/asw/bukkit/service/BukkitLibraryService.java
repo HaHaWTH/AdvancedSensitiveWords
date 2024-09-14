@@ -22,6 +22,13 @@ public class BukkitLibraryService {
             .version("0.20.0")
             .build();
 
+    private static final Library caffeine = Library.builder()
+            .groupId("com{}github{}ben-manes{}caffeine")
+            .artifactId("caffeine")
+            .resolveTransitiveDependencies(true)
+            .version("2.9.3")
+            .build();
+
     public BukkitLibraryService(AdvancedSensitiveWords plugin) {
         libraryManager = new BukkitLibraryManager(plugin);
         libraryManager.addJitPack();
@@ -36,6 +43,6 @@ public class BukkitLibraryService {
     }
 
     public void load() {
-        libraryManager.loadLibraries(ollama4j, openai4j);
+        libraryManager.loadLibraries(ollama4j, openai4j, caffeine);
     }
 }

@@ -96,12 +96,12 @@ class ChatListener : Listener {
                                 if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) {
                                     Notifier.notice(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
                                 }
-                                if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) {
+                                if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH) && settingsManager.getProperty(PluginSettings.OLLAMA_AI_PUNISH)) {
                                     AdvancedSensitiveWords.getScheduler().runTask { Punishment.punish(player) }
                                 }
                             }
                         } catch (e: NumberFormatException) {
-                            LOGGER.severe("Failed to parse Ollama output to a number: $it")
+                            LOGGER.warning("Failed to parse Ollama output to a number: $it")
                         }
                     }
             }
@@ -147,7 +147,7 @@ class ChatListener : Listener {
                                     if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) {
                                         Notifier.notice(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
                                     }
-                                    if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) {
+                                    if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH) && settingsManager.getProperty(PluginSettings.OPENAI_AI_PUNISH)) {
                                         AdvancedSensitiveWords.getScheduler().runTask { Punishment.punish(player) }
                                     }
                                 }

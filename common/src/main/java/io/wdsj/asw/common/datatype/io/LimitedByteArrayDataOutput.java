@@ -6,7 +6,13 @@ import com.google.common.io.ByteStreams;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-@SuppressWarnings("unused")
+/**
+ * A utility class for writing data to a byte array with a size limit.
+ * It wraps a {@link ByteArrayDataOutput} to write various data types such as integers, floats, and UTF-8 strings,
+ * while ensuring that the total data does not exceed the specified maximum size.
+ *
+ * <p>Throws an {@link IOException} if data exceeds the allowed size during the writing process.
+ **/
 public final class LimitedByteArrayDataOutput {
     private static final int doubleSize = Double.BYTES;
     private static final int floatSize = Float.BYTES;
