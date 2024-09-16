@@ -72,9 +72,9 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     private static TaskScheduler scheduler;
     private static boolean isEventMode = false;
     public static Logger LOGGER;
-    private BukkitLibraryService libraryService;
-    private static final OllamaProcessor OLLAMA_PROCESSOR = new OllamaProcessor();
-    private static final OpenAIProcessor OPENAI_PROCESSOR = new OpenAIProcessor();
+    private static BukkitLibraryService libraryService;
+    private final OllamaProcessor OLLAMA_PROCESSOR = new OllamaProcessor();
+    private final OpenAIProcessor OPENAI_PROCESSOR = new OpenAIProcessor();
     private VoiceChatHookService voiceChatHookService;
     private CachingPermTool permCache;
     public static TaskScheduler getScheduler() {
@@ -83,12 +83,6 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
 
     public static AdvancedSensitiveWords getInstance() {
         return instance;
-    }
-    public static OllamaProcessor getOllamaProcessor() {
-        return OLLAMA_PROCESSOR;
-    }
-    public static OpenAIProcessor getOpenAIProcessor() {
-        return OPENAI_PROCESSOR;
     }
     public static boolean isEventMode() {
         return isEventMode;
@@ -125,7 +119,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     public void onEnable() {
         LOGGER.info("Loading libraries...");
         long startTime = System.currentTimeMillis();
-        libraryService.load();
+        libraryService.loadRequired();
         LOGGER.info("Initializing DFA system...");
         cleanStatisticCache();
         scheduler = UniversalScheduler.getScheduler(this);
@@ -185,6 +179,9 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         }
         if (settingsManager.getProperty(PluginSettings.ENABLE_PLAYER_ITEM_CHECK)) {
             getServer().getPluginManager().registerEvents(new PlayerItemListener(), this);
+            if (settingsManager.getProperty(PluginSettings.ITEM_MONITOR_SPAWN)) {
+                getServer().getPluginManager().registerEvents(new ItemSpawnListener(), this);
+            }
         }
         if (settingsManager.getProperty(PluginSettings.CHAT_BROADCAST_CHECK)) {
             if (isClassLoaded("org.bukkit.event.server.BroadcastMessageEvent")) {

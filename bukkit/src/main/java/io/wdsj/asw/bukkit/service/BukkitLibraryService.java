@@ -42,7 +42,7 @@ public class BukkitLibraryService {
         }
     }
 
-    public void load() {
+    public void loadRequired() {
         libraryManager.loadLibraries(ollama4j, openai4j, caffeine);
     }
 }

@@ -5,6 +5,8 @@ import fr.xephi.authme.api.v3.AuthMeApi
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
+import io.wdsj.asw.bukkit.ai.OllamaProcessor
+import io.wdsj.asw.bukkit.ai.OpenAIProcessor
 import io.wdsj.asw.bukkit.manage.notice.Notifier
 import io.wdsj.asw.bukkit.manage.permission.PermissionsConstant
 import io.wdsj.asw.bukkit.manage.permission.cache.CachingPermTool
@@ -71,9 +73,8 @@ class ChatListener : Listener {
             return
         } else {
             if (settingsManager.getProperty(PluginSettings.ENABLE_OLLAMA_AI_MODEL_CHECK)
-                    && AdvancedSensitiveWords.getOllamaProcessor().isOllamaInit) {
-                val processor = AdvancedSensitiveWords.getOllamaProcessor()
-                processor.process(originalMessage)
+                    && OllamaProcessor.isOllamaInit) {
+                OllamaProcessor.process(originalMessage)
                     .thenAccept {
                         try {
                             val rating = it?.toInt() ?: 0
@@ -106,9 +107,8 @@ class ChatListener : Listener {
                     }
             }
             if (settingsManager.getProperty(PluginSettings.ENABLE_OPENAI_AI_MODEL_CHECK)
-                && AdvancedSensitiveWords.getOpenAIProcessor().isOpenAiInit) {
-                val processor = AdvancedSensitiveWords.getOpenAIProcessor()
-                processor.process(originalMessage)
+                && OpenAIProcessor.isOpenAiInit) {
+                OpenAIProcessor.process(originalMessage)
                     .thenAccept {
                         val results = it.results() ?: return@thenAccept
                         for (result in results) {

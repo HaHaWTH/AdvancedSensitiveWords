@@ -11,6 +11,8 @@ import fr.xephi.authme.api.v3.AuthMeApi
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
+import io.wdsj.asw.bukkit.ai.OllamaProcessor
+import io.wdsj.asw.bukkit.ai.OpenAIProcessor
 import io.wdsj.asw.bukkit.listener.FakeMessageExecutor
 import io.wdsj.asw.bukkit.manage.notice.Notifier
 import io.wdsj.asw.bukkit.manage.permission.PermissionsConstant
@@ -91,9 +93,8 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                 return
             } else {
                 if (settingsManager.getProperty(PluginSettings.ENABLE_OLLAMA_AI_MODEL_CHECK)
-                    && AdvancedSensitiveWords.getOllamaProcessor().isOllamaInit && Utils.isNotCommand(originalMessage)) {
-                    val processor = AdvancedSensitiveWords.getOllamaProcessor()
-                    processor.process(originalMessage)
+                    && OllamaProcessor.isOllamaInit && Utils.isNotCommand(originalMessage)) {
+                    OllamaProcessor.process(originalMessage)
                         .thenAccept {
                             try {
                                 val rating = it?.toInt() ?: 0
@@ -142,9 +143,8 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                 }
 
                 if (settingsManager.getProperty(PluginSettings.ENABLE_OPENAI_AI_MODEL_CHECK)
-                    && AdvancedSensitiveWords.getOpenAIProcessor().isOpenAiInit && Utils.isNotCommand(originalMessage)) {
-                    val processor = AdvancedSensitiveWords.getOpenAIProcessor()
-                    processor.process(originalMessage)
+                    && OpenAIProcessor.isOpenAiInit && Utils.isNotCommand(originalMessage)) {
+                    OpenAIProcessor.process(originalMessage)
                         .thenAccept {
                             val results = it.results() ?: return@thenAccept
                             for (result in results) {

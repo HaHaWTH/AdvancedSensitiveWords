@@ -24,14 +24,14 @@ public class LoggingUtils {
                 try {
                     logFile.createNewFile();
                 } catch (IOException e) {
-                    LOGGER.severe("Failed to create violations.log file: " + e.getMessage());
+                    LOGGER.warning("Failed to create violations.log file: " + e.getMessage());
                     return;
                 }
             }
             try (Writer writer = new OutputStreamWriter(new FileOutputStream(logFile, true), StandardCharsets.UTF_8)) {
                 writer.write(logMessage + System.lineSeparator());
             } catch (IOException e) {
-                LOGGER.severe("Failed to write to violations.log file: " + e.getMessage());
+                LOGGER.warning("Failed to write to violations.log file: " + e.getMessage());
             }
         });
     }

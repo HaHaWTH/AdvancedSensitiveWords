@@ -13,8 +13,8 @@ import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER;
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
 
 public class OpenAIProcessor implements AIProcessor {
-    public boolean isOpenAiInit = false;
-    private OpenAiClient client;
+    public static boolean isOpenAiInit = false;
+    private static OpenAiClient client;
     public OpenAIProcessor() {
     }
 
@@ -44,8 +44,7 @@ public class OpenAIProcessor implements AIProcessor {
         isOpenAiInit = false;
     }
 
-    @Override
-    public CompletableFuture<ModerationResponse> process(String inputMessage) {
+    public static CompletableFuture<ModerationResponse> process(String inputMessage) {
         if (!isOpenAiInit) {
             throw new IllegalStateException("OpenAI Moderation Processor is not initialized");
         }

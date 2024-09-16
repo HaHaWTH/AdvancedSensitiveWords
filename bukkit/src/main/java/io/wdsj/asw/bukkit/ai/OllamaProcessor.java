@@ -12,10 +12,10 @@ import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER;
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
 
 public class OllamaProcessor implements AIProcessor {
-    public boolean isOllamaInit = false;
-    private PromptBuilder promptBuilder;
-    private OllamaAPI api;
-    private String modelName;
+    public static boolean isOllamaInit = false;
+    private static PromptBuilder promptBuilder;
+    private static OllamaAPI api;
+    private static String modelName;
     public OllamaProcessor() {
     }
 
@@ -51,8 +51,7 @@ public class OllamaProcessor implements AIProcessor {
         isOllamaInit = false;
     }
 
-    @Override
-    public CompletableFuture<String> process(String inputMessage) {
+    public static CompletableFuture<String> process(String inputMessage) {
         if (!isOllamaInit) {
             throw new IllegalStateException("OllamaProcessor is not initialized");
         }

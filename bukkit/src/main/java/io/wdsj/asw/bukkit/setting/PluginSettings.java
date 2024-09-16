@@ -394,6 +394,9 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"替换还是取消(replace/cancel)",
             "Replace or cancel (replace/cancel)"})
     public static final Property<String> ITEM_METHOD = newProperty("Item.method", "replace");
+    @Comment({"*是否监控物品生成, 给予额外保护",
+            "*Whether to monitor item spawn as an extra protection"})
+    public static final Property<Boolean> ITEM_MONITOR_SPAWN = newProperty("Item.monitorSpawn", false);
     @Comment({"存在敏感词时是否发送消息提醒",
             "Whether to send a message alert when sensitive words are found"})
     public static final Property<Boolean> ITEM_SEND_MESSAGE = newProperty("Item.sendMessage", true);
