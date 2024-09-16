@@ -19,7 +19,7 @@ public class BukkitLibraryService {
             .groupId("dev{}ai4j")
             .artifactId("openai4j")
             .resolveTransitiveDependencies(true)
-            .version("0.20.0")
+            .version("0.21.0")
             .build();
 
     private static final Library caffeine = Library.builder()
