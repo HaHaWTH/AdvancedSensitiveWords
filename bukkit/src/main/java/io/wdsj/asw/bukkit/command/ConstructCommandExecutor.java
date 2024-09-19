@@ -138,6 +138,34 @@ public class ConstructCommandExecutor implements CommandExecutor {
                 }
                 return true;
             }
+            if (args[0].equalsIgnoreCase("addallow") && (sender.hasPermission(PermissionsConstant.ADD) || sender instanceof ConsoleCommandSender)) {
+                if (args.length > 1) {
+                    List<String> words = new ArrayList<>(Arrays.asList(args).subList(1, args.length));
+                    sensitiveWordBs.addWordAllow(words);
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_ADD_SUCCESS)));
+                } else {
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.NOT_ENOUGH_ARGS)));
+                }
+                return true;
+            }
+            if (args[0].equalsIgnoreCase("addallow")) {
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.NO_PERMISSION)));
+                return true;
+            }
+            if (args[0].equalsIgnoreCase("removeallow") && (sender.hasPermission(PermissionsConstant.REMOVE) || sender instanceof ConsoleCommandSender)) {
+                if (args.length > 1) {
+                    List<String> words = new ArrayList<>(Arrays.asList(args).subList(1, args.length));
+                    sensitiveWordBs.removeWordAllow(words);
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_REMOVE_SUCCESS)));
+                } else {
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.NOT_ENOUGH_ARGS)));
+                }
+                return true;
+            }
+            if (args[0].equalsIgnoreCase("removeallow")) {
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.NO_PERMISSION)));
+                return true;
+            }
             if (args[0].equalsIgnoreCase("remove")) {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.NO_PERMISSION)));
                 return true;

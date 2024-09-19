@@ -25,8 +25,10 @@ public class ConstructTabCompleter implements TabCompleter {
                 tabComplete.add("reloadconfig");
             } else if (sender.hasPermission(PermissionsConstant.ADD) && args[0].startsWith("a")) {
                 tabComplete.add("add");
+                tabComplete.add("addallow");
             } else if (sender.hasPermission(PermissionsConstant.REMOVE) && args[0].startsWith("rem")) {
                 tabComplete.add("remove");
+                tabComplete.add("removeallow");
             } else if (sender.hasPermission(PermissionsConstant.RESET) && args[0].startsWith("res")) {
                 tabComplete.add("reset");
             } else if (sender.hasPermission(PermissionsConstant.STATUS) && args[0].startsWith("s")) {
@@ -54,6 +56,8 @@ public class ConstructTabCompleter implements TabCompleter {
                 tabComplete.add("punish");
                 tabComplete.add("info");
                 tabComplete.add("reset");
+                tabComplete.add("addallow");
+                tabComplete.add("removeallow");
             }
             return tabComplete;
         }

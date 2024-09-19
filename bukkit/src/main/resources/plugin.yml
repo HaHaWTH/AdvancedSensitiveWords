@@ -19,7 +19,7 @@ folia-supported: true
 commands:
   advancedsensitivewords:
     description: Advanced Sensitive Words main command.
-    usage: /asw <reload|status|test|help|info|reset|punish|add|remove>
+    usage: /asw <reload|status|test|help|info|reset|punish|add|remove|addallow|removeallow>
     aliases: [asw]
 permissions:
   advancedsensitivewords.*:

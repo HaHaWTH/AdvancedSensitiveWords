@@ -221,11 +221,13 @@ public class PluginSettings implements SettingsHolder {
             "Whether to ignore styled English characters (e.g., Ⓕⓤc⒦)"})
     public static final Property<Boolean> IGNORE_ENGLISH_STYLE = newProperty("Plugin.ignoreEnglishStyle", true);
 
-    @Comment({"是否强制英文全词匹配",
+    @Comment({"是否启用全词匹配",
             "(例:屏蔽了av但又不想让have被屏蔽)",
-            "Whether to force full-word matches for English",
-            "(e.g., to block 'av' without blocking 'have')"})
-    public static final Property<Boolean> FORCE_ENGLISH_FULL_MATCH = newProperty("Plugin.forceEnglishFullMatch", false);
+            "(匹配模式: 0-关闭全词匹配, 1-英文全词匹配, 2-英文&数字全词匹配",
+            "Whether to force full-word matches",
+            "(e.g., to block 'av' without blocking 'have')",
+            "(Modes: 0-Off, 1-English full match, 2-English&Number full match"})
+    public static final Property<Integer> FULL_MATCH_MODE = newProperty("Plugin.fullMatchMode", 0);
 
     @Comment({"检测重复字符(例：SSSSSBBBBB)",
             "Whether to ignore repeated characters (e.g., SSSSSBBBBB)"})

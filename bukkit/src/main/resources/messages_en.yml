@@ -36,6 +36,8 @@ Plugin:
     &7/asw reloadconfig: &areload plugin config
     &7/asw add <word>: &aAdd word to filter dictionary
     &7/asw remove <word>: &aremove word from filter dictionary
+    &7/asw addallow <word>: &aAdd word to allow list
+    &7/asw removeallow <word>: &aremove word from allow list
     &7/asw status: &ashow plug-in status menu
     &7/asw test <text to be tested>: &arun sensitive word test
     &7/asw help: &ashow help information

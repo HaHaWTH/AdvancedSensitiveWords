@@ -36,6 +36,8 @@ Plugin:
        &7/asw reloadconfig: &a重新加载插件配置
        &7/asw add <敏感词>: &a添加敏感词
        &7/asw remove <敏感词>: &a移除敏感词
+       &7/asw addallow <敏感词>: &a添加敏感词到白名单
+       &7/asw removeallow <敏感词>: &a移除敏感词白名单
        &7/asw status: &a显示插件状态菜单
        &7/asw test <待测消息>: &a运行敏感词测试
        &7/asw help: &a显示帮助信息
