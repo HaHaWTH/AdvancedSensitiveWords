@@ -46,6 +46,7 @@ import io.wdsj.asw.bukkit.util.context.SignContext;
 import io.wdsj.asw.common.template.PluginVersionTemplate;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
+import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -160,6 +161,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         Metrics metrics = new Metrics(this, pluginId);
         metrics.addCustomChart(new SimplePie("default_list", () -> String.valueOf(settingsManager.getProperty(PluginSettings.ENABLE_DEFAULT_WORDS))));
         metrics.addCustomChart(new SimplePie("java_vendor", TimingUtils::getJvmVendor));
+        metrics.addCustomChart(new SingleLineChart("total_filtered_messages", () -> (int) messagesFilteredNum.get()));
         getServer().getPluginManager().registerEvents(new ShadowListener(), this);
         getServer().getPluginManager().registerEvents(new AltsListener(), this);
         getServer().getPluginManager().registerEvents(new FakeMessageExecutor(), this);
