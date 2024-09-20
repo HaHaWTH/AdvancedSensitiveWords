@@ -223,10 +223,10 @@ public class PluginSettings implements SettingsHolder {
 
     @Comment({"是否启用全词匹配",
             "(例:屏蔽了av但又不想让have被屏蔽)",
-            "(匹配模式: 0-关闭全词匹配, 1-英文全词匹配, 2-英文&数字全词匹配)",
+            "(匹配模式: 0-关闭全词匹配, 1-英文全词匹配, 2-英文&数字全词匹配, 3-数字全词匹配)",
             "Whether to force full-word matches",
             "(e.g., to block 'av' without blocking 'have')",
-            "(Modes: 0-Off, 1-English full match, 2-English&Number full match)"})
+            "(Modes: 0-Off, 1-English full match, 2-English&Number full match, 3-Number full match)"})
     public static final Property<Integer> FULL_MATCH_MODE = newProperty("Plugin.fullMatchMode", 0);
 
     @Comment({"检测重复字符(例：SSSSSBBBBB)",

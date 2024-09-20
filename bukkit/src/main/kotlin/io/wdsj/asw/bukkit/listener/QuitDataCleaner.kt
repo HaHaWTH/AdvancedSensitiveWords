@@ -1,6 +1,7 @@
 package io.wdsj.asw.bukkit.listener
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
+import io.wdsj.asw.bukkit.manage.punish.PlayerShadowController
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.util.context.ChatContext
 import io.wdsj.asw.bukkit.util.context.SignContext
@@ -29,5 +30,6 @@ class QuitDataCleaner : Listener {
     private fun doCleanTask(player: Player) {
         ChatContext.clearPlayerContext(player)
         SignContext.clearPlayerContext(player)
+        PlayerShadowController.unshadowPlayer(player)
     }
 }

@@ -18,6 +18,7 @@ import io.wdsj.asw.bukkit.ai.OllamaProcessor;
 import io.wdsj.asw.bukkit.ai.OpenAIProcessor;
 import io.wdsj.asw.bukkit.command.ConstructCommandExecutor;
 import io.wdsj.asw.bukkit.command.ConstructTabCompleter;
+import io.wdsj.asw.bukkit.core.condition.WordResultConditionNumMatch;
 import io.wdsj.asw.bukkit.integration.placeholder.ASWExpansion;
 import io.wdsj.asw.bukkit.listener.*;
 import io.wdsj.asw.bukkit.listener.packet.ASWBookPacketListener;
@@ -245,6 +246,9 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
                 break;
             case 2:
                 condition = WordResultConditions.englishWordNumMatch();
+                break;
+            case 3:
+                condition = new WordResultConditionNumMatch();
                 break;
             default:
                 condition = WordResultConditions.alwaysTrue();
