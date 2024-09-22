@@ -37,7 +37,7 @@ public class LoggingUtils {
     }
 
     public static void start() {
-        loggingThreadPool = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("ASW-LoggingThread-%d").setDaemon(true).build());
+        loggingThreadPool = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("ASW Logging Thread-%d").setDaemon(true).build());
     }
     public static void stop() {
         if (loggingThreadPool != null) {

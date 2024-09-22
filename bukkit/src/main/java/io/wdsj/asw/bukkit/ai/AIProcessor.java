@@ -10,7 +10,7 @@ import java.util.concurrent.Executors;
  * Interface for AI processors (Maybe more in the future?)
  */
 public interface AIProcessor {
-    ExecutorService THREAD_POOL = VTUtils.newVirtualThreadPerTaskExecutorOrProvided(Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("ASW-AIProcessor-%d").setDaemon(true).build()));
+    ExecutorService THREAD_POOL = VTUtils.newVirtualThreadPerTaskExecutorOrProvided(Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("ASW AIProcessor Thread-%d").setDaemon(true).build()));
     default void shutdown() {
         THREAD_POOL.shutdownNow();
     }

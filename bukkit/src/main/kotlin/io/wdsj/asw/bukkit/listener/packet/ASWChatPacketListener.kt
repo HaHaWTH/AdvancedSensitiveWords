@@ -57,7 +57,7 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                 if (isCancelMode) {
                     if (settingsManager.getProperty(PluginSettings.CHAT_FAKE_MESSAGE_ON_CANCEL) && Utils.isNotCommand(originalMessage)) {
                         FakeMessageExecutor.selfIncrement(player)
-                    } else if (!settingsManager.getProperty(PluginSettings.CHAT_FAKE_MESSAGE_ON_CANCEL)) {
+                    } else {
                         event.isCancelled = true
                     }
                 } else {

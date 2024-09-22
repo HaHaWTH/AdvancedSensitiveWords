@@ -1,5 +1,6 @@
 name: AdvancedSensitiveWords
 version: ${project.version}
+# noinspection YAMLSchemaValidation
 main: ${plugin.mainClass}
 api-version: '1.13'
 website: ${plugin.website}

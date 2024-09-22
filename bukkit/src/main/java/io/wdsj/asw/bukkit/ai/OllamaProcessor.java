@@ -19,8 +19,8 @@ public class OllamaProcessor implements AIProcessor {
     public OllamaProcessor() {
     }
 
-    public void initService(String modelAddress, String modelName, int timeOut, boolean debug) {
-        this.modelName = modelName;
+    public void initService(String modelAddress, String name, int timeOut, boolean debug) {
+        modelName = name;
         api = new OllamaAPI(modelAddress);
         api.setRequestTimeoutSeconds(timeOut);
         try {
@@ -63,7 +63,7 @@ public class OllamaProcessor implements AIProcessor {
                         new OptionsBuilder().build());
                 return response.getResponse();
             } catch (Exception e) {
-                LOGGER.severe("Error occurred while communicating with Ollama server: " + e.getMessage());
+                LOGGER.warning("Error occurred while communicating with Ollama server: " + e.getMessage());
                 return null;
             }
         }, THREAD_POOL);
