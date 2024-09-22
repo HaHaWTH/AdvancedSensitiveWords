@@ -4,7 +4,7 @@ import com.github.houbb.heaven.util.lang.StringUtil
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
 import io.wdsj.asw.bukkit.manage.notice.Notifier
-import io.wdsj.asw.bukkit.manage.permission.PermissionsConstant
+import io.wdsj.asw.bukkit.manage.permission.PermissionsEnum
 import io.wdsj.asw.bukkit.manage.permission.cache.CachingPermTool
 import io.wdsj.asw.bukkit.manage.punish.Punishment
 import io.wdsj.asw.bukkit.manage.punish.ViolationCounter
@@ -33,7 +33,7 @@ class SignListener : Listener {
         if (!AdvancedSensitiveWords.isInitialized) return
         if (!settingsManager.getProperty(PluginSettings.ENABLE_SIGN_EDIT_CHECK)) return
         val player = event.player
-        if (CachingPermTool.hasPermission(PermissionsConstant.BYPASS, player) || event.lines.isEmpty()) return
+        if (CachingPermTool.hasPermission(PermissionsEnum.BYPASS, player) || event.lines.isEmpty()) return
         var shouldSendMessage = false
         val startTime = System.currentTimeMillis()
         val indexList: MutableList<Int> = ArrayList()

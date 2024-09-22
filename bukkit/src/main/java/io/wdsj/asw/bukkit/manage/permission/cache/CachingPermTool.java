@@ -2,6 +2,7 @@ package io.wdsj.asw.bukkit.manage.permission.cache;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import io.wdsj.asw.bukkit.manage.permission.PermissionsEnum;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -19,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 // Taken from: xGinko/AnarchyExploitFixes
 public final class CachingPermTool implements Listener {
 
-    private static final Map<UUID, Cache<String, Boolean>> permissionCacheMap = new ConcurrentHashMap<>();
+    private static final Map<UUID, Cache<PermissionsEnum, Boolean>> permissionCacheMap = new ConcurrentHashMap<>();
 
     CachingPermTool(JavaPlugin plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -31,17 +32,17 @@ public final class CachingPermTool implements Listener {
 
     public void disable() {
         HandlerList.unregisterAll(this);
-        for (Map.Entry<UUID, Cache<String, Boolean>> entry : permissionCacheMap.entrySet())
+        for (Map.Entry<UUID, Cache<PermissionsEnum, Boolean>> entry : permissionCacheMap.entrySet())
             entry.getValue().cleanUp();
         permissionCacheMap.clear();
     }
 
-    public static boolean hasPermission(String permission, HumanEntity human) {
-        Cache<String, Boolean> permCache = permissionCacheMap.computeIfAbsent(human.getUniqueId(),
+    public static boolean hasPermission(PermissionsEnum permission, HumanEntity human) {
+        Cache<PermissionsEnum, Boolean> permCache = permissionCacheMap.computeIfAbsent(human.getUniqueId(),
                 k -> Caffeine.newBuilder().expireAfterWrite(8, TimeUnit.SECONDS).build());
         Boolean hasPermission = permCache.getIfPresent(permission);
         if (hasPermission == null) {
-            hasPermission = human.hasPermission(permission);
+            hasPermission = human.hasPermission(permission.getPermission());
             permCache.put(permission, hasPermission);
         }
         return hasPermission;

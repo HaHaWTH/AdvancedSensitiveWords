@@ -3,7 +3,7 @@ package io.wdsj.asw.bukkit.listener
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
 import io.wdsj.asw.bukkit.manage.notice.Notifier
-import io.wdsj.asw.bukkit.manage.permission.PermissionsConstant
+import io.wdsj.asw.bukkit.manage.permission.PermissionsEnum
 import io.wdsj.asw.bukkit.manage.permission.cache.CachingPermTool
 import io.wdsj.asw.bukkit.manage.punish.Punishment
 import io.wdsj.asw.bukkit.manage.punish.ViolationCounter
@@ -29,7 +29,7 @@ class PlayerLoginListener : Listener {
     fun onLogin(event: PlayerLoginEvent) {
         if (!AdvancedSensitiveWords.isInitialized || !settingsManager.getProperty(PluginSettings.ENABLE_PLAYER_NAME_CHECK)) return
         val player = event.player
-        if (CachingPermTool.hasPermission(PermissionsConstant.BYPASS, player)) return
+        if (CachingPermTool.hasPermission(PermissionsEnum.BYPASS, player)) return
         if (PlayerUtils.isNpc(player) && settingsManager.getProperty(PluginSettings.NAME_IGNORE_NPC)) return
         if (Bukkit.getPluginManager()
                 .getPlugin("floodgate") != null && settingsManager.getProperty(

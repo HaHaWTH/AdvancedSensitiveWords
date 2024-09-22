@@ -3,7 +3,7 @@ package io.wdsj.asw.bukkit.listener
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
 import io.wdsj.asw.bukkit.manage.notice.Notifier
-import io.wdsj.asw.bukkit.manage.permission.PermissionsConstant
+import io.wdsj.asw.bukkit.manage.permission.PermissionsEnum
 import io.wdsj.asw.bukkit.manage.permission.cache.CachingPermTool
 import io.wdsj.asw.bukkit.manage.punish.Punishment
 import io.wdsj.asw.bukkit.manage.punish.ViolationCounter
@@ -27,7 +27,7 @@ class PlayerItemListener : Listener {
     fun onPlayerHeldItem(event: PlayerItemHeldEvent) {
         if (!AdvancedSensitiveWords.isInitialized || !settingsManager.getProperty(PluginSettings.ENABLE_PLAYER_ITEM_CHECK)) return
         val player = event.player
-        if (CachingPermTool.hasPermission(PermissionsConstant.BYPASS, player)) return
+        if (CachingPermTool.hasPermission(PermissionsEnum.BYPASS, player)) return
         val item = player.inventory.getItem(event.newSlot)
         if (item != null && item.hasItemMeta()) {
             val meta = item.itemMeta
@@ -91,7 +91,7 @@ class PlayerItemListener : Listener {
     fun onDrop(event: PlayerDropItemEvent) {
         if (!AdvancedSensitiveWords.isInitialized || !settingsManager.getProperty(PluginSettings.ENABLE_PLAYER_ITEM_CHECK)) return
         val player = event.player
-        if (CachingPermTool.hasPermission(PermissionsConstant.BYPASS, player)) return
+        if (CachingPermTool.hasPermission(PermissionsEnum.BYPASS, player)) return
         val item = event.itemDrop.itemStack
         if (item.hasItemMeta()) {
             val meta = item.itemMeta

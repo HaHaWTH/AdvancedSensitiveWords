@@ -3,7 +3,7 @@ package io.wdsj.asw.bukkit.listener
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
 import io.wdsj.asw.bukkit.manage.notice.Notifier
-import io.wdsj.asw.bukkit.manage.permission.PermissionsConstant
+import io.wdsj.asw.bukkit.manage.permission.PermissionsEnum
 import io.wdsj.asw.bukkit.manage.permission.cache.CachingPermTool
 import io.wdsj.asw.bukkit.manage.punish.Punishment
 import io.wdsj.asw.bukkit.manage.punish.ViolationCounter
@@ -28,7 +28,7 @@ class BookListener : Listener {
         if (!AdvancedSensitiveWords.isInitialized) return
         if (!settingsManager.getProperty(PluginSettings.ENABLE_BOOK_EDIT_CHECK)) return
         val player = event.player
-        if (CachingPermTool.hasPermission(PermissionsConstant.BYPASS, player)) return
+        if (CachingPermTool.hasPermission(PermissionsEnum.BYPASS, player)) return
         val isCacheEnabled = settingsManager.getProperty(PluginSettings.BOOK_CACHE)
         val skipReturnLine = settingsManager.getProperty(PluginSettings.BOOK_IGNORE_NEWLINE)
         val isCancelMode = settingsManager.getProperty(PluginSettings.BOOK_METHOD).equals("cancel", ignoreCase = true)

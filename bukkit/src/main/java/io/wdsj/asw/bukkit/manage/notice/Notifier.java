@@ -1,6 +1,6 @@
 package io.wdsj.asw.bukkit.manage.notice;
 
-import io.wdsj.asw.bukkit.manage.permission.PermissionsConstant;
+import io.wdsj.asw.bukkit.manage.permission.PermissionsEnum;
 import io.wdsj.asw.bukkit.manage.permission.cache.CachingPermTool;
 import io.wdsj.asw.bukkit.manage.punish.ViolationCounter;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
@@ -28,7 +28,7 @@ public class Notifier {
             Collection<? extends Player> players = Bukkit.getOnlinePlayers();
             String message = ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.ADMIN_REMINDER).replace("%player%", violatedPlayer.getName()).replace("%type%", moduleType.toString()).replace("%message%", originalMessage).replace("%censored_list%", censoredList.toString()).replace("%violation%", String.valueOf(ViolationCounter.getViolationCount(violatedPlayer))));
             for (Player player : players) {
-                if (CachingPermTool.hasPermission(PermissionsConstant.NOTICE, player)) {
+                if (CachingPermTool.hasPermission(PermissionsEnum.NOTICE, player)) {
                     player.sendMessage(message);
                 }
             }
@@ -39,7 +39,7 @@ public class Notifier {
         getScheduler().runTask(() -> {
             Collection<? extends Player> players = Bukkit.getOnlinePlayers();
             for (Player player : players) {
-                if (CachingPermTool.hasPermission(PermissionsConstant.NOTICE, player)) {
+                if (CachingPermTool.hasPermission(PermissionsEnum.NOTICE, player)) {
                     player.sendMessage(message);
                 }
             }
@@ -57,7 +57,7 @@ public class Notifier {
         Collection<? extends Player> players = Bukkit.getOnlinePlayers();
         String message = ChatColor.translateAlternateColorCodes('&', messagesManager.getProperty(PluginMessages.ADMIN_REMINDER_PROXY).replace("%player%", violatedPlayer).replace("%type%", eventType).replace("%message%", originalMessage).replace("%censored_list%", censoredList).replace("%server_name%", serverName).replace("%violation%", violationCount));
         for (Player player : players) {
-            if (CachingPermTool.hasPermission(PermissionsConstant.NOTICE, player)) {
+            if (CachingPermTool.hasPermission(PermissionsEnum.NOTICE, player)) {
                 player.sendMessage(message);
             }
         }

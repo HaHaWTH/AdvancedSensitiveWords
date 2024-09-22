@@ -2,10 +2,8 @@ package io.wdsj.asw.bukkit.service;
 
 import com.alessiodp.libby.BukkitLibraryManager;
 import com.alessiodp.libby.Library;
-import com.alessiodp.libby.Repositories;
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 
-import java.lang.reflect.Field;
 import java.util.Locale;
 
 public class BukkitLibraryService {
@@ -34,12 +32,6 @@ public class BukkitLibraryService {
     public BukkitLibraryService(AdvancedSensitiveWords plugin) {
         libraryManager = new BukkitLibraryManager(plugin);
         if (Locale.getDefault().getCountry().toUpperCase(Locale.ROOT).equals("CN")) {
-            try {
-                Field mavenCentralField = Repositories.class.getDeclaredField("MAVEN_CENTRAL");
-                mavenCentralField.setAccessible(true);
-                mavenCentralField.set(null, "https://maven.aliyun.com/repository/public/");
-            } catch (Exception ignored) {
-            }
             libraryManager.addRepository("https://maven.aliyun.com/repository/public/");
             libraryManager.addRepository("https://mirrors.cloud.tencent.com/nexus/repository/maven-public/");
             libraryManager.addRepository("https://repo.huaweicloud.com/repository/maven/");
