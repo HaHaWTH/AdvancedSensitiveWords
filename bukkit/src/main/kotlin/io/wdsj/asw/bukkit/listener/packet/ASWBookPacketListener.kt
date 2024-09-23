@@ -21,7 +21,7 @@ import io.wdsj.asw.bukkit.util.LoggingUtils
 import io.wdsj.asw.bukkit.util.TimingUtils
 import io.wdsj.asw.bukkit.util.Utils
 import io.wdsj.asw.bukkit.util.cache.BookCache
-import org.bukkit.ChatColor
+import io.wdsj.asw.bukkit.util.message.MessageUtils
 import org.bukkit.entity.Player
 
 class ASWBookPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW) {
@@ -130,7 +130,7 @@ class ASWBookPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                     }
                 }
                 if (settingsManager.getProperty(PluginSettings.BOOK_SEND_MESSAGE)) {
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', AdvancedSensitiveWords.messagesManager.getProperty(PluginMessages.MESSAGE_ON_BOOK)))
+                    MessageUtils.sendMessage(player, PluginMessages.MESSAGE_ON_BOOK)
                 }
                 if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
                     LoggingUtils.logViolation(userName + "(IP: " + Utils.getPlayerIp(player) + ")(Book)", outMessage + outList)

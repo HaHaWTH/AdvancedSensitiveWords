@@ -15,7 +15,7 @@ import io.wdsj.asw.bukkit.type.ModuleType
 import io.wdsj.asw.bukkit.util.LoggingUtils
 import io.wdsj.asw.bukkit.util.TimingUtils
 import io.wdsj.asw.bukkit.util.Utils
-import org.bukkit.ChatColor
+import io.wdsj.asw.bukkit.util.message.MessageUtils
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -51,12 +51,7 @@ class PlayerItemListener : Listener {
                         item.setItemMeta(meta)
                     }
                     if (settingsManager.getProperty(PluginSettings.ITEM_SEND_MESSAGE)) {
-                        player.sendMessage(
-                            ChatColor.translateAlternateColorCodes(
-                                '&',
-                                AdvancedSensitiveWords.messagesManager.getProperty(PluginMessages.MESSAGE_ON_ITEM)
-                            )
-                        )
+                        MessageUtils.sendMessage(player, PluginMessages.MESSAGE_ON_ITEM)
                     }
                     if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
                         LoggingUtils.logViolation(
@@ -115,11 +110,9 @@ class PlayerItemListener : Listener {
                         item.setItemMeta(meta)
                     }
                     if (settingsManager.getProperty(PluginSettings.ITEM_SEND_MESSAGE)) {
-                        player.sendMessage(
-                            ChatColor.translateAlternateColorCodes(
-                                '&',
-                                AdvancedSensitiveWords.messagesManager.getProperty(PluginMessages.MESSAGE_ON_ITEM)
-                            )
+                        MessageUtils.sendMessage(
+                            player,
+                            PluginMessages.MESSAGE_ON_ITEM
                         )
                     }
                     if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {

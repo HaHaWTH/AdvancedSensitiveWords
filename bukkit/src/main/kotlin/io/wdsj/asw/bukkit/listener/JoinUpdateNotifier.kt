@@ -8,7 +8,7 @@ import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.update.Updater
 import io.wdsj.asw.bukkit.util.PlayerUtils
-import org.bukkit.ChatColor
+import io.wdsj.asw.bukkit.util.message.MessageUtils
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -23,11 +23,11 @@ class JoinUpdateNotifier : Listener {
             || PlayerUtils.isNpc(player)) return
 
         if (Updater.hasUpdate()) {
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+            MessageUtils.sendMessage(player,
                 messagesManager.getProperty(PluginMessages.UPDATE_AVAILABLE)
                     .replace("%current_version%", Updater.getCurrentVersion())
                     .replace("%latest_version%", Updater.getLatestVersion())
-            ))
+            )
         }
     }
 }

@@ -8,9 +8,7 @@ import com.github.retrooper.packetevents.protocol.packettype.PacketType
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientChatCommand
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientChatMessage
 import fr.xephi.authme.api.v3.AuthMeApi
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
+import io.wdsj.asw.bukkit.AdvancedSensitiveWords.*
 import io.wdsj.asw.bukkit.ai.OllamaProcessor
 import io.wdsj.asw.bukkit.ai.OpenAIProcessor
 import io.wdsj.asw.bukkit.listener.FakeMessageExecutor
@@ -28,6 +26,7 @@ import io.wdsj.asw.bukkit.util.LoggingUtils
 import io.wdsj.asw.bukkit.util.TimingUtils
 import io.wdsj.asw.bukkit.util.Utils
 import io.wdsj.asw.bukkit.util.context.ChatContext
+import io.wdsj.asw.bukkit.util.message.MessageUtils
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import java.util.*
@@ -50,10 +49,10 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
             if (shouldNotProcess(player, originalMessage)) return
             val startTime = System.currentTimeMillis()
             // Word check
-            val censoredWords = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalMessage)
+            val censoredWords = sensitiveWordBs.findAll(originalMessage)
             if (censoredWords.isNotEmpty()) {
                 Utils.messagesFilteredNum.getAndIncrement()
-                val processedMessage = AdvancedSensitiveWords.sensitiveWordBs.replace(originalMessage)
+                val processedMessage = sensitiveWordBs.replace(originalMessage)
                 if (isCancelMode) {
                     if (settingsManager.getProperty(PluginSettings.CHAT_FAKE_MESSAGE_ON_CANCEL) && Utils.isNotCommand(originalMessage)) {
                         FakeMessageExecutor.selfIncrement(player)
@@ -69,7 +68,7 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                     }
                 }
                 if (settingsManager.getProperty(PluginSettings.CHAT_SEND_MESSAGE)) {
-                    user.sendMessage(ChatColor.translateAlternateColorCodes('&', AdvancedSensitiveWords.messagesManager.getProperty(PluginMessages.MESSAGE_ON_CHAT).replace("%integrated_player%", userName).replace("%integrated_message%", originalMessage)))
+                    MessageUtils.sendMessage(player, ChatColor.translateAlternateColorCodes('&', MessageUtils.retrieveMessage(PluginMessages.MESSAGE_ON_CHAT).replace("%integrated_player%", userName).replace("%integrated_message%", originalMessage)))
                 }
 
                 if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
@@ -86,7 +85,7 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                 TimingUtils.addProcessStatistic(endTime, startTime)
                 if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, ModuleType.CHAT, originalMessage, censoredWords)
                 if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) {
-                    AdvancedSensitiveWords.getScheduler().runTask {
+                    getScheduler().runTask {
                         Punishment.punish(player)
                     }
                 }
@@ -102,13 +101,11 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                                     val unsupportedList = Collections.singletonList("Unsupported")
                                     Utils.messagesFilteredNum.getAndIncrement()
                                     if (settingsManager.getProperty(PluginSettings.CHAT_SEND_MESSAGE)) {
-                                        player.sendMessage(
-                                            ChatColor.translateAlternateColorCodes(
-                                                '&',
-                                                AdvancedSensitiveWords.messagesManager.getProperty(PluginMessages.MESSAGE_ON_CHAT)
-                                                    .replace("%integrated_player%", player.name)
-                                                    .replace("%integrated_message%", originalMessage)
-                                            )
+                                        MessageUtils.sendMessage(
+                                            player,
+                                            MessageUtils.retrieveMessage(PluginMessages.MESSAGE_ON_CHAT)
+                                                .replace("%integrated_player%", player.name)
+                                                .replace("%integrated_message%", originalMessage)
                                         )
                                     }
                                     if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
@@ -133,7 +130,7 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                                         Notifier.notice(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
                                     }
                                     if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH) && settingsManager.getProperty(PluginSettings.OLLAMA_AI_PUNISH)) {
-                                        AdvancedSensitiveWords.getScheduler().runTask { Punishment.punish(player) }
+                                        getScheduler().runTask { Punishment.punish(player) }
                                     }
                                 }
                             } catch (e: NumberFormatException) {
@@ -163,13 +160,11 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                                         val unsupportedList = Collections.singletonList("Unsupported")
                                         Utils.messagesFilteredNum.getAndIncrement()
                                         if (settingsManager.getProperty(PluginSettings.CHAT_SEND_MESSAGE)) {
-                                            player.sendMessage(
-                                                ChatColor.translateAlternateColorCodes(
-                                                    '&',
-                                                    AdvancedSensitiveWords.messagesManager.getProperty(PluginMessages.MESSAGE_ON_CHAT)
-                                                        .replace("%integrated_player%", player.name)
-                                                        .replace("%integrated_message%", originalMessage)
-                                                )
+                                            MessageUtils.sendMessage(
+                                                player,
+                                                messagesManager.getProperty(PluginMessages.MESSAGE_ON_CHAT)
+                                                    .replace("%integrated_player%", player.name)
+                                                    .replace("%integrated_message%", originalMessage)
                                             )
                                         }
                                         if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
@@ -204,7 +199,7 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                                             )
                                         }
                                         if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH) && settingsManager.getProperty(PluginSettings.OPENAI_AI_PUNISH)) {
-                                            AdvancedSensitiveWords.getScheduler().runTask { Punishment.punish(player) }
+                                            getScheduler().runTask { Punishment.punish(player) }
                                         }
                                     }
                                 }
@@ -218,7 +213,7 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                 ChatContext.addMessage(player, originalMessage)
                 val queue = ChatContext.getHistory(player)
                 val originalContext = queue.joinToString("")
-                val censoredContextList = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalContext)
+                val censoredContextList = sensitiveWordBs.findAll(originalContext)
                 if (censoredContextList.isNotEmpty()) {
                     ChatContext.pollPlayerContext(player)
                     Utils.messagesFilteredNum.getAndIncrement()
@@ -228,7 +223,7 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                         event.isCancelled = true
                     }
                     if (settingsManager.getProperty(PluginSettings.CHAT_SEND_MESSAGE)) {
-                        user.sendMessage(ChatColor.translateAlternateColorCodes('&', AdvancedSensitiveWords.messagesManager.getProperty(PluginMessages.MESSAGE_ON_CHAT).replace("%integrated_player%", userName).replace("%integrated_message%", originalMessage)))
+                        MessageUtils.sendMessage(player, messagesManager.getProperty(PluginMessages.MESSAGE_ON_CHAT).replace("%integrated_player%", userName).replace("%integrated_message%", originalMessage))
                     }
                     if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
                         LoggingUtils.logViolation(userName + "(IP: " + Utils.getPlayerIp(player) + ")(Chat)(Context)", originalContext + censoredContextList)
@@ -246,7 +241,7 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                         Notifier.notice(player, ModuleType.CHAT, originalContext, censoredContextList)
                     }
                     if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) {
-                        AdvancedSensitiveWords.getScheduler().runTask {
+                        getScheduler().runTask {
                             Punishment.punish(player)
                         }
                     }
@@ -258,10 +253,10 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
             val originalCommand = if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) wrapperPlayClientChatCommand.command.replace(Utils.getPreProcessRegex().toRegex(), "") else wrapperPlayClientChatCommand.command
             if (shouldNotProcess(player, "/$originalCommand")) return
             val startTime = System.currentTimeMillis()
-            val censoredWords = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalCommand)
+            val censoredWords = sensitiveWordBs.findAll(originalCommand)
             if (censoredWords.isNotEmpty()) {
                 Utils.messagesFilteredNum.getAndIncrement()
-                val processedCommand = AdvancedSensitiveWords.sensitiveWordBs.replace(originalCommand)
+                val processedCommand = sensitiveWordBs.replace(originalCommand)
                 if (isCancelMode) {
                     event.isCancelled = true
                 } else {
@@ -273,7 +268,7 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                     }
                 }
                 if (settingsManager.getProperty(PluginSettings.CHAT_SEND_MESSAGE)) {
-                    user.sendMessage(ChatColor.translateAlternateColorCodes('&', AdvancedSensitiveWords.messagesManager.getProperty(PluginMessages.MESSAGE_ON_CHAT).replace("%integrated_player%", userName).replace("%integrated_message%", originalCommand)))
+                    MessageUtils.sendMessage(player, messagesManager.getProperty(PluginMessages.MESSAGE_ON_CHAT).replace("%integrated_player%", userName).replace("%integrated_message%", originalCommand))
                 }
                 if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
                     LoggingUtils.logViolation(userName + "(IP: " + Utils.getPlayerIp(player) + ")(Chat)", "/$originalCommand$censoredWords")
@@ -289,7 +284,7 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                 TimingUtils.addProcessStatistic(endTime, startTime)
                 if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, ModuleType.CHAT, originalCommand, censoredWords)
                 if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) {
-                    AdvancedSensitiveWords.getScheduler().runTask {
+                    getScheduler().runTask {
                         Punishment.punish(player)
                     }
                 }
@@ -298,11 +293,11 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
     }
 
     private fun shouldNotProcess(player: Player, message: String): Boolean {
-        if (AdvancedSensitiveWords.isInitialized && !CachingPermTool.hasPermission(PermissionsEnum.BYPASS, player) && !Utils.isCommandAndWhiteListed(message)) {
-            if (AdvancedSensitiveWords.isAuthMeAvailable && settingsManager.getProperty(PluginSettings.ENABLE_AUTHME_COMPATIBILITY)) {
+        if (isInitialized && !CachingPermTool.hasPermission(PermissionsEnum.BYPASS, player) && !Utils.isCommandAndWhiteListed(message)) {
+            if (isAuthMeAvailable && settingsManager.getProperty(PluginSettings.ENABLE_AUTHME_COMPATIBILITY)) {
                 if (!AuthMeApi.getInstance().isAuthenticated(player)) return true
             }
-            if (AdvancedSensitiveWords.isCslAvailable && settingsManager.getProperty(PluginSettings.ENABLE_CSL_COMPATIBILITY)) {
+            if (isCslAvailable && settingsManager.getProperty(PluginSettings.ENABLE_CSL_COMPATIBILITY)) {
                 return !CatSeedLoginAPI.isLogin(player.name) || !CatSeedLoginAPI.isRegister(player.name)
             }
             return false

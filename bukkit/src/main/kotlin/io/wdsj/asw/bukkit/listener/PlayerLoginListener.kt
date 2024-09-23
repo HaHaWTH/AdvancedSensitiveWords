@@ -1,7 +1,6 @@
 package io.wdsj.asw.bukkit.listener
 
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
+import io.wdsj.asw.bukkit.AdvancedSensitiveWords.*
 import io.wdsj.asw.bukkit.manage.notice.Notifier
 import io.wdsj.asw.bukkit.manage.permission.PermissionsEnum
 import io.wdsj.asw.bukkit.manage.permission.cache.CachingPermTool
@@ -16,8 +15,8 @@ import io.wdsj.asw.bukkit.util.LoggingUtils
 import io.wdsj.asw.bukkit.util.PlayerUtils
 import io.wdsj.asw.bukkit.util.TimingUtils
 import io.wdsj.asw.bukkit.util.Utils
+import io.wdsj.asw.bukkit.util.message.MessageUtils
 import org.bukkit.Bukkit
-import org.bukkit.ChatColor
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -27,7 +26,7 @@ import org.geysermc.floodgate.api.FloodgateApi
 class PlayerLoginListener : Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     fun onLogin(event: PlayerLoginEvent) {
-        if (!AdvancedSensitiveWords.isInitialized || !settingsManager.getProperty(PluginSettings.ENABLE_PLAYER_NAME_CHECK)) return
+        if (!isInitialized || !settingsManager.getProperty(PluginSettings.ENABLE_PLAYER_NAME_CHECK)) return
         val player = event.player
         if (CachingPermTool.hasPermission(PermissionsEnum.BYPASS, player)) return
         if (PlayerUtils.isNpc(player) && settingsManager.getProperty(PluginSettings.NAME_IGNORE_NPC)) return
@@ -40,9 +39,9 @@ class PlayerLoginListener : Listener {
         }
         val playerName = player.name
         val startTime = System.currentTimeMillis()
-        val censoredWordList = AdvancedSensitiveWords.sensitiveWordBs.findAll(playerName)
+        val censoredWordList = sensitiveWordBs.findAll(playerName)
         if (censoredWordList.isNotEmpty()) {
-            val processedPlayerName = AdvancedSensitiveWords.sensitiveWordBs.replace(playerName)
+            val processedPlayerName = sensitiveWordBs.replace(playerName)
             val playerIp = event.address.hostAddress
             Utils.messagesFilteredNum.getAndIncrement()
             if (settingsManager.getProperty(PluginSettings.NAME_METHOD)
@@ -51,22 +50,17 @@ class PlayerLoginListener : Listener {
                 player.setDisplayName(processedPlayerName)
                 player.setPlayerListName(processedPlayerName)
                 if (settingsManager.getProperty(PluginSettings.NAME_SEND_MESSAGE)) {
-                    AdvancedSensitiveWords.getScheduler().runTaskLater({
-                        player.sendMessage(
-                            ChatColor.translateAlternateColorCodes(
-                                '&',
-                                AdvancedSensitiveWords.messagesManager.getProperty(PluginMessages.MESSAGE_ON_NAME)
-                            )
+                    getScheduler().runTaskLater({
+                        MessageUtils.sendMessage(
+                            player,
+                            PluginMessages.MESSAGE_ON_NAME
                         )
-                    }, 60L)
+                    }, 20L * 3L)
                 }
             } else {
                 event.disallow(
                     PlayerLoginEvent.Result.KICK_OTHER,
-                    ChatColor.translateAlternateColorCodes(
-                        '&',
-                        AdvancedSensitiveWords.messagesManager.getProperty(PluginMessages.MESSAGE_ON_NAME)
-                    )
+                    MessageUtils.retrieveMessage(PluginMessages.MESSAGE_ON_NAME)
                 )
             }
             if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {

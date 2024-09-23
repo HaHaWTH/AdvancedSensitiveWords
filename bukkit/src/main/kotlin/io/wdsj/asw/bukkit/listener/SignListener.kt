@@ -1,8 +1,7 @@
 package io.wdsj.asw.bukkit.listener
 
 import com.github.houbb.heaven.util.lang.StringUtil
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
+import io.wdsj.asw.bukkit.AdvancedSensitiveWords.*
 import io.wdsj.asw.bukkit.manage.notice.Notifier
 import io.wdsj.asw.bukkit.manage.permission.PermissionsEnum
 import io.wdsj.asw.bukkit.manage.permission.cache.CachingPermTool
@@ -17,7 +16,7 @@ import io.wdsj.asw.bukkit.util.LoggingUtils
 import io.wdsj.asw.bukkit.util.TimingUtils
 import io.wdsj.asw.bukkit.util.Utils
 import io.wdsj.asw.bukkit.util.context.SignContext
-import org.bukkit.ChatColor
+import io.wdsj.asw.bukkit.util.message.MessageUtils
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -30,7 +29,7 @@ class SignListener : Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     fun onSign(event: SignChangeEvent) {
-        if (!AdvancedSensitiveWords.isInitialized) return
+        if (!isInitialized) return
         if (!settingsManager.getProperty(PluginSettings.ENABLE_SIGN_EDIT_CHECK)) return
         val player = event.player
         if (CachingPermTool.hasPermission(PermissionsEnum.BYPASS, player) || event.lines.isEmpty()) return
@@ -45,9 +44,9 @@ class SignListener : Listener {
                     Utils.getPreProcessRegex().toRegex(), ""
                 )
             assert(originalMessage != null)
-            val censoredWordList = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalMessage)
+            val censoredWordList = sensitiveWordBs.findAll(originalMessage)
             if (censoredWordList.isNotEmpty()) {
-                val processedMessage = AdvancedSensitiveWords.sensitiveWordBs.replace(originalMessage)
+                val processedMessage = sensitiveWordBs.replace(originalMessage)
                 outMessage = originalMessage
                 outProcessedMessage = processedMessage
                 outList = censoredWordList
@@ -65,9 +64,9 @@ class SignListener : Listener {
         }
         if (settingsManager.getProperty(PluginSettings.SIGN_MULTI_LINE_CHECK) && indexList.isNotEmpty()) {
             val originalMessagesString = originalMultiMessages.toString()
-            val censoredWordList = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalMessagesString)
+            val censoredWordList = sensitiveWordBs.findAll(originalMessagesString)
             if (censoredWordList.isNotEmpty()) {
-                val processedMessagesString = AdvancedSensitiveWords.sensitiveWordBs.replace(originalMessagesString)
+                val processedMessagesString = sensitiveWordBs.replace(originalMessagesString)
                 outMessage = originalMessagesString
                 outProcessedMessage = processedMessagesString
                 outList = censoredWordList
@@ -90,10 +89,10 @@ class SignListener : Listener {
             val originalAllMessage = event.lines.joinToString("")
             SignContext.addMessage(player, originalAllMessage)
             val originalContext = SignContext.getHistory(player).joinToString("")
-            val censoredContextList = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalContext)
+            val censoredContextList = sensitiveWordBs.findAll(originalContext)
             if (censoredContextList.isNotEmpty()) {
                 SignContext.pollPlayerContext(player)
-                val processedContext = AdvancedSensitiveWords.sensitiveWordBs.replace(originalContext)
+                val processedContext = sensitiveWordBs.replace(originalContext)
                 shouldSendMessage = true
                 event.isCancelled = true
                 outMessage = originalContext
@@ -103,11 +102,9 @@ class SignListener : Listener {
         }
 
         if (settingsManager.getProperty(PluginSettings.SIGN_SEND_MESSAGE) && shouldSendMessage) {
-            player.sendMessage(
-                ChatColor.translateAlternateColorCodes(
-                    '&',
-                    AdvancedSensitiveWords.messagesManager.getProperty(PluginMessages.MESSAGE_ON_SIGN)
-                )
+            MessageUtils.sendMessage(
+                player,
+                PluginMessages.MESSAGE_ON_SIGN
             )
         }
 

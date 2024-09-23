@@ -2,8 +2,7 @@ package io.wdsj.asw.bukkit.listener
 
 import cc.baka9.catseedlogin.bukkit.CatSeedLoginAPI
 import fr.xephi.authme.api.v3.AuthMeApi
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
+import io.wdsj.asw.bukkit.AdvancedSensitiveWords.*
 import io.wdsj.asw.bukkit.manage.notice.Notifier
 import io.wdsj.asw.bukkit.manage.permission.PermissionsEnum
 import io.wdsj.asw.bukkit.manage.permission.cache.CachingPermTool
@@ -17,7 +16,7 @@ import io.wdsj.asw.bukkit.type.ModuleType
 import io.wdsj.asw.bukkit.util.LoggingUtils
 import io.wdsj.asw.bukkit.util.TimingUtils
 import io.wdsj.asw.bukkit.util.Utils
-import org.bukkit.ChatColor
+import io.wdsj.asw.bukkit.util.message.MessageUtils
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -34,11 +33,11 @@ class CommandListener : Listener {
                 Utils.getPreProcessRegex().toRegex(), ""
             ) else event.message
         if (shouldNotProcess(player, originalCommand)) return
-        val censoredWordList = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalCommand)
+        val censoredWordList = sensitiveWordBs.findAll(originalCommand)
         val startTime = System.currentTimeMillis()
         if (censoredWordList.isNotEmpty()) {
             Utils.messagesFilteredNum.getAndIncrement()
-            val processedCommand = AdvancedSensitiveWords.sensitiveWordBs.replace(originalCommand)
+            val processedCommand = sensitiveWordBs.replace(originalCommand)
             if (settingsManager.getProperty(PluginSettings.CHAT_METHOD)
                     .equals("cancel", ignoreCase = true)
             ) {
@@ -51,13 +50,11 @@ class CommandListener : Listener {
                 }
             }
             if (settingsManager.getProperty(PluginSettings.CHAT_SEND_MESSAGE)) {
-                player.sendMessage(
-                    ChatColor.translateAlternateColorCodes(
-                        '&',
-                        AdvancedSensitiveWords.messagesManager.getProperty(PluginMessages.MESSAGE_ON_CHAT)
-                            .replace("%integrated_player%", player.name)
-                            .replace("%integrated_message%", originalCommand)
-                    )
+                MessageUtils.sendMessage(
+                    player,
+                    messagesManager.getProperty(PluginMessages.MESSAGE_ON_CHAT)
+                        .replace("%integrated_player%", player.name)
+                        .replace("%integrated_message%", originalCommand)
                 )
             }
             if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
@@ -86,11 +83,11 @@ class CommandListener : Listener {
     }
 
     private fun shouldNotProcess(player: Player, message: String): Boolean {
-        if (AdvancedSensitiveWords.isInitialized && !CachingPermTool.hasPermission(PermissionsEnum.BYPASS, player) && !Utils.isCommandAndWhiteListed(message)) {
-            if (AdvancedSensitiveWords.isAuthMeAvailable && settingsManager.getProperty(PluginSettings.ENABLE_AUTHME_COMPATIBILITY)) {
+        if (isInitialized && !CachingPermTool.hasPermission(PermissionsEnum.BYPASS, player) && !Utils.isCommandAndWhiteListed(message)) {
+            if (isAuthMeAvailable && settingsManager.getProperty(PluginSettings.ENABLE_AUTHME_COMPATIBILITY)) {
                 if (!AuthMeApi.getInstance().isAuthenticated(player)) return true
             }
-            if (AdvancedSensitiveWords.isCslAvailable && settingsManager.getProperty(PluginSettings.ENABLE_CSL_COMPATIBILITY)) {
+            if (isCslAvailable && settingsManager.getProperty(PluginSettings.ENABLE_CSL_COMPATIBILITY)) {
                 return !CatSeedLoginAPI.isLogin(player.name) || !CatSeedLoginAPI.isRegister(player.name)
             }
             return false

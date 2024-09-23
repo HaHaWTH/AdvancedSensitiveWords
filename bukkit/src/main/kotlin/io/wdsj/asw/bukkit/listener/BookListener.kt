@@ -16,7 +16,7 @@ import io.wdsj.asw.bukkit.util.LoggingUtils
 import io.wdsj.asw.bukkit.util.TimingUtils
 import io.wdsj.asw.bukkit.util.Utils
 import io.wdsj.asw.bukkit.util.cache.BookCache
-import org.bukkit.ChatColor
+import io.wdsj.asw.bukkit.util.message.MessageUtils
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -160,11 +160,9 @@ class BookListener : Listener {
         }
 
         if (settingsManager.getProperty(PluginSettings.BOOK_SEND_MESSAGE) && shouldSendMessage) {
-            player.sendMessage(
-                ChatColor.translateAlternateColorCodes(
-                    '&',
-                    AdvancedSensitiveWords.messagesManager.getProperty(PluginMessages.MESSAGE_ON_BOOK)
-                )
+            MessageUtils.sendMessage(
+                player,
+                PluginMessages.MESSAGE_ON_BOOK
             )
         }
 
