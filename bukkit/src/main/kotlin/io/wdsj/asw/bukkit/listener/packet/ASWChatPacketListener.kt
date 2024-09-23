@@ -27,7 +27,6 @@ import io.wdsj.asw.bukkit.util.TimingUtils
 import io.wdsj.asw.bukkit.util.Utils
 import io.wdsj.asw.bukkit.util.context.ChatContext
 import io.wdsj.asw.bukkit.util.message.MessageUtils
-import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import java.util.*
 
@@ -68,7 +67,7 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                     }
                 }
                 if (settingsManager.getProperty(PluginSettings.CHAT_SEND_MESSAGE)) {
-                    MessageUtils.sendMessage(player, ChatColor.translateAlternateColorCodes('&', MessageUtils.retrieveMessage(PluginMessages.MESSAGE_ON_CHAT).replace("%integrated_player%", userName).replace("%integrated_message%", originalMessage)))
+                    MessageUtils.sendMessage(player, MessageUtils.retrieveMessage(PluginMessages.MESSAGE_ON_CHAT).replace("%integrated_player%", userName).replace("%integrated_message%", originalMessage))
                 }
 
                 if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
