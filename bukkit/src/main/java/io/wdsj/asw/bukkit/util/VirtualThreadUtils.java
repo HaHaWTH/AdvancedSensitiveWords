@@ -9,14 +9,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 /**
- * Utility class for virtual threads which are available in Java 21+
+ * Utility class for virtual threads which are introduced in Java 21
  */
-public class VTUtils {
-    private VTUtils() {}
+public class VirtualThreadUtils {
+    private VirtualThreadUtils() {}
 
-    private static ThreadFactory VTThreadFactory;
+    private static ThreadFactory virtualThreadFactory;
 
-    private static ExecutorService VTExecutorService;
+    private static ExecutorService virtualThreadPerTaskExecutor;
 
     static {
         try {
@@ -25,36 +25,41 @@ public class VTUtils {
             Method factory = ThreadBuilder.getMethod("factory");
             ofVirtual.setAccessible(true);
             factory.setAccessible(true);
-            VTThreadFactory = (ThreadFactory) factory.invoke(ofVirtual.invoke(null));
+            virtualThreadFactory = (ThreadFactory) factory.invoke(ofVirtual.invoke(null));
         } catch (Exception e) {
-            VTThreadFactory = null;
+            virtualThreadFactory = null;
         }
         try {
             Method method = Executors.class.getMethod("newVirtualThreadPerTaskExecutor");
             method.setAccessible(true);
-            VTExecutorService = (ExecutorService) method.invoke(null);
+            virtualThreadPerTaskExecutor = (ExecutorService) method.invoke(null);
         } catch (Exception e) {
-            VTExecutorService = null;
+            virtualThreadPerTaskExecutor = null;
         }
     }
 
     @Nullable
     public static ThreadFactory newVirtualThreadFactory() {
-        return VTThreadFactory;
+        return virtualThreadFactory;
     }
 
     @Nullable
     public static ExecutorService newVirtualThreadPerTaskExecutor() {
-        return VTExecutorService;
+        return virtualThreadPerTaskExecutor;
     }
 
     @NotNull
     public static ThreadFactory newVirtualThreadFactoryOrProvided(ThreadFactory threadFactory) {
-        return VTThreadFactory != null ? VTThreadFactory : threadFactory;
+        return Utils.checkNotNullWithFallback(virtualThreadFactory, threadFactory);
+    }
+
+    @NotNull
+    public static ThreadFactory newVirtualThreadFactoryOrDefault() {
+        return Utils.checkNotNullWithFallback(virtualThreadFactory, Executors.defaultThreadFactory());
     }
 
     @NotNull
     public static ExecutorService newVirtualThreadPerTaskExecutorOrProvided(ExecutorService executorService) {
-        return VTExecutorService != null ? VTExecutorService : executorService;
+        return Utils.checkNotNullWithFallback(virtualThreadPerTaskExecutor, executorService);
     }
 }

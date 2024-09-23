@@ -146,7 +146,7 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                     && OpenAIProcessor.isOpenAiInit && Utils.isNotCommand(originalMessage)) {
                     OpenAIProcessor.process(originalMessage)
                         .thenAccept {
-                            val results = it.results() ?: return@thenAccept
+                            val results = it?.results() ?: return@thenAccept
                             for (result in results) {
                                 if (result.isFlagged) {
                                     val categories = result.categories()

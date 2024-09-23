@@ -46,8 +46,7 @@ public class VoiceChatExtension implements VoicechatPlugin {
      *
      * @param event the microphone packet event
      */
-    private void onMicrophone(MicrophonePacketEvent event) {
-
+    private void onMicrophone(MicrophonePacketEvent event) { // TODO: incomplete version, plans to add real-time voice transcribe
         if (event.getSenderConnection() == null) {
             return;
         }

@@ -100,6 +100,18 @@ public class Utils {
         return !command.startsWith("/");
     }
 
+    /**
+     * Checks if the given object is null, and returns the fallback value if it is.
+     * @param obj The object to check
+     * @param fallback The fallback value to return if the object is null
+     */
+    public static <T> T checkNotNullWithFallback(T obj, T fallback) {
+        if (obj == null) {
+            return fallback;
+        }
+        return obj;
+    }
+
     private Utils() {
     }
 }

@@ -110,7 +110,7 @@ class ChatListener : Listener {
                 && OpenAIProcessor.isOpenAiInit) {
                 OpenAIProcessor.process(originalMessage)
                     .thenAccept {
-                        val results = it.results() ?: return@thenAccept
+                        val results = it?.results() ?: return@thenAccept
                         for (result in results) {
                             if (result.isFlagged) {
                                 val categories = result.categories()

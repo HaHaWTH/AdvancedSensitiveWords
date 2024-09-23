@@ -9,8 +9,8 @@ import static io.wdsj.asw.bukkit.util.Utils.messagesFilteredNum;
 
 public class TimingUtils {
     private static final List<Long> processStatistic = Collections.synchronizedList(new ArrayList<>());
-    private static final String vendor = System.getProperties().getProperty("java.vendor");
-    private static final String javaVersion = System.getProperties().getProperty("java.version");
+    private static final String vendor = Utils.checkNotNullWithFallback(System.getProperties().getProperty("java.vendor"), "Unknown");
+    private static final String javaVersion = Utils.checkNotNullWithFallback(System.getProperties().getProperty("java.version"), "Unknown");
 
     public static void addProcessStatistic(long endTime, long startTime) {
         long processTime = endTime - startTime;
