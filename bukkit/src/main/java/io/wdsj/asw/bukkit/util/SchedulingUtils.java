@@ -7,6 +7,8 @@ import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
+import java.util.concurrent.Callable;
+
 public class SchedulingUtils {
     private SchedulingUtils() {
     }
@@ -39,6 +41,14 @@ public class SchedulingUtils {
     public static void cancelTaskSafely(MyScheduledTask task) {
         if (task == null) return;
         task.cancel();
+    }
+
+    public static <T> T callSyncMethod(Callable<T> callable) {
+        try {
+            return AdvancedSensitiveWords.getScheduler().callSyncMethod(callable).get();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

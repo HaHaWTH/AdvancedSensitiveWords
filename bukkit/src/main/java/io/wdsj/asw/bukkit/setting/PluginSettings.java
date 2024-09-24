@@ -282,13 +282,13 @@ public class PluginSettings implements SettingsHolder {
             "Whether to enable punishment"})
     public static final Property<Boolean> CHAT_PUNISH = newProperty("Chat.punish", true);
 
-    @Comment({"*是否启用服务器广播消息检测(仅提供取消和替换模式,配置跟随聊天检测)(不会触发API事件)",
-            "*Whether to enable server broadcast message checks (only offers cancel and replace modes, configuration follows chat checks) (does not trigger API events)"})
-    public static final Property<Boolean> CHAT_BROADCAST_CHECK = newProperty("Chat.broadcastCheck", true);
+    @Comment({"*是否启用服务器广播消息检测(仅提供取消和替换模式,配置跟随聊天检测)",
+            "*Whether to enable server broadcast message checks (only offers cancel and replace modes, configuration follows chat checks)"})
+    public static final Property<Boolean> CHAT_BROADCAST_CHECK = newProperty("Chat.broadcastCheck", false);
 
     @Comment({"是否开启聊天上下文检测(仅提供取消和假消息模式,配置跟随聊天检测)",
             "Whether to enable chat context checks (only offers cancel and fake message modes, configuration follows chat checks)"})
-    public static final Property<Boolean> CHAT_CONTEXT_CHECK = newProperty("Chat.contextCheck", false);
+    public static final Property<Boolean> CHAT_CONTEXT_CHECK = newProperty("Chat.contextCheck", true);
 
     @Comment({"最大检测上下文大小",
             "Maximum context size for checks"})
@@ -296,7 +296,7 @@ public class PluginSettings implements SettingsHolder {
 
     @Comment({"最大检测上下文时间(单位: 秒)",
             "Maximum context time for checks(seconds)"})
-    public static final Property<Integer> CHAT_CONTEXT_TIME_LIMIT = newProperty("Chat.contextMaxTime", 120);
+    public static final Property<Integer> CHAT_CONTEXT_TIME_LIMIT = newProperty("Chat.contextMaxTime", 90);
 
     @Comment({"是否反转指令白名单为黑名单",
             "Whether to invert the command whitelist to a blacklist"})
@@ -327,14 +327,14 @@ public class PluginSettings implements SettingsHolder {
     public static final Property<Boolean> BOOK_PUNISH = newProperty("Book.punish", true);
     @Comment({"是否启用书检测缓存(有助于优化性能)",
             "Whether to enable book check caching (helps optimize performance)"})
-    public static final Property<Boolean> BOOK_CACHE = newProperty("Book.cache.enableCache", false);
+    public static final Property<Boolean> BOOK_CACHE = newProperty("Book.cache.enableCache", true);
 
-    @Comment({"*最大缓存数量(默认200)",
-            "*Maximum cache size (default is 200)"})
-    public static final Property<Integer> BOOK_MAXIMUM_CACHE_SIZE = newProperty("Book.cache.maximumCacheSize", 200);
+    @Comment({"*最大缓存数量",
+            "*Maximum cache size"})
+    public static final Property<Integer> BOOK_MAXIMUM_CACHE_SIZE = newProperty("Book.cache.maximumCacheSize", 400);
     @Comment({"*缓存最大保存时间(分)",
             "*Cache expire time (minutes)"})
-    public static final Property<Integer> BOOK_CACHE_EXPIRE_TIME = newProperty("Book.cache.expireTime", 60);
+    public static final Property<Integer> BOOK_CACHE_EXPIRE_TIME = newProperty("Book.cache.expireTime", 10);
 
     @Comment({"重载时是否清空缓存",
             "Whether to clear cache on reload"})
