@@ -1,6 +1,6 @@
 package io.wdsj.asw.bukkit.command;
 
-import io.wdsj.asw.bukkit.manage.permission.PermissionsEnum;
+import io.wdsj.asw.bukkit.permission.PermissionsEnum;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;

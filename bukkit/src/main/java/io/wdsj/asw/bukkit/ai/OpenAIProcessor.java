@@ -12,12 +12,20 @@ import static dev.ai4j.openai4j.moderation.ModerationModel.TEXT_MODERATION_LATES
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER;
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
 
+/**
+ * OpenAI Moderation Processor.
+ */
 public class OpenAIProcessor implements AIProcessor {
     public static boolean isOpenAiInit = false;
     private static OpenAiClient client;
     public OpenAIProcessor() {
     }
 
+    /**
+     * Initialize the OpenAI moderation service.
+     * @param apikey the openai key
+     * @param debug whether to enable debug logging
+     */
     public void initService(String apikey, boolean debug) {
         @SuppressWarnings("rawtypes")
         OpenAiClient.Builder builder = OpenAiClient.builder()
@@ -44,6 +52,11 @@ public class OpenAIProcessor implements AIProcessor {
         isOpenAiInit = false;
     }
 
+    /**
+     * Process the input message using OpenAI moderation.
+     * @param inputMessage the input message
+     * @return A future contains the moderation response
+     */
     public static CompletableFuture<ModerationResponse> process(String inputMessage) {
         if (!isOpenAiInit) {
             throw new IllegalStateException("OpenAI Moderation Processor is not initialized");

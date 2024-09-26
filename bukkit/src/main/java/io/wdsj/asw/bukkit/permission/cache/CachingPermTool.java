@@ -1,8 +1,8 @@
-package io.wdsj.asw.bukkit.manage.permission.cache;
+package io.wdsj.asw.bukkit.permission.cache;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import io.wdsj.asw.bukkit.manage.permission.PermissionsEnum;
+import io.wdsj.asw.bukkit.permission.PermissionsEnum;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

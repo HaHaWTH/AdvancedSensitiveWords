@@ -1,4 +1,4 @@
-package io.wdsj.asw.bukkit.manage.permission;
+package io.wdsj.asw.bukkit.permission;
 
 /**
  * Permission enums

@@ -2,9 +2,9 @@ package io.wdsj.asw.bukkit.command;
 
 import com.github.houbb.heaven.util.util.OsUtil;
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
-import io.wdsj.asw.bukkit.manage.permission.PermissionsEnum;
 import io.wdsj.asw.bukkit.manage.punish.Punishment;
 import io.wdsj.asw.bukkit.manage.punish.ViolationCounter;
+import io.wdsj.asw.bukkit.permission.PermissionsEnum;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
 import io.wdsj.asw.bukkit.util.cache.BookCache;

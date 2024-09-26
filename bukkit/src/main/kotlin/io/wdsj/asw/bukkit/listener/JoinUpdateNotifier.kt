@@ -2,8 +2,8 @@ package io.wdsj.asw.bukkit.listener
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.messagesManager
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
-import io.wdsj.asw.bukkit.manage.permission.PermissionsEnum
-import io.wdsj.asw.bukkit.manage.permission.cache.CachingPermTool
+import io.wdsj.asw.bukkit.permission.PermissionsEnum
+import io.wdsj.asw.bukkit.permission.cache.CachingPermTool
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.update.Updater

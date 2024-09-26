@@ -13,10 +13,10 @@ import io.wdsj.asw.bukkit.ai.OllamaProcessor
 import io.wdsj.asw.bukkit.ai.OpenAIProcessor
 import io.wdsj.asw.bukkit.listener.FakeMessageExecutor
 import io.wdsj.asw.bukkit.manage.notice.Notifier
-import io.wdsj.asw.bukkit.manage.permission.PermissionsEnum
-import io.wdsj.asw.bukkit.manage.permission.cache.CachingPermTool
 import io.wdsj.asw.bukkit.manage.punish.Punishment
 import io.wdsj.asw.bukkit.manage.punish.ViolationCounter
+import io.wdsj.asw.bukkit.permission.PermissionsEnum
+import io.wdsj.asw.bukkit.permission.cache.CachingPermTool
 import io.wdsj.asw.bukkit.proxy.bungee.BungeeSender
 import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender
 import io.wdsj.asw.bukkit.setting.PluginMessages
@@ -292,7 +292,8 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
     }
 
     private fun shouldNotProcess(player: Player, message: String): Boolean {
-        if (isInitialized && !CachingPermTool.hasPermission(PermissionsEnum.BYPASS, player) && !Utils.isCommandAndWhiteListed(message)) {
+        if (isInitialized && !CachingPermTool.hasPermission(
+                PermissionsEnum.BYPASS, player) && !Utils.isCommandAndWhiteListed(message)) {
             if (isAuthMeAvailable && settingsManager.getProperty(PluginSettings.ENABLE_AUTHME_COMPATIBILITY)) {
                 if (!AuthMeApi.getInstance().isAuthenticated(player)) return true
             }
