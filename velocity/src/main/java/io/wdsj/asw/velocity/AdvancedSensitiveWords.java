@@ -24,7 +24,7 @@ import java.util.Locale;
 @Plugin(
         id = "advancedsensitivewords",
         name = "AdvancedSensitiveWords",
-        version = PluginVersionTemplate.VERSION,
+        version = PluginVersionTemplate.VERSION + "-" + PluginVersionTemplate.VERSION_CHANNEL,
         authors = {"HaHaWTH"}
 )
 public class AdvancedSensitiveWords {

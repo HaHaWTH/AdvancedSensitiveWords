@@ -2,18 +2,21 @@ package io.wdsj.asw.bukkit.update;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import io.wdsj.asw.common.template.PluginVersionTemplate;
 
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+
+import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER;
 
 public class Updater {
     private static String currentVersion;
     private static String latestVersion;
     private static boolean isUpdateAvailable = false;
     private static final String UPDATE_URL = "https://api.github.com/repos/HaHaWTH/AdvancedSensitiveWords/releases/latest";
+    private static final String currentVersionChannel = PluginVersionTemplate.VERSION_CHANNEL;
 
     public Updater(String current) {
         currentVersion = current;
@@ -24,7 +27,12 @@ public class Updater {
      * Note: This method will perform a network request!
      * @return true if there is an update available, false otherwise
      */
+    @SuppressWarnings("all")
     public boolean isUpdateAvailable() {
+        boolean isDevChannel = currentVersionChannel.equalsIgnoreCase("dev");
+        if (isDevChannel) {
+            LOGGER.info("You are running an development version of AdvancedSensitiveWords!");
+        }
         URI uri = URI.create(UPDATE_URL);
         try {
             URL url = uri.toURL();
@@ -37,9 +45,13 @@ public class Updater {
                 latestVersion = latest;
                 isUpdateAvailable = !currentVersion.equals(latest);
                 reader.close();
+                if (isDevChannel) {
+                    LOGGER.info("Current running: " + currentVersion + "-" + currentVersionChannel + ", latest release: " + latest);
+                    return false;
+                }
                 return isUpdateAvailable;
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             latestVersion = null;
             isUpdateAvailable = false;
             return false;

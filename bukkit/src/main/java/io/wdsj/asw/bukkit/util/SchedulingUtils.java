@@ -3,11 +3,14 @@ package io.wdsj.asw.bukkit.util;
 
 import com.github.Anon8281.universalScheduler.UniversalScheduler;
 import com.github.Anon8281.universalScheduler.scheduling.tasks.MyScheduledTask;
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.event.Event;
 
 import java.util.concurrent.Callable;
+
+import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.getScheduler;
 
 public class SchedulingUtils {
     private SchedulingUtils() {
@@ -16,7 +19,7 @@ public class SchedulingUtils {
 
     public static void runSyncIfFolia(Runnable runnable) {
         if (isFolia) {
-            AdvancedSensitiveWords.getScheduler().runTask(runnable);
+            getScheduler().runTask(runnable);
         } else {
             runnable.run();
         }
@@ -24,7 +27,7 @@ public class SchedulingUtils {
 
     public static void runSyncAtEntityIfFolia(Entity entity, Runnable runnable) {
         if (isFolia) {
-            AdvancedSensitiveWords.getScheduler().runTask(entity, runnable);
+            getScheduler().runTask(entity, runnable);
         } else {
             runnable.run();
         }
@@ -32,9 +35,25 @@ public class SchedulingUtils {
 
     public static void runSyncAtLocationIfFolia(Location location, Runnable runnable) {
         if (isFolia) {
-            AdvancedSensitiveWords.getScheduler().runTask(location, runnable);
+            getScheduler().runTask(location, runnable);
         } else {
             runnable.run();
+        }
+    }
+
+    public static void runSyncIfEventAsync(Runnable runnable, Event event) {
+        if (event.isAsynchronous()) {
+            getScheduler().runTask(runnable);
+        } else {
+            runnable.run();
+        }
+    }
+
+    public static void runSyncIfNotOnMainThread(Runnable runnable) {
+        if (Bukkit.isPrimaryThread()) {
+            runnable.run();
+        } else {
+            getScheduler().runTask(runnable);
         }
     }
 
@@ -45,7 +64,7 @@ public class SchedulingUtils {
 
     public static <T> T callSyncMethod(Callable<T> callable) {
         try {
-            return AdvancedSensitiveWords.getScheduler().callSyncMethod(callable).get();
+            return getScheduler().callSyncMethod(callable).get();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

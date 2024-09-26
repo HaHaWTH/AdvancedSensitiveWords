@@ -16,6 +16,7 @@ import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.type.ModuleType
 import io.wdsj.asw.bukkit.util.LoggingUtils
+import io.wdsj.asw.bukkit.util.SchedulingUtils
 import io.wdsj.asw.bukkit.util.TimingUtils
 import io.wdsj.asw.bukkit.util.Utils
 import io.wdsj.asw.bukkit.util.context.ChatContext
@@ -65,8 +66,10 @@ class ChatListener : Listener {
             val endTime = System.currentTimeMillis()
             TimingUtils.addProcessStatistic(endTime, startTime)
             if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, ModuleType.CHAT, originalMessage, censoredWordList)
-            getScheduler().runTask {
-                if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) Punishment.punish(player)
+            if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) {
+                SchedulingUtils.runSyncIfEventAsync({
+                    Punishment.punish(player)
+                }, event)
             }
             return
         } else {
@@ -96,7 +99,9 @@ class ChatListener : Listener {
                                     Notifier.notice(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
                                 }
                                 if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH) && settingsManager.getProperty(PluginSettings.OLLAMA_AI_PUNISH)) {
-                                    getScheduler().runTask { Punishment.punish(player) }
+                                    SchedulingUtils.runSyncIfEventAsync({
+                                        Punishment.punish(player)
+                                    }, event)
                                 }
                             }
                         } catch (e: NumberFormatException) {
@@ -143,7 +148,9 @@ class ChatListener : Listener {
                                         Notifier.notice(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
                                     }
                                     if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH) && settingsManager.getProperty(PluginSettings.OPENAI_AI_PUNISH)) {
-                                        getScheduler().runTask { Punishment.punish(player) }
+                                        SchedulingUtils.runSyncIfEventAsync({
+                                            Punishment.punish(player)
+                                        }, event)
                                     }
                                 }
                             }
@@ -182,9 +189,9 @@ class ChatListener : Listener {
                 TimingUtils.addProcessStatistic(endTime, startTime)
                 if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, ModuleType.CHAT, originalContext, censoredContextList)
                 if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) {
-                    getScheduler().runTask {
+                    SchedulingUtils.runSyncIfEventAsync({
                         Punishment.punish(player)
-                    }
+                    }, event)
                 }
             }
         }

@@ -21,7 +21,7 @@ public class VoiceChatHookService {
                 service.registerPlugin(voiceChatExtension);
                 LOGGER.info("Successfully hooked into voicechat.");
             } catch (Exception e) {
-                LOGGER.severe("Failed to register voicechat listener." +
+                LOGGER.warning("Failed to register voicechat listener." +
                         " This should not happen, please report to the author: " + e.getMessage());
             }
         } else {
