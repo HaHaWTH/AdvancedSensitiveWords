@@ -43,17 +43,17 @@ object VirtualThreadUtils {
     }
 
     @JvmStatic
-    fun newVirtualThreadFactoryOrProvided(threadFactory: ThreadFactory?): ThreadFactory {
-        return Utils.checkNotNullWithFallback(virtualThreadFactory, threadFactory)!!
+    fun newVirtualThreadFactoryOrProvided(threadFactory: ThreadFactory): ThreadFactory {
+        return virtualThreadFactory ?: threadFactory
     }
 
     @JvmStatic
     fun newVirtualThreadFactoryOrDefault(): ThreadFactory {
-        return Utils.checkNotNullWithFallback(virtualThreadFactory, Executors.defaultThreadFactory())!!
+        return virtualThreadFactory ?: Executors.defaultThreadFactory()
     }
 
     @JvmStatic
-    fun newVirtualThreadPerTaskExecutorOrProvided(executorService: ExecutorService?): ExecutorService {
-        return Utils.checkNotNullWithFallback(virtualThreadPerTaskExecutor, executorService)!!
+    fun newVirtualThreadPerTaskExecutorOrProvided(executorService: ExecutorService): ExecutorService {
+        return virtualThreadPerTaskExecutor ?: executorService
     }
 }
