@@ -42,7 +42,7 @@ class AnvilListener : Listener {
                         var originalItemName = itemMeta.displayName
                         if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) originalItemName =
                             originalItemName.replace(
-                                Utils.getPreProcessRegex().toRegex(), ""
+                                Utils.preProcessRegex.toRegex(), ""
                             )
                         val censoredWords = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalItemName)
                         if (censoredWords.isNotEmpty()) {

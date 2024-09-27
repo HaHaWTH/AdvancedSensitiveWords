@@ -41,7 +41,7 @@ class SignListener : Listener {
             var originalMessage = event.getLine(line)
             if (settingsManager.getProperty(PluginSettings.PRE_PROCESS) && originalMessage != null) originalMessage =
                 originalMessage.replace(
-                    Utils.getPreProcessRegex().toRegex(), ""
+                    Utils.preProcessRegex.toRegex(), ""
                 )
             assert(originalMessage != null)
             val censoredWordList = sensitiveWordBs.findAll(originalMessage)

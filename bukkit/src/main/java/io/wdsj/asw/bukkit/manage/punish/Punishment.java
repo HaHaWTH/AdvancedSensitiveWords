@@ -37,7 +37,10 @@ public class Punishment {
 
     public static void processSinglePunish(Player player, String method) throws IllegalArgumentException {
         String[] normalPunish = method.split("\\|");
-        PunishmentType punishMethod = PunishmentType.valueOf(normalPunish[0].toUpperCase(Locale.ROOT));
+        PunishmentType punishMethod = PunishmentType.getType(normalPunish[0].toUpperCase(Locale.ROOT));
+        if (punishMethod == null) {
+            throw new IllegalArgumentException("Invalid punishment method");
+        }
         long violationCount = ViolationCounter.getViolationCount(player);
         if (normalPunish.length > 2 && normalPunish[normalPunish.length - 1].toUpperCase(Locale.ROOT).startsWith("VL") && normalPunish[normalPunish.length - 1].length() > 2) {
             String vlCondition = normalPunish[normalPunish.length - 1].substring(2);
@@ -107,8 +110,7 @@ public class Punishment {
                 }
                 break;
             default:
-                LOGGER.warning("Unknown punishment type");
-                break;
+                throw new IllegalArgumentException("Invalid punishment method");
         }
     }
 

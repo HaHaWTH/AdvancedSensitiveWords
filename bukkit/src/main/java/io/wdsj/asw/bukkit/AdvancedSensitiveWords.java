@@ -57,7 +57,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
-import static io.wdsj.asw.bukkit.util.TimingUtils.cleanStatisticCache;
+import static io.wdsj.asw.bukkit.util.TimingUtils.resetStatistics;
 import static io.wdsj.asw.bukkit.util.Utils.*;
 
 
@@ -124,7 +124,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         long startTime = System.currentTimeMillis();
         libraryService.loadRequired();
         LOGGER.info("Initializing DFA system...");
-        cleanStatisticCache();
+        resetStatistics();
         scheduler = UniversalScheduler.getScheduler(this);
         permCache = CachingPermTool.enable(this);
         BookCache.initialize();
@@ -279,7 +279,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         getServer().getMessenger().unregisterOutgoingPluginChannel(this);
         getServer().getMessenger().unregisterIncomingPluginChannel(this);
         HandlerList.unregisterAll(this);
-        TimingUtils.cleanStatisticCache();
+        TimingUtils.resetStatistics();
         ChatContext.forceClearContext();
         SignContext.forceClearContext();
         PlayerShadowController.clear();

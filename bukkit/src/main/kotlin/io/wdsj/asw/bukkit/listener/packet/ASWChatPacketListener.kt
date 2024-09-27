@@ -44,7 +44,7 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
         if (packetType === PacketType.Play.Client.CHAT_MESSAGE) {
             val player = event.getPlayer() as Player
             val wrapperPlayClientChatMessage = WrapperPlayClientChatMessage(event)
-            val originalMessage = if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) wrapperPlayClientChatMessage.message.replace(Utils.getPreProcessRegex().toRegex(), "") else wrapperPlayClientChatMessage.message
+            val originalMessage = if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) wrapperPlayClientChatMessage.message.replace(Utils.preProcessRegex.toRegex(), "") else wrapperPlayClientChatMessage.message
             if (shouldNotProcess(player, originalMessage)) return
             val startTime = System.currentTimeMillis()
             // Word check
@@ -249,7 +249,7 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
         } else if (packetType === PacketType.Play.Client.CHAT_COMMAND) {
             val player = event.getPlayer() as Player
             val wrapperPlayClientChatCommand = WrapperPlayClientChatCommand(event)
-            val originalCommand = if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) wrapperPlayClientChatCommand.command.replace(Utils.getPreProcessRegex().toRegex(), "") else wrapperPlayClientChatCommand.command
+            val originalCommand = if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) wrapperPlayClientChatCommand.command.replace(Utils.preProcessRegex.toRegex(), "") else wrapperPlayClientChatCommand.command
             if (shouldNotProcess(player, "/$originalCommand")) return
             val startTime = System.currentTimeMillis()
             val censoredWords = sensitiveWordBs.findAll(originalCommand)

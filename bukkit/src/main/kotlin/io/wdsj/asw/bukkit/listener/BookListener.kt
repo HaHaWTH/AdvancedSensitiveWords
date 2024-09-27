@@ -45,7 +45,7 @@ class BookListener : Listener {
                 if (skipReturnLine) originalPage = originalPage.replace("\n", "").replace("§0", "")
                 if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) originalPage =
                     originalPage.replace(
-                        Utils.getPreProcessRegex().toRegex(), ""
+                        Utils.preProcessRegex.toRegex(), ""
                     )
                 val isBookCached = BookCache.isBookCached(originalPage)
                 val censoredWordList =
@@ -83,7 +83,7 @@ class BookListener : Listener {
                 if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) {
                     originalPageCrossed =
                         originalPageCrossed.replace(
-                            Utils.getPreProcessRegex().toRegex(), ""
+                            Utils.preProcessRegex.toRegex(), ""
                         )
                 }
                 val censoredWordListCrossed = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalPageCrossed)
@@ -101,7 +101,7 @@ class BookListener : Listener {
         if (originalAuthor != null) {
             if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) originalAuthor =
                 originalAuthor.replace(
-                    Utils.getPreProcessRegex().toRegex(), ""
+                    Utils.preProcessRegex.toRegex(), ""
                 )
             val censoredWordListAuthor = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalAuthor)
             if (censoredWordListAuthor.isNotEmpty()) {
@@ -122,7 +122,7 @@ class BookListener : Listener {
         if (originalTitle != null) {
             if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) originalTitle =
                 originalTitle.replace(
-                    Utils.getPreProcessRegex().toRegex(), ""
+                    Utils.preProcessRegex.toRegex(), ""
                 )
             val censoredWordListTitle = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalTitle)
             if (censoredWordListTitle.isNotEmpty()) {

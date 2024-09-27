@@ -20,7 +20,7 @@ class ItemSpawnListener : Listener {
             var originalName = it
             if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) originalName =
                 originalName.replace(
-                    Utils.getPreProcessRegex().toRegex(), ""
+                    Utils.preProcessRegex.toRegex(), ""
                 )
             val startTime = System.currentTimeMillis()
             val censoredWordList = sensitiveWordBs.findAll(originalName)

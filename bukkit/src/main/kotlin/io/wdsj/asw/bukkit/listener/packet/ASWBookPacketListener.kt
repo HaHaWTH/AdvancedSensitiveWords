@@ -51,7 +51,7 @@ class ASWBookPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                 if (skipReturnLine) {
                     originalPage = originalPage.replace("\n", "").replace("§0", "")
                 }
-                if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) originalPage = originalPage.replace(Utils.getPreProcessRegex().toRegex(), "")
+                if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) originalPage = originalPage.replace(Utils.preProcessRegex.toRegex(), "")
                 val isBookCached = BookCache.isBookCached(originalPage)
                 val censoredWordList = if (isBookCached && isCacheEnabled) BookCache.getCachedBookSensitiveWordList(originalPage) else AdvancedSensitiveWords.sensitiveWordBs.findAll(originalPage)
                 if (censoredWordList.isNotEmpty()) {
@@ -81,7 +81,7 @@ class ASWBookPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
             if (settingsManager.getProperty(PluginSettings.BOOK_CROSS_PAGE) && !shouldSendMessage) {
                 var crossPageListString = originalPages.joinToString("").replace("\n", "").replace("§0", "")
                 if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) {
-                    crossPageListString = crossPageListString.replace(Utils.getPreProcessRegex().toRegex(), "")
+                    crossPageListString = crossPageListString.replace(Utils.preProcessRegex.toRegex(), "")
                 }
                 val censoredWordListCrossPage = AdvancedSensitiveWords.sensitiveWordBs.findAll(crossPageListString)
                 if (censoredWordListCrossPage.isNotEmpty()) {
@@ -95,7 +95,7 @@ class ASWBookPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
             // Book title check
             var originalTitle = wrapper.title
             if (originalTitle != null) {
-                if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) originalTitle = originalTitle.replace(Utils.getPreProcessRegex().toRegex(), "")
+                if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) originalTitle = originalTitle.replace(Utils.preProcessRegex.toRegex(), "")
                 val censoredWordListTitle = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalTitle)
                 if (censoredWordListTitle.isNotEmpty()) {
                     val processedTitle = AdvancedSensitiveWords.sensitiveWordBs.replace(originalTitle)

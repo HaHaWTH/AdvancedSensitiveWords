@@ -35,7 +35,7 @@ class ChatListener : Listener {
         val player = event.player
         if (shouldNotProcess(player)) return
         val isCancelMode = settingsManager.getProperty(PluginSettings.CHAT_METHOD).equals("cancel", ignoreCase = true)
-        val originalMessage = if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) event.message.replace(Utils.getPreProcessRegex().toRegex(), "") else event.message
+        val originalMessage = if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) event.message.replace(Utils.preProcessRegex.toRegex(), "") else event.message
         val censoredWordList = sensitiveWordBs.findAll(originalMessage)
         val startTime = System.currentTimeMillis()
         if (censoredWordList.isNotEmpty()) {

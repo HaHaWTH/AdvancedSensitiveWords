@@ -30,7 +30,7 @@ class CommandListener : Listener {
         val player = event.player
         val originalCommand =
             if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) event.message.replace(
-                Utils.getPreProcessRegex().toRegex(), ""
+                Utils.preProcessRegex.toRegex(), ""
             ) else event.message
         if (shouldNotProcess(player, originalCommand)) return
         val censoredWordList = sensitiveWordBs.findAll(originalCommand)

@@ -36,7 +36,7 @@ class PlayerItemListener : Listener {
                 val startTime = System.currentTimeMillis()
                 if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) originalName =
                     originalName.replace(
-                        Utils.getPreProcessRegex().toRegex(), ""
+                        Utils.preProcessRegex.toRegex(), ""
                     )
                 val censoredWordList = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalName)
                 if (censoredWordList.isNotEmpty()) {
@@ -95,7 +95,7 @@ class PlayerItemListener : Listener {
                 val startTime = System.currentTimeMillis()
                 if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) originalName =
                     originalName.replace(
-                        Utils.getPreProcessRegex().toRegex(), ""
+                        Utils.preProcessRegex.toRegex(), ""
                     )
                 val censoredWordList = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalName)
                 if (censoredWordList.isNotEmpty()) {

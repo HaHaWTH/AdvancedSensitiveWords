@@ -18,7 +18,7 @@ class BroadCastListener : Listener {
         var originalMessage = event.message
         if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) originalMessage =
             originalMessage.replace(
-                Utils.getPreProcessRegex().toRegex(), ""
+                Utils.preProcessRegex.toRegex(), ""
             )
         val startTime = System.currentTimeMillis()
         val censoredWordList = AdvancedSensitiveWords.sensitiveWordBs.findAll(originalMessage)
