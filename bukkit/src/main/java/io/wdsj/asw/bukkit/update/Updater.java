@@ -66,7 +66,7 @@ public class Updater {
                 InputStreamReader reader = new InputStreamReader(connection.getInputStream());
                 JsonObject jsonObject = new JsonParser().parse(reader).getAsJsonObject();
                 String latestHash = jsonObject.get("sha").getAsString();
-                latestVersion = latestHash.substring(0, 6);
+                latestVersion = latestHash.substring(0, 7);
                 currentVersion = PluginVersionTemplate.COMMIT_HASH_SHORT;
                 isUpdateAvailable = !PluginVersionTemplate.COMMIT_HASH.equals(latestHash);
                 return isUpdateAvailable;
