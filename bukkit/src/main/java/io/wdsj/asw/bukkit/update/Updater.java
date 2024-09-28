@@ -63,13 +63,15 @@ public class Updater {
             connection.setReadTimeout(5000);
             int responseCode = connection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
-                InputStreamReader reader = new InputStreamReader(connection.getInputStream());
-                JsonObject jsonObject = new JsonParser().parse(reader).getAsJsonObject();
-                String latestHash = jsonObject.get("sha").getAsString();
-                latestVersion = latestHash.substring(0, 7);
-                currentVersion = PluginVersionTemplate.COMMIT_HASH_SHORT;
-                isUpdateAvailable = !PluginVersionTemplate.COMMIT_HASH.equals(latestHash);
-                return isUpdateAvailable;
+                try (InputStreamReader reader = new InputStreamReader(connection.getInputStream())) {
+                    JsonObject jsonObject = new JsonParser().parse(reader).getAsJsonObject();
+                    String latestHash = jsonObject.get("sha").getAsString();
+                    latestVersion = latestHash.substring(0, 7);
+                    currentVersion = PluginVersionTemplate.COMMIT_HASH_SHORT;
+                    isUpdateAvailable = !PluginVersionTemplate.COMMIT_HASH.equals(latestHash);
+                    reader.close();
+                    return isUpdateAvailable;
+                }
             }
         } catch (Exception ignored) {
         }
