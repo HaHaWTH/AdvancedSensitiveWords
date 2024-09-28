@@ -217,12 +217,21 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         violationResetTask = new ViolationResetTask().runTaskTimerAsynchronously(this, settingsManager.getProperty(PluginSettings.VIOLATION_RESET_TIME) * 20L * 60L, settingsManager.getProperty(PluginSettings.VIOLATION_RESET_TIME) * 20L * 60L);
         long endTime = System.currentTimeMillis();
         LOGGER.info("AdvancedSensitiveWords is enabled!(took " + (endTime - startTime) + "ms)");
+        if (Updater.isDevChannel()) {
+            LOGGER.info("You are running a development version of AdvancedSensitiveWords! Branch: " + PluginVersionTemplate.COMMIT_BRANCH);
+        }
         if (settingsManager.getProperty(PluginSettings.CHECK_FOR_UPDATE)) {
             getScheduler().runTaskAsynchronously(() -> {
-                Updater updater = new Updater(PLUGIN_VERSION);
+                Updater updater = new Updater();
+                LOGGER.info("Checking for update...");
                 if (updater.isUpdateAvailable()) {
-                    LOGGER.warning("There is a new version available: " + Updater.getLatestVersion() +
-                            ", you're on: " + Updater.getCurrentVersion());
+                    if (Updater.isDevChannel()) {
+                        LOGGER.warning("There is a new development version available: " + Updater.getLatestVersion() +
+                                ", you're on: " + Updater.getCurrentVersion());
+                    } else {
+                        LOGGER.warning("There is a new version available: " + Updater.getLatestVersion() +
+                                ", you're on: " + Updater.getCurrentVersion());
+                    }
                 }
             });
         }

@@ -9,17 +9,18 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 
-import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER;
+import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.PLUGIN_VERSION;
 
 public class Updater {
-    private static String currentVersion;
+    private static String currentVersion = PLUGIN_VERSION;
     private static String latestVersion;
     private static boolean isUpdateAvailable = false;
-    private static final String UPDATE_URL = "https://api.github.com/repos/HaHaWTH/AdvancedSensitiveWords/releases/latest";
-    private static final String currentVersionChannel = PluginVersionTemplate.VERSION_CHANNEL;
+    private static final String RELEASE_URL = "https://api.github.com/repos/HaHaWTH/AdvancedSensitiveWords/releases/latest";
+    private static final String COMMITS_URL = "https://api.github.com/repos/HaHaWTH/AdvancedSensitiveWords/commits/" + PluginVersionTemplate.COMMIT_BRANCH;
+    @SuppressWarnings("all")
+    private static final boolean isDevChannel = PluginVersionTemplate.VERSION_CHANNEL.equalsIgnoreCase("dev");
 
-    public Updater(String current) {
-        currentVersion = current;
+    public Updater() {
     }
 
     /**
@@ -27,13 +28,11 @@ public class Updater {
      * Note: This method will perform a network request!
      * @return true if there is an update available, false otherwise
      */
-    @SuppressWarnings("all")
     public boolean isUpdateAvailable() {
-        boolean isDevChannel = currentVersionChannel.equalsIgnoreCase("dev");
         if (isDevChannel) {
-            LOGGER.info("You are running an development version of AdvancedSensitiveWords!");
+            return isDevUpdateAvailable();
         }
-        URI uri = URI.create(UPDATE_URL);
+        URI uri = URI.create(RELEASE_URL);
         try {
             URL url = uri.toURL();
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -45,10 +44,6 @@ public class Updater {
                 latestVersion = latest;
                 isUpdateAvailable = !currentVersion.equals(latest);
                 reader.close();
-                if (isDevChannel) {
-                    LOGGER.info("Current running: " + currentVersion + "-" + currentVersionChannel + ", latest release: " + latest);
-                    return false;
-                }
                 return isUpdateAvailable;
             }
         } catch (Exception e) {
@@ -56,6 +51,29 @@ public class Updater {
             isUpdateAvailable = false;
             return false;
         }
+    }
+
+    protected boolean isDevUpdateAvailable() {
+        URI uri = URI.create(COMMITS_URL);
+        try {
+            URL url = uri.toURL();
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setConnectTimeout(10000);
+            connection.setReadTimeout(5000);
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                InputStreamReader reader = new InputStreamReader(connection.getInputStream());
+                JsonObject jsonObject = new JsonParser().parse(reader).getAsJsonObject();
+                String latestHash = jsonObject.get("sha").getAsString();
+                latestVersion = latestHash.substring(0, 6);
+                currentVersion = PluginVersionTemplate.COMMIT_HASH_SHORT;
+                isUpdateAvailable = !PluginVersionTemplate.COMMIT_HASH.equals(latestHash);
+                return isUpdateAvailable;
+            }
+        } catch (Exception ignored) {
+        }
+        return false;
     }
 
     public static String getLatestVersion() {
@@ -73,5 +91,9 @@ public class Updater {
      */
     public static boolean hasUpdate() {
         return isUpdateAvailable;
+    }
+
+    public static boolean isDevChannel() {
+        return isDevChannel;
     }
 }

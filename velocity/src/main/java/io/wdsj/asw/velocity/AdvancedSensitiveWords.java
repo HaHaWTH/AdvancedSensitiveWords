@@ -29,15 +29,18 @@ import java.util.Locale;
 )
 public class AdvancedSensitiveWords {
 
-    @Inject
-    private Logger logger;
-    @Inject
-    private ProxyServer server;
-    @Inject
-    private Metrics.Factory metricsFactory;
+    private final Logger logger;
+    private final ProxyServer server;
+    private final Metrics.Factory metricsFactory;
     private static final MinecraftChannelIdentifier CHANNEL = MinecraftChannelIdentifier.create("asw", "main");
     private static final ChannelIdentifier LEGACY_CHANNEL
             = new LegacyChannelIdentifier("asw:main");
+    @Inject
+    public AdvancedSensitiveWords(Logger logger, ProxyServer server, Metrics.Factory metricsFactory) {
+        this.logger = logger;
+        this.server = server;
+        this.metricsFactory = metricsFactory;
+    }
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
         server.getChannelRegistrar().register(CHANNEL, LEGACY_CHANNEL);
