@@ -17,7 +17,7 @@ public class Updater {
     private static boolean isUpdateAvailable = false;
     private static final String RELEASE_URL = "https://api.github.com/repos/HaHaWTH/AdvancedSensitiveWords/releases/latest";
     private static final String COMMITS_URL = "https://api.github.com/repos/HaHaWTH/AdvancedSensitiveWords/commits/" + PluginVersionTemplate.COMMIT_BRANCH;
-    @SuppressWarnings("all")
+    @SuppressWarnings("ConstantConditions") // IDE doesn't know this will be replaced
     private static final boolean isDevChannel = PluginVersionTemplate.VERSION_CHANNEL.equalsIgnoreCase("dev");
 
     public Updater() {

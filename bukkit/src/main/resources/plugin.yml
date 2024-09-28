@@ -4,6 +4,7 @@ version: ${project.version}-${version.channel}
 main: ${plugin.mainClass}
 api-version: '1.13'
 website: ${plugin.website}
+build-hash: ${git.commit.id.abbrev}
 authors:
   - HeyWTF_IS_That
   - HaHaWTH
