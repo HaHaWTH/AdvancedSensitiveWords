@@ -38,6 +38,8 @@ public class Updater {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setConnectTimeout(10000);
             conn.setReadTimeout(10000);
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Accept", "application/vnd.github+json");
             try (InputStreamReader reader = new InputStreamReader(conn.getInputStream())) {
                 JsonObject jsonObject = new JsonParser().parse(reader).getAsJsonObject();
                 String latest = jsonObject.get("tag_name").getAsString();
@@ -60,7 +62,8 @@ public class Updater {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.setConnectTimeout(10000);
-            connection.setReadTimeout(5000);
+            connection.setReadTimeout(10000);
+            connection.setRequestProperty("Accept", "application/vnd.github+json");
             int responseCode = connection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 try (InputStreamReader reader = new InputStreamReader(connection.getInputStream())) {
@@ -75,6 +78,7 @@ public class Updater {
             }
         } catch (Exception ignored) {
         }
+        isUpdateAvailable = false;
         return false;
     }
 

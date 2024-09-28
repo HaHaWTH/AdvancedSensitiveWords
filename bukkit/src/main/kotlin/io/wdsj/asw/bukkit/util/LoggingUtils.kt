@@ -8,17 +8,17 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStreamWriter
 import java.nio.charset.StandardCharsets
-import java.text.SimpleDateFormat
-import java.util.*
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 object LoggingUtils {
-    private val dateFormat = SimpleDateFormat("yyyy/MM/dd-HH:mm:ss")
+    private val dateFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd-HH:mm:ss")
     private lateinit var loggingThreadPool: ExecutorService
     fun logViolation(playerName: String, violationReason: String) {
         loggingThreadPool.submit {
-            val formattedDate = dateFormat.format(Date())
+            val formattedDate = LocalDateTime.now().format(dateFormatter)
             val logMessage = "[$formattedDate] $playerName $violationReason"
             val logFile = File(AdvancedSensitiveWords.getInstance().dataFolder, "violations.log")
             if (!logFile.exists()) {
