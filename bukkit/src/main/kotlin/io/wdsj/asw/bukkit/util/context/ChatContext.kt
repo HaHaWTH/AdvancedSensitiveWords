@@ -20,8 +20,9 @@ object ChatContext {
         while (history.size >= settingsManager.getProperty(PluginSettings.CHAT_CONTEXT_MAX_SIZE)) {
             history.pollFirst()
         }
-        if (message.trim().isEmpty()) return
-        history.offerLast(TimedString.of(message.trim()))
+        message.trim().takeIf { it.isNotEmpty() } ?.let {
+            history.offerLast(TimedString.of(it))
+        }
     }
 
     fun getHistory(player: Player): Deque<String> {

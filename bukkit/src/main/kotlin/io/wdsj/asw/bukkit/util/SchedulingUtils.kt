@@ -41,7 +41,7 @@ object SchedulingUtils {
     }
 
     @JvmStatic
-    fun runSyncIfEventAsync(runnable: Runnable, event: Event) {
+    fun runSyncIfEventAsync(event: Event, runnable: Runnable) {
         if (event.isAsynchronous) {
             AdvancedSensitiveWords.getScheduler().runTask(runnable)
         } else {
@@ -60,8 +60,7 @@ object SchedulingUtils {
 
     @JvmStatic
     fun cancelTaskSafely(task: MyScheduledTask?) {
-        if (task == null) return
-        task.cancel()
+        task?.cancel()
     }
 
     @JvmStatic

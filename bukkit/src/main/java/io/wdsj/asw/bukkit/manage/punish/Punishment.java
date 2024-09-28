@@ -39,7 +39,7 @@ public class Punishment {
         String[] normalPunish = method.split("\\|");
         PunishmentType punishMethod = PunishmentType.getType(normalPunish[0].toUpperCase(Locale.ROOT));
         if (punishMethod == null) {
-            throw new IllegalArgumentException("Invalid punishment method");
+            throw new IllegalArgumentException("Invalid punishment method " + normalPunish[0].toUpperCase(Locale.ROOT));
         }
         long violationCount = ViolationCounter.getViolationCount(player);
         if (normalPunish.length > 2 && normalPunish[normalPunish.length - 1].toUpperCase(Locale.ROOT).startsWith("VL") && normalPunish[normalPunish.length - 1].length() > 2) {
