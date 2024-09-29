@@ -78,6 +78,7 @@ public class Updater {
             }
         } catch (Exception ignored) {
         }
+        latestVersion = null;
         isUpdateAvailable = false;
         return false;
     }

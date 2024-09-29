@@ -235,6 +235,12 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
                         LOGGER.warning("There is a new version available: " + Updater.getLatestVersion() +
                                 ", you're on: " + Updater.getCurrentVersion());
                     }
+                } else {
+                    if (Updater.getLatestVersion() != null) {
+                        LOGGER.info("You are running the latest version.");
+                    } else {
+                        LOGGER.info("Unable to fetch version info.");
+                    }
                 }
             });
         }
