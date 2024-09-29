@@ -57,6 +57,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
+import static io.wdsj.asw.bukkit.util.LoggingUtils.purgeLog;
 import static io.wdsj.asw.bukkit.util.TimingUtils.resetStatistics;
 import static io.wdsj.asw.bukkit.util.Utils.*;
 
@@ -76,8 +77,8 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     private static boolean isEventMode = false;
     public static Logger LOGGER;
     private static BukkitLibraryService libraryService;
-    private final OllamaProcessor OLLAMA_PROCESSOR = new OllamaProcessor();
-    private final OpenAIProcessor OPENAI_PROCESSOR = new OpenAIProcessor();
+    private OllamaProcessor ollamaProcessor;
+    private OpenAIProcessor openaiProcessor;
     private VoiceChatHookService voiceChatHookService;
     private CachingPermTool permCache;
     public static TaskScheduler getScheduler() {
@@ -167,10 +168,12 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new AltsListener(), this);
         getServer().getPluginManager().registerEvents(new FakeMessageExecutor(), this);
         if (settingsManager.getProperty(PluginSettings.ENABLE_OLLAMA_AI_MODEL_CHECK)) {
-            OLLAMA_PROCESSOR.initService(settingsManager.getProperty(PluginSettings.OLLAMA_AI_API_ADDRESS), settingsManager.getProperty(PluginSettings.OLLAMA_AI_MODEL_NAME), settingsManager.getProperty(PluginSettings.AI_MODEL_TIMEOUT), settingsManager.getProperty(PluginSettings.OLLAMA_AI_DEBUG_LOG));
+            ollamaProcessor = new OllamaProcessor();
+            ollamaProcessor.initService(settingsManager.getProperty(PluginSettings.OLLAMA_AI_API_ADDRESS), settingsManager.getProperty(PluginSettings.OLLAMA_AI_MODEL_NAME), settingsManager.getProperty(PluginSettings.AI_MODEL_TIMEOUT), settingsManager.getProperty(PluginSettings.OLLAMA_AI_DEBUG_LOG));
         }
         if (settingsManager.getProperty(PluginSettings.ENABLE_OPENAI_AI_MODEL_CHECK)) {
-            OPENAI_PROCESSOR.initService(settingsManager.getProperty(PluginSettings.OPENAI_API_KEY), settingsManager.getProperty(PluginSettings.OPENAI_DEBUG_LOG));
+            openaiProcessor = new OpenAIProcessor();
+            openaiProcessor.initService(settingsManager.getProperty(PluginSettings.OPENAI_API_KEY), settingsManager.getProperty(PluginSettings.OPENAI_DEBUG_LOG));
         }
         if (settingsManager.getProperty(PluginSettings.ENABLE_SIGN_EDIT_CHECK)) {
             getServer().getPluginManager().registerEvents(new SignListener(), this);
@@ -293,8 +296,12 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         SignContext.forceClearContext();
         PlayerShadowController.clear();
         PlayerAltController.clear();
-        OLLAMA_PROCESSOR.shutdown();
-        OPENAI_PROCESSOR.shutdown();
+        if (ollamaProcessor != null) {
+            ollamaProcessor.shutdown();
+        }
+        if (openaiProcessor != null) {
+            openaiProcessor.shutdown();
+        }
         if (voiceChatHookService != null) {
             voiceChatHookService.unregister();
         }

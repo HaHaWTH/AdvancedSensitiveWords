@@ -1,5 +1,6 @@
 package io.wdsj.asw.bukkit.util
 
+import com.github.houbb.heaven.util.io.FileUtil
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER
@@ -37,6 +38,14 @@ object LoggingUtils {
                 LOGGER.warning("Failed to write to violations.log file: " + e.message)
             }
         }
+    }
+
+    @JvmStatic
+    fun purgeLog() {
+        val logFile = File(AdvancedSensitiveWords.getInstance().dataFolder, "violations.log")
+        if (!logFile.exists()) return
+        FileUtil.deleteFile(logFile)
+        LOGGER.info("Successfully purged violations")
     }
 
     @JvmStatic

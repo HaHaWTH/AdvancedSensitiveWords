@@ -1,12 +1,10 @@
 package io.wdsj.asw.bukkit.util
 
-import com.github.houbb.heaven.util.io.FileUtil
 import com.github.houbb.heaven.util.lang.StringUtil
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
-import java.io.File
 import java.util.*
 import java.util.concurrent.atomic.AtomicLong
 
@@ -52,15 +50,6 @@ object Utils {
         }
         return true
     }
-
-    @JvmStatic
-    fun purgeLog() {
-        val logFile = File(AdvancedSensitiveWords.getInstance().dataFolder, "violations.log")
-        if (!logFile.exists()) return
-        FileUtil.deleteFile(logFile)
-        AdvancedSensitiveWords.LOGGER.info("Successfully purged violations")
-    }
-
     fun isCommand(command: String): Boolean {
         return command.startsWith("/")
     }
