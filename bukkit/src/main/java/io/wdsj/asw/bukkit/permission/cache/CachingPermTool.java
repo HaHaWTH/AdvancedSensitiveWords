@@ -11,6 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.UUID;
@@ -37,7 +38,7 @@ public final class CachingPermTool implements Listener {
         permissionCacheMap.clear();
     }
 
-    public static boolean hasPermission(PermissionsEnum permission, HumanEntity human) {
+    public static boolean hasPermission(PermissionsEnum permission, @NotNull HumanEntity human) {
         Cache<PermissionsEnum, Boolean> permCache = permissionCacheMap.computeIfAbsent(human.getUniqueId(),
                 k -> Caffeine.newBuilder().expireAfterWrite(8, TimeUnit.SECONDS).build());
         Boolean hasPermission = permCache.getIfPresent(permission);

@@ -1,10 +1,13 @@
 package io.wdsj.asw.bukkit.listener
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.*
+import io.wdsj.asw.bukkit.permission.PermissionsEnum
+import io.wdsj.asw.bukkit.permission.cache.CachingPermTool
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.util.LoggingUtils
 import io.wdsj.asw.bukkit.util.TimingUtils
 import io.wdsj.asw.bukkit.util.Utils
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -16,6 +19,8 @@ class ItemSpawnListener : Listener {
     fun onItemSpawn(event: ItemSpawnEvent) {
         if (!isInitialized || !settingsManager.getProperty(PluginSettings.ITEM_MONITOR_SPAWN) || !settingsManager.getProperty(PluginSettings.ENABLE_PLAYER_ITEM_CHECK)) return
         val itemEntity = event.entity
+        val throwerPlayer = itemEntity.thrower?.let { Bukkit.getPlayer(it) }
+        if (throwerPlayer != null && CachingPermTool.hasPermission(PermissionsEnum.BYPASS, throwerPlayer)) return
         itemEntity.customName?.let {
             var originalName = it
             if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) originalName =
