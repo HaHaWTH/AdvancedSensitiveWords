@@ -1,4 +1,4 @@
-package io.wdsj.asw.bukkit.update;
+package io.wdsj.asw.common.update;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -9,10 +9,8 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 
-import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.PLUGIN_VERSION;
-
 public class Updater {
-    private static String currentVersion = PLUGIN_VERSION;
+    private static String currentVersion = PluginVersionTemplate.VERSION;
     private static String latestVersion;
     private static boolean isUpdateAvailable = false;
     private static final String RELEASE_URL = "https://api.github.com/repos/HaHaWTH/AdvancedSensitiveWords/releases/latest";

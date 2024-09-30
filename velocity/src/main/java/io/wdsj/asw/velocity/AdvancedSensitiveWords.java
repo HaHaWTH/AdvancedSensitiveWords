@@ -1,25 +1,26 @@
 package io.wdsj.asw.velocity;
 
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
+import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
-import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
-import com.velocitypowered.api.proxy.server.ServerInfo;
-import io.wdsj.asw.common.constant.networking.ChannelDataConstant;
-import io.wdsj.asw.common.datatype.io.LimitedByteArrayDataOutput;
 import io.wdsj.asw.common.template.PluginVersionTemplate;
+import io.wdsj.asw.common.update.Updater;
+import io.wdsj.asw.velocity.config.Config;
+import io.wdsj.asw.velocity.subscriber.PluginMessageForwarder;
 import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 
-import java.util.Locale;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 @Plugin(
         id = "advancedsensitivewords",
@@ -32,53 +33,70 @@ public class AdvancedSensitiveWords {
     private final Logger logger;
     private final ProxyServer server;
     private final Metrics.Factory metricsFactory;
-    private static final MinecraftChannelIdentifier CHANNEL = MinecraftChannelIdentifier.create("asw", "main");
-    private static final ChannelIdentifier LEGACY_CHANNEL
+    private final File dataFolder;
+    public static final MinecraftChannelIdentifier CHANNEL = MinecraftChannelIdentifier.create("asw", "main");
+    public static final ChannelIdentifier LEGACY_CHANNEL
             = new LegacyChannelIdentifier("asw:main");
+    private static Config config;
     @Inject
-    public AdvancedSensitiveWords(Logger logger, ProxyServer server, Metrics.Factory metricsFactory) {
+    public AdvancedSensitiveWords(Logger logger, ProxyServer server, Metrics.Factory metricsFactory, @DataDirectory Path path) {
         this.logger = logger;
         this.server = server;
         this.metricsFactory = metricsFactory;
+        this.dataFolder = path.toFile();
     }
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
+        reloadConfiguration();
         server.getChannelRegistrar().register(CHANNEL, LEGACY_CHANNEL);
         Metrics metrics = metricsFactory.make(this, 21637);
+        server.getEventManager().register(this, new PluginMessageForwarder(logger, server));
+        if (config.check_for_update) {
+            server.getScheduler().buildTask(this, () -> {
+                Updater updater = new Updater();
+                logger.info("Checking for update...");
+                if (updater.isUpdateAvailable()) {
+                    if (Updater.isDevChannel()) {
+                        logger.warn("There is a new development version available: " + Updater.getLatestVersion() +
+                                ", you're on: " + Updater.getCurrentVersion());
+                    } else {
+                        logger.warn("There is a new version available: " + Updater.getLatestVersion() +
+                                ", you're on: " + Updater.getCurrentVersion());
+                    }
+                } else {
+                    if (Updater.getLatestVersion() != null) {
+                        logger.info("You are running the latest version.");
+                    } else {
+                        logger.info("Unable to fetch version info.");
+                    }
+                }
+            }).schedule();
+        }
     }
 
-    @Subscribe
-    public void onPluginMessage(PluginMessageEvent event) {
-        if (event.getIdentifier().equals(CHANNEL) || event.getIdentifier().equals(LEGACY_CHANNEL)) {
-            if (!(event.getSource() instanceof ServerConnection)) return;
-            ServerInfo serverInfo = ((ServerConnection) event.getSource()).getServerInfo();
-            byte[] message = event.getData();
-            ByteArrayDataInput input = ByteStreams.newDataInput(message);
-            if (!input.readUTF().equals(PluginVersionTemplate.VERSION)) {
-                logger.warn("Plugin version mismatch! Things may not work properly.");
-            }
-            switch (input.readUTF().toLowerCase(Locale.ROOT)) {
-                case ChannelDataConstant.NOTICE:
-                    server.getAllServers().forEach(server -> {
-                        if (!server.getServerInfo().equals(serverInfo) && !server.getPlayersConnected().isEmpty()) {
-                            LimitedByteArrayDataOutput out = LimitedByteArrayDataOutput.newDataOutput(32767);
-                            try {
-                                out.write(message);
-                                out.writeUTF(serverInfo.getName());
-                            } catch (Exception e) {
-                                logger.error("Failed to write notice message: " + e.getMessage());
-                            }
-                            server.sendPluginMessage(CHANNEL, out.toByteArray());
-                            logger.debug("Send notice message to " + server.getServerInfo().getName());
-                        }
-                    });
-                    break;
-                case ChannelDataConstant.COMMAND_PROXY:
-                    String command = input.readUTF();
-                    server.getCommandManager().executeAsync(server.getConsoleCommandSource(), command);
-                    break;
-            }
-            event.setResult(PluginMessageEvent.ForwardResult.handled());
+    private void reloadConfiguration() {
+        try {
+            createDirectory(dataFolder);
+            config = new Config(this, dataFolder);
+            config.saveConfig();
+        } catch (Throwable t) {
+            logger.error("Failed while loading config!", t);
         }
+    }
+
+    public void createDirectory(File dir) throws IOException {
+        try {
+            Files.createDirectories(dir.toPath());
+        } catch (FileAlreadyExistsException e) { // Thrown if dir exists but is not a directory
+            if (dir.delete()) createDirectory(dir);
+        }
+    }
+
+    public Logger getLogger() {
+        return this.logger;
+    }
+
+    public static Config config() {
+        return config;
     }
 }

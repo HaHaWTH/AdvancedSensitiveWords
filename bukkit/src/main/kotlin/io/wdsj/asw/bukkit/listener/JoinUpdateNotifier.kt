@@ -6,9 +6,9 @@ import io.wdsj.asw.bukkit.permission.PermissionsEnum
 import io.wdsj.asw.bukkit.permission.cache.CachingPermTool
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
-import io.wdsj.asw.bukkit.update.Updater
 import io.wdsj.asw.bukkit.util.PlayerUtils
 import io.wdsj.asw.bukkit.util.message.MessageUtils
+import io.wdsj.asw.common.update.Updater
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
