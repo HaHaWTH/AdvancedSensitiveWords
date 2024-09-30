@@ -1,4 +1,5 @@
 name: AdvancedSensitiveWords
 version: '${project.version}-${version.channel}'
 main: io.wdsj.asw.bungee.AdvancedSensitiveWords
+author: HaHaWTH
 build-hash: ${git.commit.id.abbrev}

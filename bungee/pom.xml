@@ -52,6 +52,10 @@
                             <pattern>org.bstats</pattern>
                             <shadedPattern>io.wdsj.asw.bungee.libs.bstats</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>io.github.thatsmusic99</pattern>
+                            <shadedPattern>io.wdsj.asw.velocity.libs.thatsmusic99</shadedPattern>
+                        </relocation>
                     </relocations>
                     <finalName>${project.artifactId}</finalName>
                 </configuration>
@@ -70,6 +74,10 @@
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>cm-repo</id>
+            <url>https://ci.pluginwiki.us/plugin/repository/everything/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -83,6 +91,12 @@
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bungeecord</artifactId>
             <version>3.1.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.thatsmusic99</groupId>
+            <artifactId>ConfigurationMaster-API</artifactId>
+            <version>v2.0.0-rc.2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
