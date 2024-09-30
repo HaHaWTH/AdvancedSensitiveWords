@@ -13,6 +13,7 @@ import java.util.List;
 
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER;
 
+@SuppressWarnings("UnstableApiUsage")
 public class BungeeSender {
     public static void sendNotifyMessage(Player violatedPlayer, ModuleType moduleType, String originalMessage, List<String> censoredList) {
         LimitedByteArrayDataOutput out = LimitedByteArrayDataOutput.newDataOutput(32767);

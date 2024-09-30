@@ -15,15 +15,19 @@ import java.util.Locale;
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER;
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
 
+@SuppressWarnings("UnstableApiUsage")
 public class VelocityReceiver implements PluginMessageListener {
+    private boolean warned = false;
     @Override
     public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, @NotNull byte[] message) {
         if (!settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) return;
         if (channel.equals(VelocityChannel.CHANNEL)) {
             ByteArrayDataInput input = ByteStreams.newDataInput(message);
-            if (!input.readUTF().equals(AdvancedSensitiveWords.PLUGIN_VERSION)) {
+            if (!input.readUTF().equals(AdvancedSensitiveWords.PLUGIN_VERSION) && !warned) {
                 LOGGER.warning("Plugin version mismatch! Things may not work properly.");
+                warned = true;
             }
+            // noinspection SwitchStatementWithTooFewBranches
             switch (input.readUTF().toLowerCase(Locale.ROOT)) { // Use switch for future updates
                 case ChannelDataConstant.NOTICE:
                     String playerName = input.readUTF();

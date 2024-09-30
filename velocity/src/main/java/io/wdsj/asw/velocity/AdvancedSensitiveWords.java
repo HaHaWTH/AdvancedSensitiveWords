@@ -53,9 +53,8 @@ public class AdvancedSensitiveWords {
         server.getEventManager().register(this, new PluginMessageForwarder(logger, server));
         if (config.check_for_update) {
             server.getScheduler().buildTask(this, () -> {
-                Updater updater = new Updater();
                 logger.info("Checking for update...");
-                if (updater.isUpdateAvailable()) {
+                if (Updater.isUpdateAvailable()) {
                     if (Updater.isDevChannel()) {
                         logger.warn("There is a new development version available: " + Updater.getLatestVersion() +
                                 ", you're on: " + Updater.getCurrentVersion());
@@ -64,7 +63,7 @@ public class AdvancedSensitiveWords {
                                 ", you're on: " + Updater.getCurrentVersion());
                     }
                 } else {
-                    if (Updater.getLatestVersion() != null) {
+                    if (!Updater.isErred()) {
                         logger.info("You are running the latest version.");
                     } else {
                         logger.info("Unable to fetch version info.");

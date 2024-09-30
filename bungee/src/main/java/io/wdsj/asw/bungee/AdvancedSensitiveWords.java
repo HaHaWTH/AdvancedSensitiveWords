@@ -34,9 +34,8 @@ public final class AdvancedSensitiveWords extends Plugin {
         Metrics metrics = new Metrics(this, 21636);
         if (config.check_for_update) {
             getProxy().getScheduler().runAsync(this, () -> {
-                Updater updater = new Updater();
                 LOGGER.info("Checking for update...");
-                if (updater.isUpdateAvailable()) {
+                if (Updater.isUpdateAvailable()) {
                     if (Updater.isDevChannel()) {
                         LOGGER.warning("There is a new development version available: " + Updater.getLatestVersion() +
                                 ", you're on: " + Updater.getCurrentVersion());
@@ -45,7 +44,7 @@ public final class AdvancedSensitiveWords extends Plugin {
                                 ", you're on: " + Updater.getCurrentVersion());
                     }
                 } else {
-                    if (Updater.getLatestVersion() != null) {
+                    if (!Updater.isErred()) {
                         LOGGER.info("You are running the latest version.");
                     } else {
                         LOGGER.info("Unable to fetch version info.");

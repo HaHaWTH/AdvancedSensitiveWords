@@ -17,7 +17,9 @@ import java.util.Locale;
 import static io.wdsj.asw.velocity.AdvancedSensitiveWords.CHANNEL;
 import static io.wdsj.asw.velocity.AdvancedSensitiveWords.LEGACY_CHANNEL;
 
+@SuppressWarnings("UnstableApiUsage")
 public class PluginMessageForwarder {
+    private boolean warned = false;
     private final Logger logger;
     private final ProxyServer server;
     public PluginMessageForwarder(Logger logger, ProxyServer server) {
@@ -31,8 +33,9 @@ public class PluginMessageForwarder {
             ServerInfo serverInfo = ((ServerConnection) event.getSource()).getServerInfo();
             byte[] message = event.getData();
             ByteArrayDataInput input = ByteStreams.newDataInput(message);
-            if (!input.readUTF().equals(PluginVersionTemplate.VERSION)) {
+            if (!input.readUTF().equals(PluginVersionTemplate.VERSION) && !warned) {
                 logger.warn("Plugin version mismatch! Things may not work properly.");
+                warned = true;
             }
             switch (input.readUTF().toLowerCase(Locale.ROOT)) {
                 case ChannelDataConstant.NOTICE:

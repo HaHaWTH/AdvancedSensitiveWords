@@ -3,6 +3,7 @@ package io.wdsj.asw.common.update;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.wdsj.asw.common.template.PluginVersionTemplate;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -13,20 +14,19 @@ public class Updater {
     private static String currentVersion = PluginVersionTemplate.VERSION;
     private static String latestVersion;
     private static boolean isUpdateAvailable = false;
+    private static boolean isErred = false;
     private static final String RELEASE_URL = "https://api.github.com/repos/HaHaWTH/AdvancedSensitiveWords/releases/latest";
     private static final String COMMITS_URL = "https://api.github.com/repos/HaHaWTH/AdvancedSensitiveWords/commits/" + PluginVersionTemplate.COMMIT_BRANCH;
     @SuppressWarnings("ConstantConditions") // IDE doesn't know this will be replaced
     private static final boolean isDevChannel = PluginVersionTemplate.VERSION_CHANNEL.equalsIgnoreCase("dev");
-
-    public Updater() {
-    }
 
     /**
      * Check if there is an update available
      * Note: This method will perform a network request!
      * @return true if there is an update available, false otherwise
      */
-    public boolean isUpdateAvailable() {
+    public static boolean isUpdateAvailable() {
+        currentVersion = PluginVersionTemplate.VERSION;
         if (isDevChannel) {
             return isDevUpdateAvailable();
         }
@@ -47,13 +47,13 @@ public class Updater {
                 return isUpdateAvailable;
             }
         } catch (Exception e) {
-            latestVersion = null;
+            isErred = true;
             isUpdateAvailable = false;
             return false;
         }
     }
 
-    protected boolean isDevUpdateAvailable() {
+    protected static boolean isDevUpdateAvailable() {
         URI uri = URI.create(COMMITS_URL);
         try {
             URL url = uri.toURL();
@@ -76,7 +76,7 @@ public class Updater {
             }
         } catch (Exception ignored) {
         }
-        latestVersion = null;
+        isErred = true;
         isUpdateAvailable = false;
         return false;
     }
@@ -84,7 +84,7 @@ public class Updater {
     public static String getLatestVersion() {
         return latestVersion;
     }
-
+    @NotNull
     public static String getCurrentVersion() {
         return currentVersion;
     }
@@ -96,6 +96,10 @@ public class Updater {
      */
     public static boolean hasUpdate() {
         return isUpdateAvailable;
+    }
+
+    public static boolean isErred() {
+        return isErred;
     }
 
     public static boolean isDevChannel() {

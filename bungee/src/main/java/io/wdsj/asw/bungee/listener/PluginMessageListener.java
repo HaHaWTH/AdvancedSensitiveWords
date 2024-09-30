@@ -16,6 +16,7 @@ import java.util.Locale;
 import static io.wdsj.asw.bungee.AdvancedSensitiveWords.*;
 
 public class PluginMessageListener implements Listener {
+    private boolean warned = false;
 
     @EventHandler
     public void onPluginMessage(final PluginMessageEvent event) {
@@ -25,8 +26,9 @@ public class PluginMessageListener implements Listener {
         }
         ByteArrayDataInput in = ByteStreams.newDataInput(event.getData());
         if (in.readUTF().equals(SUB_CHANNEL)) {
-            if (!in.readUTF().equals(PluginVersionTemplate.VERSION)) {
+            if (!in.readUTF().equals(PluginVersionTemplate.VERSION) && !warned) {
                 LOGGER.warning("Plugin version mismatch! Things may not work properly.");
+                warned = true;
             }
             switch (in.readUTF().toLowerCase(Locale.ROOT)) {
                 case ChannelDataConstant.NOTICE:
