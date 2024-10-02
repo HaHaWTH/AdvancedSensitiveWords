@@ -92,10 +92,12 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         return isEventMode;
     }
     private MyScheduledTask violationResetTask;
+    private boolean isFirstLoad;
     @Override
     public void onLoad() {
         LOGGER = getLogger();
         instance = this;
+        isFirstLoad = !getDataFolder().exists();
         settingsManager = SettingsManagerBuilder
                 .withYamlFile(CONFIG_FILE)
                 .configurationData(PluginSettings.class)
@@ -121,6 +123,9 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        if (isFirstLoad) {
+            LOGGER.info("Downloading required libraries, this may take minutes to complete.");
+        }
         LOGGER.info("Loading libraries...");
         long startTime = System.currentTimeMillis();
         libraryService.loadRequired();
