@@ -36,6 +36,7 @@ public class ExternalWordAllow implements IWordAllow {
                     .filter(Files::isRegularFile)
                     .map(Path::toFile)
                     .collect(Collectors.toList());
+            if (files.isEmpty()) return Collections.emptyList();
 
             files.parallelStream()
                     .forEach(file -> {
@@ -47,7 +48,7 @@ public class ExternalWordAllow implements IWordAllow {
                             LOGGER.severe("Error reading file: " + file.getName());
                         }
                     });
-            if (!files.isEmpty()) LOGGER.info("Loaded " + files.size() + " external allow file(s).");
+            LOGGER.info("Loaded " + files.size() + " external allow file(s). " + "Total words: " + totalList.size());
         } catch (IOException e) {
             LOGGER.severe("Error occurred while loading external allow files: " + e.getMessage());
             return Collections.emptyList();

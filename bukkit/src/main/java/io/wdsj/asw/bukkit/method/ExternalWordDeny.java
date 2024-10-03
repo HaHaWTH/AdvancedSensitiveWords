@@ -36,6 +36,7 @@ public class ExternalWordDeny implements IWordDeny {
                     .filter(Files::isRegularFile)
                     .map(Path::toFile)
                     .collect(Collectors.toList());
+            if (files.isEmpty()) return Collections.emptyList();
 
             files.parallelStream()
                     .forEach(file -> {
@@ -47,7 +48,7 @@ public class ExternalWordDeny implements IWordDeny {
                             LOGGER.severe("Error reading file: " + file.getName());
                         }
                     });
-            if (!files.isEmpty()) LOGGER.info("Loaded " + files.size() + " external deny file(s).");
+            LOGGER.info("Loaded " + files.size() + " external deny file(s). " + "Total words: " + totalList.size());
         } catch (IOException e) {
             LOGGER.severe("Error occurred while loading external deny files: " + e.getMessage());
             return Collections.emptyList();
