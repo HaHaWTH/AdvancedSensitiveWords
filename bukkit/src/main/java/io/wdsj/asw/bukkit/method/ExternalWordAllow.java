@@ -3,6 +3,7 @@ package io.wdsj.asw.bukkit.method;
 import com.github.houbb.sensitive.word.api.IWordAllow;
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -36,10 +37,16 @@ public class ExternalWordAllow implements IWordAllow {
                     .map(Path::toFile)
                     .collect(Collectors.toList());
 
-            for (File file : files) {
-                List<String> lines = Files.readAllLines(file.toPath());
-                totalList.addAll(lines);
-            }
+            files.parallelStream()
+                    .forEach(file -> {
+                        try (BufferedReader reader = Files.newBufferedReader(file.toPath())) {
+                            synchronized (totalList) {
+                                reader.lines().forEach(totalList::add);
+                            }
+                        } catch (IOException e) {
+                            LOGGER.severe("Error reading file: " + file.getName());
+                        }
+                    });
             if (!files.isEmpty()) LOGGER.info("Loaded " + files.size() + " external allow file(s).");
         } catch (IOException e) {
             LOGGER.severe("Error occurred while loading external allow files: " + e.getMessage());
