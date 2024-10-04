@@ -22,7 +22,7 @@ public class ExternalWordDeny implements IWordDeny {
 
     @Override
     public List<String> deny() {
-        List<String> totalList = new ArrayList<>();
+        final List<String> totalList = new ArrayList<>();
 
         if (Files.notExists(dataFolder.toPath())) {
             try {

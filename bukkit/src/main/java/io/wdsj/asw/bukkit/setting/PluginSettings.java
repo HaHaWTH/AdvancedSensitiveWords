@@ -39,6 +39,12 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"在线文本字符编码(UTF-8/GBK)",
             "Online words text encoding (UTF-8/GBK)"})
     public static final Property<String> ONLINE_WORDS_ENCODING = newProperty("Plugin.onlineWordsEncoding", "UTF-8");
+    @Comment({"是否为在线词库启用缓存",
+            "Whether to enable cache for online words"})
+    public static final Property<Boolean> CACHE_ONLINE_WORDS = newProperty("Plugin.cacheOnlineWords", true);
+    @Comment({"在线词库缓存超时时间(单位: 分钟)",
+            "Online words cache timeout(in minutes)"})
+    public static final Property<Long> ONLINE_WORDS_CACHE_TIMEOUT = newProperty("Plugin.onlineWordsCacheTimeout", 60L);
 
     @Comment({"是否记录违规消息(存储在violations.log中)",
             "Whether to log violations (stored in violations.log)"})

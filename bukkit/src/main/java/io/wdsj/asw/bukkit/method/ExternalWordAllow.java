@@ -22,7 +22,7 @@ public class ExternalWordAllow implements IWordAllow {
 
     @Override
     public List<String> allow() {
-        List<String> totalList = new ArrayList<>();
+        final List<String> totalList = new ArrayList<>();
 
         if (Files.notExists(dataFolder.toPath())) {
             try {
