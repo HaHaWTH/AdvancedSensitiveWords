@@ -1,12 +1,10 @@
 package io.wdsj.asw.velocity.subscriber;
 
-import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.ServerConnection;
-import com.velocitypowered.api.proxy.server.ServerInfo;
 import io.wdsj.asw.common.constant.networking.ChannelDataConstant;
 import io.wdsj.asw.common.datatype.io.LimitedByteArrayDataOutput;
 import io.wdsj.asw.common.template.PluginVersionTemplate;
@@ -30,9 +28,9 @@ public class PluginMessageForwarder {
     public void onPluginMessage(PluginMessageEvent event) {
         if (event.getIdentifier().equals(CHANNEL) || event.getIdentifier().equals(LEGACY_CHANNEL)) {
             if (!(event.getSource() instanceof ServerConnection)) return;
-            ServerInfo serverInfo = ((ServerConnection) event.getSource()).getServerInfo();
+            var serverInfo = ((ServerConnection) event.getSource()).getServerInfo();
             byte[] message = event.getData();
-            ByteArrayDataInput input = ByteStreams.newDataInput(message);
+            var input = ByteStreams.newDataInput(message);
             if (!input.readUTF().equals(PluginVersionTemplate.VERSION) && !warned) {
                 logger.warn("Plugin version mismatch! Things may not work properly.");
                 warned = true;
@@ -41,7 +39,7 @@ public class PluginMessageForwarder {
                 case ChannelDataConstant.NOTICE:
                     server.getAllServers().forEach(server -> {
                         if (!server.getServerInfo().equals(serverInfo) && !server.getPlayersConnected().isEmpty()) {
-                            LimitedByteArrayDataOutput out = LimitedByteArrayDataOutput.newDataOutput(32767);
+                            var out = LimitedByteArrayDataOutput.newDataOutput(32767);
                             try {
                                 out.write(message);
                                 out.writeUTF(serverInfo.getName());

@@ -23,8 +23,8 @@ import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
  */
 public class OnlineWordDeny implements IWordDeny {
     private final File dataFolder = Paths.get(AdvancedSensitiveWords.getInstance().getDataFolder().getPath(), "cache").toFile();
-    private final File cacheFile = new File(dataFolder, "cache_online_words.txt");
-    private final File timestampFile = new File(dataFolder, "cache_online_words_timestamp.txt");
+    private final File cacheFile = new File(dataFolder, "cache_online_deny_words.txt");
+    private final File timestampFile = new File(dataFolder, "cache_online_deny_words_timestamp.txt");
     private final String charset = settingsManager.getProperty(PluginSettings.ONLINE_WORDS_ENCODING);
     private final boolean isCacheEnabled = settingsManager.getProperty(PluginSettings.CACHE_ONLINE_WORDS);
 
