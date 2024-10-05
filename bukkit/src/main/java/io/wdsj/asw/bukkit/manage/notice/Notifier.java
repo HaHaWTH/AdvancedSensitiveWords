@@ -5,7 +5,6 @@ import io.wdsj.asw.bukkit.permission.PermissionsEnum;
 import io.wdsj.asw.bukkit.permission.cache.CachingPermTool;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
 import io.wdsj.asw.bukkit.type.ModuleType;
-import io.wdsj.asw.bukkit.util.SchedulingUtils;
 import io.wdsj.asw.bukkit.util.message.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -22,26 +21,22 @@ public class Notifier {
      * @param censoredList censored list
      */
     public static void notice(Player violatedPlayer, ModuleType moduleType, String originalMessage, List<String> censoredList) {
-        SchedulingUtils.runSyncIfNotOnMainThread(() -> {
-            Collection<? extends Player> players = Bukkit.getOnlinePlayers();
-            String message = MessageUtils.retrieveMessage(PluginMessages.ADMIN_REMINDER).replace("%player%", violatedPlayer.getName()).replace("%type%", moduleType.toString()).replace("%message%", originalMessage).replace("%censored_list%", censoredList.toString()).replace("%violation%", String.valueOf(ViolationCounter.getViolationCount(violatedPlayer)));
-            for (Player player : players) {
-                if (CachingPermTool.hasPermission(PermissionsEnum.NOTICE, player)) {
-                    MessageUtils.sendMessage(player, message);
-                }
+        Collection<? extends Player> players = Bukkit.getOnlinePlayers();
+        String message = MessageUtils.retrieveMessage(PluginMessages.ADMIN_REMINDER).replace("%player%", violatedPlayer.getName()).replace("%type%", moduleType.toString()).replace("%message%", originalMessage).replace("%censored_list%", censoredList.toString()).replace("%violation%", String.valueOf(ViolationCounter.getViolationCount(violatedPlayer)));
+        for (Player player : players) {
+            if (CachingPermTool.hasPermission(PermissionsEnum.NOTICE, player)) {
+                MessageUtils.sendMessage(player, message);
             }
-        });
+        }
     }
 
     public static void normalNotice(String message) {
-        SchedulingUtils.runSyncIfNotOnMainThread(() -> {
-            Collection<? extends Player> players = Bukkit.getOnlinePlayers();
-            for (Player player : players) {
-                if (CachingPermTool.hasPermission(PermissionsEnum.NOTICE, player)) {
-                    MessageUtils.sendMessage(player, message);
-                }
+        Collection<? extends Player> players = Bukkit.getOnlinePlayers();
+        for (Player player : players) {
+            if (CachingPermTool.hasPermission(PermissionsEnum.NOTICE, player)) {
+                MessageUtils.sendMessage(player, message);
             }
-        });
+        }
     }
 
     /**

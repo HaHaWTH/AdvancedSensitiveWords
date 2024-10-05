@@ -5,7 +5,6 @@ import io.wdsj.asw.bukkit.manage.notice.Notifier;
 import io.wdsj.asw.bukkit.manage.punish.ViolationCounter;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
-import io.wdsj.asw.bukkit.util.SchedulingUtils;
 import io.wdsj.asw.bukkit.util.message.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -19,7 +18,7 @@ public class ViolationResetTask extends UniversalRunnable {
     @Override
     public void run() {
         if (settingsManager.getProperty(PluginSettings.ONLY_RESET_ONLINE_PLAYERS)) {
-            for (Player player : SchedulingUtils.callSyncMethod(Bukkit::getOnlinePlayers)) {
+            for (Player player : Bukkit.getOnlinePlayers()) {
                 ViolationCounter.resetViolationCount(player);
             }
         } else {
