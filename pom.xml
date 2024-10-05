@@ -14,7 +14,7 @@
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.channel>dev</version.channel> <!-- dev, release -->
+        <version.channel>release</version.channel> <!-- dev, release -->
     </properties>
 
     <modules>
