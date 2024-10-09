@@ -219,6 +219,9 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         }
         if (Bukkit.getPluginManager().isPluginEnabled("voicechat") &&
             settingsManager.getProperty(PluginSettings.HOOK_SIMPLE_VOICE_CHAT)) {
+            if (settingsManager.getProperty(PluginSettings.VOICE_REALTIME_TRANSCRIBING)) {
+                libraryService.loadWhisperJniOptional();
+            }
             voiceChatHookService = new VoiceChatHookService(this);
             voiceChatHookService.register();
         }

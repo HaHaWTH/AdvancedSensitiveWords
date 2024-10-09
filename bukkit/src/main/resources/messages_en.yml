@@ -23,6 +23,10 @@ Name:
 Item:
   #Messages on Player item
   messageOnItem: '&cThe item you held contains sensitive words.'
+#Player voice chat related messages
+Voice:
+  #Messages on Voice chat
+  messageOnVoice: '&cDo not send inappropriate voice.'
 #Plugin related messages
 Plugin:
   #Reload command

@@ -17,6 +17,7 @@ import java.util.concurrent.Executors
 object LoggingUtils {
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd-HH:mm:ss")
     private lateinit var loggingThreadPool: ExecutorService
+    @JvmStatic
     fun logViolation(playerName: String, violationReason: String) {
         loggingThreadPool.submit {
             val formattedDate = LocalDateTime.now().format(dateFormatter)

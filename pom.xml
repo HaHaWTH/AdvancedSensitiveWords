@@ -6,7 +6,7 @@
 
     <groupId>io.wdsj</groupId>
     <artifactId>AdvancedSensitiveWords</artifactId>
-    <version>1.2</version>
+    <version>1.3</version>
     <packaging>pom</packaging>
 
     <name>AdvancedSensitiveWords</name>
@@ -14,7 +14,7 @@
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.channel>release</version.channel> <!-- dev, release -->
+        <version.channel>dev</version.channel> <!-- dev, release -->
     </properties>
 
     <modules>

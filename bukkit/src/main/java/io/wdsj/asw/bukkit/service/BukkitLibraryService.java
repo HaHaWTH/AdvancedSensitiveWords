@@ -45,4 +45,12 @@ public class BukkitLibraryService {
     public void loadRequired() {
         libraryManager.loadLibraries(openai4j, caffeine, ollama4j);
     }
+
+    public void loadWhisperJniOptional() {
+        libraryManager.loadLibraries(Library.builder()
+                .groupId("io{}github{}givimad")
+                .artifactId("whisper-jni")
+                .version("1.6.1")
+                .build());
+    }
 }

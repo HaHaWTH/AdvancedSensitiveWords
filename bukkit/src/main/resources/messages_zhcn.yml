@@ -23,6 +23,10 @@ Name:
 Item:
   # 玩家物品包含敏感词时的消息
   messageOnItem: '&c您的物品包含敏感词.'
+# 玩家语音检测消息
+Voice:
+  # 玩家发送违规语音消息时的提示
+  messageOnVoice: '&c请勿发送违规语音.'
 # 插件消息
 Plugin:
   # 插件重载消息

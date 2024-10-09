@@ -20,6 +20,8 @@ public class PluginMessages implements SettingsHolder {
     public static final Property<String> MESSAGE_ON_NAME = newProperty("Name.messageOnName", "&c您的用户名包含敏感词,请修改您的用户名或联系管理员.");
     @Comment("玩家物品包含敏感词时的消息")
     public static final Property<String> MESSAGE_ON_ITEM = newProperty("Item.messageOnItem", "&c您的物品包含敏感词.");
+    @Comment("玩家发送违规语音消息时的提示")
+    public static final Property<String> MESSAGE_ON_VOICE = newProperty("Voice.messageOnVoice", "&c请勿发送违规语音.");
     @Comment("插件重载消息")
     public static final Property<String> MESSAGE_ON_COMMAND_RELOAD = newProperty("Plugin.messageOnCommandReload", "&aAdvancedSensitiveWords 已重新加载.");
     @Comment("违规次数重置消息")
@@ -74,6 +76,7 @@ public class PluginMessages implements SettingsHolder {
         conf.setComment("Sign", "告示牌检测消息");
         conf.setComment("Anvil", "铁砧重命名检测消息");
         conf.setComment("Name", "玩家名检测消息");
+        conf.setComment("Voice", "玩家语音检测消息");
     }
 
     private PluginMessages() {

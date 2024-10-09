@@ -412,6 +412,32 @@ public class PluginSettings implements SettingsHolder {
             "Whether to enable punishment"})
     public static final Property<Boolean> ITEM_PUNISH = newProperty("Item.punish", true);
 
+    @Comment({"*是否启用实时语音转录检测(Java 11+)",
+            "*Whether to enable real-time voice transcribing(Java 11+)"})
+    public static final Property<Boolean> VOICE_REALTIME_TRANSCRIBING = newProperty("Voice.realtimeTranscribing", false);
+    @Comment({"*实时语音转录检测最大线程数",
+            "*Maximum threads for real-time voice transcribing"})
+    public static final Property<Integer> VOICE_REALTIME_TRANSCRIBING_MAX_THREAD = newProperty("Voice.realtimeTranscribingMaxThread", -1);
+    public static final Property<Long> VOICE_REALTIME_TRANSCRIBING_THREAD_KEEP_ALIVE = newProperty("Voice.realtimeTranscribingThreadKeepAlive", 60L);
+    @Comment({"*模型文件名",
+            "*Model file name"})
+    public static final Property<String> VOICE_MODEL_NAME = newProperty("Voice.modelName", "ggml-tiny.bin");
+    @Comment({"*是否启用调试日志",
+            "*Whether to enable debug logging"})
+    public static final Property<Boolean> VOICE_DEBUG = newProperty("Voice.debug", false);
+    @Comment({"*检测间隔(单位: 秒)",
+            "*Check interval(in seconds)"})
+    public static final Property<Long> VOICE_CHECK_INTERVAL = newProperty("Voice.checkInterval", 40L);
+    @Comment({"*是否在违规时通知玩家",
+            "*Whether to notify the player when violated"})
+    public static final Property<Boolean> VOICE_SEND_MESSAGE = newProperty("Voice.sendMessage", true);
+    @Comment({"是否启用惩罚",
+            "Whether to enable the punish"})
+    public static final Property<Boolean> VOICE_PUNISH = newProperty("Voice.punish", true);
+    @Comment({"是否在Shadow惩罚时同步至语音",
+            "Whether to sync Shadow punishment to voice chat"})
+    public static final Property<Boolean> VOICE_SYNC_SHADOW = newProperty("Voice.syncShadow", true);
+
 
     @Override
     public void registerComments(CommentsConfiguration conf) {
@@ -426,6 +452,7 @@ public class PluginSettings implements SettingsHolder {
         conf.setComment("Anvil", "Anvil rename detection");
         conf.setComment("Name", "Player name detection");
         conf.setComment("Item", "Item detection");
+        conf.setComment("Voice", "Voice detection (Requires hookVoiceChat enabled)");
     }
 
     // Do not instantiate.

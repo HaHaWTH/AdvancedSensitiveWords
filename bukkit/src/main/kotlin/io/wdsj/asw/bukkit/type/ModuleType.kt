@@ -10,5 +10,6 @@ enum class ModuleType {
     ANVIL,
     BOOK,
     NAME,
-    ITEM
+    ITEM,
+    VOICE
 }

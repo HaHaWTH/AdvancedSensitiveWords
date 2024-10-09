@@ -10,6 +10,7 @@ object TimingUtils {
     @JvmStatic
     val jvmVersion: String = System.getProperties().getProperty("java.version") ?: "Unknown"
 
+    @JvmStatic
     fun addProcessStatistic(endTime: Long, startTime: Long) {
         val processTime = endTime - startTime
         while (processStatistic.size >= 20) {
