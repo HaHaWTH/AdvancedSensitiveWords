@@ -6,6 +6,7 @@ import io.github.givimad.whisperjni.WhisperFullParams;
 import io.github.givimad.whisperjni.WhisperJNI;
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
+import io.wdsj.asw.bukkit.util.VirtualThreadUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,14 +47,16 @@ public class WhisperVoiceTranscribeTool {
             LOGGER.info("Using " + maxThread + " thread(s) for voice transcription");
             whisperCtx = whisper.init(Paths.get(dataFolder.getPath(), settingsManager.getProperty(PluginSettings.VOICE_MODEL_NAME)));
             RejectedExecutionHandler handler = (r, executor) -> LOGGER.info("Rejected execution of transcription task, thread pool is full");
-            threadPool = new ThreadPoolExecutor(Math.min(coreCount, maxThread),
+            threadPool = new ThreadPoolExecutor(
+                    maxThread / 2,
                     maxThread,
                     settingsManager.getProperty(PluginSettings.VOICE_REALTIME_TRANSCRIBING_THREAD_KEEP_ALIVE),
                     TimeUnit.SECONDS,
-                    new LinkedBlockingQueue<>(100),
+                    new LinkedBlockingQueue<>(maxThread * 2),
                     new ThreadFactoryBuilder()
                             .setNameFormat("ASW Whisper Transcribe Thread-%d")
                             .setDaemon(true)
+                            .setThreadFactory(VirtualThreadUtils.newVirtualThreadFactoryOrDefault())
                             .build(),
                     handler);
             threadPool.allowCoreThreadTimeOut(true);
@@ -67,7 +70,7 @@ public class WhisperVoiceTranscribeTool {
             WhisperFullParams params = new WhisperFullParams();
             int result = whisper.full(whisperCtx, params, data, data.length);
             if (result != 0) {
-                throw new RuntimeException("Transcription failed with code " + result);
+                LOGGER.warning("Transcription failed with code " + result);
             }
             whisper.fullNSegments(whisperCtx);
             return whisper.fullGetSegmentText(whisperCtx,0);
