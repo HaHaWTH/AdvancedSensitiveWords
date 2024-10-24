@@ -48,12 +48,14 @@ public class PlayerAltController {
      */
     public static Collection<UUID> getAlts(Player player) {
         String ip = Utils.getPlayerIp(player);
-        if (!PLAYER_ALTS.containsKey(ip)) {
-            return Collections.emptyList();
+        synchronized (PLAYER_ALTS) {
+            if (!PLAYER_ALTS.containsKey(ip)) {
+                return Collections.emptyList();
+            }
+            return PLAYER_ALTS.get(ip).stream()
+                    .filter(uuid -> !uuid.equals(player.getUniqueId()))
+                    .collect(Collectors.toList());
         }
-        return PLAYER_ALTS.get(ip).stream()
-                .filter(uuid -> !uuid.equals(player.getUniqueId()))
-                .collect(Collectors.toList());
     }
 
     /**
