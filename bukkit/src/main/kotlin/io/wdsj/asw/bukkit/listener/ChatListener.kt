@@ -89,7 +89,6 @@ class ChatListener : Listener {
                                 if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
                                     LoggingUtils.logViolation(player.name + "(IP: " + Utils.getPlayerIp(player) + ")(Chat AI)(LLM output: $it)", originalMessage + unsupportedList)
                                 }
-                                ViolationCounter.INSTANCE.incrementViolationCount(player)
                                 if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
                                     VelocitySender.sendNotifyMessage(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
                                 }
@@ -100,12 +99,13 @@ class ChatListener : Listener {
                                     Notifier.notice(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
                                 }
                                 if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH) && settingsManager.getProperty(PluginSettings.OLLAMA_AI_PUNISH)) {
+                                    ViolationCounter.INSTANCE.incrementViolationCount(player)
                                     SchedulingUtils.runSyncIfEventAsync(event) {
                                         Punishment.punish(player)
                                     }
                                 }
                             }
-                        } catch (e: NumberFormatException) {
+                        } catch (_: NumberFormatException) {
                             LOGGER.warning("Failed to parse Ollama output to a number: $it")
                         }
                     }
@@ -124,7 +124,6 @@ class ChatListener : Listener {
                             if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
                                 LoggingUtils.logViolation(player.name + "(IP: " + Utils.getPlayerIp(player) + ")(Chat AI)(OPENAI)", originalMessage + unsupportedList)
                             }
-                            ViolationCounter.INSTANCE.incrementViolationCount(player)
                             if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
                                 VelocitySender.sendNotifyMessage(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
                             }
@@ -135,6 +134,7 @@ class ChatListener : Listener {
                                 Notifier.notice(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
                             }
                             if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH) && settingsManager.getProperty(PluginSettings.OPENAI_AI_PUNISH)) {
+                                ViolationCounter.INSTANCE.incrementViolationCount(player)
                                 SchedulingUtils.runSyncIfEventAsync(event) {
                                     Punishment.punish(player)
                                 }

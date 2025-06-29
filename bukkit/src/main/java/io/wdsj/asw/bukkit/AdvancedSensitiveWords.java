@@ -59,7 +59,7 @@ import static io.wdsj.asw.bukkit.util.Utils.*;
 
 
 public final class AdvancedSensitiveWords extends JavaPlugin {
-    public static boolean isInitialized = false;
+    public static volatile boolean isInitialized = false;
     public static SensitiveWordBs sensitiveWordBs;
     private final File CONFIG_FILE = new File(getDataFolder(), "config.yml");
     public static boolean isAuthMeAvailable;
@@ -254,6 +254,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
                     .wordTag(WordTags.none())
                     .charIgnore(new CharIgnore())
                     .enableIpv4Check(settingsManager.getProperty(PluginSettings.ENABLE_IP_CHECK))
+                    .wordFailFast(settingsManager.getProperty(PluginSettings.FAIL_FAST))
                     .init();
             isInitialized = true;
         });

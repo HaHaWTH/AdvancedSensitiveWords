@@ -109,7 +109,6 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                                             originalMessage + unsupportedList
                                         )
                                     }
-                                    ViolationCounter.INSTANCE.incrementViolationCount(player)
                                     if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
                                         VelocitySender.sendNotifyMessage(
                                             player,
@@ -125,10 +124,11 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                                         Notifier.notice(player, ModuleType.CHAT_AI, originalMessage, unsupportedList)
                                     }
                                     if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH) && settingsManager.getProperty(PluginSettings.OLLAMA_AI_PUNISH)) {
+                                        ViolationCounter.INSTANCE.incrementViolationCount(player)
                                         getScheduler().runTask { Punishment.punish(player) }
                                     }
                                 }
-                            } catch (e: NumberFormatException) {
+                            } catch (_: NumberFormatException) {
                                 LOGGER.warning("Failed to parse Ollama output to a number: $it")
                             }
                         }
@@ -156,7 +156,6 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                                         originalMessage + unsupportedList
                                     )
                                 }
-                                ViolationCounter.INSTANCE.incrementViolationCount(player)
                                 if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
                                     VelocitySender.sendNotifyMessage(
                                         player,
@@ -182,6 +181,7 @@ class ASWChatPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
                                     )
                                 }
                                 if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH) && settingsManager.getProperty(PluginSettings.OPENAI_AI_PUNISH)) {
+                                    ViolationCounter.INSTANCE.incrementViolationCount(player)
                                     getScheduler().runTask { Punishment.punish(player) }
                                 }
                             }

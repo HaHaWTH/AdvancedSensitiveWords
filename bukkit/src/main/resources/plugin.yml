@@ -10,7 +10,7 @@ authors:
   - 0D00_0721
 description: ${plugin.description}
 loadbefore:
-  - AddYourPluginHere
+  - YouCanUseThisToPrioritizeOtherChatPlugins
 softdepend:
   - packetevents
   - floodgate

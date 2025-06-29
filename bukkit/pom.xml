@@ -288,7 +288,7 @@
         <dependency>
             <groupId>com.github.houbb</groupId>
             <artifactId>sensitive-word</artifactId>
-            <version>0.25.0</version>
+            <version>0.26.0</version>
             <scope>compile</scope>
         </dependency>
 

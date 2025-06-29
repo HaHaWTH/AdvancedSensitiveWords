@@ -11,14 +11,14 @@ public class BukkitLibraryService {
     private static final Library ollama4j = Library.builder()
             .groupId("com{}github{}HaHaWTH")
             .artifactId("ollama4j-j8")
-            .resolveTransitiveDependencies(false)
+            .resolveTransitiveDependencies(true) // TODO fix
             .version("8ce2ad8840")
             .build();
 
     private static final Library openai4j = Library.builder()
             .groupId("dev{}ai4j")
             .artifactId("openai4j")
-            .resolveTransitiveDependencies(false)
+            .resolveTransitiveDependencies(true) // TODO fix
             .version("0.27.0")
             .build();
 

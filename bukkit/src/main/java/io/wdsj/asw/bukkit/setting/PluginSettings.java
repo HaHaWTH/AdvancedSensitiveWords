@@ -101,7 +101,7 @@ public class PluginSettings implements SettingsHolder {
     public static final Property<Boolean> ENABLE_ALTS_CHECK = newProperty("Plugin.enableAltsCheck", false);
     @Comment({"*是否在玩家退出时清理相关数据缓存?",
             "*Should we clean player data cache on they quit?"})
-    public static final Property<Boolean> CLEAN_PLAYER_DATA_CACHE = newProperty("Plugin.cleanPlayerDataCache", false);
+    public static final Property<Boolean> CLEAN_PLAYER_DATA_CACHE = newProperty("Plugin.cleanPlayerDataCache", true);
 
     @Comment({"*模型请求超时时长(单位: 秒)",
             "*Maximum request time before time out(in seconds)"})
@@ -267,6 +267,10 @@ public class PluginSettings implements SettingsHolder {
             "Whether to enable IPv4 address check"})
     public static final Property<Boolean> ENABLE_IP_CHECK = newProperty("Plugin.enableIpCheck", false);
 
+    @Comment({"是否\"快速失败\" (匹配到较短敏感词后停止匹配)",
+            "Whether to \"fail-fast\" (stop matching after matching a shorter sensitive word)"})
+    public static final Property<Boolean> FAIL_FAST = newProperty("Plugin.failFast", true);
+
     @Comment({"自定义敏感词列表",
             "Custom sensitive word list"})
     public static final Property<List<String>> BLACK_LIST = newListProperty("Plugin.blackList", "失业");
@@ -315,7 +319,7 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"指令白名单(白名单的指令如含敏感词不会被检测)",
             "Command whitelist (commands on the whitelist will not be checked for sensitive words)"})
     public static final Property<List<String>> CHAT_COMMAND_WHITE_LIST = newListProperty("Chat.commandWhiteList", "/tell", "/msg", "/normal", "/message",
-                                                                                        "/private", "/msg", "/w", "/whisper", "/m");
+            "/private", "/msg", "/w", "/whisper", "/m");
 
     @Comment({"替换还是取消(replace/cancel)",
             "Replace or cancel (replace/cancel)"})
