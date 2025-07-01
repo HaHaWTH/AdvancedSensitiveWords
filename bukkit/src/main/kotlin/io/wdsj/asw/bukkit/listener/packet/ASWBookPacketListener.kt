@@ -41,7 +41,7 @@ class ASWBookPacketListener : PacketListenerAbstract(PacketListenerPriority.LOW)
             var shouldSendMessage = false
             val isCancelMode = settingsManager.getProperty(PluginSettings.BOOK_METHOD).equals("cancel", ignoreCase = true)
             val wrapper = WrapperPlayClientEditBook(event)
-            val originalPages = wrapper.pages
+            val originalPages = wrapper.pages?: return
 
             // Book content check
             val processedPages: MutableList<String> = ArrayList()
