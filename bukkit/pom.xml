@@ -320,7 +320,7 @@
         <dependency>
             <groupId>com.github.Anon8281</groupId>
             <artifactId>UniversalScheduler</artifactId>
-            <version>0.1.6</version>
+            <version>0.1.7</version>
             <scope>compile</scope>
         </dependency>
 
