@@ -1,7 +1,7 @@
 package io.wdsj.asw.bukkit.util.cache
 
-import com.github.benmanes.caffeine.cache.Cache
-import com.github.benmanes.caffeine.cache.Caffeine
+import com.google.common.cache.Cache
+import com.google.common.cache.CacheBuilder
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import java.util.concurrent.TimeUnit
@@ -47,7 +47,7 @@ object BookCache {
 
     @JvmStatic
     fun initialize() {
-        cache = Caffeine.newBuilder()
+        cache = CacheBuilder.newBuilder()
             .maximumSize(
                 settingsManager.getProperty(PluginSettings.BOOK_MAXIMUM_CACHE_SIZE).toLong()
             )
