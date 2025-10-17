@@ -1,7 +1,7 @@
 package io.wdsj.asw.bukkit.permission.cache;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import io.wdsj.asw.bukkit.permission.PermissionsEnum;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
@@ -40,7 +40,7 @@ public final class CachingPermTool implements Listener {
 
     public static boolean hasPermission(PermissionsEnum permission, @NotNull HumanEntity human) {
         Cache<PermissionsEnum, Boolean> permCache = permissionCacheMap.computeIfAbsent(human.getUniqueId(),
-                k -> Caffeine.newBuilder().expireAfterWrite(8, TimeUnit.SECONDS).build());
+                k -> CacheBuilder.newBuilder().expireAfterWrite(8, TimeUnit.SECONDS).build());
         Boolean hasPermission = permCache.getIfPresent(permission);
         if (hasPermission == null) {
             hasPermission = human.hasPermission(permission.getPermission());
