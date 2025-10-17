@@ -53,13 +53,6 @@ public class BukkitLibraryService {
             .version("0.27.0")
             .build();
 
-    private static final Library caffeine = Library.builder()
-            .groupId("com{}github{}ben-manes{}caffeine")
-            .artifactId("caffeine")
-            .resolveTransitiveDependencies(false)
-            .version("2.9.3")
-            .build();
-
     public BukkitLibraryService(AdvancedSensitiveWords plugin) {
         libraryManager = new BukkitLibraryManager(plugin);
         if (Locale.getDefault().getCountry().toUpperCase(Locale.ROOT).equals("CN")) {
@@ -74,7 +67,7 @@ public class BukkitLibraryService {
     }
 
     public void loadRequired() {
-        libraryManager.loadLibraries(caffeine);
+        // todo
     }
     public void loadOllamaOptional() {
         libraryManager.loadLibraries(ollama4j, lombok, slf4j, jackson, jackson_jsr310, logback);
