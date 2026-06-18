@@ -1,27 +1,20 @@
 package io.wdsj.asw.bukkit.service;
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
-import io.wdsj.asw.bukkit.annotation.PaperEventHandler;
 import io.wdsj.asw.bukkit.listener.*;
 import io.wdsj.asw.bukkit.listener.paper.PaperChatListener;
 import io.wdsj.asw.bukkit.listener.paper.PaperFakeMessageExecutor;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
-import io.wdsj.asw.bukkit.util.Utils;
 import org.bukkit.Bukkit;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-
-import java.lang.reflect.Method;
 
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.*;
 import static io.wdsj.asw.bukkit.util.Utils.isClassLoaded;
 
 public class ListenerService {
     private final AdvancedSensitiveWords plugin;
-    private static final boolean isModernPaper = Utils.isClassLoaded(
-            "io.papermc.paper.event.player.AsyncChatEvent"
-    );
+
     public ListenerService(AdvancedSensitiveWords plugin) {
         this.plugin = plugin;
     }
@@ -63,21 +56,8 @@ public class ListenerService {
     }
     
     
-    private boolean registerEventListener(Class<? extends Listener> listenerClass) {
-        if (!isTargetListenerHasAllClasses(listenerClass)) {
-            return false;
-        }
-        if (isPaperListener(listenerClass)) {
-            if (isModernPaper) {
-                Bukkit.getPluginManager().registerEvents(newListenerWithNoArgConstructor(listenerClass), plugin);
-                LOGGER.info("Using Paper event listener " + listenerClass.getSimpleName() + ".");
-                return true;
-            }
-            return false;
-        } else {
-            Bukkit.getPluginManager().registerEvents(newListenerWithNoArgConstructor(listenerClass), plugin);
-            return true;
-        }
+    private void registerEventListener(Class<? extends Listener> listenerClass) {
+        Bukkit.getPluginManager().registerEvents(newListenerWithNoArgConstructor(listenerClass), plugin);
     }
 
     private Listener newListenerWithNoArgConstructor(Class<? extends Listener> listenerClass) {
@@ -86,23 +66,6 @@ public class ListenerService {
         } catch (Exception e) {
             throw new IllegalStateException("Failed to register listener " + listenerClass.getSimpleName());
         }
-    }
-
-    private boolean isTargetListenerHasAllClasses(Class<? extends Listener> listener) {
-        try {
-            Method[] methods = listener.getDeclaredMethods();
-            for (Method method : methods) {
-                //noinspection StatementWithEmptyBody
-                if (method.getAnnotation(EventHandler.class) == null || method.getParameterCount() != 1) {
-                }
-            }
-        } catch (Throwable e) {
-            return false;
-        }
-        return true;
-    }
-    private boolean isPaperListener(Class<? extends Listener> listener) {
-        return listener.getAnnotation(PaperEventHandler.class) != null;
     }
 
     private void registerChatBookEventListeners() {

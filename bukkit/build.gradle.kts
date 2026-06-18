@@ -29,7 +29,6 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("org.geysermc.floodgate:api:2.2.2-SNAPSHOT")
     compileOnly("fr.xephi:authme:5.7.0-SNAPSHOT")
-    compileOnly("com.github.CatSeed:CatSeedLogin:1.4.1")
     compileOnly("org.jetbrains:annotations:26.0.2")
     compileOnly("com.google.guava:guava:33.4.0-jre")
 

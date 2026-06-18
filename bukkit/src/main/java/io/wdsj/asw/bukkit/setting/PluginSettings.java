@@ -109,10 +109,6 @@ public class PluginSettings implements SettingsHolder {
             "Whether to enable AuthMe compatibility (no checks on players not logged in to avoid false positives)"})
     public static final Property<Boolean> ENABLE_AUTHME_COMPATIBILITY = newProperty("Plugin.compatibility.authMe", false);
 
-    @Comment({"是否启用CatSeedLogin兼容(在玩家未登录时不进行检测, 避免误判)",
-            "Whether to enable CatSeedLogin compatibility (no checks on players not logged in to avoid false positives)"})
-    public static final Property<Boolean> ENABLE_CSL_COMPATIBILITY = newProperty("Plugin.compatibility.catSeedLogin", false);
-
     @Comment({"默认跳过字符",
             "Default characters to ignore"})
     public static final Property<String> IGNORE_CHAR = newProperty("Plugin.ignoreChar", "`-—=~～!！@#$%^&§*()_+[]{}\\|;:'\"“”,，.。、（）<>?？¥【】《》 ");

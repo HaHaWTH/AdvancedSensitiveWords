@@ -1,26 +1,26 @@
 package io.wdsj.asw.bukkit.listener.paper
 
-import cc.baka9.catseedlogin.bukkit.CatSeedLoginAPI
-import fr.xephi.authme.api.v3.AuthMeApi
 import io.papermc.paper.event.player.AsyncChatEvent
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords.*
+import io.wdsj.asw.bukkit.AdvancedSensitiveWords.messagesManager
+import io.wdsj.asw.bukkit.AdvancedSensitiveWords.sensitiveWordBs
+import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
 import io.wdsj.asw.bukkit.annotation.PaperEventHandler
 import io.wdsj.asw.bukkit.listener.abstraction.AbstractFakeMessageExecutor
 import io.wdsj.asw.bukkit.manage.notice.Notifier
 import io.wdsj.asw.bukkit.manage.punish.Punishment
 import io.wdsj.asw.bukkit.manage.punish.ViolationCounter
-import io.wdsj.asw.bukkit.permission.PermissionsEnum
-import io.wdsj.asw.bukkit.permission.cache.CachingPermTool
 import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.type.ModuleType
 import io.wdsj.asw.bukkit.util.LoggingUtils
+import io.wdsj.asw.bukkit.util.PlayerProcessingGuard
 import io.wdsj.asw.bukkit.util.SchedulingUtils
 import io.wdsj.asw.bukkit.util.TimingUtils
 import io.wdsj.asw.bukkit.util.Utils
 import io.wdsj.asw.bukkit.util.context.ChatContext
 import io.wdsj.asw.bukkit.util.message.MessageUtils
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextReplacementConfig
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.entity.Player
@@ -34,106 +34,135 @@ class PaperChatListener : Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     fun onChat(event: AsyncChatEvent) {
         if (!settingsManager.getProperty(PluginSettings.ENABLE_CHAT_CHECK)) return
+
         val player = event.player
-        if (shouldNotProcess(player)) return
-        val isCancelMode = settingsManager.getProperty(PluginSettings.CHAT_METHOD).equals("cancel", ignoreCase = true)
-        val originalMessage = if (settingsManager.getProperty(PluginSettings.PRE_PROCESS)) {
-            val replacementConfig = TextReplacementConfig.builder()
-                .match(Utils.preProcessRegex.toPattern())
-                .replacement("")
-                .build()
-            event.message().replaceText(replacementConfig)
-        } else {
-            event.message()
-        }
-        val originalPlainText = PlainTextComponentSerializer.plainText().serialize(originalMessage)
-        val censoredWordList = sensitiveWordBs.findAll(originalPlainText)
+        if (PlayerProcessingGuard.shouldSkip(player)) return
+
         val startTime = System.currentTimeMillis()
-        if (censoredWordList.isNotEmpty()) {
-            Utils.messagesFilteredNum.getAndIncrement()
-            val processedMessage = sensitiveWordBs.replace(originalPlainText)
-            if (isCancelMode) {
-                if (settingsManager.getProperty(PluginSettings.CHAT_FAKE_MESSAGE_ON_CANCEL)) {
-                    AbstractFakeMessageExecutor.selfIncrement(player)
-                } else {
-                    event.isCancelled = true
-                }
+        val originalMessage = preprocess(event.message())
+        val originalPlainText = PlainTextComponentSerializer.plainText().serialize(originalMessage)
+        val censoredWords = sensitiveWordBs.findAll(originalPlainText)
+
+        if (censoredWords.isNotEmpty()) {
+            handleDirectMessage(event, player, originalMessage, originalPlainText, censoredWords, startTime)
+            return
+        }
+
+        handleContextMessage(event, player, originalPlainText, startTime)
+    }
+
+    private fun preprocess(message: Component): Component {
+        if (!settingsManager.getProperty(PluginSettings.PRE_PROCESS)) return message
+
+        val replacementConfig = TextReplacementConfig.builder()
+            .match(Utils.preProcessRegex.toPattern())
+            .replacement("")
+            .build()
+        return message.replaceText(replacementConfig)
+    }
+
+    private fun handleDirectMessage(
+        event: AsyncChatEvent,
+        player: Player,
+        originalMessage: Component,
+        originalPlainText: String,
+        censoredWords: List<String>,
+        startTime: Long,
+    ) {
+        Utils.messagesFilteredNum.getAndIncrement()
+        applyDirectMessageAction(event, originalMessage, originalPlainText)
+        recordViolation(event, player, originalPlainText, originalPlainText, censoredWords, false, startTime)
+    }
+
+    private fun applyDirectMessageAction(
+        event: AsyncChatEvent,
+        originalMessage: Component,
+        originalPlainText: String,
+    ) {
+        if (isCancelMode()) {
+            if (settingsManager.getProperty(PluginSettings.CHAT_FAKE_MESSAGE_ON_CANCEL)) {
+                AbstractFakeMessageExecutor.selfIncrement(event.player)
             } else {
-                val cfg = TextReplacementConfig.builder()
-                    .matchLiteral(originalPlainText)
-                    .replacement(processedMessage)
-                    .build()
-                val processedWithLiteral = originalMessage.replaceText(cfg)
-                event.message(processedWithLiteral)
-            }
-            if (settingsManager.getProperty(PluginSettings.CHAT_SEND_MESSAGE)) {
-                MessageUtils.sendMessage(player, messagesManager.getProperty(PluginMessages.MESSAGE_ON_CHAT).replace("%integrated_player%", player.name).replace("%integrated_message%", originalPlainText))
-            }
-            if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
-                LoggingUtils.logViolation(player.name + "(IP: " + Utils.getPlayerIp(player) + ")(Chat)", originalPlainText + censoredWordList)
-            }
-            ViolationCounter.INSTANCE.incrementViolationCount(player)
-            if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
-                VelocitySender.sendNotifyMessage(player, ModuleType.CHAT, originalPlainText, censoredWordList)
-            }
-            val endTime = System.currentTimeMillis()
-            TimingUtils.addProcessStatistic(endTime, startTime)
-            if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, ModuleType.CHAT, originalPlainText, censoredWordList)
-            if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) {
-                SchedulingUtils.runSyncIfEventAsync(event) {
-                    Punishment.punish(player)
-                }
+                event.isCancelled = true
             }
             return
         }
 
-        if (settingsManager.getProperty(PluginSettings.CHAT_CONTEXT_CHECK)) {
-            ChatContext.addMessage(player, originalPlainText)
-            val queue = ChatContext.getHistory(player)
-            val originalContext = queue.joinToString("")
-            val censoredContextList = sensitiveWordBs.findAll(originalContext)
-            if (censoredContextList.isNotEmpty()) {
-                ChatContext.pollPlayerContext(player)
-                Utils.messagesFilteredNum.getAndIncrement()
-                if (settingsManager.getProperty(PluginSettings.CHAT_FAKE_MESSAGE_ON_CANCEL)) {
-                    AbstractFakeMessageExecutor.selfIncrement(player)
-                } else {
-                    event.isCancelled = true
-                }
-                if (settingsManager.getProperty(PluginSettings.CHAT_SEND_MESSAGE)) {
-                    MessageUtils.sendMessage(player, messagesManager.getProperty(PluginMessages.MESSAGE_ON_CHAT).replace("%integrated_player%", player.name).replace("%integrated_message%", originalPlainText))
-                }
-                if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
-                    LoggingUtils.logViolation(player.name + "(IP: " + Utils.getPlayerIp(player) + ")(Chat)(Context)", originalContext + censoredContextList)
-                }
-                ViolationCounter.INSTANCE.incrementViolationCount(player)
-                if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
-                    VelocitySender.sendNotifyMessage(player, ModuleType.CHAT, originalContext, censoredContextList)
-                }
-                val endTime = System.currentTimeMillis()
-                TimingUtils.addProcessStatistic(endTime, startTime)
-                if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(player, ModuleType.CHAT, originalContext, censoredContextList)
-                if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) {
-                    SchedulingUtils.runSyncIfEventAsync(event) {
-                        Punishment.punish(player)
-                    }
-                }
+        val processedMessage = sensitiveWordBs.replace(originalPlainText)
+        val replacementConfig = TextReplacementConfig.builder()
+            .matchLiteral(originalPlainText)
+            .replacement(processedMessage)
+            .build()
+        event.message(originalMessage.replaceText(replacementConfig))
+    }
+
+    private fun handleContextMessage(
+        event: AsyncChatEvent,
+        player: Player,
+        originalPlainText: String,
+        startTime: Long,
+    ) {
+        if (!settingsManager.getProperty(PluginSettings.CHAT_CONTEXT_CHECK)) return
+
+        ChatContext.addMessage(player, originalPlainText)
+        val originalContext = ChatContext.getHistory(player).joinToString("")
+        val censoredWords = sensitiveWordBs.findAll(originalContext)
+        if (censoredWords.isEmpty()) return
+
+        ChatContext.pollPlayerContext(player)
+        Utils.messagesFilteredNum.getAndIncrement()
+        if (settingsManager.getProperty(PluginSettings.CHAT_FAKE_MESSAGE_ON_CANCEL)) {
+            AbstractFakeMessageExecutor.selfIncrement(player)
+        } else {
+            event.isCancelled = true
+        }
+
+        recordViolation(event, player, originalPlainText, originalContext, censoredWords, true, startTime)
+    }
+
+    private fun recordViolation(
+        event: AsyncChatEvent,
+        player: Player,
+        playerMessage: String,
+        violationContent: String,
+        censoredWords: List<String>,
+        contextCheck: Boolean,
+        startTime: Long,
+    ) {
+        if (settingsManager.getProperty(PluginSettings.CHAT_SEND_MESSAGE)) {
+            MessageUtils.sendMessage(
+                player,
+                messagesManager.getProperty(PluginMessages.MESSAGE_ON_CHAT)
+                    .replace("%integrated_player%", player.name)
+                    .replace("%integrated_message%", playerMessage),
+            )
+        }
+
+        if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
+            val source = if (contextCheck) "(Chat)(Context)" else "(Chat)"
+            LoggingUtils.logViolation(
+                player.name + "(IP: " + Utils.getPlayerIp(player) + ")" + source,
+                violationContent + censoredWords,
+            )
+        }
+
+        ViolationCounter.INSTANCE.incrementViolationCount(player)
+        if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
+            VelocitySender.sendNotifyMessage(player, ModuleType.CHAT, violationContent, censoredWords)
+        }
+
+        TimingUtils.addProcessStatistic(System.currentTimeMillis(), startTime)
+        if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) {
+            Notifier.notice(player, ModuleType.CHAT, violationContent, censoredWords)
+        }
+        if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) {
+            SchedulingUtils.runSyncIfEventAsync(event) {
+                Punishment.punish(player)
             }
         }
     }
 
-    private fun shouldNotProcess(player: Player): Boolean {
-        if (isInitialized && !CachingPermTool.hasPermission(
-                PermissionsEnum.BYPASS, player)) {
-            if (isAuthMeAvailable && settingsManager.getProperty(PluginSettings.ENABLE_AUTHME_COMPATIBILITY)) {
-                if (!AuthMeApi.getInstance().isAuthenticated(player)) return true
-            }
-            if (isCslAvailable && settingsManager.getProperty(PluginSettings.ENABLE_CSL_COMPATIBILITY)) {
-                return !CatSeedLoginAPI.isLogin(player.name) || !CatSeedLoginAPI.isRegister(player.name)
-            }
-            return false
-        }
-        return true
+    private fun isCancelMode(): Boolean {
+        return settingsManager.getProperty(PluginSettings.CHAT_METHOD).equals("cancel", ignoreCase = true)
     }
-
 }

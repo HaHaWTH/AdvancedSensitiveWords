@@ -22,7 +22,7 @@ One-stop-shop **ultimate** anti-swear solution for your Minecraft server!
 12. **Sign multiple lines check**
 13. **Book check with ignore lines support and cache**
 14. Bedrock player compatibility
-15. Compatibility with main stream login plugins (AuthMe, CatSeedLogin etc.)
+15. Compatibility with AuthMe login checks
 16. Emoji and other unicode support
 17. Chinese support
 18. Fast processing depending on our custom data structure

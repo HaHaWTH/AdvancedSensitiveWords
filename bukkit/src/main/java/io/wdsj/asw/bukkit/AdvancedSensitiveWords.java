@@ -44,7 +44,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
 import static io.wdsj.asw.bukkit.util.LoggingUtils.purgeLog;
@@ -55,9 +54,8 @@ import static io.wdsj.asw.bukkit.util.Utils.*;
 public final class AdvancedSensitiveWords extends JavaPlugin {
     public static volatile boolean isInitialized = false;
     public static SensitiveWordBs sensitiveWordBs;
-    private final File CONFIG_FILE = new File(getDataFolder(), "config.yml");
+    private final File configFile = new File(getDataFolder(), "config.yml");
     public static boolean isAuthMeAvailable;
-    public static boolean isCslAvailable;
     public static SettingsManager settingsManager;
     public static SettingsManager messagesManager;
     public static final String PLUGIN_VERSION = PluginVersionTemplate.VERSION;
@@ -80,7 +78,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         LOGGER = getLogger();
         instance = this;
         settingsManager = SettingsManagerBuilder
-                .withYamlFile(CONFIG_FILE)
+                .withYamlFile(configFile)
                 .configurationData(PluginSettings.class)
                 .useDefaultMigrationService()
                 .create();
@@ -108,86 +106,28 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         if (settingsManager.getProperty(PluginSettings.PURGE_LOG_FILE)) purgeLog();
         listenerService = new ListenerService(this);
         listenerService.registerListeners();
-        Objects.requireNonNull(getCommand("advancedsensitivewords")).setExecutor(new ConstructCommandExecutor());
-        Objects.requireNonNull(getCommand("asw")).setExecutor(new ConstructCommandExecutor());
-        Objects.requireNonNull(getCommand("advancedsensitivewords")).setTabCompleter(new ConstructTabCompleter());
-        Objects.requireNonNull(getCommand("asw")).setTabCompleter(new ConstructTabCompleter());
-        int pluginId = 20661;
-        Metrics metrics = new Metrics(this, pluginId);
-        metrics.addCustomChart(new SimplePie("default_list", () -> String.valueOf(settingsManager.getProperty(PluginSettings.ENABLE_DEFAULT_WORDS))));
-        metrics.addCustomChart(new SimplePie("java_vendor", TimingUtils::getJvmVendor));
-        metrics.addCustomChart(new SingleLineChart("total_filtered_messages", () -> (int) messagesFilteredNum.get()));
-        getServer().getMessenger().registerOutgoingPluginChannel(this, VelocityChannel.CHANNEL);
-        getServer().getMessenger().registerIncomingPluginChannel(this, VelocityChannel.CHANNEL, new VelocityReceiver());
-        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") &&
-            settingsManager.getProperty(PluginSettings.ENABLE_PLACEHOLDER)) {
-            new ASWExpansion().register();
-            LOGGER.info("Placeholders registered.");
-        }
-        violationResetTask = new ViolationResetTask().runTaskTimerAsynchronously(this, settingsManager.getProperty(PluginSettings.VIOLATION_RESET_TIME) * 20L * 60L, settingsManager.getProperty(PluginSettings.VIOLATION_RESET_TIME) * 20L * 60L);
+        registerCommands();
+        setupMetrics();
+        registerVelocityChannel();
+        registerPlaceholderExpansion();
+        scheduleViolationResetTask();
         long endTime = System.currentTimeMillis();
         LOGGER.info("AdvancedSensitiveWords is enabled!(took " + (endTime - startTime) + "ms)");
         if (Updater.isDevChannel()) {
             LOGGER.info("You are running a development version of AdvancedSensitiveWords! Branch: " + PluginVersionTemplate.COMMIT_BRANCH);
         }
-        if (settingsManager.getProperty(PluginSettings.CHECK_FOR_UPDATE)) {
-            getScheduler().runTaskAsynchronously(() -> {
-                LOGGER.info("Checking for update...");
-                if (Updater.isUpdateAvailable()) {
-                    if (Updater.isDevChannel()) {
-                        LOGGER.warning("There is a new development version available: " + Updater.getLatestVersion() +
-                                ", you're on: " + Updater.getCurrentVersion());
-                    } else {
-                        LOGGER.warning("There is a new version available: " + Updater.getLatestVersion() +
-                                ", you're on: " + Updater.getCurrentVersion());
-                    }
-                } else {
-                    if (!Updater.isErred()) {
-                        LOGGER.info("You are running the latest version.");
-                    } else {
-                        LOGGER.info("Unable to fetch version info.");
-                    }
-                }
-            });
-        }
+        checkForUpdatesAsync();
     }
 
 
     public void doInitTasks() {
         isAuthMeAvailable = Bukkit.getPluginManager().getPlugin("AuthMe") != null;
-        isCslAvailable = Bukkit.getPluginManager().getPlugin("CatSeedLogin") != null;
         IWordAllow wA = WordAllows.chains(WordAllows.defaults(), new WordAllow(), new ExternalWordAllow(this));
-        AtomicReference<IWordDeny> wD = new AtomicReference<>();
         isInitialized = false;
         sensitiveWordBs = null;
-        IWordResultCondition condition;
-        switch (settingsManager.getProperty(PluginSettings.FULL_MATCH_MODE)) {
-            case 0:
-                condition = WordResultConditions.alwaysTrue();
-                break;
-            case 1:
-                condition = WordResultConditions.englishWordMatch();
-                break;
-            case 2:
-                condition = WordResultConditions.englishWordNumMatch();
-                break;
-            case 3:
-                condition = new WordResultConditionNumMatch();
-                break;
-            default:
-                condition = WordResultConditions.alwaysTrue();
-                LOGGER.warning("Invalid full match mode, will turn off full match.");
-        }
+        IWordResultCondition condition = createWordResultCondition();
         getScheduler().runTaskAsynchronously(() -> {
-            if (settingsManager.getProperty(PluginSettings.ENABLE_DEFAULT_WORDS) && settingsManager.getProperty(PluginSettings.ENABLE_ONLINE_WORDS)) {
-                wD.set(WordDenys.chains(WordDenys.defaults(), new WordDeny(), new OnlineWordDeny(this), new ExternalWordDeny(this)));
-            } else if (settingsManager.getProperty(PluginSettings.ENABLE_DEFAULT_WORDS)) {
-                wD.set(WordDenys.chains(new WordDeny(), WordDenys.defaults(), new ExternalWordDeny(this)));
-            } else if (settingsManager.getProperty(PluginSettings.ENABLE_ONLINE_WORDS)) {
-                wD.set(WordDenys.chains(new OnlineWordDeny(this), new WordDeny(), new ExternalWordDeny(this)));
-            } else {
-                wD.set(WordDenys.chains(new WordDeny(), new ExternalWordDeny(this)));
-            }
+            IWordDeny wordDeny = createWordDeny();
             sensitiveWordBs = SensitiveWordBs.newInstance()
                     .ignoreCase(settingsManager.getProperty(PluginSettings.IGNORE_CASE))
                     .ignoreWidth(settingsManager.getProperty(PluginSettings.IGNORE_WIDTH))
@@ -201,7 +141,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
                     .enableWordCheck(settingsManager.getProperty(PluginSettings.ENABLE_WORD_CHECK))
                     .wordResultCondition(condition)
                     .wordCheckUrl(settingsManager.getProperty(PluginSettings.URL_CHECK_NO_PREFIX) ? WordChecks.urlNoPrefix() : WordChecks.url())
-                    .wordDeny(wD.get())
+                    .wordDeny(wordDeny)
                     .wordAllow(wA)
                     .numCheckLen(settingsManager.getProperty(PluginSettings.NUM_CHECK_LEN))
                     .wordReplace(new WordReplace())
@@ -233,7 +173,99 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         Objects.requireNonNull(getCommand("asw")).setExecutor(null);
         Objects.requireNonNull(getCommand("advancedsensitivewords")).setTabCompleter(null);
         Objects.requireNonNull(getCommand("asw")).setTabCompleter(null);
-        LOGGER.info("AdvancedSensitiveWords is disabled!");
+        LOGGER.info("AdvancedSensitiveWords is disabled.");
+    }
+
+    private void registerCommands() {
+        ConstructCommandExecutor executor = new ConstructCommandExecutor();
+        ConstructTabCompleter tabCompleter = new ConstructTabCompleter();
+        Objects.requireNonNull(getCommand("advancedsensitivewords")).setExecutor(executor);
+        Objects.requireNonNull(getCommand("asw")).setExecutor(executor);
+        Objects.requireNonNull(getCommand("advancedsensitivewords")).setTabCompleter(tabCompleter);
+        Objects.requireNonNull(getCommand("asw")).setTabCompleter(tabCompleter);
+    }
+
+    private void setupMetrics() {
+        int pluginId = 20661;
+        Metrics metrics = new Metrics(this, pluginId);
+        metrics.addCustomChart(new SimplePie("default_list", () -> String.valueOf(settingsManager.getProperty(PluginSettings.ENABLE_DEFAULT_WORDS))));
+        metrics.addCustomChart(new SimplePie("java_vendor", TimingUtils::getJvmVendor));
+        metrics.addCustomChart(new SingleLineChart("total_filtered_messages", () -> (int) messagesFilteredNum.get()));
+    }
+
+    private void registerVelocityChannel() {
+        getServer().getMessenger().registerOutgoingPluginChannel(this, VelocityChannel.CHANNEL);
+        getServer().getMessenger().registerIncomingPluginChannel(this, VelocityChannel.CHANNEL, new VelocityReceiver());
+    }
+
+    private void registerPlaceholderExpansion() {
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") &&
+                settingsManager.getProperty(PluginSettings.ENABLE_PLACEHOLDER)) {
+            new ASWExpansion().register();
+            LOGGER.info("Placeholders registered.");
+        }
+    }
+
+    private void scheduleViolationResetTask() {
+        long resetIntervalTicks = settingsManager.getProperty(PluginSettings.VIOLATION_RESET_TIME) * 20L * 60L;
+        violationResetTask = new ViolationResetTask().runTaskTimerAsynchronously(this, resetIntervalTicks, resetIntervalTicks);
+    }
+
+    private void checkForUpdatesAsync() {
+        if (!settingsManager.getProperty(PluginSettings.CHECK_FOR_UPDATE)) {
+            return;
+        }
+        getScheduler().runTaskAsynchronously(() -> {
+            LOGGER.info("Checking for update...");
+            if (Updater.isUpdateAvailable()) {
+                logAvailableUpdate();
+            } else if (!Updater.isErred()) {
+                LOGGER.info("You are running the latest version.");
+            } else {
+                LOGGER.info("Unable to fetch version info.");
+            }
+        });
+    }
+
+    private void logAvailableUpdate() {
+        if (Updater.isDevChannel()) {
+            LOGGER.warning("There is a new development version available: " + Updater.getLatestVersion() +
+                    ", you're on: " + Updater.getCurrentVersion());
+            return;
+        }
+        LOGGER.warning("There is a new version available: " + Updater.getLatestVersion() +
+                ", you're on: " + Updater.getCurrentVersion());
+    }
+
+    private IWordResultCondition createWordResultCondition() {
+        switch (settingsManager.getProperty(PluginSettings.FULL_MATCH_MODE)) {
+            case 0:
+                return WordResultConditions.alwaysTrue();
+            case 1:
+                return WordResultConditions.englishWordMatch();
+            case 2:
+                return WordResultConditions.englishWordNumMatch();
+            case 3:
+                return new WordResultConditionNumMatch();
+            default:
+                LOGGER.warning("Invalid full match mode, will turn off full match.");
+                return WordResultConditions.alwaysTrue();
+        }
+    }
+
+    private IWordDeny createWordDeny() {
+        boolean enableDefaultWords = settingsManager.getProperty(PluginSettings.ENABLE_DEFAULT_WORDS);
+        boolean enableOnlineWords = settingsManager.getProperty(PluginSettings.ENABLE_ONLINE_WORDS);
+        if (enableDefaultWords && enableOnlineWords) {
+            return WordDenys.chains(WordDenys.defaults(), new WordDeny(), new OnlineWordDeny(this), new ExternalWordDeny(this));
+        }
+        if (enableDefaultWords) {
+            return WordDenys.chains(new WordDeny(), WordDenys.defaults(), new ExternalWordDeny(this));
+        }
+        if (enableOnlineWords) {
+            return WordDenys.chains(new OnlineWordDeny(this), new WordDeny(), new ExternalWordDeny(this));
+        }
+        return WordDenys.chains(new WordDeny(), new ExternalWordDeny(this));
     }
 
 }

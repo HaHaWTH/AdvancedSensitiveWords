@@ -10,12 +10,12 @@ authors:
   - 0D00_0721
 description: ${pluginDescription}
 loadbefore:
+  - TrChat
   - YouCanUseThisToPrioritizeOtherChatPlugins
 softdepend:
   - floodgate
   - PlaceholderAPI
   - AuthMe
-  - CatSeedLogin
 folia-supported: true
 commands:
   advancedsensitivewords:
