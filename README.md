@@ -4,8 +4,6 @@ One-stop-shop **ultimate** anti-swear solution for your Minecraft server!
 
 ![](https://socialify.git.ci/HaHaWTH/AdvancedSensitiveWords/image?description=1&descriptionEditable=One-stop-shop%20ultimate%20anti-swear%20solution%20for%20Minecraft&font=Inter&language=1&name=1&stargazers=1&theme=Auto)
 
-[![Available on SpigotMC](https://img.shields.io/badge/Available%20on%20SpigotMC-orange?style=for-the-badge&logo=SpigotMC&logoColor=FFFFFF)](https://www.spigotmc.org/resources/advancedsensitivewords.115484/)
-
 [![CodeFactor](https://www.codefactor.io/repository/github/hahawth/advancedsensitivewords/badge)](https://www.codefactor.io/repository/github/hahawth/advancedsensitivewords)
 [![QQ](https://img.shields.io/badge/QQ-361581545-blue)](https://qm.qq.com/q/sC52yJDrGi)
 
@@ -34,7 +32,6 @@ One-stop-shop **ultimate** anti-swear solution for your Minecraft server!
 22. Custom punishments (Effect, command, hostile, etc.)
 23. Fake message support (Inspired by [Bilibili Avalon System](https://github.com/freedom-introvert/Research-on-Avalon-System-in-Bilibili-Comment-Area))
 24. PlaceHolder API expansion support
-25. AI powered moderation system
 
 **Features above make us unique in the anti-swear plugins!**
 
@@ -43,16 +40,12 @@ One-stop-shop **ultimate** anti-swear solution for your Minecraft server!
 ```mermaid
 graph TD
     A[Player Interaction] --> B[Event Listeners]
-    C[Player Packet] --> D[Packet Listeners]
     B --> E[Regex Preprocess]
-    D --> E[Regex Preprocess]
     E --> F[DFA Match]
     F -->|Matched| G[Result]
     G --> J[Replace]
     G --> K[Cancel]
-    F -->|Not Matched| H[AI Processor]
-    H -->|LLMs| I[Rating]
-    I --> L[Punish]
+    G --> L[Punish]
 ```
 
 ## Commands
@@ -92,22 +85,18 @@ graph TD
 **For more info, please visit [our Wiki](https://github.com/HaHaWTH/AdvancedSensitiveWords/wiki)**
 
 ## Supported Platforms
-- Spigot(stable)
+- Paper(stable)
 - Velocity(stable)
-- BungeeCord(stable)
-- Sponge(WIP)
-- Fabric(Planned)
-- Forge/NeoForge(Coming s∞n)
 
 ## Known Incompatibilities
 - [HuskChat (Only proxy mode)](https://github.com/WiIIiam278/HuskChat)
 
 ## Statistics
-[![](https://img.shields.io/bstats/servers/20661?label=Spigot%20Servers&style=for-the-badge)](https://bstats.org/plugin/bukkit/AdvancedSensitiveWords/20661)
+[![](https://img.shields.io/bstats/servers/20661?label=Paper%20Servers&style=for-the-badge)](https://bstats.org/plugin/bukkit/AdvancedSensitiveWords/20661)
 
 [![](https://img.shields.io/bstats/players/20661?label=Online%20Players&style=for-the-badge)](https://bstats.org/plugin/bukkit/AdvancedSensitiveWords/20661)
 
 ## Open-source projects used
-- **[Ollama4j(Modified to support Java 8)](https://github.com/ollama4j/ollama4j)**
-- **[OpenAI4j](https://github.com/ai-for-java/openai4j)**
-- **[packetevents(Used for handling chat & book packets)](https://github.com/retrooper/packetevents)**
+- **[sensitive-word](https://github.com/houbb/sensitive-word)**
+- **[UniversalScheduler](https://github.com/Anon8281/UniversalScheduler)**
+- **[ConfigMe](https://github.com/AuthMe/ConfigMe)**

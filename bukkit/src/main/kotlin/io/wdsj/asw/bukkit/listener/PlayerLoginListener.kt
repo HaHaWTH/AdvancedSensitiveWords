@@ -6,7 +6,6 @@ import io.wdsj.asw.bukkit.manage.punish.Punishment
 import io.wdsj.asw.bukkit.manage.punish.ViolationCounter
 import io.wdsj.asw.bukkit.permission.PermissionsEnum
 import io.wdsj.asw.bukkit.permission.cache.CachingPermTool
-import io.wdsj.asw.bukkit.proxy.bungee.BungeeSender
 import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
@@ -69,9 +68,6 @@ class PlayerLoginListener : Listener {
             ViolationCounter.INSTANCE.incrementViolationCount(player)
             if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
                 VelocitySender.sendNotifyMessage(player, ModuleType.NAME, playerName, censoredWordList)
-            }
-            if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
-                BungeeSender.sendNotifyMessage(player, ModuleType.NAME, playerName, censoredWordList)
             }
             val endTime = System.currentTimeMillis()
             TimingUtils.addProcessStatistic(endTime, startTime)

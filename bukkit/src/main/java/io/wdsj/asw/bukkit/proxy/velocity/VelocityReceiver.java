@@ -18,6 +18,7 @@ import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
 @SuppressWarnings("UnstableApiUsage")
 public class VelocityReceiver implements PluginMessageListener {
     private boolean warned = false;
+
     @Override
     public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, @NotNull byte[] message) {
         if (!settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) return;
@@ -27,8 +28,7 @@ public class VelocityReceiver implements PluginMessageListener {
                 LOGGER.warning("Plugin version mismatch! Things may not work properly.");
                 warned = true;
             }
-            // noinspection SwitchStatementWithTooFewBranches
-            switch (input.readUTF().toLowerCase(Locale.ROOT)) { // Use switch for future updates
+            switch (input.readUTF().toLowerCase(Locale.ROOT)) {
                 case ChannelDataConstant.NOTICE:
                     String playerName = input.readUTF();
                     String moduleType = input.readUTF();

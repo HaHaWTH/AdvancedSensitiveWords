@@ -1,11 +1,9 @@
 package io.wdsj.asw.bukkit.service;
 
-import com.github.retrooper.packetevents.PacketEvents;
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 import io.wdsj.asw.bukkit.annotation.PaperEventHandler;
 import io.wdsj.asw.bukkit.listener.*;
-import io.wdsj.asw.bukkit.listener.packet.ASWBookPacketListener;
-import io.wdsj.asw.bukkit.listener.packet.ASWChatPacketListener;
+import io.wdsj.asw.bukkit.listener.paper.PaperChatListener;
 import io.wdsj.asw.bukkit.listener.paper.PaperFakeMessageExecutor;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
 import io.wdsj.asw.bukkit.util.Utils;
@@ -29,34 +27,10 @@ public class ListenerService {
     }
 
     public void registerListeners() {
-        if (!AdvancedSensitiveWords.isEventMode()) {
-            if (USE_PE) {
-                try {
-                    if (settingsManager.getProperty(PluginSettings.ENABLE_CHAT_CHECK)) {
-                        PacketEvents.getAPI().getEventManager().registerListener(ASWChatPacketListener.class.getConstructor().newInstance());
-                    }
-                    if (settingsManager.getProperty(PluginSettings.ENABLE_BOOK_EDIT_CHECK)) {
-                        PacketEvents.getAPI().getEventManager().registerListener(ASWBookPacketListener.class.getConstructor().newInstance());
-                    }
-                } catch (Exception e) {
-                    LOGGER.severe("Failed to register packetevents listener." +
-                            " This should not happen, please report to the author");
-                    LOGGER.severe(e.getMessage());
-                }
-                PacketEvents.getAPI().init();
-            } else {
-                LOGGER.warning("Cannot use packetevents, using event mode instead.");
-                registerChatBookEventListeners();
-                setEventMode(true);
-            }
-        } else {
-            registerChatBookEventListeners();
-        }
+        registerChatBookEventListeners();
         registerEventListener(ShadowListener.class);
         registerEventListener(AltsListener.class);
-        if (!registerEventListener(PaperFakeMessageExecutor.class)) {
-            registerEventListener(FakeMessageExecutor.class);
-        }
+        registerEventListener(PaperFakeMessageExecutor.class);
         if (settingsManager.getProperty(PluginSettings.ENABLE_SIGN_EDIT_CHECK)) {
             registerEventListener(SignListener.class);
         }
@@ -85,11 +59,6 @@ public class ListenerService {
     }
 
     public void unregisterListeners() {
-        if (!isEventMode()) {
-            if (USE_PE) {
-                PacketEvents.getAPI().terminate();
-            }
-        }
         HandlerList.unregisterAll(plugin);
     }
     
@@ -138,9 +107,7 @@ public class ListenerService {
 
     private void registerChatBookEventListeners() {
         if (settingsManager.getProperty(PluginSettings.ENABLE_CHAT_CHECK)) {
-            if (true) { // Always listen AsyncPlayerChatEvent
-                registerEventListener(ChatListener.class);
-            }
+            registerEventListener(PaperChatListener.class);
             registerEventListener(CommandListener.class);
         }
         if (settingsManager.getProperty(PluginSettings.ENABLE_BOOK_EDIT_CHECK)) {

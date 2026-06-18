@@ -5,11 +5,9 @@ package io.wdsj.asw.bukkit.type
  */
 enum class ModuleType {
     CHAT,
-    CHAT_AI,
     SIGN,
     ANVIL,
     BOOK,
     NAME,
-    ITEM,
-    VOICE
+    ITEM
 }

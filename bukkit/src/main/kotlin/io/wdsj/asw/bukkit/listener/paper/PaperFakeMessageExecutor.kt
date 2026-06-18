@@ -11,22 +11,11 @@ import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
-import org.bukkit.event.player.AsyncPlayerChatEvent
 
 @PaperEventHandler
 class PaperFakeMessageExecutor : Listener, AbstractFakeMessageExecutor() {
-    /*
     @EventHandler(priority = EventPriority.LOWEST)
     fun onChatFirst(event: AsyncChatEvent) {
-        if (settingsManager.getProperty(PluginSettings.CHAT_FAKE_MESSAGE_ON_CANCEL) && shouldFakeMessage(event.player)) {
-            event.isCancelled = true
-        }
-    }
-     */ // In Paper, the event order is AsyncPlayerChatEvent -> AsyncChatEvent and results are inherited from AsyncPlayerChatEvent
-
-    @Suppress("DEPRECATION")
-    @EventHandler(priority = EventPriority.LOWEST)
-    fun onLegacyChatFirst(event: AsyncPlayerChatEvent) {
         if (settingsManager.getProperty(PluginSettings.CHAT_FAKE_MESSAGE_ON_CANCEL) && shouldFakeMessage(event.player)) {
             event.isCancelled = true
         }

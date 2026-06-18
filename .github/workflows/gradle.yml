@@ -1,0 +1,33 @@
+name: AdvancedSensitiveWords CI
+
+on:
+  push:
+  pull_request:
+    branches:
+      - 'pro'
+      - 'refactor/remake'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 25
+          cache: gradle
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./gradlew
+      - name: Build
+        run: ./gradlew build --no-daemon
+      - name: Upload Paper Artifact
+        uses: actions/upload-artifact@v7
+        with:
+          path: ./bukkit/build/libs/AdvancedSensitiveWords-paper.jar
+          archive: false
+      - name: Upload Velocity Artifact
+        uses: actions/upload-artifact@v7
+        with:
+          path: ./velocity/build/libs/AdvancedSensitiveWords-velocity.jar
+          archive: false

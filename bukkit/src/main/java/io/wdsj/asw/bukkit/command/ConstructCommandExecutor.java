@@ -71,7 +71,7 @@ public class ConstructCommandExecutor implements CommandExecutor {
                 return true;
             }
             if (args[0].equalsIgnoreCase("status") && (sender.hasPermission(PermissionsEnum.STATUS.getPermission()) || sender instanceof ConsoleCommandSender)) {
-                MessageUtils.sendMessage(sender, messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_STATUS).replace("%num%", String.valueOf(messagesFilteredNum.get())).replace("%mode%", isEventMode() ? "Event" : "Packet").replace("%init%", isInitialized ? "true" : "false").replace("%ms%", getProcessAverage() + "ms").replace("%version%", AdvancedSensitiveWords.PLUGIN_VERSION).replace("%mc_version%", getMinecraftVersion()).replace("%platform%", OsUtil.isWindows() ? "Windows" : (OsUtil.isMac() ? "Mac" : isUnix() ? "Linux" : "Unknown")).replace("%bit%", is64() ? "64bit" : "32bit").replace("%java_version%", getJvmVersion()).replace("%java_vendor%", getJvmVendor()));
+                MessageUtils.sendMessage(sender, messagesManager.getProperty(PluginMessages.MESSAGE_ON_COMMAND_STATUS).replace("%num%", String.valueOf(messagesFilteredNum.get())).replace("%mode%", "Event").replace("%init%", isInitialized ? "true" : "false").replace("%ms%", getProcessAverage() + "ms").replace("%version%", AdvancedSensitiveWords.PLUGIN_VERSION).replace("%mc_version%", getMinecraftVersion()).replace("%platform%", OsUtil.isWindows() ? "Windows" : (OsUtil.isMac() ? "Mac" : isUnix() ? "Linux" : "Unknown")).replace("%bit%", is64() ? "64bit" : "32bit").replace("%java_version%", getJvmVersion()).replace("%java_vendor%", getJvmVendor()));
                 return true;
             }
             if (args[0].equalsIgnoreCase("status")) {

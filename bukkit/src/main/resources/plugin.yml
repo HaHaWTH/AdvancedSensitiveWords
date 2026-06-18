@@ -1,23 +1,21 @@
 name: AdvancedSensitiveWords
-version: ${project.version}-${version.channel}
-main: ${plugin.main}
-api-version: '1.13'
-website: ${plugin.website}
-build-hash: ${git.commit.id.abbrev}
+version: ${pluginVersion}-${versionChannel}
+main: ${pluginMain}
+api-version: '1.21'
+website: ${pluginWebsite}
+build-hash: ${gitCommitShort}
 authors:
   - HeyWTF_IS_That
   - HaHaWTH
   - 0D00_0721
-description: ${plugin.description}
+description: ${pluginDescription}
 loadbefore:
   - YouCanUseThisToPrioritizeOtherChatPlugins
 softdepend:
-  - packetevents
   - floodgate
   - PlaceholderAPI
   - AuthMe
   - CatSeedLogin
-  - voicechat
 folia-supported: true
 commands:
   advancedsensitivewords:

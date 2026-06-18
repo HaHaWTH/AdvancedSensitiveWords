@@ -14,8 +14,6 @@ import com.github.houbb.sensitive.word.support.check.WordChecks;
 import com.github.houbb.sensitive.word.support.deny.WordDenys;
 import com.github.houbb.sensitive.word.support.resultcondition.WordResultConditions;
 import com.github.houbb.sensitive.word.support.tag.WordTags;
-import io.wdsj.asw.bukkit.ai.OllamaProcessor;
-import io.wdsj.asw.bukkit.ai.OpenAIProcessor;
 import io.wdsj.asw.bukkit.command.ConstructCommandExecutor;
 import io.wdsj.asw.bukkit.command.ConstructTabCompleter;
 import io.wdsj.asw.bukkit.core.condition.WordResultConditionNumMatch;
@@ -25,13 +23,9 @@ import io.wdsj.asw.bukkit.manage.punish.PlayerShadowController;
 import io.wdsj.asw.bukkit.manage.punish.ViolationCounter;
 import io.wdsj.asw.bukkit.method.*;
 import io.wdsj.asw.bukkit.permission.cache.CachingPermTool;
-import io.wdsj.asw.bukkit.proxy.bungee.BungeeCordChannel;
-import io.wdsj.asw.bukkit.proxy.bungee.BungeeReceiver;
 import io.wdsj.asw.bukkit.proxy.velocity.VelocityChannel;
 import io.wdsj.asw.bukkit.proxy.velocity.VelocityReceiver;
-import io.wdsj.asw.bukkit.service.BukkitLibraryService;
 import io.wdsj.asw.bukkit.service.ListenerService;
-import io.wdsj.asw.bukkit.service.hook.VoiceChatHookService;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
 import io.wdsj.asw.bukkit.task.punish.ViolationResetTask;
@@ -68,12 +62,8 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     public static SettingsManager messagesManager;
     public static final String PLUGIN_VERSION = PluginVersionTemplate.VERSION;
     private static AdvancedSensitiveWords instance;
-    public static boolean USE_PE = false;
     private static TaskScheduler scheduler;
-    private static boolean isEventMode = false;
     public static Logger LOGGER;
-    private static BukkitLibraryService libraryService;
-    private VoiceChatHookService voiceChatHookService;
     private ListenerService listenerService;
     private CachingPermTool permCache;
     public static TaskScheduler getScheduler() {
@@ -83,19 +73,12 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     public static AdvancedSensitiveWords getInstance() {
         return instance;
     }
-    public static boolean isEventMode() {
-        return isEventMode;
-    }
-    public static void setEventMode(boolean mode) {
-        isEventMode = mode;
-    }
     private MyScheduledTask violationResetTask;
-    private boolean isFirstLoad;
+
     @Override
     public void onLoad() {
         LOGGER = getLogger();
         instance = this;
-        isFirstLoad = !getDataFolder().exists();
         settingsManager = SettingsManagerBuilder
                 .withYamlFile(CONFIG_FILE)
                 .configurationData(PluginSettings.class)
@@ -111,22 +94,11 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
                 .configurationData(PluginMessages.class)
                 .useDefaultMigrationService()
                 .create();
-        libraryService = new BukkitLibraryService(this);
-        isEventMode = settingsManager.getProperty(PluginSettings.DETECTION_MODE).equalsIgnoreCase("event");
-        if (canUsePE() &&
-                !isEventMode) {
-            USE_PE = true;
-        }
     }
 
     @Override
     public void onEnable() {
-        if (isFirstLoad) {
-            LOGGER.info("Downloading required libraries, this may take minutes to complete.");
-        }
-        LOGGER.info("Loading libraries...");
         long startTime = System.currentTimeMillis();
-        libraryService.loadRequired();
         LOGGER.info("Initializing DFA system...");
         resetStatistics();
         scheduler = UniversalScheduler.getScheduler(this);
@@ -145,30 +117,12 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         metrics.addCustomChart(new SimplePie("default_list", () -> String.valueOf(settingsManager.getProperty(PluginSettings.ENABLE_DEFAULT_WORDS))));
         metrics.addCustomChart(new SimplePie("java_vendor", TimingUtils::getJvmVendor));
         metrics.addCustomChart(new SingleLineChart("total_filtered_messages", () -> (int) messagesFilteredNum.get()));
-        if (settingsManager.getProperty(PluginSettings.ENABLE_OLLAMA_AI_MODEL_CHECK)) {
-            libraryService.loadOllamaOptional();
-            OllamaProcessor.INSTANCE.initService(settingsManager.getProperty(PluginSettings.OLLAMA_AI_API_ADDRESS), settingsManager.getProperty(PluginSettings.OLLAMA_AI_MODEL_NAME), settingsManager.getProperty(PluginSettings.AI_MODEL_TIMEOUT), settingsManager.getProperty(PluginSettings.OLLAMA_AI_DEBUG_LOG));
-        }
-        if (settingsManager.getProperty(PluginSettings.ENABLE_OPENAI_AI_MODEL_CHECK)) {
-            libraryService.loadOpenAiOptional();
-            OpenAIProcessor.INSTANCE.initService(settingsManager.getProperty(PluginSettings.OPENAI_API_KEY), settingsManager.getProperty(PluginSettings.OPENAI_DEBUG_LOG));
-        }
         getServer().getMessenger().registerOutgoingPluginChannel(this, VelocityChannel.CHANNEL);
         getServer().getMessenger().registerIncomingPluginChannel(this, VelocityChannel.CHANNEL, new VelocityReceiver());
-        getServer().getMessenger().registerOutgoingPluginChannel(this, BungeeCordChannel.BUNGEE_CHANNEL);
-        getServer().getMessenger().registerIncomingPluginChannel(this, BungeeCordChannel.BUNGEE_CHANNEL, new BungeeReceiver());
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") &&
             settingsManager.getProperty(PluginSettings.ENABLE_PLACEHOLDER)) {
             new ASWExpansion().register();
             LOGGER.info("Placeholders registered.");
-        }
-        if (Bukkit.getPluginManager().isPluginEnabled("voicechat") &&
-            settingsManager.getProperty(PluginSettings.HOOK_SIMPLE_VOICE_CHAT)) {
-            if (settingsManager.getProperty(PluginSettings.VOICE_REALTIME_TRANSCRIBING)) {
-                libraryService.loadWhisperJniOptional();
-            }
-            voiceChatHookService = new VoiceChatHookService(this);
-            voiceChatHookService.register();
         }
         violationResetTask = new ViolationResetTask().runTaskTimerAsynchronously(this, settingsManager.getProperty(PluginSettings.VIOLATION_RESET_TIME) * 20L * 60L, settingsManager.getProperty(PluginSettings.VIOLATION_RESET_TIME) * 20L * 60L);
         long endTime = System.currentTimeMillis();
@@ -270,9 +224,6 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         SignContext.forceClearContext();
         PlayerShadowController.clear();
         PlayerAltController.clear();
-        if (voiceChatHookService != null) {
-            voiceChatHookService.unregister();
-        }
         BookCache.invalidateAll();
         ViolationCounter.INSTANCE.resetAllViolations();
         SchedulingUtils.cancelTaskSafely(violationResetTask);

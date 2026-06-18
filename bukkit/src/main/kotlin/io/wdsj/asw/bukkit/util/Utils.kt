@@ -45,10 +45,6 @@ object Utils {
         }
     }
 
-    @JvmStatic
-    fun canUsePE(): Boolean {
-        return Bukkit.getPluginManager().getPlugin("packetevents") != null
-    }
     fun isCommand(command: String): Boolean {
         return command.startsWith("/")
     }

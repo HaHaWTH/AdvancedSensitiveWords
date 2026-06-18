@@ -7,7 +7,6 @@ import io.wdsj.asw.bukkit.manage.punish.Punishment
 import io.wdsj.asw.bukkit.manage.punish.ViolationCounter
 import io.wdsj.asw.bukkit.permission.PermissionsEnum
 import io.wdsj.asw.bukkit.permission.cache.CachingPermTool
-import io.wdsj.asw.bukkit.proxy.bungee.BungeeSender
 import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
@@ -75,9 +74,6 @@ class AnvilListener : Listener {
                                 VelocitySender.sendNotifyMessage(player, ModuleType.ANVIL, originalItemName, censoredWords)
                             }
 
-                            if (settingsManager.getProperty(PluginSettings.HOOK_BUNGEECORD)) {
-                                BungeeSender.sendNotifyMessage(player, ModuleType.ANVIL, originalItemName, censoredWords)
-                            }
                             val endTime = System.currentTimeMillis()
                             TimingUtils.addProcessStatistic(endTime, startTime)
                             if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) Notifier.notice(

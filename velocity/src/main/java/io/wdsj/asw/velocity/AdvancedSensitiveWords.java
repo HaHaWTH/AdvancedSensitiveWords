@@ -35,9 +35,9 @@ public class AdvancedSensitiveWords {
     private final Metrics.Factory metricsFactory;
     private final File dataFolder;
     public static final MinecraftChannelIdentifier CHANNEL = MinecraftChannelIdentifier.create("asw", "main");
-    public static final ChannelIdentifier LEGACY_CHANNEL
-            = new LegacyChannelIdentifier("asw:main");
+    public static final ChannelIdentifier LEGACY_CHANNEL = new LegacyChannelIdentifier("asw:main");
     private static Config config;
+
     @Inject
     public AdvancedSensitiveWords(Logger logger, ProxyServer server, Metrics.Factory metricsFactory, @DataDirectory Path path) {
         this.logger = logger;
@@ -45,11 +45,12 @@ public class AdvancedSensitiveWords {
         this.metricsFactory = metricsFactory;
         this.dataFolder = path.toFile();
     }
+
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
         reloadConfiguration();
         server.getChannelRegistrar().register(CHANNEL, LEGACY_CHANNEL);
-        Metrics metrics = metricsFactory.make(this, 21637);
+        metricsFactory.make(this, 21637);
         server.getEventManager().register(this, new PluginMessageForwarder(logger, server));
         if (config.check_for_update) {
             server.getScheduler().buildTask(this, () -> {
@@ -84,7 +85,7 @@ public class AdvancedSensitiveWords {
     public void createDirectory(File dir) throws IOException {
         try {
             Files.createDirectories(dir.toPath());
-        } catch (FileAlreadyExistsException e) { // Thrown if dir exists but is not a directory
+        } catch (FileAlreadyExistsException e) {
             if (dir.delete()) createDirectory(dir);
         }
     }
