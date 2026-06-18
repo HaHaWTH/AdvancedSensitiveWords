@@ -17,17 +17,16 @@ class ShadowListener : Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     fun onChat(event: AsyncChatEvent) {
         val player = event.player
-        if (PlayerShadowController.isShadowed(player)) {
-            val viewers: MutableSet<Audience> = event.viewers()
-            viewers.clear()
-            if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_ALTS_CHECK) && PlayerAltController.hasAlt(player)) {
-                val alts = PlayerAltController.getAlts(player)
-                for (alt in alts) {
-                    val altPlayer = Bukkit.getPlayer(alt)
-                    altPlayer?.let { viewers.add(it) }
-                }
+        if (!PlayerShadowController.isShadowed(player)) return
+
+        val viewers: MutableSet<Audience> = event.viewers()
+        viewers.clear()
+        if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_ALTS_CHECK) && PlayerAltController.hasAlt(player)) {
+            for (alt in PlayerAltController.getAlts(player)) {
+                val altPlayer = Bukkit.getPlayer(alt)
+                altPlayer?.let { viewers.add(it) }
             }
-            viewers.add(player)
         }
+        viewers.add(player)
     }
 }

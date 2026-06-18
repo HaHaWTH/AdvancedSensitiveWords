@@ -6,18 +6,14 @@ import io.wdsj.asw.bukkit.AdvancedSensitiveWords.sensitiveWordBs
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
 import io.wdsj.asw.bukkit.annotation.PaperEventHandler
 import io.wdsj.asw.bukkit.listener.abstraction.AbstractFakeMessageExecutor
-import io.wdsj.asw.bukkit.manage.notice.Notifier
 import io.wdsj.asw.bukkit.manage.punish.Punishment
-import io.wdsj.asw.bukkit.manage.punish.ViolationCounter
-import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.type.ModuleType
-import io.wdsj.asw.bukkit.util.LoggingUtils
 import io.wdsj.asw.bukkit.util.PlayerProcessingGuard
 import io.wdsj.asw.bukkit.util.SchedulingUtils
-import io.wdsj.asw.bukkit.util.TimingUtils
 import io.wdsj.asw.bukkit.util.Utils
+import io.wdsj.asw.bukkit.util.ViolationReporter
 import io.wdsj.asw.bukkit.util.context.ChatContext
 import io.wdsj.asw.bukkit.util.message.MessageUtils
 import net.kyori.adventure.text.Component
@@ -31,12 +27,15 @@ import org.bukkit.event.Listener
 @Suppress("UNUSED")
 @PaperEventHandler
 class PaperChatListener : Listener {
+    private val processingGuard = PlayerProcessingGuard()
+    private val violationReporter = ViolationReporter()
+
     @EventHandler(priority = EventPriority.LOWEST)
     fun onChat(event: AsyncChatEvent) {
         if (!settingsManager.getProperty(PluginSettings.ENABLE_CHAT_CHECK)) return
 
         val player = event.player
-        if (PlayerProcessingGuard.shouldSkip(player)) return
+        if (processingGuard.shouldSkip(player)) return
 
         val startTime = System.currentTimeMillis()
         val originalMessage = preprocess(event.message())
@@ -69,7 +68,6 @@ class PaperChatListener : Listener {
         censoredWords: List<String>,
         startTime: Long,
     ) {
-        Utils.messagesFilteredNum.getAndIncrement()
         applyDirectMessageAction(event, originalMessage, originalPlainText)
         recordViolation(event, player, originalPlainText, originalPlainText, censoredWords, false, startTime)
     }
@@ -110,7 +108,6 @@ class PaperChatListener : Listener {
         if (censoredWords.isEmpty()) return
 
         ChatContext.pollPlayerContext(player)
-        Utils.messagesFilteredNum.getAndIncrement()
         if (settingsManager.getProperty(PluginSettings.CHAT_FAKE_MESSAGE_ON_CANCEL)) {
             AbstractFakeMessageExecutor.selfIncrement(player)
         } else {
@@ -138,24 +135,16 @@ class PaperChatListener : Listener {
             )
         }
 
-        if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
-            val source = if (contextCheck) "(Chat)(Context)" else "(Chat)"
-            LoggingUtils.logViolation(
-                player.name + "(IP: " + Utils.getPlayerIp(player) + ")" + source,
-                violationContent + censoredWords,
-            )
-        }
-
-        ViolationCounter.INSTANCE.incrementViolationCount(player)
-        if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
-            VelocitySender.sendNotifyMessage(player, ModuleType.CHAT, violationContent, censoredWords)
-        }
-
-        TimingUtils.addProcessStatistic(System.currentTimeMillis(), startTime)
-        if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) {
-            Notifier.notice(player, ModuleType.CHAT, violationContent, censoredWords)
-        }
-        if (settingsManager.getProperty(PluginSettings.CHAT_PUNISH)) {
+        val source = if (contextCheck) "Chat)(Context" else "Chat"
+        violationReporter.report(
+            player = player,
+            moduleType = ModuleType.CHAT,
+            content = violationContent,
+            censoredWords = censoredWords,
+            logSource = source,
+            startTime = startTime,
+            punish = settingsManager.getProperty(PluginSettings.CHAT_PUNISH),
+        ) {
             SchedulingUtils.runSyncIfEventAsync(event) {
                 Punishment.punish(player)
             }
