@@ -39,7 +39,7 @@ public class ExternalWordAllow implements IWordAllow {
             List<File> files = paths
                     .filter(Files::isRegularFile)
                     .map(Path::toFile)
-                    .collect(Collectors.toList());
+                    .toList();
             if (files.isEmpty()) return Collections.emptyList();
 
             files.parallelStream()

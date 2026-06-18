@@ -33,7 +33,7 @@ dependencies {
     compileOnly("com.google.guava:guava:33.4.0-jre")
 
     implementation(kotlin("stdlib"))
-    implementation("com.github.houbb:sensitive-word:0.26.2")
+    implementation("com.github.houbb:sensitive-word:0.29.5")
     implementation("com.github.Anon8281:UniversalScheduler:0.1.7")
     implementation("org.bstats:bstats-bukkit:3.1.0")
     implementation("ch.jalu:configme:1.3.1") {
