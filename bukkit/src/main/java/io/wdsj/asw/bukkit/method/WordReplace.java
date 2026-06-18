@@ -10,8 +10,8 @@ import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
 
 public class WordReplace implements IWordReplace {
     @Override
-    public void replace(StringBuilder stringBuilder, char[] rawChars, IWordResult wordResult, IWordContext wordContext) {
-        String sensitiveWord = InnerWordCharUtils.getString(rawChars, wordResult);
+    public void replace(StringBuilder stringBuilder, String rawString, IWordResult wordResult, IWordContext wordContext) {
+        String sensitiveWord = InnerWordCharUtils.getString(rawString, wordResult);
         for (String word : settingsManager.getProperty(PluginSettings.DEFINED_REPLACEMENT)) {
             String[] parts = word.split("\\|");
             if (parts.length == 2) {

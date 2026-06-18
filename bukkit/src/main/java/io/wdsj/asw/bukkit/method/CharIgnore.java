@@ -11,9 +11,9 @@ import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
 
 public class CharIgnore implements ISensitiveWordCharIgnore {
     @Override
-    public boolean ignore(int i, char[] chars, InnerSensitiveWordContext innerSensitiveWordContext) {
+    public boolean ignore(int i, String string, InnerSensitiveWordContext innerSensitiveWordContext) {
         Set<Character> SET = StringUtil.toCharSet(settingsManager.getProperty(PluginSettings.IGNORE_CHAR));
-        char c = chars[i];
+        char c = string.charAt(i);
         return SET.contains(c);
     }
 }
