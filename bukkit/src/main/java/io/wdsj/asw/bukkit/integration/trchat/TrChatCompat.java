@@ -21,8 +21,8 @@ public final class TrChatCompat {
     private static final Listener SEND_EVENT_LISTENER = new Listener() {
     };
     private static final EventExecutor SEND_EVENT_EXECUTOR = TrChatCompat::handleSendEvent;
-    private static final AtomicBoolean REGISTERED = new AtomicBoolean(false);
-    private static final AtomicBoolean SEND_FAILURE_WARNED = new AtomicBoolean(false);
+    private static boolean REGISTERED;
+    private static boolean warned;
 
     private TrChatCompat() {
     }
@@ -31,7 +31,7 @@ public final class TrChatCompat {
         if (!TrChatReflection.isAvailable()) {
             return;
         }
-        if (!REGISTERED.compareAndSet(false, true)) {
+        if (REGISTERED) {
             return;
         }
 
@@ -43,11 +43,12 @@ public final class TrChatCompat {
                 plugin,
                 false
         );
+        REGISTERED = true;
         AdvancedSensitiveWords.LOGGER.info("TrChat compatibility for fake chat messages is enabled.");
     }
 
     public static boolean tryMarkFakeMessage(Player player) {
-        if (!REGISTERED.get()) {
+        if (!REGISTERED) {
             return false;
         }
         if (!Bukkit.getPluginManager().isPluginEnabled(TrChatReflection.PLUGIN_NAME)) {
@@ -127,8 +128,9 @@ public final class TrChatCompat {
         if (TrChatReflection.sendComponent(receiver, component, sender)) {
             return true;
         }
-        if (SEND_FAILURE_WARNED.compareAndSet(false, true)) {
+        if (!warned) {
             AdvancedSensitiveWords.LOGGER.warning("Failed to send TrChat fake message component. Falling back to legacy text.");
+            warned = true;
         }
         return false;
     }
