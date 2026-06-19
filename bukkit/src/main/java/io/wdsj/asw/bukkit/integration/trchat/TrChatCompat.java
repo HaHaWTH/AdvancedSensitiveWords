@@ -2,6 +2,7 @@ package io.wdsj.asw.bukkit.integration.trchat;
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 import io.wdsj.asw.bukkit.manage.punish.PlayerAltController;
+import io.wdsj.asw.bukkit.manage.punish.PlayerShadowController;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -15,7 +16,6 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.Locale;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class TrChatCompat {
     private static final Listener SEND_EVENT_LISTENER = new Listener() {
@@ -27,6 +27,7 @@ public final class TrChatCompat {
     private TrChatCompat() {
     }
 
+    private static boolean trchatInstalled;
     public static void tryRegister(Plugin plugin) {
         if (!TrChatReflection.isAvailable()) {
             return;
@@ -34,6 +35,7 @@ public final class TrChatCompat {
         if (REGISTERED) {
             return;
         }
+        trchatInstalled = Bukkit.getPluginManager().getPlugin(TrChatReflection.PLUGIN_NAME) != null;
 
         assert TrChatReflection.SEND_EVENT_CLASS != null;
         Bukkit.getPluginManager().registerEvent(
@@ -45,14 +47,11 @@ public final class TrChatCompat {
                 false
         );
         REGISTERED = true;
-        AdvancedSensitiveWords.LOGGER.info("TrChat compatibility for fake chat messages is enabled.");
+        AdvancedSensitiveWords.LOGGER.info("TrChat compatibility for fake chat messages and shadowban is enabled.");
     }
 
     public static boolean tryMarkFakeMessage(Player player) {
-        if (!REGISTERED) {
-            return false;
-        }
-        if (!Bukkit.getPluginManager().isPluginEnabled(TrChatReflection.PLUGIN_NAME)) {
+        if (!isEnabled()) {
             return false;
         }
 
@@ -60,8 +59,14 @@ public final class TrChatCompat {
         return true;
     }
 
+    public static boolean isEnabled() {
+        return REGISTERED && trchatInstalled;
+    }
+
     private static void handleSendEvent(Listener listener, Event event) {
-        if (!TrChatReflection.isSendEvent(event)) return;
+        if (!TrChatReflection.isSendEvent(event)) {
+            return;
+        }
         if (!(event instanceof Cancellable cancellable)) {
             return;
         }
@@ -72,6 +77,7 @@ public final class TrChatCompat {
         }
 
         if (!TrChatPendingFakeMessages.hasPending(player)) {
+            handleShadowSendEvent(cancellable, event, player);
             return;
         }
 
@@ -95,6 +101,28 @@ public final class TrChatCompat {
                 if (!TrChatPendingFakeMessages.consume(player)) {
                     return;
                 }
+                cancellable.setCancelled(true);
+                sendFormattedMessage(event, player);
+                break;
+        }
+    }
+
+    private static void handleShadowSendEvent(Cancellable cancellable, Event event, Player player) {
+        if (!PlayerShadowController.isShadowed(player) || cancellable.isCancelled()) {
+            return;
+        }
+
+        String type = TrChatReflection.getTypeName(event).toUpperCase(Locale.ROOT);
+        switch (type) {
+            case "SENDER":
+                cancellable.setCancelled(true);
+                sendFormattedMessage(event, player);
+                break;
+            case "RECEIVER":
+                cancellable.setCancelled(true);
+                break;
+            case "COMMON":
+            default:
                 cancellable.setCancelled(true);
                 sendFormattedMessage(event, player);
                 break;
@@ -130,7 +158,7 @@ public final class TrChatCompat {
             return true;
         }
         if (!warned) {
-            AdvancedSensitiveWords.LOGGER.warn("Failed to send TrChat fake message component. Falling back to legacy text.");
+            AdvancedSensitiveWords.LOGGER.warn("Failed to send TrChat component. Falling back to legacy text.");
             warned = true;
         }
         return false;

@@ -4,6 +4,8 @@ import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
 import io.wdsj.asw.bukkit.util.SchedulingUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
@@ -12,11 +14,24 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER;
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
 
 public class Punishment {
+    private static final Map<String, String> LEGACY_EFFECT_ALIASES = Map.ofEntries(
+            Map.entry("slow", "slowness"),
+            Map.entry("fast_digging", "haste"),
+            Map.entry("slow_digging", "mining_fatigue"),
+            Map.entry("increase_damage", "strength"),
+            Map.entry("heal", "instant_health"),
+            Map.entry("harm", "instant_damage"),
+            Map.entry("jump", "jump_boost"),
+            Map.entry("confusion", "nausea"),
+            Map.entry("damage_resistance", "resistance")
+    );
+
     public static void punish(Player player) {
         List<String> punishList = settingsManager.getProperty(PluginSettings.PUNISHMENT);
         if (punishList.isEmpty()) return;
@@ -24,7 +39,7 @@ public class Punishment {
             try {
                 processSinglePunish(player, punish);
             } catch (IllegalArgumentException e) {
-                LOGGER.warn("Invalid punishment method: " + punish);
+                LOGGER.warn("Invalid punishment method: {}", punish);
             }
         }
     }
@@ -74,8 +89,7 @@ public class Punishment {
             case EFFECT:
                 if (normalPunish.length < 2) throw new IllegalArgumentException("Not enough args");
                 String effect = normalPunish[1];
-                //noinspection deprecation // TODO: Remove deprecated usage
-                PotionEffectType potionEffect = PotionEffectType.getByName(effect.toUpperCase(Locale.ROOT));
+                PotionEffectType potionEffect = resolvePotionEffectType(effect);
                 if (potionEffect == null) throw new IllegalArgumentException("Unknown potion effect");
                 switch (normalPunish.length) {
                     case 2:
@@ -106,13 +120,27 @@ public class Punishment {
         }
     }
 
+    private static PotionEffectType resolvePotionEffectType(String effect) {
+        String normalizedEffect = effect.trim().toLowerCase(Locale.ROOT).replace(' ', '_');
+        if (normalizedEffect.isEmpty()) {
+            return null;
+        }
+
+        NamespacedKey key = normalizedEffect.contains(":")
+                ? NamespacedKey.fromString(normalizedEffect)
+                : NamespacedKey.minecraft(LEGACY_EFFECT_ALIASES.getOrDefault(normalizedEffect, normalizedEffect));
+        if (key == null) {
+            return null;
+        }
+        return Registry.EFFECT.get(key);
+    }
+
     private static void makeHostileTowardsPlayer(Player target, double radius) {
         SchedulingUtils.runSyncAtEntityIfFolia(target, () -> {
             List<Entity> entities = target.getNearbyEntities(radius, radius, radius);
             for (Entity entity : entities) {
                 SchedulingUtils.runSyncAtEntityIfFolia(entity, () -> {
-                    if (entity instanceof Mob && !entity.hasMetadata("NPC")) {
-                        Mob mob = (Mob) entity;
+                    if (entity instanceof Mob mob && !entity.hasMetadata("NPC")) {
                         mob.setTarget(target);
                     }
                 });
@@ -135,7 +163,7 @@ public class Punishment {
                 return true;
             }
         } catch (NumberFormatException e) {
-            LOGGER.warn("Invalid violation condition: " + vlCondition);
+            LOGGER.warn("Invalid violation condition: {}", vlCondition);
             return false;
         }
     }

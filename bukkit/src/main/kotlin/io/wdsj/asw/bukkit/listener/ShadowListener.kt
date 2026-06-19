@@ -3,6 +3,7 @@ package io.wdsj.asw.bukkit.listener
 import io.papermc.paper.event.player.AsyncChatEvent
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.annotation.PaperEventHandler
+import io.wdsj.asw.bukkit.integration.trchat.TrChatCompat
 import io.wdsj.asw.bukkit.manage.punish.PlayerAltController
 import io.wdsj.asw.bukkit.manage.punish.PlayerShadowController
 import io.wdsj.asw.bukkit.setting.PluginSettings
@@ -18,6 +19,7 @@ class ShadowListener : Listener {
     fun onChat(event: AsyncChatEvent) {
         val player = event.player
         if (!PlayerShadowController.isShadowed(player)) return
+        if (TrChatCompat.isEnabled()) return
 
         val viewers: MutableSet<Audience> = event.viewers()
         viewers.clear()

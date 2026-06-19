@@ -15,12 +15,11 @@ import java.util.Locale;
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER;
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
 
-@SuppressWarnings("UnstableApiUsage")
 public class VelocityReceiver implements PluginMessageListener {
     private boolean warned = false;
 
     @Override
-    public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, @NotNull byte[] message) {
+    public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, byte @NotNull [] message) {
         if (!settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) return;
         if (channel.equals(VelocityChannel.CHANNEL)) {
             ByteArrayDataInput input = ByteStreams.newDataInput(message);

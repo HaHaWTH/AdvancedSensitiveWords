@@ -236,19 +236,16 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     }
 
     private IWordResultCondition createWordResultCondition() {
-        switch (settingsManager.getProperty(PluginSettings.FULL_MATCH_MODE)) {
-            case 0:
-                return WordResultConditions.alwaysTrue();
-            case 1:
-                return WordResultConditions.englishWordMatch();
-            case 2:
-                return WordResultConditions.englishWordNumMatch();
-            case 3:
-                return new WordResultConditionNumMatch();
-            default:
+        return switch (settingsManager.getProperty(PluginSettings.FULL_MATCH_MODE)) {
+            case 0 -> WordResultConditions.alwaysTrue();
+            case 1 -> WordResultConditions.englishWordMatch();
+            case 2 -> WordResultConditions.englishWordNumMatch();
+            case 3 -> new WordResultConditionNumMatch();
+            default -> {
                 LOGGER.warn("Invalid full match mode, will turn off full match.");
-                return WordResultConditions.alwaysTrue();
-        }
+                yield WordResultConditions.alwaysTrue();
+            }
+        };
     }
 
     private IWordDeny createWordDeny() {
