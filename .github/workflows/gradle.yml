@@ -24,7 +24,7 @@ jobs:
       - name: Upload Paper Artifact
         uses: actions/upload-artifact@v7
         with:
-          path: ./bukkit/build/libs/AdvancedSensitiveWords-paper.jar
+          path: ./paper/build/libs/AdvancedSensitiveWords-paper.jar
           archive: false
       - name: Upload Velocity Artifact
         uses: actions/upload-artifact@v7

@@ -24,4 +24,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "AdvancedSensitiveWords"
 
-include("common", "bukkit", "velocity")
+include("common", "paper", "velocity")
