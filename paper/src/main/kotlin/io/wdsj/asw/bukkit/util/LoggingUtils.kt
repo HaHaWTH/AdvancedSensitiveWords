@@ -18,6 +18,7 @@ object LoggingUtils {
     private val loggingThreadPool = Executors.newSingleThreadExecutor(
         ThreadFactoryBuilder()
             .setNameFormat("ASW Logging Thread")
+            .setThreadFactory(Thread.ofVirtual().factory())
             .setDaemon(true)
             .build()
     )
