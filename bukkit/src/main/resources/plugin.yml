@@ -16,6 +16,7 @@ softdepend:
   - floodgate
   - PlaceholderAPI
   - AuthMe
+  - packetevents
 folia-supported: true
 commands:
   advancedsensitivewords:

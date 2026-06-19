@@ -269,6 +269,9 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"替换还是取消(replace/cancel)",
             "Replace or cancel (replace/cancel)"})
     public static final Property<String> SIGN_METHOD = newProperty("Sign.method", "replace");
+    @Comment({"Whether to show cancelled sensitive sign edits only to the placer and detected alts.",
+            "Only available when Sign.method is cancel. Requires PacketEvents for chunk resend compatibility."})
+    public static final Property<Boolean> SIGN_FAKE_ON_CANCEL = newProperty("Sign.fakeOnCancel", false);
     @Comment({"是否启用惩罚",
             "Whether to enable punishment"})
     public static final Property<Boolean> SIGN_PUNISH = newProperty("Sign.punish", true);

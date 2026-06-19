@@ -5,6 +5,7 @@ import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.type.ModuleType
+import io.wdsj.asw.bukkit.integration.sign.SignFakeViewService
 import io.wdsj.asw.bukkit.util.PlayerProcessingGuard
 import io.wdsj.asw.bukkit.util.Utils
 import io.wdsj.asw.bukkit.util.ViolationReporter
@@ -21,7 +22,7 @@ class SignListener : Listener {
     private val processingGuard = PlayerProcessingGuard()
     private val violationReporter = ViolationReporter()
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onSign(event: SignChangeEvent) {
         if (!settingsManager.getProperty(PluginSettings.ENABLE_SIGN_EDIT_CHECK)) return
         if (event.lines().isEmpty()) return
@@ -30,11 +31,22 @@ class SignListener : Listener {
         if (processingGuard.shouldSkipBasic(player)) return
 
         val startTime = System.currentTimeMillis()
+        val attemptedLines = event.lines().toList()
         val lineScan = censorSingleLines(event)
         val violation = lineScan.violation
             ?: censorMultiLine(event, lineScan)
             ?: censorContext(event, player)
             ?: return
+
+        if (isCancelMode() && settingsManager.getProperty(PluginSettings.SIGN_FAKE_ON_CANCEL)) {
+            SignFakeViewService.recordCancelledEdit(
+                event,
+                player,
+                attemptedLines,
+                violation.content,
+                violation.censoredWords,
+            )
+        }
 
         if (settingsManager.getProperty(PluginSettings.SIGN_SEND_MESSAGE)) {
             MessageUtils.sendMessage(player, PluginMessages.MESSAGE_ON_SIGN)
@@ -71,11 +83,12 @@ class SignListener : Listener {
                 continue
             }
 
-            val processedMessage = sensitiveWordBs.replace(originalMessage)
             violation = SignViolation(originalMessage, censoredWords)
             if (isCancelMode()) {
                 event.isCancelled = true
+                continue
             }
+            val processedMessage = sensitiveWordBs.replace(originalMessage)
             event.line(lineIndex, MessageUtils.replaceLiteral(originalComponent, originalMessage, processedMessage))
         }
 
