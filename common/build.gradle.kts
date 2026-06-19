@@ -1,20 +1,11 @@
 plugins {
     `java-library`
+    id("com.github.gmazzo.buildconfig")
 }
-
-val generatedVersionDir = layout.buildDirectory.dir("generated/sources/version-template/java")
 
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(21))
-    }
-}
-
-sourceSets {
-    named("main") {
-        java {
-            srcDir(generatedVersionDir)
-        }
     }
 }
 
@@ -24,21 +15,19 @@ dependencies {
     compileOnly("com.google.guava:guava:33.4.0-jre")
 }
 
-val generateVersionTemplate by tasks.registering(Copy::class) {
-    from("src/main/templates")
-    into(generatedVersionDir)
-    filteringCharset = "UTF-8"
-    expand(mapOf<String, String>(
-        "pluginVersion" to project.version.toString(),
-        "versionChannel" to rootProject.extra["versionChannel"].toString(),
-        "gitCommitShort" to rootProject.extra["gitCommitShort"].toString(),
-        "gitCommitFull" to rootProject.extra["gitCommitFull"].toString(),
-        "gitBranch" to rootProject.extra["gitBranch"].toString(),
-    ))
+buildConfig {
+    packageName("io.wdsj.asw.common.template")
+    className("PluginVersionTemplate")
+    useJavaOutput()
+
+    buildConfigField("VERSION", project.version.toString())
+    buildConfigField("VERSION_CHANNEL", rootProject.extra["versionChannel"].toString())
+    buildConfigField("COMMIT_HASH_SHORT", rootProject.extra["gitCommitShort"].toString())
+    buildConfigField("COMMIT_HASH", rootProject.extra["gitCommitFull"].toString())
+    buildConfigField("COMMIT_BRANCH", rootProject.extra["gitBranch"].toString())
 }
 
 tasks.withType<JavaCompile>().configureEach {
-    dependsOn(generateVersionTemplate)
     options.encoding = "UTF-8"
     options.release.set(17)
 }
