@@ -9,7 +9,6 @@ import io.wdsj.asw.bukkit.setting.PluginSettings;
 import io.wdsj.asw.bukkit.type.ModuleType;
 import io.wdsj.asw.bukkit.util.SchedulingUtils;
 import io.wdsj.asw.bukkit.util.ViolationReporter;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
