@@ -14,12 +14,12 @@ public final class SignFakeViewCompat {
 
     public static void tryRegister(AdvancedSensitiveWords plugin) {
         SignFakeViewService.setOperational(false);
-        if (!AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_SIGN_EDIT_CHECK)
-                || !AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.SIGN_FAKE_ON_CANCEL)) {
+        if (!AdvancedSensitiveWords.setting(PluginSettings.ENABLE_SIGN_EDIT_CHECK)
+                || !AdvancedSensitiveWords.setting(PluginSettings.SIGN_FAKE_ON_CANCEL)) {
             return;
         }
 
-        if (!AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.SIGN_METHOD).equalsIgnoreCase("cancel")) {
+        if (!AdvancedSensitiveWords.setting(PluginSettings.SIGN_METHOD).isCancel()) {
             AdvancedSensitiveWords.LOGGER.info("Sign.fakeOnCancel is enabled but Sign.method is not cancel; sign fake view is disabled.");
             return;
         }

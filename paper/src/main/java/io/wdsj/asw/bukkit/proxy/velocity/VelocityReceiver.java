@@ -13,14 +13,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Locale;
 
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER;
-import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
+import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.setting;
 
 public class VelocityReceiver implements PluginMessageListener {
     private boolean warned = false;
 
     @Override
     public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, byte @NotNull [] message) {
-        if (!settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) return;
+        if (!setting(PluginSettings.HOOK_VELOCITY)) return;
         if (channel.equals(VelocityChannel.CHANNEL)) {
             ByteArrayDataInput input = ByteStreams.newDataInput(message);
             if (!input.readUTF().equals(AdvancedSensitiveWords.PLUGIN_VERSION) && !warned) {
@@ -35,7 +35,7 @@ public class VelocityReceiver implements PluginMessageListener {
                     String originalMsg = input.readUTF();
                     String censoredWordList = input.readUTF();
                     String serverName = input.readUTF();
-                    if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) {
+                    if (setting(PluginSettings.NOTICE_OPERATOR)) {
                         Notifier.noticeFromProxy(playerName, serverName, moduleType, violationCount, originalMsg, censoredWordList);
                     }
                     break;

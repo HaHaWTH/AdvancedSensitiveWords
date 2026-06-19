@@ -99,4 +99,4 @@ graph TD
 ## Open-source projects used
 - **[sensitive-word](https://github.com/houbb/sensitive-word)**
 - **[UniversalScheduler](https://github.com/Anon8281/UniversalScheduler)**
-- **[ConfigMe](https://github.com/AuthMe/ConfigMe)**
+- **[ConfigLib](https://github.com/Exlll/ConfigLib)**

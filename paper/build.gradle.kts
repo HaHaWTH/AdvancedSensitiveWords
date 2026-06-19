@@ -39,9 +39,11 @@ dependencies {
     implementation("com.github.houbb:sensitive-word:0.29.5")
     implementation("com.github.Anon8281:UniversalScheduler:0.1.7")
     implementation("org.bstats:bstats-bukkit:3.1.0")
-    implementation("ch.jalu:configme:1.3.1") {
-        exclude(group = "org.yaml", module = "snakeyaml")
-    }
+    implementation("de.exlll:configlib-yaml:4.8.1")
+    runtimeOnly("org.snakeyaml:snakeyaml-engine:2.7")
+
+    testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.11.4")
 }
 
 tasks.withType<JavaCompile>().configureEach {
@@ -54,6 +56,10 @@ tasks.withType<KotlinCompile>().configureEach {
         jvmTarget.set(JvmTarget.JVM_21)
         javaParameters.set(true)
     }
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 tasks.processResources {
@@ -93,11 +99,12 @@ tasks.named<ShadowJar>("shadowJar") {
     relocate("org.jetbrains.annotations", "io.wdsj.asw.bukkit.libs.org.jetbrains.annotations")
     relocate("org.intellij.lang.annotations", "io.wdsj.asw.bukkit.libs.org.intellij.lang.annotations")
     relocate("org.apiguardian.api", "io.wdsj.asw.bukkit.libs.api")
-    relocate("ch.jalu.configme", "io.wdsj.asw.bukkit.libs.config")
+    relocate("de.exlll.configlib", "io.wdsj.asw.bukkit.libs.configlib")
+    relocate("org.snakeyaml.engine.v2", "io.wdsj.asw.bukkit.libs.snakeyaml.engine.v2")
+    relocate("org.snakeyaml.engine.external", "io.wdsj.asw.bukkit.libs.snakeyaml.engine.external")
     relocate("org.incendo", "io.wdsj.asw.bukkit.libs.incendo")
     relocate("io.leangen.geantyref", "io.wdsj.asw.bukkit.libs.geantyref")
 
-    exclude("org/yaml/snakeyaml/**")
     exclude("org/slf4j/**")
     exclude("net/kyori/**")
     exclude("*.md")
@@ -108,6 +115,8 @@ tasks.named<ShadowJar>("shadowJar") {
 
     minimize {
         exclude(dependency("org.incendo:.*:.*"))
+        exclude(dependency("de.exlll:.*:.*"))
+        exclude(dependency("org.snakeyaml:snakeyaml-engine:.*"))
     }
 }
 

@@ -1,7 +1,7 @@
 package io.wdsj.asw.bukkit.listener
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.sensitiveWordBs
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
+import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.type.ModuleType
@@ -16,13 +16,13 @@ import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryType
 
-class AnvilListener : Listener {
-    private val processingGuard = PlayerProcessingGuard()
-    private val violationReporter = ViolationReporter()
+class AnvilListener(private val configuration: PaperConfigurationService) : Listener {
+    private val processingGuard = PlayerProcessingGuard(configuration)
+    private val violationReporter = ViolationReporter(configuration)
 
     @EventHandler(priority = EventPriority.LOWEST)
     fun onAnvil(event: InventoryClickEvent) {
-        if (!settingsManager.getProperty(PluginSettings.ENABLE_ANVIL_EDIT_CHECK)) return
+        if (!configuration.get(PluginSettings.ENABLE_ANVIL_EDIT_CHECK)) return
         if (event.inventory.type != InventoryType.ANVIL) return
         if (event.rawSlot != 2) return
 
@@ -54,7 +54,7 @@ class AnvilListener : Listener {
             outputItem.setItemMeta(itemMeta)
         }
 
-        if (settingsManager.getProperty(PluginSettings.ANVIL_SEND_MESSAGE)) {
+        if (configuration.get(PluginSettings.ANVIL_SEND_MESSAGE)) {
             MessageUtils.sendMessage(player, PluginMessages.MESSAGE_ON_ANVIL_RENAME)
         }
 
@@ -65,16 +65,16 @@ class AnvilListener : Listener {
             censoredWords = censoredWords,
             logSource = "Anvil",
             startTime = startTime,
-            punish = settingsManager.getProperty(PluginSettings.ANVIL_PUNISH),
+            punish = configuration.get(PluginSettings.ANVIL_PUNISH),
         )
     }
 
     private fun preprocess(text: String): String {
-        if (!settingsManager.getProperty(PluginSettings.PRE_PROCESS)) return text
+        if (!configuration.get(PluginSettings.PRE_PROCESS)) return text
         return text.replace(Utils.preProcessRegex.toRegex(), "")
     }
 
     private fun isCancelMode(): Boolean {
-        return settingsManager.getProperty(PluginSettings.ANVIL_METHOD).equals("cancel", ignoreCase = true)
+        return configuration.get(PluginSettings.ANVIL_METHOD).isCancel
     }
 }

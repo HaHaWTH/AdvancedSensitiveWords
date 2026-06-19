@@ -9,7 +9,7 @@ import io.wdsj.asw.bukkit.util.message.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
+import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.setting;
 
 /**
  * Asynchronous task to reset the violation count of players.
@@ -17,7 +17,7 @@ import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
 public class ViolationResetTask extends UniversalRunnable {
     @Override
     public void run() {
-        if (settingsManager.getProperty(PluginSettings.ONLY_RESET_ONLINE_PLAYERS)) {
+        if (setting(PluginSettings.ONLY_RESET_ONLINE_PLAYERS)) {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 ViolationCounter.INSTANCE.resetViolationCount(player);
             }

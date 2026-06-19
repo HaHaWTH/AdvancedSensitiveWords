@@ -1,7 +1,7 @@
 package io.wdsj.asw.bukkit.listener
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.sensitiveWordBs
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
+import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.type.ModuleType
@@ -17,13 +17,13 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerEditBookEvent
 
-class BookListener : Listener {
-    private val processingGuard = PlayerProcessingGuard()
-    private val violationReporter = ViolationReporter()
+class BookListener(private val configuration: PaperConfigurationService) : Listener {
+    private val processingGuard = PlayerProcessingGuard(configuration)
+    private val violationReporter = ViolationReporter(configuration)
 
     @EventHandler(priority = EventPriority.LOWEST)
     fun onBook(event: PlayerEditBookEvent) {
-        if (!settingsManager.getProperty(PluginSettings.ENABLE_BOOK_EDIT_CHECK)) return
+        if (!configuration.get(PluginSettings.ENABLE_BOOK_EDIT_CHECK)) return
 
         val player = event.player
         if (processingGuard.shouldSkipBasic(player)) return
@@ -41,7 +41,7 @@ class BookListener : Listener {
 
         event.newBookMeta = bookMeta
 
-        if (settingsManager.getProperty(PluginSettings.BOOK_SEND_MESSAGE)) {
+        if (configuration.get(PluginSettings.BOOK_SEND_MESSAGE)) {
             MessageUtils.sendMessage(player, PluginMessages.MESSAGE_ON_BOOK)
         }
 
@@ -52,7 +52,7 @@ class BookListener : Listener {
             censoredWords = finalViolation.censoredWords,
             logSource = "Book",
             startTime = startTime,
-            punish = settingsManager.getProperty(PluginSettings.BOOK_PUNISH),
+            punish = configuration.get(PluginSettings.BOOK_PUNISH),
         )
     }
 
@@ -78,7 +78,7 @@ class BookListener : Listener {
     }
 
     private fun censorCrossPage(event: PlayerEditBookEvent): BookViolation? {
-        if (!settingsManager.getProperty(PluginSettings.BOOK_CROSS_PAGE)) return null
+        if (!configuration.get(PluginSettings.BOOK_CROSS_PAGE)) return null
 
         val originalPageCrossed = (1..event.newBookMeta.pageCount)
             .joinToString("") { MessageUtils.plainText(event.newBookMeta.page(it)) }
@@ -119,7 +119,7 @@ class BookListener : Listener {
     }
 
     private fun findPageCensoredWords(page: String): List<String> {
-        if (!settingsManager.getProperty(PluginSettings.BOOK_CACHE)) {
+        if (!configuration.get(PluginSettings.BOOK_CACHE)) {
             return sensitiveWordBs.findAll(page)
         }
         if (BookCache.isBookCached(page)) {
@@ -129,7 +129,7 @@ class BookListener : Listener {
     }
 
     private fun replacePage(page: Component, pagePlainText: String, censoredWords: List<String>): Component {
-        if (!settingsManager.getProperty(PluginSettings.BOOK_CACHE)) {
+        if (!configuration.get(PluginSettings.BOOK_CACHE)) {
             return MessageUtils.replaceLiteral(page, pagePlainText, sensitiveWordBs.replace(pagePlainText))
         }
         if (BookCache.isBookCached(pagePlainText)) {
@@ -146,7 +146,7 @@ class BookListener : Listener {
     }
 
     private fun preprocessPageText(text: String): String {
-        val lineNormalized = if (settingsManager.getProperty(PluginSettings.BOOK_IGNORE_NEWLINE)) {
+        val lineNormalized = if (configuration.get(PluginSettings.BOOK_IGNORE_NEWLINE)) {
             text.replace("\n", "").replace("§0", "")
         } else {
             text
@@ -155,12 +155,12 @@ class BookListener : Listener {
     }
 
     private fun preprocessText(text: String): String {
-        if (!settingsManager.getProperty(PluginSettings.PRE_PROCESS)) return text
+        if (!configuration.get(PluginSettings.PRE_PROCESS)) return text
         return text.replace(Utils.preProcessRegex.toRegex(), "")
     }
 
     private fun isCancelMode(): Boolean {
-        return settingsManager.getProperty(PluginSettings.BOOK_METHOD).equals("cancel", ignoreCase = true)
+        return configuration.get(PluginSettings.BOOK_METHOD).isCancel
     }
 
     private data class BookViolation(

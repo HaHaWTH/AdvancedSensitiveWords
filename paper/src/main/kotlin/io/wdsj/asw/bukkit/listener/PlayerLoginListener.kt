@@ -2,7 +2,7 @@ package io.wdsj.asw.bukkit.listener
 
 import io.papermc.paper.event.player.PlayerServerFullCheckEvent
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.sensitiveWordBs
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
+import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.manage.notice.Notifier
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
@@ -17,10 +17,10 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.geysermc.floodgate.api.FloodgateApi
 
-class PlayerLoginListener : Listener {
+class PlayerLoginListener(private val configuration: PaperConfigurationService) : Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     fun onServerFullCheck(event: PlayerServerFullCheckEvent) {
-        if (!settingsManager.getProperty(PluginSettings.ENABLE_PLAYER_NAME_CHECK)) return
+        if (!configuration.get(PluginSettings.ENABLE_PLAYER_NAME_CHECK)) return
         if (shouldIgnoreProfile(event)) return
 
         val playerName = event.playerProfile.name ?: return
@@ -33,7 +33,7 @@ class PlayerLoginListener : Listener {
     }
 
     private fun shouldIgnoreProfile(event: PlayerServerFullCheckEvent): Boolean {
-        if (!settingsManager.getProperty(PluginSettings.NAME_IGNORE_BEDROCK)) return false
+        if (!configuration.get(PluginSettings.NAME_IGNORE_BEDROCK)) return false
         if (Bukkit.getPluginManager().getPlugin("floodgate") == null) return false
 
         val profileId = event.playerProfile.id ?: return false
@@ -41,7 +41,7 @@ class PlayerLoginListener : Listener {
     }
 
     private fun denyLogin(event: PlayerServerFullCheckEvent) {
-        val kickMessage = if (settingsManager.getProperty(PluginSettings.NAME_SEND_MESSAGE)) {
+        val kickMessage = if (configuration.get(PluginSettings.NAME_SEND_MESSAGE)) {
             MessageUtils.retrieveComponent(PluginMessages.MESSAGE_ON_NAME)
         } else {
             event.kickMessage()
@@ -52,13 +52,13 @@ class PlayerLoginListener : Listener {
     private fun reportViolation(playerName: String, censoredWords: List<String>, startTime: Long) {
         Utils.messagesFilteredNum.getAndIncrement()
 
-        if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
+        if (configuration.get(PluginSettings.LOG_VIOLATION)) {
             LoggingUtils.logViolation("$playerName(IP: Unknown)(Name)", playerName + censoredWords)
         }
 
         TimingUtils.addProcessStatistic(System.currentTimeMillis(), startTime)
 
-        if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) {
+        if (configuration.get(PluginSettings.NOTICE_OPERATOR)) {
             val message = MessageUtils.retrieveMessage(PluginMessages.ADMIN_REMINDER)
                 .replace("%player%", playerName)
                 .replace("%type%", ModuleType.NAME.toString())

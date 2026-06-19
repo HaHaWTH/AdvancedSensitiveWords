@@ -4,7 +4,7 @@ import com.github.houbb.sensitive.word.api.IWordResult
 import com.github.houbb.sensitive.word.support.result.WordResultHandlers
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.sensitiveWordBs
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
+import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.integration.packetevents.sign.SignFakeViewService
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
@@ -27,13 +27,13 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.SignChangeEvent
 
 // TODO: Paper event handler
-class SignListener : Listener {
-    private val processingGuard = PlayerProcessingGuard()
-    private val violationReporter = ViolationReporter()
+class SignListener(private val configuration: PaperConfigurationService) : Listener {
+    private val processingGuard = PlayerProcessingGuard(configuration)
+    private val violationReporter = ViolationReporter(configuration)
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onSign(event: SignChangeEvent) {
-        if (!settingsManager.getProperty(PluginSettings.ENABLE_SIGN_EDIT_CHECK)) return
+        if (!configuration.get(PluginSettings.ENABLE_SIGN_EDIT_CHECK)) return
         if (event.lines().isEmpty()) return
 
         val player = event.player
@@ -47,7 +47,7 @@ class SignListener : Listener {
             ?: censorContext(event, player)
             ?: return
 
-        if (isCancelMode() && !violation.context && settingsManager.getProperty(PluginSettings.SIGN_FAKE_ON_CANCEL)) {
+        if (isCancelMode() && !violation.context && configuration.get(PluginSettings.SIGN_FAKE_ON_CANCEL)) {
             SignFakeViewService.recordCancelledEdit(
                 event,
                 player,
@@ -57,7 +57,7 @@ class SignListener : Listener {
             )
         }
 
-        if (settingsManager.getProperty(PluginSettings.SIGN_SEND_MESSAGE)) {
+        if (configuration.get(PluginSettings.SIGN_SEND_MESSAGE)) {
             MessageUtils.sendMessage(player, PluginMessages.MESSAGE_ON_SIGN)
         }
 
@@ -70,7 +70,7 @@ class SignListener : Listener {
             censoredWords = violation.censoredWords,
             logPrefix = "${player.name}(IP: ${Utils.getPlayerIp(player)})(Sign)($locationLog)",
             startTime = startTime,
-            punish = settingsManager.getProperty(PluginSettings.SIGN_PUNISH),
+            punish = configuration.get(PluginSettings.SIGN_PUNISH),
         )
     }
 
@@ -105,7 +105,7 @@ class SignListener : Listener {
     }
 
     private fun censorMultiLine(event: SignChangeEvent, lineScan: SignLineScan): SignViolation? {
-        if (!settingsManager.getProperty(PluginSettings.SIGN_MULTI_LINE_CHECK)) return null
+        if (!configuration.get(PluginSettings.SIGN_MULTI_LINE_CHECK)) return null
         if (lineScan.cleanLineIndexes.isEmpty()) return null
 
         val censoredWords = sensitiveWordBs.findAll(lineScan.cleanLineContent)
@@ -124,7 +124,7 @@ class SignListener : Listener {
     }
 
     private fun censorContext(event: SignChangeEvent, player: Player): SignViolation? {
-        if (!settingsManager.getProperty(PluginSettings.SIGN_CONTEXT_CHECK)) return null
+        if (!configuration.get(PluginSettings.SIGN_CONTEXT_CHECK)) return null
 
         val entry = contextEntry(event)
         SignContext.addMessage(player, entry)
@@ -273,14 +273,14 @@ class SignListener : Listener {
 
     private fun replacementFor(context: String, result: IWordResult): String {
         val sensitiveWord = context.substring(result.startIndex(), result.endIndex())
-        settingsManager.getProperty(PluginSettings.DEFINED_REPLACEMENT).forEach { definition ->
+        configuration.get(PluginSettings.DEFINED_REPLACEMENT).forEach { definition ->
             val separator = definition.indexOf('|')
             if (separator <= 0 || definition.indexOf('|', separator + 1) >= 0) return@forEach
             if (definition.substring(0, separator) == sensitiveWord) {
                 return definition.substring(separator + 1)
             }
         }
-        return settingsManager.getProperty(PluginSettings.REPLACEMENT).repeat(result.endIndex() - result.startIndex())
+        return configuration.get(PluginSettings.REPLACEMENT).repeat(result.endIndex() - result.startIndex())
     }
 
     private fun splitLines(lineLengths: List<Int>, content: String): List<String> {
@@ -299,12 +299,12 @@ class SignListener : Listener {
     }
 
     private fun preprocess(text: String): String {
-        if (!settingsManager.getProperty(PluginSettings.PRE_PROCESS)) return text
+        if (!configuration.get(PluginSettings.PRE_PROCESS)) return text
         return text.replace(Utils.preProcessRegex.toRegex(), "")
     }
 
     private fun isCancelMode(): Boolean {
-        return settingsManager.getProperty(PluginSettings.SIGN_METHOD).equals("cancel", ignoreCase = true)
+        return configuration.get(PluginSettings.SIGN_METHOD).isCancel
     }
 
     private data class SignLineScan(

@@ -6,13 +6,13 @@ import com.github.houbb.sensitive.word.api.IWordResult;
 import com.github.houbb.sensitive.word.utils.InnerWordCharUtils;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
 
-import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
+import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.setting;
 
 public class WordReplace implements IWordReplace {
     @Override
     public void replace(StringBuilder stringBuilder, String rawString, IWordResult wordResult, IWordContext wordContext) {
         String sensitiveWord = InnerWordCharUtils.getString(rawString, wordResult);
-        for (String word : settingsManager.getProperty(PluginSettings.DEFINED_REPLACEMENT)) {
+        for (String word : setting(PluginSettings.DEFINED_REPLACEMENT)) {
             String[] parts = word.split("\\|");
             if (parts.length == 2) {
                 int l = parts[1].length();
@@ -27,7 +27,7 @@ public class WordReplace implements IWordReplace {
         int wordLength = wordResult.endIndex() - wordResult.startIndex();
 
         for (int i = 0; i < wordLength; ++i) {
-            stringBuilder.append(settingsManager.getProperty(PluginSettings.REPLACEMENT));
+            stringBuilder.append(setting(PluginSettings.REPLACEMENT));
         }
 
     }

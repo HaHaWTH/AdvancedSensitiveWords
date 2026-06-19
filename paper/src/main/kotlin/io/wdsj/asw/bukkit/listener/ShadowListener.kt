@@ -7,6 +7,7 @@ import io.wdsj.asw.bukkit.integration.trchat.TrChatCompat
 import io.wdsj.asw.bukkit.manage.punish.PlayerAltController
 import io.wdsj.asw.bukkit.manage.punish.PlayerShadowController
 import io.wdsj.asw.bukkit.setting.PluginSettings
+import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import net.kyori.adventure.audience.Audience
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
@@ -14,7 +15,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 
 @PaperEventHandler
-class ShadowListener : Listener {
+class ShadowListener(private val configuration: PaperConfigurationService) : Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     fun onChat(event: AsyncChatEvent) {
         val player = event.player
@@ -23,7 +24,7 @@ class ShadowListener : Listener {
 
         val viewers: MutableSet<Audience> = event.viewers()
         viewers.clear()
-        if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_ALTS_CHECK) && PlayerAltController.hasAlt(player)) {
+        if (configuration.get(PluginSettings.ENABLE_ALTS_CHECK) && PlayerAltController.hasAlt(player)) {
             for (alt in PlayerAltController.getAlts(player)) {
                 val altPlayer = Bukkit.getPlayer(alt)
                 altPlayer?.let { viewers.add(it) }

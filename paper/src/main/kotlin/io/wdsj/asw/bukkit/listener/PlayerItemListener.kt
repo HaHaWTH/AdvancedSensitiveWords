@@ -1,7 +1,7 @@
 package io.wdsj.asw.bukkit.listener
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.sensitiveWordBs
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
+import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.type.ModuleType
@@ -20,13 +20,13 @@ import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerItemHeldEvent
 import org.bukkit.inventory.ItemStack
 
-class PlayerItemListener : Listener {
-    private val processingGuard = PlayerProcessingGuard()
-    private val violationReporter = ViolationReporter()
+class PlayerItemListener(private val configuration: PaperConfigurationService) : Listener {
+    private val processingGuard = PlayerProcessingGuard(configuration)
+    private val violationReporter = ViolationReporter(configuration)
 
     @EventHandler(priority = EventPriority.LOW)
     fun onPlayerHeldItem(event: PlayerItemHeldEvent) {
-        if (!settingsManager.getProperty(PluginSettings.ENABLE_PLAYER_ITEM_CHECK)) return
+        if (!configuration.get(PluginSettings.ENABLE_PLAYER_ITEM_CHECK)) return
 
         val player = event.player
         if (processingGuard.shouldSkipBasic(player)) return
@@ -37,7 +37,7 @@ class PlayerItemListener : Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     fun onDrop(event: PlayerDropItemEvent) {
-        if (!settingsManager.getProperty(PluginSettings.ENABLE_PLAYER_ITEM_CHECK)) return
+        if (!configuration.get(PluginSettings.ENABLE_PLAYER_ITEM_CHECK)) return
 
         val player = event.player
         if (processingGuard.shouldSkipBasic(player)) return
@@ -47,7 +47,7 @@ class PlayerItemListener : Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onClick(event: InventoryClickEvent) {
-        if (!settingsManager.getProperty(PluginSettings.ENABLE_PLAYER_ITEM_CHECK)) return
+        if (!configuration.get(PluginSettings.ENABLE_PLAYER_ITEM_CHECK)) return
 
         val player = event.whoClicked as? Player ?: return
         if (processingGuard.shouldSkipBasic(player)) return
@@ -82,7 +82,7 @@ class PlayerItemListener : Listener {
             item.setItemMeta(meta)
         }
 
-        if (settingsManager.getProperty(PluginSettings.ITEM_SEND_MESSAGE)) {
+        if (configuration.get(PluginSettings.ITEM_SEND_MESSAGE)) {
             MessageUtils.sendMessage(player, PluginMessages.MESSAGE_ON_ITEM)
         }
 
@@ -93,16 +93,16 @@ class PlayerItemListener : Listener {
             censoredWords = censoredWords,
             logSource = "Item",
             startTime = startTime,
-            punish = settingsManager.getProperty(PluginSettings.ITEM_PUNISH),
+            punish = configuration.get(PluginSettings.ITEM_PUNISH),
         )
     }
 
     private fun preprocess(text: String): String {
-        if (!settingsManager.getProperty(PluginSettings.PRE_PROCESS)) return text
+        if (!configuration.get(PluginSettings.PRE_PROCESS)) return text
         return text.replace(Utils.preProcessRegex.toRegex(), "")
     }
 
     private fun isCancelMode(): Boolean {
-        return settingsManager.getProperty(PluginSettings.ITEM_METHOD).equals("cancel", ignoreCase = true)
+        return configuration.get(PluginSettings.ITEM_METHOD).isCancel
     }
 }

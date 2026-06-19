@@ -1,6 +1,6 @@
 package io.wdsj.asw.bukkit.util
 
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
+import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.manage.notice.Notifier
 import io.wdsj.asw.bukkit.manage.punish.Punishment
 import io.wdsj.asw.bukkit.manage.punish.ViolationCounter
@@ -9,7 +9,7 @@ import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.type.ModuleType
 import org.bukkit.entity.Player
 
-class ViolationReporter {
+class ViolationReporter(private val configuration: PaperConfigurationService) {
     fun report(
         player: Player,
         moduleType: ModuleType,
@@ -23,7 +23,7 @@ class ViolationReporter {
     ) {
         Utils.messagesFilteredNum.getAndIncrement()
 
-        if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
+        if (configuration.get(PluginSettings.LOG_VIOLATION)) {
             LoggingUtils.logViolation(
                 "${player.name}(IP: ${Utils.getPlayerIp(player)})($logSource)",
                 logContent + censoredWords,
@@ -32,13 +32,13 @@ class ViolationReporter {
 
         ViolationCounter.INSTANCE.incrementViolationCount(player)
 
-        if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
+        if (configuration.get(PluginSettings.HOOK_VELOCITY)) {
             VelocitySender.sendNotifyMessage(player, moduleType, content, censoredWords)
         }
 
         TimingUtils.addProcessStatistic(System.currentTimeMillis(), startTime)
 
-        if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) {
+        if (configuration.get(PluginSettings.NOTICE_OPERATOR)) {
             Notifier.notice(player, moduleType, content, censoredWords)
         }
 
@@ -59,19 +59,19 @@ class ViolationReporter {
     ) {
         Utils.messagesFilteredNum.getAndIncrement()
 
-        if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
+        if (configuration.get(PluginSettings.LOG_VIOLATION)) {
             LoggingUtils.logViolation(logPrefix, content + censoredWords)
         }
 
         ViolationCounter.INSTANCE.incrementViolationCount(player)
 
-        if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
+        if (configuration.get(PluginSettings.HOOK_VELOCITY)) {
             VelocitySender.sendNotifyMessage(player, moduleType, content, censoredWords)
         }
 
         TimingUtils.addProcessStatistic(System.currentTimeMillis(), startTime)
 
-        if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) {
+        if (configuration.get(PluginSettings.NOTICE_OPERATOR)) {
             Notifier.notice(player, moduleType, content, censoredWords)
         }
 

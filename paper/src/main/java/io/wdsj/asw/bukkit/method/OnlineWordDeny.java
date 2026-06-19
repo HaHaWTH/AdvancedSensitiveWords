@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER;
-import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
+import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.setting;
 
 /**
  * OnlineWordDeny for ASW.
@@ -26,8 +26,8 @@ public class OnlineWordDeny implements IWordDeny {
     private final File dataFolder;
     private final File cacheFile;
     private final File timestampFile;
-    private final String charset = settingsManager.getProperty(PluginSettings.ONLINE_WORDS_ENCODING);
-    private final boolean isCacheEnabled = settingsManager.getProperty(PluginSettings.CACHE_ONLINE_WORDS);
+    private final String charset = setting(PluginSettings.ONLINE_WORDS_ENCODING);
+    private final boolean isCacheEnabled = setting(PluginSettings.CACHE_ONLINE_WORDS);
 
     public OnlineWordDeny(Plugin plugin) {
         this.dataFolder = Paths.get(plugin.getDataFolder().getPath(), "cache").toFile();
@@ -45,7 +45,7 @@ public class OnlineWordDeny implements IWordDeny {
             }
         }
 
-        String link = settingsManager.getProperty(PluginSettings.ONLINE_WORDS_URL);
+        String link = setting(PluginSettings.ONLINE_WORDS_URL);
         List<String> lines = new ArrayList<>();
         URI uri = URI.create(link);
 
@@ -75,7 +75,7 @@ public class OnlineWordDeny implements IWordDeny {
         if (!timestampFile.exists()) {
             return true;
         }
-        final long timeout = settingsManager.getProperty(PluginSettings.ONLINE_WORDS_CACHE_TIMEOUT);
+        final long timeout = setting(PluginSettings.ONLINE_WORDS_CACHE_TIMEOUT);
         if (timeout < 0) {
             return false;
         }

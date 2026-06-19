@@ -139,7 +139,7 @@ public final class TrChatCompat {
         if (!sendComponent(player, component, player)) {
             sendLegacyFallback(event, player);
         }
-        if (!AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_ALTS_CHECK) || !PlayerAltController.hasAlt(player)) {
+        if (!AdvancedSensitiveWords.setting(PluginSettings.ENABLE_ALTS_CHECK) || !PlayerAltController.hasAlt(player)) {
             return;
         }
 

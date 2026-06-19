@@ -18,7 +18,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER;
-import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
+import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.setting;
 
 public class Punishment {
     private static final Map<String, String> LEGACY_EFFECT_ALIASES = Map.ofEntries(
@@ -34,7 +34,7 @@ public class Punishment {
     );
 
     public static void punish(Player player) {
-        List<String> punishList = settingsManager.getProperty(PluginSettings.PUNISHMENT);
+        List<String> punishList = setting(PluginSettings.PUNISHMENT);
         if (punishList.isEmpty()) return;
         for (String punish : punishList) {
             try {
@@ -83,7 +83,7 @@ public class Punishment {
             case COMMAND_PROXY:
                 if (normalPunish.length < 2) throw new IllegalArgumentException("Not enough args");
                 String command_proxy = normalPunish[1].replace("%player%", player.getName()).replace("%PLAYER%", player.getName());
-                if (settingsManager.getProperty(PluginSettings.HOOK_VELOCITY)) {
+                if (setting(PluginSettings.HOOK_VELOCITY)) {
                     VelocitySender.executeVelocityCommand(player, command_proxy);
                 }
                 break;

@@ -6,47 +6,48 @@ import io.wdsj.asw.bukkit.integration.trchat.TrChatCompat;
 import io.wdsj.asw.bukkit.listener.*;
 import io.wdsj.asw.bukkit.listener.paper.PaperChatListener;
 import io.wdsj.asw.bukkit.listener.paper.PaperFakeMessageExecutor;
+import io.wdsj.asw.bukkit.setting.PaperConfigurationService;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
-import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.*;
-
 public class ListenerService {
     private final AdvancedSensitiveWords plugin;
+    private final PaperConfigurationService configuration;
 
     public ListenerService(AdvancedSensitiveWords plugin) {
         this.plugin = plugin;
+        this.configuration = plugin.getConfigurationService();
     }
 
     public void registerListeners() {
         TrChatCompat.tryRegister(plugin);
         registerChatBookEventListeners();
-        registerEventListener(ShadowListener.class);
-        registerEventListener(AltsListener.class);
-        registerEventListener(PaperFakeMessageExecutor.class);
-        if (settingsManager.getProperty(PluginSettings.ENABLE_SIGN_EDIT_CHECK)) {
-            registerEventListener(SignListener.class);
+        registerEventListener(new ShadowListener(configuration));
+        registerEventListener(new AltsListener(configuration));
+        registerEventListener(new PaperFakeMessageExecutor(configuration));
+        if (configuration.get(PluginSettings.ENABLE_SIGN_EDIT_CHECK)) {
+            registerEventListener(new SignListener(configuration));
         }
         SignFakeViewCompat.tryRegister(plugin);
-        if (settingsManager.getProperty(PluginSettings.ENABLE_ANVIL_EDIT_CHECK)) {
-            registerEventListener(AnvilListener.class);
+        if (configuration.get(PluginSettings.ENABLE_ANVIL_EDIT_CHECK)) {
+            registerEventListener(new AnvilListener(configuration));
         }
-        if (settingsManager.getProperty(PluginSettings.ENABLE_PLAYER_NAME_CHECK)) {
-            registerEventListener(PlayerLoginListener.class);
+        if (configuration.get(PluginSettings.ENABLE_PLAYER_NAME_CHECK)) {
+            registerEventListener(new PlayerLoginListener(configuration));
         }
-        if (settingsManager.getProperty(PluginSettings.ENABLE_PLAYER_ITEM_CHECK)) {
-            registerEventListener(PlayerItemListener.class);
+        if (configuration.get(PluginSettings.ENABLE_PLAYER_ITEM_CHECK)) {
+            registerEventListener(new PlayerItemListener(configuration));
         }
-        if (settingsManager.getProperty(PluginSettings.CHAT_BROADCAST_CHECK)) {
-            registerEventListener(BroadCastListener.class);
+        if (configuration.get(PluginSettings.CHAT_BROADCAST_CHECK)) {
+            registerEventListener(new BroadCastListener(configuration));
         }
-        if (settingsManager.getProperty(PluginSettings.CLEAN_PLAYER_DATA_CACHE)) {
-            registerEventListener(QuitDataCleaner.class);
+        if (configuration.get(PluginSettings.CLEAN_PLAYER_DATA_CACHE)) {
+            registerEventListener(new QuitDataCleaner(configuration));
         }
-        if (settingsManager.getProperty(PluginSettings.CHECK_FOR_UPDATE)) {
-            registerEventListener(JoinUpdateNotifier.class);
+        if (configuration.get(PluginSettings.CHECK_FOR_UPDATE)) {
+            registerEventListener(new JoinUpdateNotifier(configuration));
         }
     }
 
@@ -56,25 +57,17 @@ public class ListenerService {
     }
     
     
-    private void registerEventListener(Class<? extends Listener> listenerClass) {
-        Bukkit.getPluginManager().registerEvents(newListenerWithNoArgConstructor(listenerClass), plugin);
-    }
-
-    private Listener newListenerWithNoArgConstructor(Class<? extends Listener> listenerClass) {
-        try {
-            return listenerClass.getConstructor().newInstance();
-        } catch (Exception e) {
-            throw new IllegalStateException("Failed to create listener " + listenerClass.getSimpleName());
-        }
+    private void registerEventListener(Listener listener) {
+        Bukkit.getPluginManager().registerEvents(listener, plugin);
     }
 
     private void registerChatBookEventListeners() {
-        if (settingsManager.getProperty(PluginSettings.ENABLE_CHAT_CHECK)) {
-            registerEventListener(PaperChatListener.class);
-            registerEventListener(CommandListener.class);
+        if (configuration.get(PluginSettings.ENABLE_CHAT_CHECK)) {
+            registerEventListener(new PaperChatListener(configuration));
+            registerEventListener(new CommandListener(configuration));
         }
-        if (settingsManager.getProperty(PluginSettings.ENABLE_BOOK_EDIT_CHECK)) {
-            registerEventListener(BookListener.class);
+        if (configuration.get(PluginSettings.ENABLE_BOOK_EDIT_CHECK)) {
+            registerEventListener(new BookListener(configuration));
         }
     }
 

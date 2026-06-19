@@ -7,12 +7,12 @@ import io.wdsj.asw.bukkit.setting.PluginSettings;
 
 import java.util.Set;
 
-import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
+import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.setting;
 
 public class CharIgnore implements ISensitiveWordCharIgnore {
     @Override
     public boolean ignore(int i, String string, InnerSensitiveWordContext innerSensitiveWordContext) {
-        Set<Character> SET = StringUtil.toCharSet(settingsManager.getProperty(PluginSettings.IGNORE_CHAR));
+        Set<Character> SET = StringUtil.toCharSet(setting(PluginSettings.IGNORE_CHAR));
         char c = string.charAt(i);
         return SET.contains(c);
     }

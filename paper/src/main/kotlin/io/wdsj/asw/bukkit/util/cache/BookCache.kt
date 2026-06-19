@@ -2,7 +2,7 @@ package io.wdsj.asw.bukkit.util.cache
 
 import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
+import io.wdsj.asw.bukkit.AdvancedSensitiveWords.setting
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import java.util.concurrent.TimeUnit
 
@@ -49,10 +49,10 @@ object BookCache {
     fun initialize() {
         cache = CacheBuilder.newBuilder()
             .maximumSize(
-                settingsManager.getProperty(PluginSettings.BOOK_MAXIMUM_CACHE_SIZE).toLong()
+                setting(PluginSettings.BOOK_MAXIMUM_CACHE_SIZE).toLong()
             )
             .expireAfterWrite(
-                settingsManager.getProperty(PluginSettings.BOOK_CACHE_EXPIRE_TIME).toLong(),
+                setting(PluginSettings.BOOK_CACHE_EXPIRE_TIME).toLong(),
                 TimeUnit.MINUTES
             )
             .build()

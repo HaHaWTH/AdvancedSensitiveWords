@@ -2,7 +2,7 @@ package io.wdsj.asw.bukkit.listener
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.isInitialized
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.sensitiveWordBs
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
+import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.util.LoggingUtils
 import io.wdsj.asw.bukkit.util.TimingUtils
@@ -13,11 +13,11 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.server.BroadcastMessageEvent
 
-class BroadCastListener : Listener {
+class BroadCastListener(private val configuration: PaperConfigurationService) : Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     fun onBroadCast(event: BroadcastMessageEvent) {
         if (!isInitialized) return
-        if (!settingsManager.getProperty(PluginSettings.CHAT_BROADCAST_CHECK)) return
+        if (!configuration.get(PluginSettings.CHAT_BROADCAST_CHECK)) return
 
         val originalComponent = event.message()
         val originalMessage = preprocess(MessageUtils.plainText(originalComponent))
@@ -38,18 +38,18 @@ class BroadCastListener : Listener {
             )
         }
 
-        if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
+        if (configuration.get(PluginSettings.LOG_VIOLATION)) {
             LoggingUtils.logViolation("Broadcast(IP: None)(BroadCast)", originalMessage + censoredWords)
         }
         TimingUtils.addProcessStatistic(System.currentTimeMillis(), startTime)
     }
 
     private fun preprocess(message: String): String {
-        if (!settingsManager.getProperty(PluginSettings.PRE_PROCESS)) return message
+        if (!configuration.get(PluginSettings.PRE_PROCESS)) return message
         return message.replace(Utils.preProcessRegex.toRegex(), "")
     }
 
     private fun isCancelMode(): Boolean {
-        return settingsManager.getProperty(PluginSettings.CHAT_METHOD).equals("cancel", ignoreCase = true)
+        return configuration.get(PluginSettings.CHAT_METHOD).isCancel
     }
 }

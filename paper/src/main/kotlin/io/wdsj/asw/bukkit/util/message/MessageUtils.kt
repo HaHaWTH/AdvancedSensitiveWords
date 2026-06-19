@@ -1,7 +1,7 @@
 package io.wdsj.asw.bukkit.util.message
 
-import ch.jalu.configme.properties.Property
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
+import io.wdsj.asw.bukkit.setting.PluginMessages
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextReplacementConfig
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -15,12 +15,12 @@ object MessageUtils {
     private val legacySectionSerializer: LegacyComponentSerializer = LegacyComponentSerializer.legacySection()
 
     @JvmStatic
-    fun retrieveMessage(property: Property<String>): String {
-        return AdvancedSensitiveWords.messagesManager.getProperty(property)
+    fun retrieveMessage(property: PluginMessages): String {
+        return AdvancedSensitiveWords.message(property)
     }
 
     @JvmStatic
-    fun retrieveComponent(property: Property<String>): Component {
+    fun retrieveComponent(property: PluginMessages): Component {
         return miniMessage.deserialize(retrieveMessage(property))
     }
 
@@ -54,7 +54,7 @@ object MessageUtils {
     }
 
     @JvmStatic
-    fun sendMessage(sender: CommandSender, property: Property<String>) {
+    fun sendMessage(sender: CommandSender, property: PluginMessages) {
         sendMessage(sender, retrieveMessage(property))
     }
 

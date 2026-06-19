@@ -82,8 +82,8 @@ public final class SignFakeViewService {
     }
 
     public static boolean isConfiguredForCancelFakeView() {
-        return AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.ENABLE_SIGN_EDIT_CHECK)
-                && AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.SIGN_FAKE_ON_CANCEL);
+        return AdvancedSensitiveWords.setting(PluginSettings.ENABLE_SIGN_EDIT_CHECK)
+                && AdvancedSensitiveWords.setting(PluginSettings.SIGN_FAKE_ON_CANCEL);
     }
 
     public static void recordCancelledEdit(

@@ -1,6 +1,6 @@
 package io.wdsj.asw.bukkit.listener
 
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
+import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.manage.punish.PlayerShadowController
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.util.context.ChatContext
@@ -12,17 +12,17 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerKickEvent
 import org.bukkit.event.player.PlayerQuitEvent
 
-class QuitDataCleaner : Listener {
+class QuitDataCleaner(private val configuration: PaperConfigurationService) : Listener {
     @EventHandler
     fun onQuit(event: PlayerQuitEvent) {
-        if (!settingsManager.getProperty(PluginSettings.CLEAN_PLAYER_DATA_CACHE)) return
+        if (!configuration.get(PluginSettings.CLEAN_PLAYER_DATA_CACHE)) return
         val player = event.player
         doCleanTask(player)
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     fun onKick(event: PlayerKickEvent) {
-        if (!settingsManager.getProperty(PluginSettings.CLEAN_PLAYER_DATA_CACHE)) return
+        if (!configuration.get(PluginSettings.CLEAN_PLAYER_DATA_CACHE)) return
         val player = event.player
         doCleanTask(player)
     }

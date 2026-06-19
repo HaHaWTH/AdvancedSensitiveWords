@@ -1,10 +1,9 @@
 package io.wdsj.asw.bukkit.util.context
 
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
+import io.wdsj.asw.bukkit.AdvancedSensitiveWords.setting
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.common.datatype.TimedString
 import org.bukkit.entity.Player
-import java.util.UUID
 
 object ChatContext {
     private val chatHistory = ContextHistory<TimedString>()
@@ -22,7 +21,7 @@ object ChatContext {
         return chatHistory.snapshot(
             player.uniqueId,
             contextCapacity(),
-            settingsManager.getProperty(PluginSettings.CHAT_CONTEXT_TIME_LIMIT) * 1_000L,
+            setting(PluginSettings.CHAT_CONTEXT_TIME_LIMIT) * 1_000L,
         ) { it.time }.map { it.string }
     }
 
@@ -39,5 +38,5 @@ object ChatContext {
         chatHistory.clearAll()
     }
 
-    private fun contextCapacity(): Int = settingsManager.getProperty(PluginSettings.CHAT_CONTEXT_MAX_SIZE)
+    private fun contextCapacity(): Int = setting(PluginSettings.CHAT_CONTEXT_MAX_SIZE)
 }

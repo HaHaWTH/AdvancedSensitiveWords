@@ -6,6 +6,7 @@ import io.wdsj.asw.bukkit.manage.punish.Punishment;
 import io.wdsj.asw.bukkit.manage.punish.ViolationCounter;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
+import io.wdsj.asw.bukkit.setting.PaperConfigurationService;
 import io.wdsj.asw.bukkit.util.TimingUtils;
 import io.wdsj.asw.bukkit.util.Utils;
 import io.wdsj.asw.bukkit.util.cache.BookCache;
@@ -19,9 +20,11 @@ import java.util.List;
 
 public final class AswCommandService {
     private final AdvancedSensitiveWords plugin;
+    private final PaperConfigurationService configuration;
 
     public AswCommandService(AdvancedSensitiveWords plugin) {
         this.plugin = plugin;
+        this.configuration = plugin.getConfigurationService();
     }
 
     public void reloadAll(CommandSender sender) {
@@ -32,8 +35,8 @@ public final class AswCommandService {
         plugin.reloadPluginConfiguration();
         AdvancedSensitiveWords.sensitiveWordBs.destroy();
         plugin.doInitTasks();
-        if (AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.BOOK_CACHE_CLEAR_ON_RELOAD)
-                && AdvancedSensitiveWords.settingsManager.getProperty(PluginSettings.BOOK_CACHE)) {
+        if (configuration.get(PluginSettings.BOOK_CACHE_CLEAR_ON_RELOAD)
+                && configuration.get(PluginSettings.BOOK_CACHE)) {
             BookCache.invalidateAll();
         }
         MessageUtils.sendMessage(sender, PluginMessages.MESSAGE_ON_COMMAND_RELOAD);
@@ -152,7 +155,7 @@ public final class AswCommandService {
         return false;
     }
 
-    private void sendTemporaryMutationMessage(CommandSender sender, ch.jalu.configme.properties.Property<String> successMessage) {
+    private void sendTemporaryMutationMessage(CommandSender sender, PluginMessages successMessage) {
         MessageUtils.sendMessage(sender, successMessage);
         MessageUtils.sendMessage(sender, PluginMessages.MESSAGE_ON_COMMAND_RUNTIME_ONLY);
     }

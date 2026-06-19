@@ -1,6 +1,6 @@
 package io.wdsj.asw.bukkit.util.context
 
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
+import io.wdsj.asw.bukkit.AdvancedSensitiveWords.setting
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import org.bukkit.entity.Player
 import org.bukkit.block.sign.Side
@@ -20,7 +20,7 @@ object SignContext {
         return signEditHistory.snapshot(
             player.uniqueId,
             contextCapacity(),
-            settingsManager.getProperty(PluginSettings.SIGN_CONTEXT_TIME_LIMIT) * 1_000L,
+            setting(PluginSettings.SIGN_CONTEXT_TIME_LIMIT) * 1_000L,
         ) { it.time }
     }
 
@@ -33,7 +33,7 @@ object SignContext {
         signEditHistory.clearAll()
     }
 
-    private fun contextCapacity(): Int = settingsManager.getProperty(PluginSettings.SIGN_CONTEXT_MAX_SIZE)
+    private fun contextCapacity(): Int = setting(PluginSettings.SIGN_CONTEXT_MAX_SIZE)
 }
 
 data class SignContextEntry(

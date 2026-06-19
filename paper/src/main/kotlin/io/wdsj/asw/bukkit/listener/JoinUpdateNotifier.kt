@@ -1,12 +1,11 @@
 package io.wdsj.asw.bukkit.listener
 
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords.messagesManager
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.permission.PermissionsEnum
 import io.wdsj.asw.bukkit.permission.cache.CachingPermTool
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
+import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.util.PlayerUtils
 import io.wdsj.asw.bukkit.util.message.MessageUtils
 import io.wdsj.asw.common.template.PluginVersionTemplate
@@ -15,11 +14,11 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 
-class JoinUpdateNotifier : Listener {
+class JoinUpdateNotifier(private val configuration: PaperConfigurationService) : Listener {
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {
         val player = event.player
-        if (!settingsManager.getProperty(PluginSettings.CHECK_FOR_UPDATE)
+        if (!configuration.get(PluginSettings.CHECK_FOR_UPDATE)
             || !CachingPermTool.hasPermission(PermissionsEnum.UPDATE, player)
             || PlayerUtils.isNpc(player)) return
 
@@ -39,7 +38,7 @@ class JoinUpdateNotifier : Listener {
                 result.latestVersion
             }
             MessageUtils.sendMessage(player,
-                messagesManager.getProperty(PluginMessages.UPDATE_AVAILABLE)
+                configuration.message(PluginMessages.UPDATE_AVAILABLE)
                     .replace("%current_version%", if (Updater.isDevChannel()) PluginVersionTemplate.COMMIT_HASH_SHORT else AdvancedSensitiveWords.PLUGIN_VERSION)
                     .replace("%latest_version%", latestVersion)
             )

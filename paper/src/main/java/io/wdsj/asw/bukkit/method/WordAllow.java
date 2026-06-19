@@ -5,11 +5,11 @@ import io.wdsj.asw.bukkit.setting.PluginSettings;
 
 import java.util.List;
 
-import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager;
+import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.setting;
 
 public class WordAllow implements IWordAllow {
     @Override
     public List<String> allow() {
-        return settingsManager.getProperty(PluginSettings.WHITE_LIST);
+        return setting(PluginSettings.WHITE_LIST);
     }
 }

@@ -1,8 +1,7 @@
 package io.wdsj.asw.bukkit.listener
 
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords.messagesManager
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.sensitiveWordBs
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
+import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.type.ModuleType
@@ -16,13 +15,13 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
 
-class CommandListener : Listener {
-    private val processingGuard = PlayerProcessingGuard()
-    private val violationReporter = ViolationReporter()
+class CommandListener(private val configuration: PaperConfigurationService) : Listener {
+    private val processingGuard = PlayerProcessingGuard(configuration)
+    private val violationReporter = ViolationReporter(configuration)
 
     @EventHandler(priority = EventPriority.LOWEST)
     fun onCommand(event: PlayerCommandPreprocessEvent) {
-        if (!settingsManager.getProperty(PluginSettings.ENABLE_CHAT_CHECK)) return
+        if (!configuration.get(PluginSettings.ENABLE_CHAT_CHECK)) return
 
         val player = event.player
         val originalCommand = preprocess(event.message)
@@ -37,7 +36,7 @@ class CommandListener : Listener {
     }
 
     private fun preprocess(message: String): String {
-        if (!settingsManager.getProperty(PluginSettings.PRE_PROCESS)) return message
+        if (!configuration.get(PluginSettings.PRE_PROCESS)) return message
         return message.replace(Utils.preProcessRegex.toRegex(), "")
     }
 
@@ -57,10 +56,10 @@ class CommandListener : Listener {
         censoredWords: List<String>,
         startTime: Long,
     ) {
-        if (settingsManager.getProperty(PluginSettings.CHAT_SEND_MESSAGE)) {
+        if (configuration.get(PluginSettings.CHAT_SEND_MESSAGE)) {
             MessageUtils.sendMessage(
                 player,
-                messagesManager.getProperty(PluginMessages.MESSAGE_ON_CHAT)
+                configuration.message(PluginMessages.MESSAGE_ON_CHAT)
                     .replace("%integrated_player%", player.name)
                     .replace("%integrated_message%", originalCommand),
             )
@@ -73,11 +72,11 @@ class CommandListener : Listener {
             censoredWords = censoredWords,
             logSource = "Chat",
             startTime = startTime,
-            punish = settingsManager.getProperty(PluginSettings.CHAT_PUNISH),
+            punish = configuration.get(PluginSettings.CHAT_PUNISH),
         )
     }
 
     private fun isCancelMode(): Boolean {
-        return settingsManager.getProperty(PluginSettings.CHAT_METHOD).equals("cancel", ignoreCase = true)
+        return configuration.get(PluginSettings.CHAT_METHOD).isCancel
     }
 }

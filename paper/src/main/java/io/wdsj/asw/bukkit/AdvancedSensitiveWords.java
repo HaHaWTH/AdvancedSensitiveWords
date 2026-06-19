@@ -1,7 +1,5 @@
 package io.wdsj.asw.bukkit;
 
-import ch.jalu.configme.SettingsManager;
-import ch.jalu.configme.SettingsManagerBuilder;
 import com.github.Anon8281.universalScheduler.UniversalScheduler;
 import com.github.Anon8281.universalScheduler.scheduling.schedulers.TaskScheduler;
 import com.github.Anon8281.universalScheduler.scheduling.tasks.MyScheduledTask;
@@ -25,8 +23,10 @@ import io.wdsj.asw.bukkit.permission.cache.CachingPermTool;
 import io.wdsj.asw.bukkit.proxy.velocity.VelocityChannel;
 import io.wdsj.asw.bukkit.proxy.velocity.VelocityReceiver;
 import io.wdsj.asw.bukkit.service.ListenerService;
+import io.wdsj.asw.bukkit.setting.PaperConfigurationService;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
+import io.wdsj.asw.bukkit.setting.SettingKey;
 import io.wdsj.asw.bukkit.task.punish.ViolationResetTask;
 import io.wdsj.asw.bukkit.util.SchedulingUtils;
 import io.wdsj.asw.bukkit.util.TimingUtils;
@@ -42,8 +42,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.slf4j.Logger;
 
-import java.io.File;
-
 import static io.wdsj.asw.bukkit.util.LoggingUtils.purgeLog;
 import static io.wdsj.asw.bukkit.util.TimingUtils.resetStatistics;
 import static io.wdsj.asw.bukkit.util.Utils.*;
@@ -52,17 +50,14 @@ import static io.wdsj.asw.bukkit.util.Utils.*;
 public final class AdvancedSensitiveWords extends JavaPlugin {
     public static volatile boolean isInitialized = false;
     public static SensitiveWordBs sensitiveWordBs;
-    private final File configFile = new File(getDataFolder(), "config.yml");
-    private File messagesFile;
     public static boolean isAuthMeAvailable;
-    public static SettingsManager settingsManager;
-    public static SettingsManager messagesManager;
     public static final String PLUGIN_VERSION = PluginVersionTemplate.VERSION;
     private static AdvancedSensitiveWords instance;
     private static TaskScheduler scheduler;
     public static Logger LOGGER;
     private ListenerService listenerService;
     private CachingPermTool permCache;
+    private PaperConfigurationService configurationService;
     private volatile Updater.UpdateResult updateResult = Updater.UpdateResult.noUpdate();
     private AswCommandRegistrar commandRegistrar;
     public static TaskScheduler getScheduler() {
@@ -76,18 +71,26 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     public Updater.UpdateResult getUpdateResult() {
         return updateResult;
     }
+
+    public PaperConfigurationService getConfigurationService() {
+        return configurationService;
+    }
+
+    public static <T> T setting(SettingKey<T> key) {
+        return instance.configurationService.get(key);
+    }
+
+    public static String message(PluginMessages key) {
+        return instance.configurationService.message(key);
+    }
     private MyScheduledTask violationResetTask;
 
     @Override
     public void onLoad() {
         LOGGER = getSLF4JLogger();
         instance = this;
-        settingsManager = SettingsManagerBuilder
-                .withYamlFile(configFile)
-                .configurationData(PluginSettings.class)
-                .useDefaultMigrationService()
-                .create();
-        loadMessagesConfiguration();
+        configurationService = new PaperConfigurationService(LOGGER, getDataFolder().toPath());
+        configurationService.load();
     }
 
     @Override
@@ -99,7 +102,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         permCache = CachingPermTool.enable(this);
         BookCache.initialize();
         doInitTasks();
-        if (settingsManager.getProperty(PluginSettings.PURGE_LOG_FILE)) purgeLog();
+        if (configurationService.get(PluginSettings.PURGE_LOG_FILE)) purgeLog();
         listenerService = new ListenerService(this);
         listenerService.registerListeners();
         commandRegistrar = new AswCommandRegistrar(this);
@@ -126,26 +129,26 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         getScheduler().runTaskAsynchronously(() -> {
             IWordDeny wordDeny = createWordDeny();
             sensitiveWordBs = SensitiveWordBs.newInstance()
-                    .ignoreCase(settingsManager.getProperty(PluginSettings.IGNORE_CASE))
-                    .ignoreWidth(settingsManager.getProperty(PluginSettings.IGNORE_WIDTH))
-                    .ignoreNumStyle(settingsManager.getProperty(PluginSettings.IGNORE_NUM_STYLE))
-                    .ignoreChineseStyle(settingsManager.getProperty(PluginSettings.IGNORE_CHINESE_STYLE))
-                    .ignoreEnglishStyle(settingsManager.getProperty(PluginSettings.IGNORE_ENGLISH_STYLE))
-                    .ignoreRepeat(settingsManager.getProperty(PluginSettings.IGNORE_REPEAT))
-                    .enableNumCheck(settingsManager.getProperty(PluginSettings.ENABLE_NUM_CHECK))
-                    .enableEmailCheck(settingsManager.getProperty(PluginSettings.ENABLE_EMAIL_CHECK))
-                    .enableUrlCheck(settingsManager.getProperty(PluginSettings.ENABLE_URL_CHECK))
-                    .enableWordCheck(settingsManager.getProperty(PluginSettings.ENABLE_WORD_CHECK))
+                    .ignoreCase(configurationService.get(PluginSettings.IGNORE_CASE))
+                    .ignoreWidth(configurationService.get(PluginSettings.IGNORE_WIDTH))
+                    .ignoreNumStyle(configurationService.get(PluginSettings.IGNORE_NUM_STYLE))
+                    .ignoreChineseStyle(configurationService.get(PluginSettings.IGNORE_CHINESE_STYLE))
+                    .ignoreEnglishStyle(configurationService.get(PluginSettings.IGNORE_ENGLISH_STYLE))
+                    .ignoreRepeat(configurationService.get(PluginSettings.IGNORE_REPEAT))
+                    .enableNumCheck(configurationService.get(PluginSettings.ENABLE_NUM_CHECK))
+                    .enableEmailCheck(configurationService.get(PluginSettings.ENABLE_EMAIL_CHECK))
+                    .enableUrlCheck(configurationService.get(PluginSettings.ENABLE_URL_CHECK))
+                    .enableWordCheck(configurationService.get(PluginSettings.ENABLE_WORD_CHECK))
                     .wordResultCondition(condition)
-                    .wordCheckUrl(settingsManager.getProperty(PluginSettings.URL_CHECK_NO_PREFIX) ? WordChecks.urlNoPrefix() : WordChecks.url())
+                    .wordCheckUrl(configurationService.get(PluginSettings.URL_CHECK_NO_PREFIX) ? WordChecks.urlNoPrefix() : WordChecks.url())
                     .wordDeny(wordDeny)
                     .wordAllow(wA)
-                    .numCheckLen(settingsManager.getProperty(PluginSettings.NUM_CHECK_LEN))
+                    .numCheckLen(configurationService.get(PluginSettings.NUM_CHECK_LEN))
                     .wordReplace(new WordReplace())
                     .wordTag(WordTags.none())
                     .charIgnore(new CharIgnore())
-                    .enableIpv4Check(settingsManager.getProperty(PluginSettings.ENABLE_IP_CHECK))
-                    .wordFailFast(settingsManager.getProperty(PluginSettings.FAIL_FAST))
+                    .enableIpv4Check(configurationService.get(PluginSettings.ENABLE_IP_CHECK))
+                    .wordFailFast(configurationService.get(PluginSettings.FAIL_FAST))
                     .init();
             isInitialized = true;
         });
@@ -171,34 +174,13 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     }
 
     public void reloadPluginConfiguration() {
-        settingsManager.reload();
-        loadMessagesConfiguration();
-    }
-
-    private void loadMessagesConfiguration() {
-        File targetMessagesFile = new File(getDataFolder(), "messages_"
-                + settingsManager.getProperty(PluginSettings.PLUGIN_LANGUAGE) + ".yml");
-        if (!targetMessagesFile.exists()) {
-            saveResource(targetMessagesFile.getName(), false);
-        }
-
-        if (messagesManager != null && targetMessagesFile.equals(messagesFile)) {
-            messagesManager.reload();
-            return;
-        }
-
-        messagesFile = targetMessagesFile;
-        messagesManager = SettingsManagerBuilder
-                .withYamlFile(messagesFile)
-                .configurationData(PluginMessages.class)
-                .useDefaultMigrationService()
-                .create();
+        configurationService.reload();
     }
 
     private void setupMetrics() {
         int pluginId = 20661;
         Metrics metrics = new Metrics(this, pluginId);
-        metrics.addCustomChart(new SimplePie("default_list", () -> String.valueOf(settingsManager.getProperty(PluginSettings.ENABLE_DEFAULT_WORDS))));
+        metrics.addCustomChart(new SimplePie("default_list", () -> String.valueOf(configurationService.get(PluginSettings.ENABLE_DEFAULT_WORDS))));
         metrics.addCustomChart(new SimplePie("java_vendor", TimingUtils::getJvmVendor));
         metrics.addCustomChart(new SingleLineChart("total_filtered_messages", () -> (int) messagesFilteredNum.get()));
     }
@@ -210,19 +192,19 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
 
     private void registerPlaceholderExpansion() {
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") &&
-                settingsManager.getProperty(PluginSettings.ENABLE_PLACEHOLDER)) {
+                configurationService.get(PluginSettings.ENABLE_PLACEHOLDER)) {
             new ASWExpansion().register();
             LOGGER.info("Placeholders registered.");
         }
     }
 
     private void scheduleViolationResetTask() {
-        long resetIntervalTicks = settingsManager.getProperty(PluginSettings.VIOLATION_RESET_TIME) * 20L * 60L;
+        long resetIntervalTicks = configurationService.get(PluginSettings.VIOLATION_RESET_TIME) * 20L * 60L;
         violationResetTask = new ViolationResetTask().runTaskTimerAsynchronously(this, resetIntervalTicks, resetIntervalTicks);
     }
 
     private void checkForUpdatesAsync() {
-        if (!settingsManager.getProperty(PluginSettings.CHECK_FOR_UPDATE)) {
+        if (!configurationService.get(PluginSettings.CHECK_FOR_UPDATE)) {
             return;
         }
         getScheduler().runTaskAsynchronously(() -> {
@@ -271,7 +253,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     }
 
     private IWordResultCondition createWordResultCondition() {
-        return switch (settingsManager.getProperty(PluginSettings.FULL_MATCH_MODE)) {
+        return switch (configurationService.get(PluginSettings.FULL_MATCH_MODE)) {
             case 0 -> WordResultConditions.alwaysTrue();
             case 1 -> WordResultConditions.englishWordMatch();
             case 2 -> WordResultConditions.englishWordNumMatch();
@@ -284,8 +266,8 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     }
 
     private IWordDeny createWordDeny() {
-        boolean enableDefaultWords = settingsManager.getProperty(PluginSettings.ENABLE_DEFAULT_WORDS);
-        boolean enableOnlineWords = settingsManager.getProperty(PluginSettings.ENABLE_ONLINE_WORDS);
+        boolean enableDefaultWords = configurationService.get(PluginSettings.ENABLE_DEFAULT_WORDS);
+        boolean enableOnlineWords = configurationService.get(PluginSettings.ENABLE_ONLINE_WORDS);
         if (enableDefaultWords && enableOnlineWords) {
             return WordDenys.chains(WordDenys.defaults(), new WordDeny(), new OnlineWordDeny(this), new ExternalWordDeny(this));
         }
