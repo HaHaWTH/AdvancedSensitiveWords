@@ -35,6 +35,10 @@ class ConfigurationFormatTest {
         assertTrue(output.contains("enable-default-words: true"));
         assertTrue(output.contains("# Whether to load the bundled default word dictionaries."));
         assertTrue(output.contains("method: REPLACE"));
+        assertTrue(output.contains("ai:"));
+        assertTrue(output.contains("base-url: https://api.deepseek.com"));
+        assertTrue(output.contains("model-name: deepseek-v4-flash"));
+        assertTrue(output.contains("log-responses: false"));
         assertFalse(output.contains("Plugin:"));
         assertFalse(output.contains("enableDefaultWords"));
     }

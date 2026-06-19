@@ -3,10 +3,14 @@ package io.wdsj.asw.bukkit.setting;
 import de.exlll.configlib.NameFormatters;
 import de.exlll.configlib.YamlConfigurationProperties;
 import de.exlll.configlib.YamlConfigurationStore;
+import io.wdsj.asw.bukkit.api.moderation.LlmModerationCategory;
 import org.slf4j.Logger;
 
+import java.net.URI;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Owns the Paper configuration snapshots and their ConfigLib stores.
@@ -33,6 +37,7 @@ public final class PaperConfigurationService {
     public void load() {
         try {
             SettingsConfiguration loadedSettings = settingsStore.update(dataDirectory.resolve("config.yml"));
+            validateSettings(loadedSettings);
             MessagesConfiguration loadedMessages = loadMessages(loadedSettings.plugin.language);
             settings = loadedSettings;
             messages = loadedMessages;
@@ -100,6 +105,96 @@ public final class PaperConfigurationService {
         YamlConfigurationStore<EnglishMessagesConfiguration> store =
                 new YamlConfigurationStore<>(EnglishMessagesConfiguration.class, PROPERTIES);
         return store.update(messageFile);
+    }
+
+    private void validateSettings(SettingsConfiguration settings) {
+        SettingsConfiguration.Ai ai = settings.ai;
+        if (ai == null) {
+            throw new IllegalArgumentException("ai settings cannot be null");
+        }
+        if (ai.requestTimeoutSeconds < 1) {
+            throw new IllegalArgumentException("ai.request-timeout-seconds must be at least 1");
+        }
+        if (ai.maxOutputTokens < 1) {
+            throw new IllegalArgumentException("ai.max-output-tokens must be at least 1");
+        }
+        if (!Double.isFinite(ai.temperature) || ai.temperature < 0.0D) {
+            throw new IllegalArgumentException("ai.temperature must be a finite non-negative number");
+        }
+        if (ai.maxConcurrentRequests < 1 || ai.queueCapacity < 1) {
+            throw new IllegalArgumentException("ai.max-concurrent-requests and ai.queue-capacity must be at least 1");
+        }
+        if (ai.perPlayerCooldownSeconds < 0) {
+            throw new IllegalArgumentException("ai.per-player-cooldown-seconds cannot be negative");
+        }
+        if (ai.minimumMessageCodePoints < 1 || ai.maximumMessageCodePoints < ai.minimumMessageCodePoints) {
+            throw new IllegalArgumentException("ai message code point bounds are invalid");
+        }
+        if (!Double.isFinite(ai.minimumEntropyBits) || ai.minimumEntropyBits < 0.0D) {
+            throw new IllegalArgumentException("ai.minimum-entropy-bits must be a finite non-negative number");
+        }
+        if (!Double.isFinite(ai.minimumConfidence) || ai.minimumConfidence < 0.0D || ai.minimumConfidence > 1.0D) {
+            throw new IllegalArgumentException("ai.minimum-confidence must be between 0.0 and 1.0");
+        }
+        validateEnforcedCategories(ai.enforcedCategories);
+
+        if (!ai.enabled) {
+            return;
+        }
+
+        validateHttpUrl(ai.baseUrl, "ai.base-url");
+        requireText(ai.modelName, "ai.model-name");
+        if (resolveApiKey(ai).isBlank()) {
+            throw new IllegalArgumentException("AI is enabled but no API key is configured");
+        }
+    }
+
+    private void validateEnforcedCategories(java.util.List<String> categories) {
+        if (categories == null) {
+            throw new IllegalArgumentException("ai.enforced-categories cannot be null");
+        }
+        Set<LlmModerationCategory> parsed = new HashSet<>();
+        for (String categoryName : categories) {
+            LlmModerationCategory category = LlmModerationCategory.fromWireName(requireText(categoryName, "ai.enforced-categories entry"));
+            if (!category.isAutomaticallyEnforceable()) {
+                throw new IllegalArgumentException("ai.enforced-categories cannot include " + category.wireName());
+            }
+            if (!parsed.add(category)) {
+                throw new IllegalArgumentException("ai.enforced-categories contains duplicates");
+            }
+        }
+    }
+
+    private static void validateHttpUrl(String value, String settingName) {
+        requireText(value, settingName);
+        URI uri;
+        try {
+            uri = URI.create(value);
+        } catch (IllegalArgumentException exception) {
+            throw new IllegalArgumentException(settingName + " must be a valid HTTP(S) URL", exception);
+        }
+        if ((!"http".equalsIgnoreCase(uri.getScheme()) && !"https".equalsIgnoreCase(uri.getScheme()))
+                || uri.getHost() == null) {
+            throw new IllegalArgumentException(settingName + " must use HTTP or HTTPS");
+        }
+    }
+
+    private static String resolveApiKey(SettingsConfiguration.Ai ai) {
+        String environmentName = ai.apiKeyEnvironment == null ? "" : ai.apiKeyEnvironment.trim();
+        if (!environmentName.isEmpty()) {
+            String environmentValue = System.getenv(environmentName);
+            if (environmentValue != null && !environmentValue.isBlank()) {
+                return environmentValue;
+            }
+        }
+        return ai.apiKey == null ? "" : ai.apiKey.trim();
+    }
+
+    private static String requireText(String value, String settingName) {
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException(settingName + " cannot be blank");
+        }
+        return value.trim();
     }
 
     private String normalizeLanguage(String configuredLanguage) {

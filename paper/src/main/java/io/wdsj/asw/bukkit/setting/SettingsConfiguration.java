@@ -13,6 +13,8 @@ public final class SettingsConfiguration {
     public Plugin plugin = new Plugin();
     @Comment({"Chat and command filtering settings."})
     public Chat chat = new Chat();
+    @Comment({"LLM-assisted chat moderation settings."})
+    public Ai ai = new Ai();
     @Comment({"Book filtering settings."})
     public Book book = new Book();
     @Comment({"Sign filtering settings."})
@@ -152,6 +154,56 @@ public final class SettingsConfiguration {
         public List<String> commandWhiteList = new ArrayList<>(List.of(
                 "/tell", "/msg", "/normal", "/message", "/private", "/msg", "/w", "/whisper", "/m"
         ));
+    }
+
+    @Configuration
+    public static final class Ai {
+        @Comment("Whether to enable LLM-assisted chat moderation.")
+        public boolean enabled = false;
+        @Comment("OpenAI-compatible API base URL.")
+        public String baseUrl = "https://api.deepseek.com";
+        @Comment("Environment variable that contains the API key. It overrides api-key when set.")
+        public String apiKeyEnvironment = "DEEPSEEK_API_KEY";
+        @Comment("Fallback API key. Prefer an environment variable instead.")
+        public String apiKey = "";
+        @Comment("OpenAI-compatible model name.")
+        public String modelName = "deepseek-v4-flash";
+        @Comment("LLM request timeout in seconds. Must be at least 1; 5-30 is recommended.")
+        public int requestTimeoutSeconds = 12;
+        @Comment("Maximum completion tokens returned by the model. Must be at least 1; 128-256 is recommended for the fixed JSON response.")
+        public int maxOutputTokens = 256;
+        @Comment("Sampling temperature used for classification. Must be a finite value >= 0; use 0.0 for deterministic moderation.")
+        public double temperature = 0.0D;
+        @Comment("Whether to log raw LLM responses at INFO level for debugging. Keep disabled in production because a provider can return sensitive text.")
+        public boolean logResponses = false;
+        @Comment("Maximum concurrent virtual-thread LLM requests. Must be at least 1; keep this within your provider rate limit, usually 2-8.")
+        public int maxConcurrentRequests = 4;
+        @Comment("Maximum queued LLM requests before new candidates are dropped. Must be at least 1; 16-64 limits memory and delayed punishments.")
+        public int queueCapacity = 32;
+        @Comment("Minimum seconds between LLM requests from the same player. Must be >= 0; 5-20 reduces spam and provider cost.")
+        public int perPlayerCooldownSeconds = 10;
+        @Comment("Minimum visible Unicode code points before an LLM request is considered. Must be >= 1; 4-8 saves requests for short messages.")
+        public int minimumMessageCodePoints = 6;
+        @Comment("Maximum total Unicode code points accepted by the LLM request gate. Must be >= minimum-message-code-points; 128-512 is recommended.")
+        public int maximumMessageCodePoints = 256;
+        @Comment("Minimum Shannon entropy in bits per visible Unicode code point. Must be finite and >= 0; 2.0-3.5 is a typical request-saving gate.")
+        public double minimumEntropyBits = 2.5D;
+        @Comment("Minimum LLM confidence required for ASW automatic enforcement. Must be between 0.0 and 1.0; 0.85-0.95 is recommended.")
+        public double minimumConfidence = 0.90D;
+        @Comment("LLM categories that ASW may automatically enforce.")
+        public List<String> enforcedCategories = new ArrayList<>(List.of(
+                "harassment",
+                "hate",
+                "sexual",
+                "sexual_minors",
+                "self_harm",
+                "violence_threat",
+                "illegal",
+                "privacy_doxxing",
+                "spam_scam"
+        ));
+        @Comment("Trusted server context sent with each request. Leave blank unless required.")
+        public String serverContext = "";
     }
 
     @Configuration

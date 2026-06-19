@@ -34,6 +34,8 @@ dependencies {
     compileOnly("com.github.retrooper:packetevents-spigot:2.12.2")
     compileOnly("org.jetbrains:annotations:26.0.2")
     compileOnly("com.google.guava:guava:33.4.0-jre")
+    compileOnly("dev.langchain4j:langchain4j-open-ai:${property("langchain4jVersion")}")
+    compileOnly("dev.langchain4j:langchain4j-http-client-jdk:${property("langchain4jVersion")}")
 
     implementation(kotlin("stdlib"))
     implementation("com.github.houbb:sensitive-word:0.29.5")
@@ -43,6 +45,9 @@ dependencies {
     runtimeOnly("org.snakeyaml:snakeyaml-engine:2.7")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
+    testImplementation("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
+    testImplementation("dev.langchain4j:langchain4j-open-ai:${property("langchain4jVersion")}")
+    testImplementation("dev.langchain4j:langchain4j-http-client-jdk:${property("langchain4jVersion")}")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.11.4")
 }
 
@@ -71,6 +76,7 @@ tasks.processResources {
         "pluginWebsite" to pluginWebsite,
         "pluginDescription" to pluginDescription,
         "gitCommitShort" to rootProject.extra["gitCommitShort"],
+        "langchain4jVersion" to project.property("langchain4jVersion"),
     )
     inputs.properties(properties)
     filesMatching("plugin.yml") {

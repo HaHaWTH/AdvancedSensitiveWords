@@ -7,9 +7,24 @@ import io.wdsj.asw.bukkit.manage.punish.ViolationCounter
 import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.type.ModuleType
+import io.wdsj.asw.bukkit.api.moderation.LlmChatModerationResult
 import org.bukkit.entity.Player
 
 class ViolationReporter(private val configuration: PaperConfigurationService) {
+    fun reportLlm(player: Player, content: String, result: LlmChatModerationResult) {
+        val categoryLabel = "LLM:${result.category().wireName()}"
+        val logPrefix = "${player.name}(IP: ${Utils.getPlayerIp(player)})(Chat)(LLM category=${result.category().wireName()}, severity=${result.severity().wireName()}, confidence=${result.confidence()})"
+        reportWithCustomLogPrefix(
+            player = player,
+            moduleType = ModuleType.CHAT,
+            content = content,
+            censoredWords = listOf(categoryLabel),
+            logPrefix = logPrefix,
+            startTime = System.currentTimeMillis(),
+            punish = configuration.get(PluginSettings.CHAT_PUNISH),
+        )
+    }
+
     fun report(
         player: Player,
         moduleType: ModuleType,

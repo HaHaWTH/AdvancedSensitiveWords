@@ -66,6 +66,25 @@ public final class PluginSettings {
     public static final SettingKey<Boolean> CHAT_INVERT_WHITELIST = key(settings -> settings.chat.invertCommandWhiteList);
     public static final SettingKey<List<String>> CHAT_COMMAND_WHITE_LIST = key(settings -> settings.chat.commandWhiteList);
 
+    public static final SettingKey<Boolean> AI_ENABLED = key(settings -> settings.ai.enabled);
+    public static final SettingKey<String> AI_BASE_URL = key(settings -> settings.ai.baseUrl);
+    public static final SettingKey<String> AI_API_KEY_ENVIRONMENT = key(settings -> settings.ai.apiKeyEnvironment);
+    public static final SettingKey<String> AI_API_KEY = key(settings -> settings.ai.apiKey);
+    public static final SettingKey<String> AI_MODEL_NAME = key(settings -> settings.ai.modelName);
+    public static final SettingKey<Integer> AI_REQUEST_TIMEOUT_SECONDS = key(settings -> settings.ai.requestTimeoutSeconds);
+    public static final SettingKey<Integer> AI_MAX_OUTPUT_TOKENS = key(settings -> settings.ai.maxOutputTokens);
+    public static final SettingKey<Double> AI_TEMPERATURE = key(settings -> settings.ai.temperature);
+    public static final SettingKey<Boolean> AI_LOG_RESPONSES = key(settings -> settings.ai.logResponses);
+    public static final SettingKey<Integer> AI_MAX_CONCURRENT_REQUESTS = key(settings -> settings.ai.maxConcurrentRequests);
+    public static final SettingKey<Integer> AI_QUEUE_CAPACITY = key(settings -> settings.ai.queueCapacity);
+    public static final SettingKey<Integer> AI_PLAYER_COOLDOWN_SECONDS = key(settings -> settings.ai.perPlayerCooldownSeconds);
+    public static final SettingKey<Integer> AI_MINIMUM_MESSAGE_CODE_POINTS = key(settings -> settings.ai.minimumMessageCodePoints);
+    public static final SettingKey<Integer> AI_MAXIMUM_MESSAGE_CODE_POINTS = key(settings -> settings.ai.maximumMessageCodePoints);
+    public static final SettingKey<Double> AI_MINIMUM_ENTROPY_BITS = key(settings -> settings.ai.minimumEntropyBits);
+    public static final SettingKey<Double> AI_MINIMUM_CONFIDENCE = key(settings -> settings.ai.minimumConfidence);
+    public static final SettingKey<List<String>> AI_ENFORCED_CATEGORIES = key(settings -> settings.ai.enforcedCategories);
+    public static final SettingKey<String> AI_SERVER_CONTEXT = key(settings -> settings.ai.serverContext);
+
     public static final SettingKey<ProcessMethod> BOOK_METHOD = key(settings -> settings.book.method);
     public static final SettingKey<Boolean> BOOK_IGNORE_NEWLINE = key(settings -> settings.book.ignoreNewLine);
     public static final SettingKey<Boolean> BOOK_CROSS_PAGE = key(settings -> settings.book.crossPageCheck);

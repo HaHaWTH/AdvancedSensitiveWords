@@ -2,6 +2,7 @@ package io.wdsj.asw.bukkit.listener.paper
 
 import io.papermc.paper.event.player.AsyncChatEvent
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.sensitiveWordBs
+import io.wdsj.asw.bukkit.ai.LlmChatDetectionService
 import io.wdsj.asw.bukkit.annotation.PaperEventHandler
 import io.wdsj.asw.bukkit.integration.trchat.TrChatCompat
 import io.wdsj.asw.bukkit.listener.abstraction.AbstractFakeMessageExecutor
@@ -26,7 +27,10 @@ import org.bukkit.event.Listener
 
 @Suppress("UNUSED")
 @PaperEventHandler
-class PaperChatListener(private val configuration: PaperConfigurationService) : Listener {
+class PaperChatListener(
+    private val configuration: PaperConfigurationService,
+    private val llmChatDetectionService: LlmChatDetectionService,
+) : Listener {
     private val processingGuard = PlayerProcessingGuard(configuration)
     private val violationReporter = ViolationReporter(configuration)
 
@@ -47,7 +51,9 @@ class PaperChatListener(private val configuration: PaperConfigurationService) : 
             return
         }
 
-        handleContextMessage(event, player, originalPlainText, startTime)
+        if (!handleContextMessage(event, player, originalPlainText, startTime)) {
+            llmChatDetectionService.submit(player.uniqueId, player.name, originalPlainText)
+        }
     }
 
     private fun preprocess(message: Component): Component {
@@ -99,13 +105,13 @@ class PaperChatListener(private val configuration: PaperConfigurationService) : 
         player: Player,
         originalPlainText: String,
         startTime: Long,
-    ) {
-        if (!configuration.get(PluginSettings.CHAT_CONTEXT_CHECK)) return
+    ): Boolean {
+        if (!configuration.get(PluginSettings.CHAT_CONTEXT_CHECK)) return false
 
         ChatContext.addMessage(player, originalPlainText)
         val originalContext = ChatContext.getHistory(player).joinToString("")
         val censoredWords = sensitiveWordBs.findAll(originalContext)
-        if (censoredWords.isEmpty()) return
+        if (censoredWords.isEmpty()) return false
 
         ChatContext.pollPlayerContext(player)
         if (configuration.get(PluginSettings.CHAT_FAKE_MESSAGE_ON_CANCEL)) {
@@ -115,6 +121,7 @@ class PaperChatListener(private val configuration: PaperConfigurationService) : 
         }
 
         recordViolation(event, player, originalPlainText, originalContext, censoredWords, true, startTime)
+        return true
     }
 
     private fun recordViolation(

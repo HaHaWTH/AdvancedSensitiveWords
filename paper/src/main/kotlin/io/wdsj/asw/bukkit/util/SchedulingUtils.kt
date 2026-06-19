@@ -8,6 +8,8 @@ import org.bukkit.Location
 import org.bukkit.entity.Entity
 import org.bukkit.event.Event
 import java.util.concurrent.Callable
+import java.util.UUID
+import java.util.function.Consumer
 
 
 object SchedulingUtils {
@@ -55,6 +57,24 @@ object SchedulingUtils {
             runnable.run()
         } else {
             AdvancedSensitiveWords.getScheduler().runTask(runnable)
+        }
+    }
+
+    @JvmStatic
+    fun runForOnlinePlayer(playerId: UUID, action: Consumer<org.bukkit.entity.Player>) {
+        AdvancedSensitiveWords.getScheduler().runTask {
+            val player = Bukkit.getPlayer(playerId) ?: return@runTask
+            if (!player.isOnline) return@runTask
+
+            if (isFolia) {
+                AdvancedSensitiveWords.getScheduler().runTask(player) {
+                    if (player.isOnline) {
+                        action.accept(player)
+                    }
+                }
+                return@runTask
+            }
+            action.accept(player)
         }
     }
 

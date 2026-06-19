@@ -1,6 +1,7 @@
 package io.wdsj.asw.bukkit.service;
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
+import io.wdsj.asw.bukkit.ai.LlmChatDetectionService;
 import io.wdsj.asw.bukkit.integration.packetevents.sign.SignFakeViewCompat;
 import io.wdsj.asw.bukkit.integration.trchat.TrChatCompat;
 import io.wdsj.asw.bukkit.listener.*;
@@ -15,10 +16,12 @@ import org.bukkit.event.Listener;
 public class ListenerService {
     private final AdvancedSensitiveWords plugin;
     private final PaperConfigurationService configuration;
+    private final LlmChatDetectionService llmChatDetectionService;
 
     public ListenerService(AdvancedSensitiveWords plugin) {
         this.plugin = plugin;
         this.configuration = plugin.getConfigurationService();
+        this.llmChatDetectionService = new LlmChatDetectionService(configuration);
     }
 
     public void registerListeners() {
@@ -52,8 +55,13 @@ public class ListenerService {
     }
 
     public void unregisterListeners() {
+        llmChatDetectionService.close();
         SignFakeViewCompat.unregister();
         HandlerList.unregisterAll(plugin);
+    }
+
+    public void reloadConfiguration() {
+        llmChatDetectionService.reload();
     }
     
     
@@ -63,7 +71,8 @@ public class ListenerService {
 
     private void registerChatBookEventListeners() {
         if (configuration.get(PluginSettings.ENABLE_CHAT_CHECK)) {
-            registerEventListener(new PaperChatListener(configuration));
+            registerEventListener(llmChatDetectionService);
+            registerEventListener(new PaperChatListener(configuration, llmChatDetectionService));
             registerEventListener(new CommandListener(configuration));
         }
         if (configuration.get(PluginSettings.ENABLE_BOOK_EDIT_CHECK)) {

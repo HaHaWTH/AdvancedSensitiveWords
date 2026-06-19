@@ -9,6 +9,9 @@ authors:
   - HaHaWTH
   - 0D00_0721
 description: ${pluginDescription}
+libraries:
+  - dev.langchain4j:langchain4j-open-ai:${langchain4jVersion}
+  - dev.langchain4j:langchain4j-http-client-jdk:${langchain4jVersion}
 loadbefore:
   - YouCanUseThisToPrioritizeOtherChatPlugins
 softdepend:

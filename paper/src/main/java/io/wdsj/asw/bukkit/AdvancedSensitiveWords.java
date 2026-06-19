@@ -175,6 +175,9 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
 
     public void reloadPluginConfiguration() {
         configurationService.reload();
+        if (listenerService != null) {
+            listenerService.reloadConfiguration();
+        }
     }
 
     private void setupMetrics() {
