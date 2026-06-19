@@ -64,7 +64,7 @@ public class ListenerService {
         try {
             return listenerClass.getConstructor().newInstance();
         } catch (Exception e) {
-            throw new IllegalStateException("Failed to register listener " + listenerClass.getSimpleName());
+            throw new IllegalStateException("Failed to create listener " + listenerClass.getSimpleName());
         }
     }
 

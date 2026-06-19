@@ -25,7 +25,7 @@ dependencies {
 }
 
 val generateVersionTemplate by tasks.registering(Copy::class) {
-    from("src/main/java/io/wdsj/asw/common/template/PluginVersionTemplate.java")
+    from("src/main/templates")
     into(generatedVersionDir)
     filteringCharset = "UTF-8"
     expand(mapOf<String, String>(
@@ -39,7 +39,6 @@ val generateVersionTemplate by tasks.registering(Copy::class) {
 
 tasks.withType<JavaCompile>().configureEach {
     dependsOn(generateVersionTemplate)
-    exclude("io/wdsj/asw/common/template/PluginVersionTemplate.java")
     options.encoding = "UTF-8"
     options.release.set(17)
 }
