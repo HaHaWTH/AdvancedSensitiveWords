@@ -24,7 +24,7 @@ public class Punishment {
             try {
                 processSinglePunish(player, punish);
             } catch (IllegalArgumentException e) {
-                LOGGER.warning("Invalid punishment method: " + punish);
+                LOGGER.warn("Invalid punishment method: " + punish);
             }
         }
     }
@@ -135,7 +135,7 @@ public class Punishment {
                 return true;
             }
         } catch (NumberFormatException e) {
-            LOGGER.warning("Invalid violation condition: " + vlCondition);
+            LOGGER.warn("Invalid violation condition: " + vlCondition);
             return false;
         }
     }

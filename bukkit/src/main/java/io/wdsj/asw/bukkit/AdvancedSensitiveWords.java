@@ -41,10 +41,10 @@ import org.bstats.charts.SimplePie;
 import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.util.Objects;
-import java.util.logging.Logger;
 
 import static io.wdsj.asw.bukkit.util.LoggingUtils.purgeLog;
 import static io.wdsj.asw.bukkit.util.TimingUtils.resetStatistics;
@@ -75,7 +75,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        LOGGER = getLogger();
+        LOGGER = getSLF4JLogger();
         instance = this;
         settingsManager = SettingsManagerBuilder
                 .withYamlFile(configFile)
@@ -112,7 +112,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         registerPlaceholderExpansion();
         scheduleViolationResetTask();
         long endTime = System.currentTimeMillis();
-        LOGGER.info("AdvancedSensitiveWords is enabled!(took " + (endTime - startTime) + "ms)");
+        LOGGER.info("AdvancedSensitiveWords is enabled!(took {}ms)", endTime - startTime);
         if (Updater.isDevChannel()) {
             LOGGER.info("You are running a development version of AdvancedSensitiveWords! Branch: " + PluginVersionTemplate.COMMIT_BRANCH);
         }
@@ -229,12 +229,10 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
 
     private void logAvailableUpdate() {
         if (Updater.isDevChannel()) {
-            LOGGER.warning("There is a new development version available: " + Updater.getLatestVersion() +
-                    ", you're on: " + Updater.getCurrentVersion());
+            LOGGER.warn("There is a new development version available: {}, you're on: {}", Updater.getLatestVersion(), Updater.getCurrentVersion());
             return;
         }
-        LOGGER.warning("There is a new version available: " + Updater.getLatestVersion() +
-                ", you're on: " + Updater.getCurrentVersion());
+        LOGGER.warn("There is a new version available: {}, you're on: {}", Updater.getLatestVersion(), Updater.getCurrentVersion());
     }
 
     private IWordResultCondition createWordResultCondition() {
@@ -248,7 +246,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
             case 3:
                 return new WordResultConditionNumMatch();
             default:
-                LOGGER.warning("Invalid full match mode, will turn off full match.");
+                LOGGER.warn("Invalid full match mode, will turn off full match.");
                 return WordResultConditions.alwaysTrue();
         }
     }

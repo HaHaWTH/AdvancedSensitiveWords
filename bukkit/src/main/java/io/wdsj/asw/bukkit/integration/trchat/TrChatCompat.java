@@ -35,6 +35,7 @@ public final class TrChatCompat {
             return;
         }
 
+        assert TrChatReflection.SEND_EVENT_CLASS != null;
         Bukkit.getPluginManager().registerEvent(
                 TrChatReflection.SEND_EVENT_CLASS,
                 SEND_EVENT_LISTENER,
@@ -129,7 +130,7 @@ public final class TrChatCompat {
             return true;
         }
         if (!warned) {
-            AdvancedSensitiveWords.LOGGER.warning("Failed to send TrChat fake message component. Falling back to legacy text.");
+            AdvancedSensitiveWords.LOGGER.warn("Failed to send TrChat fake message component. Falling back to legacy text.");
             warned = true;
         }
         return false;

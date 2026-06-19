@@ -25,7 +25,7 @@ public class VelocityReceiver implements PluginMessageListener {
         if (channel.equals(VelocityChannel.CHANNEL)) {
             ByteArrayDataInput input = ByteStreams.newDataInput(message);
             if (!input.readUTF().equals(AdvancedSensitiveWords.PLUGIN_VERSION) && !warned) {
-                LOGGER.warning("Plugin version mismatch! Things may not work properly.");
+                LOGGER.warn("Plugin version mismatch! Things may not work properly.");
                 warned = true;
             }
             switch (input.readUTF().toLowerCase(Locale.ROOT)) {

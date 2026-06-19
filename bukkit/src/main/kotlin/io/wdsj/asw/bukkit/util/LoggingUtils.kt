@@ -31,7 +31,7 @@ object LoggingUtils {
                 try {
                     logFile.createNewFile()
                 } catch (e: IOException) {
-                    LOGGER.warning("Failed to create violations.log file: " + e.message)
+                    LOGGER.warn("Failed to create violations.log file: " + e.message)
                     return@submit
                 }
             }
@@ -40,7 +40,7 @@ object LoggingUtils {
                     writer.write(logMessage + System.lineSeparator())
                 }
             } catch (e: IOException) {
-                LOGGER.warning("Failed to write to violations.log file: " + e.message)
+                LOGGER.warn("Failed to write to violations.log file: " + e.message)
             }
         }
     }

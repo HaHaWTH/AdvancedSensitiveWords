@@ -1,32 +1,32 @@
 package io.wdsj.asw.bukkit.integration.trchat;
 
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMaps;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
 final class TrChatPendingFakeMessages {
-    private static final Object LOCK = new Object();
-    private static final Object2IntOpenHashMap<UUID> PENDING_MESSAGES = new Object2IntOpenHashMap<>();
+    private static final Object2IntMap<UUID> PENDING_MESSAGES = Object2IntMaps.synchronize(new Object2IntOpenHashMap<>());
 
     private TrChatPendingFakeMessages() {
     }
 
     static void increment(Player player) {
-        synchronized (LOCK) {
-            PENDING_MESSAGES.addTo(player.getUniqueId(), 1);
+        UUID uuid = player.getUniqueId();
+        synchronized (PENDING_MESSAGES) {
+            PENDING_MESSAGES.put(uuid, PENDING_MESSAGES.getInt(uuid) + 1);
         }
     }
 
     static boolean hasPending(Player player) {
-        synchronized (LOCK) {
-            return PENDING_MESSAGES.getInt(player.getUniqueId()) > 0;
-        }
+        return PENDING_MESSAGES.getInt(player.getUniqueId()) > 0;
     }
 
     static boolean consume(Player player) {
         UUID uuid = player.getUniqueId();
-        synchronized (LOCK) {
+        synchronized (PENDING_MESSAGES) {
             int count = PENDING_MESSAGES.getInt(uuid);
             if (count <= 0) {
                 return false;

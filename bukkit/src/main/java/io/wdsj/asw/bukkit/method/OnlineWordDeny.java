@@ -41,7 +41,7 @@ public class OnlineWordDeny implements IWordDeny {
                 LOGGER.info("Loading cached words from file.");
                 return Files.readAllLines(cacheFile.toPath());
             } catch (IOException e) {
-                LOGGER.warning("Failed to load cached words from file: " + e.getMessage());
+                LOGGER.warn("Failed to load cached words from file: " + e.getMessage());
             }
         }
 
@@ -63,7 +63,7 @@ public class OnlineWordDeny implements IWordDeny {
             }
             if (isCacheEnabled) saveToCache(lines);
         } catch (Exception e) {
-            LOGGER.warning("Failed to load online words list from URL: " + link);
+            LOGGER.warn("Failed to load online words list from URL: " + link);
             return Collections.emptyList();
         }
 
@@ -84,7 +84,7 @@ public class OnlineWordDeny implements IWordDeny {
             long currentTime = System.currentTimeMillis();
             return (currentTime - lastModified) > timeout * 60L * 1000L;
         } catch (IOException | NumberFormatException e) {
-            LOGGER.warning("Failed to read cache timestamp: " + e.getMessage());
+            LOGGER.warn("Failed to read cache timestamp: " + e.getMessage());
             return true;
         }
     }
@@ -94,7 +94,7 @@ public class OnlineWordDeny implements IWordDeny {
             try {
                 Files.createDirectories(dataFolder.toPath());
             } catch (IOException e) {
-                LOGGER.severe("Error occurred while creating cache directory: " + e.getMessage());
+                LOGGER.error("Error occurred while creating cache directory: " + e.getMessage());
             }
         }
 
@@ -103,13 +103,13 @@ public class OnlineWordDeny implements IWordDeny {
                 writer.write(word + System.lineSeparator());
             }
         } catch (IOException e) {
-            LOGGER.warning("Failed to save words to cache file: " + e.getMessage());
+            LOGGER.warn("Failed to save words to cache file: " + e.getMessage());
         }
 
         try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(timestampFile, false), charset)) {
             writer.write(String.valueOf(System.currentTimeMillis()));
         } catch (IOException e) {
-            LOGGER.warning("Failed to update cache timestamp: " + e.getMessage());
+            LOGGER.warn("Failed to update cache timestamp: " + e.getMessage());
         }
     }
 }

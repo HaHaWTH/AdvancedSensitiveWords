@@ -26,7 +26,7 @@ public class VelocitySender {
             out.writeUTF(originalMessage);
             out.writeUTF(censoredList.toString());
         } catch (Exception e) {
-            LOGGER.warning("Failed to send message to Velocity: " + e.getMessage());
+            LOGGER.warn("Failed to send message to Velocity: " + e.getMessage());
             return;
         }
         byte[] data = out.toByteArray();
