@@ -55,18 +55,40 @@ public class AdvancedSensitiveWords {
         if (config.check_for_update) {
             server.getScheduler().buildTask(this, () -> {
                 logger.info("Checking for update...");
-                if (Updater.isUpdateAvailable()) {
+                Updater.UpdateResult result = Updater.checkNow();
+                if (result.isUpdateAvailable()) {
                     if (Updater.isDevChannel()) {
-                        logger.warn("There is a new development version available: {}, you're on: {}", Updater.getLatestVersion(), Updater.getCurrentVersion());
+                        if (result.isReleaseUpdateAvailable()) {
+                            if (result.isError()) {
+                                logger.warn(
+                                        "A newer stable release is available: {} (current {}). Unable to compare the development branch.",
+                                        result.getLatestReleaseVersion(),
+                                        PluginVersionTemplate.VERSION
+                                );
+                                return;
+                            }
+                            logger.warn(
+                                    "A newer stable release is available: {} (current {}). Latest development commit: {} ({} commit(s) behind).",
+                                    result.getLatestReleaseVersion(),
+                                    PluginVersionTemplate.VERSION,
+                                    result.getLatestVersion(),
+                                    result.getCommitsBehind()
+                            );
+                            return;
+                        }
+                        logger.warn(
+                                "This development build is {} commit(s) behind {} (current {}).",
+                                result.getCommitsBehind(),
+                                result.getLatestVersion(),
+                                PluginVersionTemplate.COMMIT_HASH_SHORT
+                        );
                     } else {
-                        logger.warn("There is a new version available: {}, you're on: {}", Updater.getLatestVersion(), Updater.getCurrentVersion());
+                        logger.warn("There is a new version available: {}, you're on: {}", result.getLatestVersion(), PluginVersionTemplate.VERSION);
                     }
+                } else if (!result.isError()) {
+                    logger.info("You are running the latest version.");
                 } else {
-                    if (!Updater.isErred()) {
-                        logger.info("You are running the latest version.");
-                    } else {
-                        logger.info("Unable to fetch version info.");
-                    }
+                    logger.info("Unable to fetch version info.");
                 }
             }).schedule();
         }

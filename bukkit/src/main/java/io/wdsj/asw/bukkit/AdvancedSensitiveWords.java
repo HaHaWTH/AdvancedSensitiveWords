@@ -63,6 +63,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     public static Logger LOGGER;
     private ListenerService listenerService;
     private CachingPermTool permCache;
+    private volatile Updater.UpdateResult updateResult = Updater.UpdateResult.noUpdate();
     private AswCommandRegistrar commandRegistrar;
     public static TaskScheduler getScheduler() {
         return scheduler;
@@ -70,6 +71,10 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
 
     public static AdvancedSensitiveWords getInstance() {
         return instance;
+    }
+
+    public Updater.UpdateResult getUpdateResult() {
+        return updateResult;
     }
     private MyScheduledTask violationResetTask;
 
@@ -222,9 +227,11 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         }
         getScheduler().runTaskAsynchronously(() -> {
             LOGGER.info("Checking for update...");
-            if (Updater.isUpdateAvailable()) {
-                logAvailableUpdate();
-            } else if (!Updater.isErred()) {
+            Updater.UpdateResult result = Updater.checkNow();
+            updateResult = result;
+            if (result.isUpdateAvailable()) {
+                logAvailableUpdate(result);
+            } else if (!result.isError()) {
                 LOGGER.info("You are running the latest version.");
             } else {
                 LOGGER.info("Unable to fetch version info.");
@@ -232,12 +239,35 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         });
     }
 
-    private void logAvailableUpdate() {
+    private void logAvailableUpdate(Updater.UpdateResult result) {
         if (Updater.isDevChannel()) {
-            LOGGER.warn("There is a new development version available: {}, you're on: {}", Updater.getLatestVersion(), Updater.getCurrentVersion());
+            if (result.isReleaseUpdateAvailable()) {
+                if (result.isError()) {
+                    LOGGER.warn(
+                            "A newer stable release is available: {} (current {}). Unable to compare the development branch.",
+                            result.getLatestReleaseVersion(),
+                            PLUGIN_VERSION
+                    );
+                    return;
+                }
+                LOGGER.warn(
+                        "A newer stable release is available: {} (current {}). Latest development commit: {} ({} commit(s) behind).",
+                        result.getLatestReleaseVersion(),
+                        PLUGIN_VERSION,
+                        result.getLatestVersion(),
+                        result.getCommitsBehind()
+                );
+                return;
+            }
+            LOGGER.warn(
+                "This development build is {} commit(s) behind {} (current {}).",
+                    result.getCommitsBehind(),
+                    result.getLatestVersion(),
+                    PluginVersionTemplate.COMMIT_HASH_SHORT
+            );
             return;
         }
-        LOGGER.warn("There is a new version available: {}, you're on: {}", Updater.getLatestVersion(), Updater.getCurrentVersion());
+        LOGGER.warn("There is a new version available: {}, you're on: {}", result.getLatestVersion(), PLUGIN_VERSION);
     }
 
     private IWordResultCondition createWordResultCondition() {
