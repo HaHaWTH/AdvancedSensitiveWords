@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -109,10 +110,10 @@ public class Punishment {
                 break;
             case SHADOW:
                 try {
-                    long duration = normalPunish.length >= 2 ? Long.parseLong(normalPunish[1]) : 30L;
-                    PlayerShadowController.shadowPlayer(player, System.currentTimeMillis(), duration);
+                    long durationSeconds = normalPunish.length >= 2 ? Long.parseLong(normalPunish[1]) : 30L;
+                    PlayerShadowController.shadowPlayer(player, Duration.ofSeconds(durationSeconds));
                 } catch (NumberFormatException e) {
-                    PlayerShadowController.shadowPlayer(player, System.currentTimeMillis(), 30L);
+                    PlayerShadowController.shadowPlayer(player, Duration.ofSeconds(30L));
                 }
                 break;
             default:
