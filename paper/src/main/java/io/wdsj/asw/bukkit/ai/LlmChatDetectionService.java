@@ -266,9 +266,8 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
                 eventResponse.truncated(),
                 parsed.orElse(null)
         );
-        Bukkit.getPluginManager().callEvent(event);
 
-        if (!isCurrent(state) || event.isCancelled()) {
+        if (!isCurrent(state) || !event.callEvent()) {
             return;
         }
         LlmChatModerationResult result = event.getResult();
