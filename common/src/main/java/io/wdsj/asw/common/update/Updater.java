@@ -113,7 +113,7 @@ public final class Updater {
         UpdateResult releaseResult = checkReleaseUpdate();
         String localCommit = PluginVersionTemplate.COMMIT_HASH;
         String branch = PluginVersionTemplate.COMMIT_BRANCH;
-        UpdateResult errorResult = new UpdateResult(
+        final UpdateResult errorResult = new UpdateResult(
                 releaseResult.isReleaseUpdateAvailable(),
                 branch,
                 true,
@@ -148,8 +148,8 @@ public final class Updater {
         try {
             connection.setRequestProperty("User-Agent", GITHUB_REPOSITORY + "-Updater");
             connection.setRequestProperty("Accept", "application/vnd.github+json");
-            connection.setConnectTimeout(5_000);
-            connection.setReadTimeout(5_000);
+            connection.setConnectTimeout(10_000);
+            connection.setReadTimeout(7_000);
             connection.setRequestMethod("GET");
 
             if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
