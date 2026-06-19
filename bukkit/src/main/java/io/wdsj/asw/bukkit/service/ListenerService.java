@@ -12,7 +12,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.*;
-import static io.wdsj.asw.bukkit.util.Utils.isClassLoaded;
 
 public class ListenerService {
     private final AdvancedSensitiveWords plugin;
@@ -41,11 +40,7 @@ public class ListenerService {
             registerEventListener(PlayerItemListener.class);
         }
         if (settingsManager.getProperty(PluginSettings.CHAT_BROADCAST_CHECK)) {
-            if (isClassLoaded("org.bukkit.event.server.BroadcastMessageEvent")) {
-                registerEventListener(BroadCastListener.class);
-            } else {
-                LOGGER.info("BroadcastMessage is not available, please disable chat broadcast check in config.yml");
-            }
+            registerEventListener(BroadCastListener.class);
         }
         if (settingsManager.getProperty(PluginSettings.CLEAN_PLAYER_DATA_CACHE)) {
             registerEventListener(QuitDataCleaner.class);
