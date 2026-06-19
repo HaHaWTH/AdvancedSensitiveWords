@@ -24,6 +24,8 @@ kotlin {
 
 dependencies {
     implementation(project(":common"))
+    implementation("org.incendo:cloud-paper:${property("cloudVersion")}")
+    implementation("org.incendo:cloud-minecraft-extras:${property("cloudVersion")}")
 
     compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.6")
@@ -92,16 +94,21 @@ tasks.named<ShadowJar>("shadowJar") {
     relocate("org.intellij.lang.annotations", "io.wdsj.asw.bukkit.libs.org.intellij.lang.annotations")
     relocate("org.apiguardian.api", "io.wdsj.asw.bukkit.libs.api")
     relocate("ch.jalu.configme", "io.wdsj.asw.bukkit.libs.config")
+    relocate("org.incendo", "io.wdsj.asw.bukkit.libs.incendo")
+    relocate("io.leangen.geantyref", "io.wdsj.asw.bukkit.libs.geantyref")
 
     exclude("org/yaml/snakeyaml/**")
     exclude("org/slf4j/**")
+    exclude("net/kyori/**")
     exclude("*.md")
     exclude("META-INF/maven/**")
     exclude("com/google/gson/**")
     exclude("sample-db-prompt-template.txt")
     exclude("LICENSE")
 
-    minimize()
+    minimize {
+        exclude(dependency("org.incendo:.*:.*"))
+    }
 }
 
 tasks.build {

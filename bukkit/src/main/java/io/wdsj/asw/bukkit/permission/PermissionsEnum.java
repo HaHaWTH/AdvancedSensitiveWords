@@ -5,17 +5,8 @@ package io.wdsj.asw.bukkit.permission;
  */
 public enum PermissionsEnum {
     BYPASS("bypass"),
-    RELOAD("reload"),
-    ADD("add"),
-    REMOVE("remove"),
-    STATUS("status"),
-    TEST("test"),
-    HELP("help"),
     NOTICE("notice"),
-    INFO("info"),
-    RESET("reset"),
-    UPDATE("update"),
-    PUNISH("punish");
+    UPDATE("update");
 
     private final String permission;
 

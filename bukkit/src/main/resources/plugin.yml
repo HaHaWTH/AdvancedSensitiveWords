@@ -18,61 +18,73 @@ softdepend:
   - AuthMe
   - packetevents
 folia-supported: true
-commands:
-  advancedsensitivewords:
-    description: Advanced Sensitive Words main command.
-    usage: /asw <reload|status|test|help|info|reset|punish|add|remove|addallow|removeallow>
-    aliases: [asw]
 permissions:
   advancedsensitivewords.*:
     description: All permissions of Advanced Sensitive Words.
     default: false
     children:
       advancedsensitivewords.bypass: true
-      advancedsensitivewords.reload: true
-      advancedsensitivewords.status: true
-      advancedsensitivewords.test: true
-      advancedsensitivewords.help: true
       advancedsensitivewords.notice: true
-      advancedsensitivewords.info: true
       advancedsensitivewords.update: true
-      advancedsensitivewords.punish: true
-      advancedsensitivewords.add: true
-      advancedsensitivewords.remove: true
-      advancedsensitivewords.reset: true
+      advancedsensitivewords.command.*: true
+  advancedsensitivewords.command.*:
+    description: All Advanced Sensitive Words management commands.
+    default: false
+    children:
+      advancedsensitivewords.command.help: true
+      advancedsensitivewords.command.status: true
+      advancedsensitivewords.command.reload.all: true
+      advancedsensitivewords.command.reload.config: true
+      advancedsensitivewords.command.test: true
+      advancedsensitivewords.command.word.add: true
+      advancedsensitivewords.command.word.remove: true
+      advancedsensitivewords.command.allow.add: true
+      advancedsensitivewords.command.allow.remove: true
+      advancedsensitivewords.command.player.info: true
+      advancedsensitivewords.command.player.reset: true
+      advancedsensitivewords.command.player.punish: true
   advancedsensitivewords.bypass:
     description: Bypass the Advanced Sensitive Words filter.
     default: false
-  advancedsensitivewords.reload:
-    description: Reload the Advanced Sensitive Words filter.
-    default: op
-  advancedsensitivewords.status:
-    description: Show the Advanced Sensitive Words filter status.
-    default: op
-  advancedsensitivewords.test:
-    description: Test the Advanced Sensitive Words filter.
-    default: op
-  advancedsensitivewords.help:
-    description: Show the Advanced Sensitive Words filter help.
-    default: op
   advancedsensitivewords.notice:
     description: Retrieve the notice message when player violated.
     default: op
   advancedsensitivewords.update:
     description: Retrieve the update message.
     default: op
-  advancedsensitivewords.info:
-    description: Get the player info.
+  advancedsensitivewords.command.help:
+    description: Show Advanced Sensitive Words command help.
     default: op
-  advancedsensitivewords.reset:
-    description: Reset the player's violation count.
+  advancedsensitivewords.command.status:
+    description: Show Advanced Sensitive Words status.
     default: op
-  advancedsensitivewords.punish:
-    description: Punish the player.
+  advancedsensitivewords.command.reload.all:
+    description: Reload all Advanced Sensitive Words configuration and dictionaries.
     default: op
-  advancedsensitivewords.add:
-    description: Add a sensitive word.
+  advancedsensitivewords.command.reload.config:
+    description: Reload Advanced Sensitive Words configuration only.
     default: op
-  advancedsensitivewords.remove:
-    description: Remove a sensitive word.
+  advancedsensitivewords.command.test:
+    description: Test text against the word filter.
+    default: op
+  advancedsensitivewords.command.word.add:
+    description: Add temporary blocked words.
+    default: op
+  advancedsensitivewords.command.word.remove:
+    description: Remove temporary blocked words.
+    default: op
+  advancedsensitivewords.command.allow.add:
+    description: Add temporary allowed words.
+    default: op
+  advancedsensitivewords.command.allow.remove:
+    description: Remove temporary allowed words.
+    default: op
+  advancedsensitivewords.command.player.info:
+    description: Show a player's violation count.
+    default: op
+  advancedsensitivewords.command.player.reset:
+    description: Reset a player's violation count.
+    default: op
+  advancedsensitivewords.command.player.punish:
+    description: Apply a punishment to a player.
     default: op

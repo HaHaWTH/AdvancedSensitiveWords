@@ -15,19 +15,6 @@ public class PluginMessages implements SettingsHolder {
     public static final Property<String> MESSAGE_ON_ITEM = newProperty("Item.messageOnItem", "<red>This item contains blocked words.");
     public static final Property<String> MESSAGE_ON_COMMAND_RELOAD = newProperty("Plugin.messageOnCommandReload", "<green>AdvancedSensitiveWords has been reloaded.");
     public static final Property<String> MESSAGE_ON_VIOLATION_RESET = newProperty("Plugin.messageOnViolationReset", "<green><bold>All player violation counts have been reset.");
-    public static final Property<String> MESSAGE_ON_COMMAND_HELP = newProperty("Plugin.messageOnCommandHelp", """
-            <aqua>AdvancedSensitiveWords<reset>---<aqua> Help Menu
-               <gray>/asw reload: <green>Reload the word filter and plugin configuration
-               <gray>/asw reloadconfig: <green>Reload the plugin configuration only
-               <gray>/asw add \\<word>: <green>Add a word to the blocklist
-               <gray>/asw remove \\<word>: <green>Remove a word from the blocklist
-               <gray>/asw addallow \\<word>: <green>Add a word to the allowlist
-               <gray>/asw removeallow \\<word>: <green>Remove a word from the allowlist
-               <gray>/asw status: <green>Show plugin status
-               <gray>/asw test \\<text>: <green>Test text against the word filter
-               <gray>/asw help: <green>Show this help menu
-               <gray>/asw info \\<player>: <green>Show a player's violation count
-               <gray>/asw punish \\<player> [method]: <green>Punish a player. Uses the configured punishment when no method is provided""");
     public static final Property<String> MESSAGE_ON_COMMAND_STATUS = newProperty("Plugin.messageOnCommandStatus", """
             <aqua>AdvancedSensitiveWords<reset>---<aqua> Plugin Status(%version%)(MC %mc_version%)
                <gray>System: <aqua>%platform% %bit% (Java %java_version% -- %java_vendor%)
@@ -45,6 +32,10 @@ public class PluginMessages implements SettingsHolder {
     public static final Property<String> MESSAGE_ON_COMMAND_PUNISH_SUCCESS = newProperty("Plugin.commandPunish.success", "<green>Punished %player%.");
     public static final Property<String> MESSAGE_ON_COMMAND_ADD_SUCCESS = newProperty("Plugin.commandAdd.success", "<green>Added to the word filter.");
     public static final Property<String> MESSAGE_ON_COMMAND_REMOVE_SUCCESS = newProperty("Plugin.commandRemove.success", "<green>Removed from the word filter.");
+    public static final Property<String> MESSAGE_ON_COMMAND_RUNTIME_ONLY = newProperty(
+            "Plugin.commandWord.runtimeOnly",
+            "<yellow>Command changes are temporary and will be discarded when the filter reloads or the server restarts."
+    );
     public static final Property<String> NO_PERMISSION = newProperty("Plugin.noPermission", "<red>You do not have permission to use that command.");
     public static final Property<String> UNKNOWN_COMMAND = newProperty("Plugin.unknownCommand", "<red>Unknown command. Use <gray>/asw help<red>.");
     public static final Property<String> NOT_ENOUGH_ARGS = newProperty("Plugin.argsNotEnough", "<red>Missing arguments. Use <gray>/asw help<red>.");
@@ -64,6 +55,7 @@ public class PluginMessages implements SettingsHolder {
         conf.setComment("Plugin", "Plugin messages");
         conf.setComment("Plugin.commandTest", "Test command messages");
         conf.setComment("Plugin.commandPunish", "Punishment command messages");
+        conf.setComment("Plugin.commandWord", "Temporary word command messages");
         conf.setComment("Plugin.commandAdd", "Add command messages");
         conf.setComment("Plugin.commandRemove", "Remove command messages");
         conf.setComment("Chat", "Chat detection messages");

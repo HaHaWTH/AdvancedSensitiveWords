@@ -279,8 +279,8 @@ public class PluginSettings implements SettingsHolder {
             "Whether to enable multi-line check"})
     public static final Property<Boolean> SIGN_MULTI_LINE_CHECK = newProperty("Sign.multiLineCheck", true);
 
-    @Comment({"是否启用告示牌上下文检测(Beta)(仅取消模式)",
-            "Whether to enable sign context checks?(Beta)(Cancel mode only)"})
+    @Comment({"是否启用告示牌上下文检测(Beta)(替换模式会替换所有参与匹配的告示牌，取消模式会清空它们)",
+            "Whether to enable sign context checks? (Beta) (Replace mode replaces every matched sign; cancel mode clears them)"})
     public static final Property<Boolean> SIGN_CONTEXT_CHECK = newProperty("Sign.contextCheck", false);
 
     @Comment({"最大检测上下文大小",

@@ -1,16 +1,25 @@
 package io.wdsj.asw.bukkit.listener
 
+import com.github.houbb.sensitive.word.api.IWordResult
+import com.github.houbb.sensitive.word.support.result.WordResultHandlers
+import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.sensitiveWordBs
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
+import io.wdsj.asw.bukkit.integration.packetevents.sign.SignFakeViewService
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.type.ModuleType
-import io.wdsj.asw.bukkit.integration.packetevents.sign.SignFakeViewService
 import io.wdsj.asw.bukkit.util.PlayerProcessingGuard
 import io.wdsj.asw.bukkit.util.Utils
 import io.wdsj.asw.bukkit.util.ViolationReporter
 import io.wdsj.asw.bukkit.util.context.SignContext
+import io.wdsj.asw.bukkit.util.context.SignContextEntry
+import io.wdsj.asw.bukkit.util.context.SignContextTarget
 import io.wdsj.asw.bukkit.util.message.MessageUtils
+import net.kyori.adventure.text.Component
+import org.bukkit.Bukkit
+import org.bukkit.Location
+import org.bukkit.block.Sign
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -38,7 +47,7 @@ class SignListener : Listener {
             ?: censorContext(event, player)
             ?: return
 
-        if (isCancelMode() && settingsManager.getProperty(PluginSettings.SIGN_FAKE_ON_CANCEL)) {
+        if (isCancelMode() && !violation.context && settingsManager.getProperty(PluginSettings.SIGN_FAKE_ON_CANCEL)) {
             SignFakeViewService.recordCancelledEdit(
                 event,
                 player,
@@ -117,15 +126,176 @@ class SignListener : Listener {
     private fun censorContext(event: SignChangeEvent, player: Player): SignViolation? {
         if (!settingsManager.getProperty(PluginSettings.SIGN_CONTEXT_CHECK)) return null
 
-        val originalAllMessage = event.lines().joinToString("") { MessageUtils.plainText(it) }
-        SignContext.addMessage(player, originalAllMessage)
-        val originalContext = SignContext.getHistory(player).joinToString("")
+        val entry = contextEntry(event)
+        SignContext.addMessage(player, entry)
+        val entries = SignContext.getHistory(player)
+        val originalContext = entries.joinToString("") { it.content }
         val censoredWords = sensitiveWordBs.findAll(originalContext)
         if (censoredWords.isEmpty()) return null
 
-        SignContext.pollPlayerContext(player)
-        event.isCancelled = true
-        return SignViolation(originalContext, censoredWords)
+        val resolution = resolveContext(entries, originalContext)
+        applyContextAction(event, resolution)
+        SignContext.clearPlayerContext(player)
+        return SignViolation(originalContext, censoredWords, true)
+    }
+
+    private fun contextEntry(event: SignChangeEvent): SignContextEntry {
+        val lines = event.lines().map { preprocess(MessageUtils.plainText(it)) }
+        return SignContextEntry(
+            content = lines.joinToString(""),
+            target = SignContextTarget(
+                event.block.world.uid,
+                event.block.x,
+                event.block.y,
+                event.block.z,
+                event.side,
+            ),
+            lineLengths = lines.map(String::length),
+        )
+    }
+
+    private fun applyContextAction(event: SignChangeEvent, resolution: ContextResolution) {
+        if (isCancelMode()) {
+            event.isCancelled = true
+            resolution.affectedEntries.forEach { scheduleSignMutation(it, null) }
+            return
+        }
+
+        val currentTarget = SignContextTarget(
+            event.block.world.uid,
+            event.block.x,
+            event.block.y,
+            event.block.z,
+            event.side,
+        )
+        resolution.affectedEntries.forEach { entry ->
+            val replacement = resolution.replacements.getValue(entry)
+            if (entry.target == currentTarget) {
+                applyEventReplacement(event, entry, replacement)
+            } else {
+                scheduleSignMutation(entry, replacement)
+            }
+        }
+    }
+
+    private fun applyEventReplacement(event: SignChangeEvent, entry: SignContextEntry, replacement: String) {
+        splitLines(entry.lineLengths, replacement).forEachIndexed { index, line ->
+            event.line(index, Component.text(line))
+        }
+    }
+
+    private fun scheduleSignMutation(entry: SignContextEntry, replacement: String?) {
+        val world = Bukkit.getWorld(entry.target.worldId) ?: return
+        val location = Location(world, entry.target.x.toDouble(), entry.target.y.toDouble(), entry.target.z.toDouble())
+        AdvancedSensitiveWords.getScheduler().runTaskLater(location, Runnable {
+            val sign = location.block.state as? Sign ?: return@Runnable
+            val signSide = sign.getSide(entry.target.side)
+            val currentContent = (0 until 4).joinToString("") { line ->
+                preprocess(MessageUtils.plainText(signSide.line(line)))
+            }
+            if (currentContent != entry.content) return@Runnable
+
+            val lines = replacement?.let { splitLines(entry.lineLengths, it) } ?: List(4) { "" }
+            lines.forEachIndexed { index, line -> signSide.line(index, Component.text(line)) }
+            sign.update(false, false)
+        }, 1L)
+    }
+
+    private fun resolveContext(entries: List<SignContextEntry>, context: String): ContextResolution {
+        val starts = IntArray(entries.size)
+        for (index in 1 until entries.size) {
+            starts[index] = starts[index - 1] + entries[index - 1].content.length
+        }
+
+        val replacements = Array(entries.size) { StringBuilder() }
+        val affectedEntries = linkedSetOf<SignContextEntry>()
+        val results = sensitiveWordBs.findAll(context, WordResultHandlers.raw())
+            .sortedWith(compareBy<IWordResult> { it.startIndex() }.thenByDescending { it.endIndex() })
+        var cursor = 0
+        for (result in results) {
+            val start = result.startIndex().coerceIn(0, context.length)
+            val end = result.endIndex().coerceIn(start, context.length)
+            if (start < cursor || start == end) continue
+
+            appendUnchangedContext(replacements, entries, starts, context, cursor, start)
+            replacements[entryIndexAt(starts, start)].append(replacementFor(context, result))
+            markAffectedEntries(affectedEntries, entries, starts, start, end)
+            cursor = end
+        }
+        appendUnchangedContext(replacements, entries, starts, context, cursor, context.length)
+
+        return ContextResolution(
+            entries.indices.associate { index -> entries[index] to replacements[index].toString() },
+            affectedEntries,
+        )
+    }
+
+    private fun appendUnchangedContext(
+        replacements: Array<StringBuilder>,
+        entries: List<SignContextEntry>,
+        starts: IntArray,
+        context: String,
+        start: Int,
+        end: Int,
+    ) {
+        var cursor = start
+        while (cursor < end) {
+            val entryIndex = entryIndexAt(starts, cursor)
+            val entryEnd = starts[entryIndex] + entries[entryIndex].content.length
+            val segmentEnd = minOf(end, entryEnd)
+            replacements[entryIndex].append(context, cursor, segmentEnd)
+            cursor = segmentEnd
+        }
+    }
+
+    private fun entryIndexAt(starts: IntArray, index: Int): Int {
+        for (entryIndex in starts.indices.reversed()) {
+            if (index >= starts[entryIndex]) return entryIndex
+        }
+        return 0
+    }
+
+    private fun markAffectedEntries(
+        affectedEntries: MutableSet<SignContextEntry>,
+        entries: List<SignContextEntry>,
+        starts: IntArray,
+        start: Int,
+        end: Int,
+    ) {
+        entries.forEachIndexed { index, entry ->
+            val entryStart = starts[index]
+            val entryEnd = entryStart + entry.content.length
+            if (start < entryEnd && end > entryStart) {
+                affectedEntries.add(entry)
+            }
+        }
+    }
+
+    private fun replacementFor(context: String, result: IWordResult): String {
+        val sensitiveWord = context.substring(result.startIndex(), result.endIndex())
+        settingsManager.getProperty(PluginSettings.DEFINED_REPLACEMENT).forEach { definition ->
+            val separator = definition.indexOf('|')
+            if (separator <= 0 || definition.indexOf('|', separator + 1) >= 0) return@forEach
+            if (definition.substring(0, separator) == sensitiveWord) {
+                return definition.substring(separator + 1)
+            }
+        }
+        return settingsManager.getProperty(PluginSettings.REPLACEMENT).repeat(result.endIndex() - result.startIndex())
+    }
+
+    private fun splitLines(lineLengths: List<Int>, content: String): List<String> {
+        val lines = MutableList(4) { "" }
+        var offset = 0
+        for (lineIndex in lines.indices) {
+            val expectedLength = lineLengths.getOrElse(lineIndex) { 0 }
+            val end = minOf(content.length, offset + expectedLength)
+            lines[lineIndex] = content.substring(offset, end)
+            offset = end
+        }
+        if (offset < content.length) {
+            lines[3] += content.substring(offset)
+        }
+        return lines
     }
 
     private fun preprocess(text: String): String {
@@ -146,5 +316,11 @@ class SignListener : Listener {
     private data class SignViolation(
         val content: String,
         val censoredWords: List<String>,
+        val context: Boolean = false,
+    )
+
+    private data class ContextResolution(
+        val replacements: Map<SignContextEntry, String>,
+        val affectedEntries: Set<SignContextEntry>,
     )
 }

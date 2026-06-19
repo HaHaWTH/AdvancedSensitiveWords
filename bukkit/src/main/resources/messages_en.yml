@@ -29,20 +29,6 @@ Plugin:
   messageOnCommandReload: '<green>AdvancedSensitiveWords has been reloaded.'
   #Violation reset message
   messageOnViolationReset: '<green><bold>All player violation counts have been reset.'
-  #Help command
-  messageOnCommandHelp: |-
-    <aqua>AdvancedSensitiveWords<reset>---<aqua> Help Menu
-    <gray>/asw reload: <green>Reload the word filter and plugin configuration
-    <gray>/asw reloadconfig: <green>Reload the plugin configuration only
-    <gray>/asw add \<word>: <green>Add a word to the blocklist
-    <gray>/asw remove \<word>: <green>Remove a word from the blocklist
-    <gray>/asw addallow \<word>: <green>Add a word to the allowlist
-    <gray>/asw removeallow \<word>: <green>Remove a word from the allowlist
-    <gray>/asw status: <green>Show plugin status
-    <gray>/asw test \<text>: <green>Test text against the word filter
-    <gray>/asw help: <green>Show this help menu
-    <gray>/asw info \<player>: <green>Show a player's violation count
-    <gray>/asw punish \<player> [method]: <green>Punish a player. Uses the configured punishment when no method is provided
   #Status command
   messageOnCommandStatus: |-
     <aqua>AdvancedSensitiveWords<reset>---<aqua> Plugin Status(%version%)(MC %mc_version%)
@@ -76,6 +62,9 @@ Plugin:
   commandRemove:
     #Remove success
     success: '<green>Removed from the word filter.'
+  commandWord:
+    #Dynamic word changes only apply until the next filter reload or server restart
+    runtimeOnly: '<yellow>Command changes are temporary and will be discarded when the filter reloads or the server restarts.'
   #No permission
   noPermission: '<red>You do not have permission to use that command.'
   #Unknown command

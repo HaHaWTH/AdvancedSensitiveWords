@@ -14,8 +14,7 @@ import com.github.houbb.sensitive.word.support.check.WordChecks;
 import com.github.houbb.sensitive.word.support.deny.WordDenys;
 import com.github.houbb.sensitive.word.support.resultcondition.WordResultConditions;
 import com.github.houbb.sensitive.word.support.tag.WordTags;
-import io.wdsj.asw.bukkit.command.ConstructCommandExecutor;
-import io.wdsj.asw.bukkit.command.ConstructTabCompleter;
+import io.wdsj.asw.bukkit.command.AswCommandRegistrar;
 import io.wdsj.asw.bukkit.core.condition.WordResultConditionNumMatch;
 import io.wdsj.asw.bukkit.integration.placeholder.ASWExpansion;
 import io.wdsj.asw.bukkit.manage.punish.PlayerAltController;
@@ -44,7 +43,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.slf4j.Logger;
 
 import java.io.File;
-import java.util.Objects;
 
 import static io.wdsj.asw.bukkit.util.LoggingUtils.purgeLog;
 import static io.wdsj.asw.bukkit.util.TimingUtils.resetStatistics;
@@ -55,6 +53,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     public static volatile boolean isInitialized = false;
     public static SensitiveWordBs sensitiveWordBs;
     private final File configFile = new File(getDataFolder(), "config.yml");
+    private File messagesFile;
     public static boolean isAuthMeAvailable;
     public static SettingsManager settingsManager;
     public static SettingsManager messagesManager;
@@ -64,6 +63,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     public static Logger LOGGER;
     private ListenerService listenerService;
     private CachingPermTool permCache;
+    private AswCommandRegistrar commandRegistrar;
     public static TaskScheduler getScheduler() {
         return scheduler;
     }
@@ -82,16 +82,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
                 .configurationData(PluginSettings.class)
                 .useDefaultMigrationService()
                 .create();
-        File msgFile = new File(getDataFolder(), "messages_" + settingsManager.getProperty(PluginSettings.PLUGIN_LANGUAGE) +
-                ".yml");
-        if (!msgFile.exists()) {
-            saveResource("messages_" + settingsManager.getProperty(PluginSettings.PLUGIN_LANGUAGE) + ".yml", false);
-        }
-        messagesManager = SettingsManagerBuilder
-                .withYamlFile(msgFile)
-                .configurationData(PluginMessages.class)
-                .useDefaultMigrationService()
-                .create();
+        loadMessagesConfiguration();
     }
 
     @Override
@@ -106,7 +97,8 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         if (settingsManager.getProperty(PluginSettings.PURGE_LOG_FILE)) purgeLog();
         listenerService = new ListenerService(this);
         listenerService.registerListeners();
-        registerCommands();
+        commandRegistrar = new AswCommandRegistrar(this);
+        commandRegistrar.register();
         setupMetrics();
         registerVelocityChannel();
         registerPlaceholderExpansion();
@@ -169,20 +161,33 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         SchedulingUtils.cancelTaskSafely(violationResetTask);
         if (permCache != null) permCache.disable();
         if (isInitialized) sensitiveWordBs.destroy();
-        Objects.requireNonNull(getCommand("advancedsensitivewords")).setExecutor(null);
-        Objects.requireNonNull(getCommand("asw")).setExecutor(null);
-        Objects.requireNonNull(getCommand("advancedsensitivewords")).setTabCompleter(null);
-        Objects.requireNonNull(getCommand("asw")).setTabCompleter(null);
+        commandRegistrar = null;
         LOGGER.info("AdvancedSensitiveWords is disabled.");
     }
 
-    private void registerCommands() {
-        ConstructCommandExecutor executor = new ConstructCommandExecutor();
-        ConstructTabCompleter tabCompleter = new ConstructTabCompleter();
-        Objects.requireNonNull(getCommand("advancedsensitivewords")).setExecutor(executor);
-        Objects.requireNonNull(getCommand("asw")).setExecutor(executor);
-        Objects.requireNonNull(getCommand("advancedsensitivewords")).setTabCompleter(tabCompleter);
-        Objects.requireNonNull(getCommand("asw")).setTabCompleter(tabCompleter);
+    public void reloadPluginConfiguration() {
+        settingsManager.reload();
+        loadMessagesConfiguration();
+    }
+
+    private void loadMessagesConfiguration() {
+        File targetMessagesFile = new File(getDataFolder(), "messages_"
+                + settingsManager.getProperty(PluginSettings.PLUGIN_LANGUAGE) + ".yml");
+        if (!targetMessagesFile.exists()) {
+            saveResource(targetMessagesFile.getName(), false);
+        }
+
+        if (messagesManager != null && targetMessagesFile.equals(messagesFile)) {
+            messagesManager.reload();
+            return;
+        }
+
+        messagesFile = targetMessagesFile;
+        messagesManager = SettingsManagerBuilder
+                .withYamlFile(messagesFile)
+                .configurationData(PluginMessages.class)
+                .useDefaultMigrationService()
+                .create();
     }
 
     private void setupMetrics() {

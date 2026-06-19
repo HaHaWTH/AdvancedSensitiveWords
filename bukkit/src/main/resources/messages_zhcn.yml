@@ -29,20 +29,6 @@ Plugin:
   messageOnCommandReload: '<green>AdvancedSensitiveWords 已重新加载.'
   # 违规次数重置消息
   messageOnViolationReset: '<aqua>ASW<gray>Notify >> <green>已重置所有玩家的违规次数!'
-  # 插件帮助菜单
-  messageOnCommandHelp: |-
-    <aqua>AdvancedSensitiveWords<reset>---<aqua>帮助菜单
-       <gray>/asw reload: <green>重新加载过滤词库和插件配置
-       <gray>/asw reloadconfig: <green>重新加载插件配置
-       <gray>/asw add \<敏感词>: <green>添加敏感词
-       <gray>/asw remove \<敏感词>: <green>移除敏感词
-       <gray>/asw addallow \<敏感词>: <green>添加敏感词到白名单
-       <gray>/asw removeallow \<敏感词>: <green>移除敏感词白名单
-       <gray>/asw status: <green>显示插件状态菜单
-       <gray>/asw test \<待测消息>: <green>运行敏感词测试
-       <gray>/asw help: <green>显示帮助信息
-       <gray>/asw info \<玩家名称>: <green>显示玩家违规次数
-       <gray>/asw punish \<玩家名称> [惩罚]: <green>手动惩罚玩家, 不填惩罚将使用配置文件内容
   # 插件状态菜单
   messageOnCommandStatus: |-
     <aqua>AdvancedSensitiveWords<reset>---<aqua>插件状态(%version%)(MC %mc_version%)
@@ -77,6 +63,9 @@ Plugin:
   commandRemove:
     # 敏感词移除成功
     success: '<green>敏感词移除成功.'
+  commandWord:
+    # 动态修改词库仅在重载过滤器或重启服务器前生效
+    runtimeOnly: '<yellow>通过命令修改的词库仅在本次运行期间生效，重载过滤器或重启服务器后将丢失。'
   # 没有权限执行该指令
   noPermission: '<red>你没有权限执行该指令.'
   # 未知命令
