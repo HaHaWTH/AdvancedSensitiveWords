@@ -1,6 +1,7 @@
 package io.wdsj.asw.bukkit.service;
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
+import io.wdsj.asw.bukkit.integration.trchat.TrChatCompat;
 import io.wdsj.asw.bukkit.listener.*;
 import io.wdsj.asw.bukkit.listener.paper.PaperChatListener;
 import io.wdsj.asw.bukkit.listener.paper.PaperFakeMessageExecutor;
@@ -20,6 +21,7 @@ public class ListenerService {
     }
 
     public void registerListeners() {
+        TrChatCompat.tryRegister(plugin);
         registerChatBookEventListeners();
         registerEventListener(ShadowListener.class);
         registerEventListener(AltsListener.class);

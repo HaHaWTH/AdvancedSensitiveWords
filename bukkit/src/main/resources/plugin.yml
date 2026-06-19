@@ -10,9 +10,9 @@ authors:
   - 0D00_0721
 description: ${pluginDescription}
 loadbefore:
-  - TrChat
   - YouCanUseThisToPrioritizeOtherChatPlugins
 softdepend:
+  - TrChat
   - floodgate
   - PlaceholderAPI
   - AuthMe

@@ -5,6 +5,7 @@ import io.wdsj.asw.bukkit.AdvancedSensitiveWords.messagesManager
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.sensitiveWordBs
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
 import io.wdsj.asw.bukkit.annotation.PaperEventHandler
+import io.wdsj.asw.bukkit.integration.trchat.TrChatCompat
 import io.wdsj.asw.bukkit.listener.abstraction.AbstractFakeMessageExecutor
 import io.wdsj.asw.bukkit.manage.punish.Punishment
 import io.wdsj.asw.bukkit.setting.PluginMessages
@@ -79,7 +80,7 @@ class PaperChatListener : Listener {
     ) {
         if (isCancelMode()) {
             if (settingsManager.getProperty(PluginSettings.CHAT_FAKE_MESSAGE_ON_CANCEL)) {
-                AbstractFakeMessageExecutor.selfIncrement(event.player)
+                markFakeMessage(event.player)
             } else {
                 event.isCancelled = true
             }
@@ -109,7 +110,7 @@ class PaperChatListener : Listener {
 
         ChatContext.pollPlayerContext(player)
         if (settingsManager.getProperty(PluginSettings.CHAT_FAKE_MESSAGE_ON_CANCEL)) {
-            AbstractFakeMessageExecutor.selfIncrement(player)
+            markFakeMessage(player)
         } else {
             event.isCancelled = true
         }
@@ -153,5 +154,11 @@ class PaperChatListener : Listener {
 
     private fun isCancelMode(): Boolean {
         return settingsManager.getProperty(PluginSettings.CHAT_METHOD).equals("cancel", ignoreCase = true)
+    }
+
+    private fun markFakeMessage(player: Player) {
+        if (!TrChatCompat.tryMarkFakeMessage(player)) {
+            AbstractFakeMessageExecutor.selfIncrement(player)
+        }
     }
 }
