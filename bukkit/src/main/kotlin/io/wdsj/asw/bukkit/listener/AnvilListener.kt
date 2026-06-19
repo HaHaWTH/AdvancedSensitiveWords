@@ -35,7 +35,8 @@ class AnvilListener : Listener {
         val itemMeta = outputItem.itemMeta ?: return
         if (!itemMeta.hasDisplayName()) return
 
-        val originalItemName = preprocess(itemMeta.displayName)
+        val originalNameComponent = itemMeta.displayName() ?: return
+        val originalItemName = preprocess(MessageUtils.plainText(originalNameComponent))
         val startTime = System.currentTimeMillis()
         val censoredWords = sensitiveWordBs.findAll(originalItemName)
         if (censoredWords.isEmpty()) return
@@ -43,7 +44,13 @@ class AnvilListener : Listener {
         if (isCancelMode()) {
             event.isCancelled = true
         } else {
-            itemMeta.setDisplayName(sensitiveWordBs.replace(originalItemName))
+            itemMeta.displayName(
+                MessageUtils.replaceLiteral(
+                    originalNameComponent,
+                    originalItemName,
+                    sensitiveWordBs.replace(originalItemName),
+                ),
+            )
             outputItem.setItemMeta(itemMeta)
         }
 

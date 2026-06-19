@@ -24,7 +24,7 @@ class SignListener : Listener {
     @EventHandler(priority = EventPriority.LOW)
     fun onSign(event: SignChangeEvent) {
         if (!settingsManager.getProperty(PluginSettings.ENABLE_SIGN_EDIT_CHECK)) return
-        if (event.lines.isEmpty()) return
+        if (event.lines().isEmpty()) return
 
         val player = event.player
         if (processingGuard.shouldSkipBasic(player)) return
@@ -58,8 +58,9 @@ class SignListener : Listener {
         val cleanLineIndexes = mutableListOf<Int>()
         val cleanLineContent = StringBuilder()
 
-        for (lineIndex in event.lines.indices) {
-            val originalMessage = preprocess(event.getLine(lineIndex) ?: continue)
+        for (lineIndex in event.lines().indices) {
+            val originalComponent = event.line(lineIndex) ?: continue
+            val originalMessage = preprocess(MessageUtils.plainText(originalComponent))
             val censoredWords = sensitiveWordBs.findAll(originalMessage)
 
             if (censoredWords.isEmpty()) {
@@ -75,7 +76,7 @@ class SignListener : Listener {
             if (isCancelMode()) {
                 event.isCancelled = true
             }
-            event.setLine(lineIndex, processedMessage)
+            event.line(lineIndex, MessageUtils.replaceLiteral(originalComponent, originalMessage, processedMessage))
         }
 
         return SignLineScan(violation, cleanLineIndexes, cleanLineContent.toString())
@@ -93,7 +94,7 @@ class SignListener : Listener {
         } else {
             val processedMessage = sensitiveWordBs.replace(lineScan.cleanLineContent)
             for (lineIndex in lineScan.cleanLineIndexes) {
-                event.setLine(lineIndex, processedMessage)
+                event.line(lineIndex, MessageUtils.plainTextComponent(processedMessage))
             }
         }
 
@@ -103,7 +104,7 @@ class SignListener : Listener {
     private fun censorContext(event: SignChangeEvent, player: Player): SignViolation? {
         if (!settingsManager.getProperty(PluginSettings.SIGN_CONTEXT_CHECK)) return null
 
-        val originalAllMessage = event.lines.joinToString("")
+        val originalAllMessage = event.lines().joinToString("") { MessageUtils.plainText(it) }
         SignContext.addMessage(player, originalAllMessage)
         val originalContext = SignContext.getHistory(player).joinToString("")
         val censoredWords = sensitiveWordBs.findAll(originalContext)

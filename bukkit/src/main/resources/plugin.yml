@@ -75,4 +75,3 @@ permissions:
   advancedsensitivewords.remove:
     description: Remove a sensitive word.
     default: op
-# Love you

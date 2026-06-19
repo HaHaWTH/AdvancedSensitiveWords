@@ -7,6 +7,7 @@ import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.util.LoggingUtils
 import io.wdsj.asw.bukkit.util.TimingUtils
 import io.wdsj.asw.bukkit.util.Utils
+import io.wdsj.asw.bukkit.util.message.MessageUtils
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -18,7 +19,8 @@ class BroadCastListener : Listener {
         if (!isInitialized) return
         if (!settingsManager.getProperty(PluginSettings.CHAT_BROADCAST_CHECK)) return
 
-        val originalMessage = preprocess(event.message)
+        val originalComponent = event.message()
+        val originalMessage = preprocess(MessageUtils.plainText(originalComponent))
         val startTime = System.currentTimeMillis()
         val censoredWords = sensitiveWordBs.findAll(originalMessage)
         if (censoredWords.isEmpty()) return
@@ -27,7 +29,13 @@ class BroadCastListener : Listener {
         if (isCancelMode()) {
             event.isCancelled = true
         } else {
-            event.message = sensitiveWordBs.replace(originalMessage)
+            event.message(
+                MessageUtils.replaceLiteral(
+                    originalComponent,
+                    originalMessage,
+                    sensitiveWordBs.replace(originalMessage),
+                ),
+            )
         }
 
         if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {

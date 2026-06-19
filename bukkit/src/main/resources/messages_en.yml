@@ -2,98 +2,98 @@
 #Chat related messages
 Chat:
   #Messages on Chat
-  messageOnChat: '&cDo not send sensitive words in the chat.'
+  messageOnChat: '<red>Your message contains blocked words.'
 #Sign check related messages
 Sign:
   #Messages on Sign editing
-  messageOnSign: '&cDo not write sensitive vocabulary in the sign.'
+  messageOnSign: '<red>Your sign text contains blocked words.'
 #Anvil check related messages
 Anvil:
   #Messages on Anvil renaming
-  messageOnAnvilRename: '&cDo not write sensitive words in the Anvil.'
+  messageOnAnvilRename: '<red>That item name contains blocked words.'
 #Book check related messages
 Book:
   #Messages on Book editing
-  messageOnBook: '&cDo not write sensitive words in the book.'
+  messageOnBook: '<red>Your book contains blocked words.'
 #Player name check related messages
 Name:
   #Messages on Player name
-  messageOnName: '&cYour username contains sensitive words, please change your username or contact an administrator.'
+  messageOnName: '<red>Your username contains blocked words. Please change it or contact an administrator.'
 #Player item check related messages
 Item:
   #Messages on Player item
-  messageOnItem: '&cThe item you held contains sensitive words.'
+  messageOnItem: '<red>This item contains blocked words.'
 #Plugin related messages
 Plugin:
   #Reload command
-  messageOnCommandReload: '&aAdvancedSensitiveWords has been reloaded.'
+  messageOnCommandReload: '<green>AdvancedSensitiveWords has been reloaded.'
   #Violation reset message
-  messageOnViolationReset: '&a&lViolation for all players has been reset.'
+  messageOnViolationReset: '<green><bold>All player violation counts have been reset.'
   #Help command
   messageOnCommandHelp: |-
-    &bAdvancedSensitiveWords&r---&b Help Menu
-    &7/asw reload: &areload filter dictionary and plugin configuration
-    &7/asw reloadconfig: &areload plugin config
-    &7/asw add <word>: &aAdd word to filter dictionary
-    &7/asw remove <word>: &aremove word from filter dictionary
-    &7/asw addallow <word>: &aAdd word to allow list
-    &7/asw removeallow <word>: &aremove word from allow list
-    &7/asw status: &ashow plug-in status menu
-    &7/asw test <text to be tested>: &arun sensitive word test
-    &7/asw help: &ashow help information
-    &7/asw info <player>: &ashow player information
-    &7/asw punish <player> [method]: &aPunish player with the specified method, if not specified, the config file will be used
+    <aqua>AdvancedSensitiveWords<reset>---<aqua> Help Menu
+    <gray>/asw reload: <green>Reload the word filter and plugin configuration
+    <gray>/asw reloadconfig: <green>Reload the plugin configuration only
+    <gray>/asw add \<word>: <green>Add a word to the blocklist
+    <gray>/asw remove \<word>: <green>Remove a word from the blocklist
+    <gray>/asw addallow \<word>: <green>Add a word to the allowlist
+    <gray>/asw removeallow \<word>: <green>Remove a word from the allowlist
+    <gray>/asw status: <green>Show plugin status
+    <gray>/asw test \<text>: <green>Test text against the word filter
+    <gray>/asw help: <green>Show this help menu
+    <gray>/asw info \<player>: <green>Show a player's violation count
+    <gray>/asw punish \<player> [method]: <green>Punish a player. Uses the configured punishment when no method is provided
   #Status command
   messageOnCommandStatus: |-
-    &bAdvancedSensitiveWords&r---&b Plugin Status(%version%)(MC %mc_version%)
-    &7 System Information: &b%platform% %bit% (Java %java_version% -- %java_vendor%)
-    &7 Initialization: %init%
-    &7 Current mode: %mode%
-    &7 Number of filtered messages: %num%
-    &7 Average time spent on nearly 20 processes: %ms%
+    <aqua>AdvancedSensitiveWords<reset>---<aqua> Plugin Status(%version%)(MC %mc_version%)
+    <gray> System: <aqua>%platform% %bit% (Java %java_version% -- %java_vendor%)
+    <gray> Initialized: %init%
+    <gray> Detection mode: %mode%
+    <gray> Filtered messages: %num%
+    <gray> Average processing time over the last 20 checks: %ms%
   #Test command
   commandTest:
     #Return message when the test contains sensitive words
     testResultTrue: |-
-      &7 Original message: &c%original_msg%
-      &7 After filtering message: &a%processed_msg%
-      &7 List of sensitive words: &b%censored_list%
+      <gray> Original message: <red>%original_msg%
+      <gray> Filtered message: <green>%processed_msg%
+      <gray> Matched words: <aqua>%censored_list%
     #No sensitive words in the test
-    testResultPass: '&aPending message has no sensitive words!'
+    testResultPass: '<green>No blocked words were found.'
     #Plugin has not been initialized
-    testNotInit: '&cPlugin has not been initialized'
+    testNotInit: '<red>The plugin has not finished initializing.'
   #Punish command
   commandPunish:
     #Parse error
-    parseError: '&cFailed to parse the punish method, please check the syntax.'
+    parseError: '<red>Could not parse the punishment method. Please check the syntax.'
     #Successfully punished
-    success: '&aSuccessfully punished player %player%!'
+    success: '<green>Punished %player%.'
   #Add command
   commandAdd:
     #Add success
-    success: '&aSuccessfully added to filter dictionary!'
+    success: '<green>Added to the word filter.'
   #Remove command
   commandRemove:
     #Remove success
-    success: '&aSuccessfully removed from filter dictionary!'
+    success: '<green>Removed from the word filter.'
   #No permission
-  noPermission: '&cYou do not have permission to execute the command.'
+  noPermission: '<red>You do not have permission to use that command.'
   #Unknown command
-  unknownCommand: '&cUnknown command, please use &7/asw help.'
+  unknownCommand: '<red>Unknown command. Use <gray>/asw help<red>.'
   #Not enough parameters
-  argsNotEnough: '&cInsufficient parameters, please use &7/asw help'
+  argsNotEnough: '<red>Missing arguments. Use <gray>/asw help<red>.'
   #No such player
-  noSuchPlayer: '&cSpecified player does not exist.'
+  noSuchPlayer: '<red>That player could not be found.'
   #Admin notice
-  noticeOperator: '&f[&bASW&7Notify&f]&7Player &c%player% &7failed anti-swear check(%type%)(Message: %message%)List: %censored_list%'
+  noticeOperator: '<white>[<aqua>ASW<gray>Notify<white>] <red>%player% <gray>triggered %type% filtering. Message: <white>%message% <gray>Matches: <aqua>%censored_list%'
   #Admin notice(Proxy)
-  noticeOperatorProxy: '&f[&bASW&7Notify&f]&7Player &c%player% (Server: %server_name%) &7failed anti-swear check(%type%)(Message: %message%)List: %censored_list%'
+  noticeOperatorProxy: '<white>[<aqua>ASW<gray>Notify<white>] <red>%player% <gray>on <aqua>%server_name% <gray>triggered %type% filtering. Message: <white>%message% <gray>Matches: <aqua>%censored_list%'
   #Update is available
-  updateAvailable: '&f[&bASW&7Notify&f]&7A new version is available, please update. (Latest: %latest_version%, Current: %current_version%)'
+  updateAvailable: '<white>[<aqua>ASW<gray>Notify<white>] <gray>A new version is available. Latest: <aqua>%latest_version%<gray>, current: <aqua>%current_version%'
   #Player info
   messageOnCommandInfo: |-
-    &bAdvancedSensitiveWords&r---&bPlayerInfo
-    &7 Name: &b%player%
-    &7 Violations: &b%violation%
+    <aqua>AdvancedSensitiveWords<reset>---<aqua> Player Info
+    <gray> Name: <aqua>%player%
+    <gray> Violations: <aqua>%violation%
   #Reset violations
-  messageOnCommandReset: '&aViolation for player %player% has been reset.'
+  messageOnCommandReset: '<green>Reset violation count for %player%.'

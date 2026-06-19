@@ -45,7 +45,7 @@ class PlayerItemListener : Listener {
         censorItemName(player, event.itemDrop.itemStack, event)
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onClick(event: InventoryClickEvent) {
         if (!settingsManager.getProperty(PluginSettings.ENABLE_PLAYER_ITEM_CHECK)) return
 
@@ -63,7 +63,8 @@ class PlayerItemListener : Listener {
         val meta = item.itemMeta ?: return
         if (!meta.hasDisplayName()) return
 
-        val originalName = preprocess(meta.displayName)
+        val originalNameComponent = meta.displayName() ?: return
+        val originalName = preprocess(MessageUtils.plainText(originalNameComponent))
         val startTime = System.currentTimeMillis()
         val censoredWords = sensitiveWordBs.findAll(originalName)
         if (censoredWords.isEmpty()) return
@@ -71,7 +72,13 @@ class PlayerItemListener : Listener {
         if (isCancelMode()) {
             event.isCancelled = true
         } else {
-            meta.setDisplayName(sensitiveWordBs.replace(originalName))
+            meta.displayName(
+                MessageUtils.replaceLiteral(
+                    originalNameComponent,
+                    originalName,
+                    sensitiveWordBs.replace(originalName),
+                ),
+            )
             item.setItemMeta(meta)
         }
 

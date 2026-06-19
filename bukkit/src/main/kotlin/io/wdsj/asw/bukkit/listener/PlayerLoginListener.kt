@@ -1,85 +1,71 @@
 package io.wdsj.asw.bukkit.listener
 
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords.getScheduler
+import io.papermc.paper.event.player.PlayerServerFullCheckEvent
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.sensitiveWordBs
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.settingsManager
+import io.wdsj.asw.bukkit.manage.notice.Notifier
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.type.ModuleType
-import io.wdsj.asw.bukkit.util.PlayerProcessingGuard
-import io.wdsj.asw.bukkit.util.PlayerUtils
-import io.wdsj.asw.bukkit.util.ViolationReporter
+import io.wdsj.asw.bukkit.util.LoggingUtils
+import io.wdsj.asw.bukkit.util.TimingUtils
+import io.wdsj.asw.bukkit.util.Utils
 import io.wdsj.asw.bukkit.util.message.MessageUtils
 import org.bukkit.Bukkit
-import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
-import org.bukkit.event.player.PlayerLoginEvent
 import org.geysermc.floodgate.api.FloodgateApi
 
 class PlayerLoginListener : Listener {
-    private val processingGuard = PlayerProcessingGuard()
-    private val violationReporter = ViolationReporter()
-
     @EventHandler(priority = EventPriority.LOWEST)
-    fun onLogin(event: PlayerLoginEvent) {
+    fun onServerFullCheck(event: PlayerServerFullCheckEvent) {
         if (!settingsManager.getProperty(PluginSettings.ENABLE_PLAYER_NAME_CHECK)) return
+        if (shouldIgnoreProfile(event)) return
 
-        val player = event.player
-        if (processingGuard.shouldSkipBasic(player)) return
-        if (shouldIgnorePlayer(player)) return
-
-        val playerName = player.name
+        val playerName = event.playerProfile.name ?: return
         val startTime = System.currentTimeMillis()
         val censoredWords = sensitiveWordBs.findAll(playerName)
         if (censoredWords.isEmpty()) return
 
-        applyNameAction(event, player, playerName)
-
-        violationReporter.reportWithCustomLogPrefix(
-            player = player,
-            moduleType = ModuleType.NAME,
-            content = playerName,
-            censoredWords = censoredWords,
-            logPrefix = "${player.name}(IP: ${event.address.hostAddress})(Name)",
-            startTime = startTime,
-            punish = settingsManager.getProperty(PluginSettings.NAME_PUNISH),
-        )
+        denyLogin(event)
+        reportViolation(playerName, censoredWords, startTime)
     }
 
-    private fun shouldIgnorePlayer(player: Player): Boolean {
-        if (PlayerUtils.isNpc(player) && settingsManager.getProperty(PluginSettings.NAME_IGNORE_NPC)) return true
+    private fun shouldIgnoreProfile(event: PlayerServerFullCheckEvent): Boolean {
         if (!settingsManager.getProperty(PluginSettings.NAME_IGNORE_BEDROCK)) return false
         if (Bukkit.getPluginManager().getPlugin("floodgate") == null) return false
 
-        return FloodgateApi.getInstance().isFloodgatePlayer(player.uniqueId)
+        val profileId = event.playerProfile.id ?: return false
+        return FloodgateApi.getInstance().isFloodgatePlayer(profileId)
     }
 
-    private fun applyNameAction(event: PlayerLoginEvent, player: Player, playerName: String) {
-        if (isReplaceMode()) {
-            val processedPlayerName = sensitiveWordBs.replace(playerName)
-            player.setDisplayName(processedPlayerName)
-            player.setPlayerListName(processedPlayerName)
-            scheduleNameWarning(player)
-            return
+    private fun denyLogin(event: PlayerServerFullCheckEvent) {
+        val kickMessage = if (settingsManager.getProperty(PluginSettings.NAME_SEND_MESSAGE)) {
+            MessageUtils.retrieveComponent(PluginMessages.MESSAGE_ON_NAME)
+        } else {
+            event.kickMessage()
+        }
+        event.deny(kickMessage)
+    }
+
+    private fun reportViolation(playerName: String, censoredWords: List<String>, startTime: Long) {
+        Utils.messagesFilteredNum.getAndIncrement()
+
+        if (settingsManager.getProperty(PluginSettings.LOG_VIOLATION)) {
+            LoggingUtils.logViolation("$playerName(IP: Unknown)(Name)", playerName + censoredWords)
         }
 
-        event.disallow(
-            PlayerLoginEvent.Result.KICK_OTHER,
-            MessageUtils.retrieveMessage(PluginMessages.MESSAGE_ON_NAME),
-        )
-    }
+        TimingUtils.addProcessStatistic(System.currentTimeMillis(), startTime)
 
-    private fun scheduleNameWarning(player: Player) {
-        if (!settingsManager.getProperty(PluginSettings.NAME_SEND_MESSAGE)) return
-
-        getScheduler().runTaskLater({
-            MessageUtils.sendMessage(player, PluginMessages.MESSAGE_ON_NAME)
-        }, 20L * 3L)
-    }
-
-    private fun isReplaceMode(): Boolean {
-        return settingsManager.getProperty(PluginSettings.NAME_METHOD).equals("replace", ignoreCase = true)
+        if (settingsManager.getProperty(PluginSettings.NOTICE_OPERATOR)) {
+            val message = MessageUtils.retrieveMessage(PluginMessages.ADMIN_REMINDER)
+                .replace("%player%", playerName)
+                .replace("%type%", ModuleType.NAME.toString())
+                .replace("%message%", playerName)
+                .replace("%censored_list%", censoredWords.toString())
+                .replace("%violation%", "N/A")
+            Notifier.normalNotice(message)
+        }
     }
 }

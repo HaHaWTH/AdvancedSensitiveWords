@@ -302,23 +302,13 @@ public class PluginSettings implements SettingsHolder {
     @Comment({"是否启用惩罚",
             "Whether to enable punishment"})
     public static final Property<Boolean> ANVIL_PUNISH = newProperty("Anvil.punish", true);
-    @Comment({"替换还是禁止登录(replace/cancel)",
-            "Replace or forbid login (replace/cancel)"})
-    public static final Property<String> NAME_METHOD = newProperty("Name.method", "cancel");
-
     @Comment({"存在敏感词时是否发送消息/踢出消息",
             "Whether to send a message/kick message when sensitive words are found"})
     public static final Property<Boolean> NAME_SEND_MESSAGE = newProperty("Name.sendMessage", true);
-    @Comment({"是否启用惩罚",
-            "Whether to enable punishment"})
-    public static final Property<Boolean> NAME_PUNISH = newProperty("Name.punish", true);
     @Comment({"是否跳过对基岩版玩家名称的检测(需要floodgate)",
             "Whether to skip checking player names for Bedrock Edition players (requires floodgate)"})
     public static final Property<Boolean> NAME_IGNORE_BEDROCK = newProperty("Name.ignoreBedrock", false);
 
-    @Comment({"是否启用NPC兼容(支持Leaves NPC)",
-            "Whether to enable NPC compatibility (supports Leaves NPC)"})
-    public static final Property<Boolean> NAME_IGNORE_NPC = newProperty("Name.ignoreNPC", true);
     @Comment({"替换还是取消(replace/cancel)",
             "Replace or cancel (replace/cancel)"})
     public static final Property<String> ITEM_METHOD = newProperty("Item.method", "replace");

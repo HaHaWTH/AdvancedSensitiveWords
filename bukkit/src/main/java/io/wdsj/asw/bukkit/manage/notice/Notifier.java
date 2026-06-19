@@ -7,7 +7,6 @@ import io.wdsj.asw.bukkit.setting.PluginMessages;
 import io.wdsj.asw.bukkit.type.ModuleType;
 import io.wdsj.asw.bukkit.util.message.MessageUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
@@ -23,7 +22,7 @@ public class Notifier {
      */
     public static void notice(Player violatedPlayer, ModuleType moduleType, String originalMessage, List<String> censoredList) {
         Collection<? extends Player> players = Bukkit.getOnlinePlayers();
-        String message = MessageUtils.retrieveMessage(PluginMessages.ADMIN_REMINDER).replace("%player%", violatedPlayer.getName()).replace("%type%", moduleType.toString()).replace("%message%", ChatColor.stripColor(originalMessage)).replace("%censored_list%", censoredList.toString()).replace("%violation%", String.valueOf(ViolationCounter.INSTANCE.getViolationCount(violatedPlayer)));
+        String message = MessageUtils.retrieveMessage(PluginMessages.ADMIN_REMINDER).replace("%player%", violatedPlayer.getName()).replace("%type%", moduleType.toString()).replace("%message%", stripFormatting(originalMessage)).replace("%censored_list%", censoredList.toString()).replace("%violation%", String.valueOf(ViolationCounter.INSTANCE.getViolationCount(violatedPlayer)));
         for (Player player : players) {
             if (CachingPermTool.hasPermission(PermissionsEnum.NOTICE, player)) {
                 MessageUtils.sendMessage(player, message);
@@ -49,11 +48,15 @@ public class Notifier {
      */
     public static void noticeFromProxy(String violatedPlayer, String serverName, String eventType, String violationCount, String originalMessage, String censoredList) {
         Collection<? extends Player> players = Bukkit.getOnlinePlayers();
-        String message = MessageUtils.retrieveMessage(PluginMessages.ADMIN_REMINDER_PROXY).replace("%player%", violatedPlayer).replace("%type%", eventType).replace("%message%", ChatColor.stripColor(originalMessage)).replace("%censored_list%", censoredList).replace("%server_name%", serverName).replace("%violation%", violationCount);
+        String message = MessageUtils.retrieveMessage(PluginMessages.ADMIN_REMINDER_PROXY).replace("%player%", violatedPlayer).replace("%type%", eventType).replace("%message%", stripFormatting(originalMessage)).replace("%censored_list%", censoredList).replace("%server_name%", serverName).replace("%violation%", violationCount);
         for (Player player : players) {
             if (CachingPermTool.hasPermission(PermissionsEnum.NOTICE, player)) {
-                player.sendMessage(message);
+                MessageUtils.sendMessage(player, message);
             }
         }
+    }
+
+    private static String stripFormatting(String message) {
+        return MessageUtils.plainTextFromLegacy(message);
     }
 }
