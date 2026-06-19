@@ -1,4 +1,4 @@
-package io.wdsj.asw.bukkit.ai;
+package io.wdsj.asw.common.utils;
 
 import java.text.Normalizer;
 import java.util.HashMap;

@@ -91,12 +91,12 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
         if (rawCodePoints > settings.maximumMessageCodePoints()) {
             return;
         }
-        int visibleCodePoints = ChatEntropy.visibleCodePointCount(message);
+        int visibleCodePoints = io.wdsj.asw.common.utils.ChatEntropy.visibleCodePointCount(message);
         if (visibleCodePoints < settings.minimumMessageCodePoints()) {
             return;
         }
 
-        double entropy = ChatEntropy.shannonEntropyBits(message);
+        double entropy = io.wdsj.asw.common.utils.ChatEntropy.shannonEntropyBits(message);
         if (entropy < settings.minimumEntropyBits()) {
             return;
         }
