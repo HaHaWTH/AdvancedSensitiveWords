@@ -1,4 +1,4 @@
-package io.wdsj.asw.bukkit.integration.sign;
+package io.wdsj.asw.bukkit.integration.packetevents.sign;
 
 import org.bukkit.Location;
 import org.bukkit.World;

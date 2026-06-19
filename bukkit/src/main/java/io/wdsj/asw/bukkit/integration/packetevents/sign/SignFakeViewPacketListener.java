@@ -1,4 +1,4 @@
-package io.wdsj.asw.bukkit.integration.sign;
+package io.wdsj.asw.bukkit.integration.packetevents.sign;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerAbstract;

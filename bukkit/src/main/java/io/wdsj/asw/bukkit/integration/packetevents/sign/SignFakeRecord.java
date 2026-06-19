@@ -1,4 +1,4 @@
-package io.wdsj.asw.bukkit.integration.sign;
+package io.wdsj.asw.bukkit.integration.packetevents.sign;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.block.sign.Side;

@@ -1,7 +1,7 @@
 package io.wdsj.asw.bukkit.service;
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
-import io.wdsj.asw.bukkit.integration.sign.SignFakeViewCompat;
+import io.wdsj.asw.bukkit.integration.packetevents.sign.SignFakeViewCompat;
 import io.wdsj.asw.bukkit.integration.trchat.TrChatCompat;
 import io.wdsj.asw.bukkit.listener.*;
 import io.wdsj.asw.bukkit.listener.paper.PaperChatListener;

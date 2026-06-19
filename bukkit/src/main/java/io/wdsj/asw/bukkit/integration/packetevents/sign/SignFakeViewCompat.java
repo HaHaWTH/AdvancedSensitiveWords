@@ -1,4 +1,4 @@
-package io.wdsj.asw.bukkit.integration.sign;
+package io.wdsj.asw.bukkit.integration.packetevents.sign;
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
