@@ -123,7 +123,7 @@ public final class SignFakeViewService {
             if (!key.worldId().equals(worldId)) {
                 continue;
             }
-            PENDING_REFRESHES.add(new RefreshRequest(viewerId, key));
+            PENDING_REFRESHES.add(new RefreshRequest(viewerId, world, key));
         }
         scheduleDrain();
     }
@@ -365,11 +365,9 @@ public final class SignFakeViewService {
             return;
         }
 
-        World world = Bukkit.getWorld(group.worldId());
-        if (world == null) {
-            return;
-        }
-        BlockKey anchor = requests.getFirst().blockKey();
+        RefreshRequest firstRequest = requests.getFirst();
+        World world = firstRequest.world();
+        BlockKey anchor = firstRequest.blockKey();
         Location anchorLocation = new Location(world, anchor.x(), anchor.y(), anchor.z());
         // we are processing single chunk, use first loc is fine
         AdvancedSensitiveWords.getScheduler().runTask(anchorLocation, () -> scanAndSend(group, world, requests));
@@ -435,7 +433,7 @@ public final class SignFakeViewService {
         return new NamespacedKey(AdvancedSensitiveWords.getInstance(), value);
     }
 
-    private record RefreshRequest(UUID viewerId, BlockKey blockKey) {
+    private record RefreshRequest(UUID viewerId, World world, BlockKey blockKey) {
     }
 
     private record RefreshGroup(UUID viewerId, UUID worldId, int chunkX, int chunkZ) {

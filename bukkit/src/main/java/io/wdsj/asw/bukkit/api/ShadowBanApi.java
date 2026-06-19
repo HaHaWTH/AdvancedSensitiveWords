@@ -17,6 +17,7 @@ public final class ShadowBanApi {
 
     /**
      * Shadowban a player for a duration.
+     * All messages sent by the player will not be sent to other players.
      * Non-positive durations remove the current shadowban.
      *
      * @param player player to shadowban
@@ -28,6 +29,7 @@ public final class ShadowBanApi {
 
     /**
      * Shadowban a player by uuid for a duration.
+     * All messages sent by the player will not be sent to other players.
      * Non-positive durations remove the current shadowban.
      *
      * @param uuid player uuid
