@@ -4,7 +4,6 @@ import java.text.Normalizer;
 import java.util.HashMap;
 import java.util.Map;
 
-/** Calculates the request-gating entropy for a single chat message. */
 public final class ChatEntropy {
     private ChatEntropy() {
     }
