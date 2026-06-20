@@ -50,7 +50,7 @@ dependencies {
     implementation("com.github.Anon8281:UniversalScheduler:0.1.7")
     implementation("org.bstats:bstats-bukkit:3.1.0")
     implementation("de.exlll:configlib-yaml:4.8.1")
-    runtimeOnly("org.snakeyaml:snakeyaml-engine:2.7")
+    runtimeOnly("org.snakeyaml:snakeyaml-engine:3.0.1")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
     testImplementation("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
