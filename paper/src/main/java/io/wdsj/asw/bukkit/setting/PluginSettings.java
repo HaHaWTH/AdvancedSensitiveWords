@@ -81,8 +81,7 @@ public final class PluginSettings {
     public static final SettingKey<Integer> AI_MINIMUM_MESSAGE_CODE_POINTS = key(settings -> settings.ai.minimumMessageCodePoints);
     public static final SettingKey<Integer> AI_MAXIMUM_MESSAGE_CODE_POINTS = key(settings -> settings.ai.maximumMessageCodePoints);
     public static final SettingKey<Double> AI_MINIMUM_ENTROPY_BITS = key(settings -> settings.ai.minimumEntropyBits);
-    public static final SettingKey<Double> AI_MINIMUM_CONFIDENCE = key(settings -> settings.ai.minimumConfidence);
-    public static final SettingKey<List<String>> AI_ENFORCED_CATEGORIES = key(settings -> settings.ai.enforcedCategories);
+    public static final SettingKey<java.util.Map<String, SettingsConfiguration.Ai.CategoryPolicy>> AI_CATEGORY_POLICY = key(settings -> settings.ai.categoryPolicy);
     public static final SettingKey<List<String>> AI_PUNISHMENT = key(settings -> settings.ai.punishment);
     public static final SettingKey<String> AI_SERVER_CONTEXT = key(settings -> settings.ai.serverContext);
 

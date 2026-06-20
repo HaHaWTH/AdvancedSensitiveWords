@@ -15,11 +15,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,12 +30,14 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Function;
 import java.nio.charset.StandardCharsets;
+import io.wdsj.asw.bukkit.setting.SettingsConfiguration;
 
 /** Coordinates asynchronous, single-message LLM moderation requests. */
 public final class LlmChatDetectionService implements Listener, AutoCloseable {
     private final PaperConfigurationService configuration;
     private final ViolationReporter violationReporter;
     private final Function<LlmSettings, LlmChatClient> clientFactory;
+    private final LlmHistoryLogger historyLogger;
     private final AtomicLong generation = new AtomicLong();
     private final ConcurrentMap<UUID, Long> inFlightGenerations = new ConcurrentHashMap<>();
     private final ConcurrentMap<UUID, CooldownReservation> cooldowns = new ConcurrentHashMap<>();
@@ -51,17 +51,20 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
     private volatile boolean closed;
 
     public LlmChatDetectionService(PaperConfigurationService configuration) {
-        this(configuration, new ViolationReporter(configuration), OpenAiLlmChatClient::new);
+        this(configuration, new ViolationReporter(configuration), OpenAiLlmChatClient::new,
+                new LlmHistoryLogger(configuration.dataDirectory()));
     }
 
     LlmChatDetectionService(
             PaperConfigurationService configuration,
             ViolationReporter violationReporter,
-            Function<LlmSettings, LlmChatClient> clientFactory
+            Function<LlmSettings, LlmChatClient> clientFactory,
+            LlmHistoryLogger historyLogger
     ) {
         this.configuration = Objects.requireNonNull(configuration, "configuration");
         this.violationReporter = Objects.requireNonNull(violationReporter, "violationReporter");
         this.clientFactory = Objects.requireNonNull(clientFactory, "clientFactory");
+        this.historyLogger = Objects.requireNonNull(historyLogger, "historyLogger");
         reload();
     }
 
@@ -151,7 +154,7 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
                 executor == null ? 0 : executor.getQueue().size(),
                 executor == null ? 0 : executor.getPoolSize(),
                 configuration.get(PluginSettings.AI_MODEL_NAME),
-                configuration.get(PluginSettings.AI_MINIMUM_CONFIDENCE)
+                Map.copyOf(toCategoryPolicies(configuration.get(PluginSettings.AI_CATEGORY_POLICY)))
         );
     }
 
@@ -169,6 +172,7 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
         if (previous != null) {
             previous.executor().shutdownNow();
         }
+        historyLogger.close();
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -243,12 +247,18 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
     private void process(RuntimeState state, Candidate candidate) {
         try {
             String userMessage = LlmModerationPrompt.createUserMessage(candidate.message(), state.settings().serverContext());
+            historyLogger.logRequest(
+                    candidate.requestId(),
+                    candidate.playerId(),
+                    candidate.playerName(),
+                    state.settings().modelName(),
+                    candidate.entropy(),
+                    userMessage
+            );
             String rawResponse = state.client().classify(LlmModerationPrompt.SYSTEM_PROMPT, userMessage);
-            if (!isCurrent(state)) {
-                return;
-            }
-            handleResponse(state, candidate, rawResponse == null ? "" : rawResponse);
+            handleResponse(state, candidate, rawResponse == null ? "" : rawResponse, !isCurrent(state));
         } catch (RuntimeException exception) {
+            historyLogger.logFailure(candidate.requestId(), exception.getClass());
             if (isCurrent(state)) {
                 failedRequests.increment();
                 AdvancedSensitiveWords.LOGGER.debug("LLM moderation request failed for player {}.", candidate.playerId());
@@ -258,7 +268,7 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
         }
     }
 
-    private void handleResponse(RuntimeState state, Candidate candidate, String rawResponse) {
+    private void handleResponse(RuntimeState state, Candidate candidate, String rawResponse, boolean stale) {
         if (state.settings().logResponses()) {
             AdvancedSensitiveWords.LOGGER.info(
                     "LLM moderation response [requestId={}, player={}]: {}",
@@ -268,7 +278,7 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
             );
         }
         Optional<LlmChatModerationResult> parsed = LlmModerationResponseParser.parse(rawResponse);
-        if (parsed.isEmpty()) {
+        if (parsed.isEmpty() && !stale) {
             invalidResponses.increment();
         }
 
@@ -285,11 +295,20 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
                 parsed.orElse(null)
         );
 
-        if (!isCurrent(state) || !event.callEvent()) {
+        if (stale || !isCurrent(state)) {
+            historyLogger.logResponse(candidate.requestId(), rawResponse, parsed.orElse(null), null,
+                    false, null, false, false, true);
             return;
         }
+
+        event.callEvent();
         LlmChatModerationResult result = event.getResult();
-        if (result == null || !shouldEnforce(state.settings(), result)) {
+        LlmCategoryPolicy policy = result == null ? null : state.settings().categoryPolicy().get(result.category());
+        boolean eligibleForNotification = !event.isCancelled() && policy != null && policy.shouldNotify(result);
+        boolean eligibleForEnforcement = !event.isCancelled() && policy != null && policy.shouldPunish(result);
+        historyLogger.logResponse(candidate.requestId(), rawResponse, parsed.orElse(null), result,
+                event.isCancelled(), policy, eligibleForNotification, eligibleForEnforcement, false);
+        if (!eligibleForNotification && !eligibleForEnforcement) {
             return;
         }
 
@@ -297,14 +316,29 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
             if (!isCurrent(state)) {
                 return;
             }
-            violationReporter.reportLlm(player, candidate.message(), result);
-            enforcedResponses.increment();
+            if (eligibleForEnforcement) {
+                violationReporter.reportLlm(player, candidate.message(), result, eligibleForNotification);
+                enforcedResponses.increment();
+                return;
+            }
+            violationReporter.reportLlmObservation(player, candidate.message(), result);
         });
     }
 
-    private boolean shouldEnforce(LlmSettings settings, LlmChatModerationResult result) {
-        return result.confidence() >= settings.minimumConfidence()
-                && settings.enforcedCategories().contains(result.category());
+    static boolean isEligibleForNotification(
+            Map<LlmModerationCategory, LlmCategoryPolicy> categoryPolicy,
+            LlmChatModerationResult result
+    ) {
+        LlmCategoryPolicy policy = categoryPolicy.get(result.category());
+        return policy != null && policy.shouldNotify(result);
+    }
+
+    static boolean isEligibleForPunishment(
+            Map<LlmModerationCategory, LlmCategoryPolicy> categoryPolicy,
+            LlmChatModerationResult result
+    ) {
+        LlmCategoryPolicy policy = categoryPolicy.get(result.category());
+        return policy != null && policy.shouldPunish(result);
     }
 
     private boolean isCurrent(RuntimeState state) {
@@ -337,6 +371,17 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
         return new RawResponse(limited.toString(), true);
     }
 
+    private static Map<LlmModerationCategory, LlmCategoryPolicy> toCategoryPolicies(
+            Map<String, SettingsConfiguration.Ai.CategoryPolicy> configuredPolicies
+    ) {
+        Map<LlmModerationCategory, LlmCategoryPolicy> policies = new java.util.EnumMap<>(LlmModerationCategory.class);
+        for (LlmModerationCategory category : LlmModerationCategory.values()) {
+            SettingsConfiguration.Ai.CategoryPolicy policy = configuredPolicies.get(category.configurationKey());
+            policies.put(category, new LlmCategoryPolicy(policy.notifyConfidence, policy.punishConfidence));
+        }
+        return policies;
+    }
+
     record LlmSettings(
             String baseUrl,
             String apiKey,
@@ -351,16 +396,10 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
             int minimumMessageCodePoints,
             int maximumMessageCodePoints,
             double minimumEntropyBits,
-            double minimumConfidence,
-            Set<LlmModerationCategory> enforcedCategories,
+            Map<LlmModerationCategory, LlmCategoryPolicy> categoryPolicy,
             String serverContext
     ) {
         static LlmSettings from(PaperConfigurationService configuration) {
-            Set<LlmModerationCategory> categories = new LinkedHashSet<>();
-            List<String> configuredCategories = configuration.get(PluginSettings.AI_ENFORCED_CATEGORIES);
-            for (String category : configuredCategories) {
-                categories.add(LlmModerationCategory.fromWireName(category));
-            }
             return new LlmSettings(
                     configuration.get(PluginSettings.AI_BASE_URL).trim(),
                     resolveApiKey(configuration),
@@ -375,8 +414,7 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
                     configuration.get(PluginSettings.AI_MINIMUM_MESSAGE_CODE_POINTS),
                     configuration.get(PluginSettings.AI_MAXIMUM_MESSAGE_CODE_POINTS),
                     configuration.get(PluginSettings.AI_MINIMUM_ENTROPY_BITS),
-                    configuration.get(PluginSettings.AI_MINIMUM_CONFIDENCE),
-                    Set.copyOf(categories),
+                    Map.copyOf(toCategoryPolicies(configuration.get(PluginSettings.AI_CATEGORY_POLICY))),
                     Objects.requireNonNullElse(configuration.get(PluginSettings.AI_SERVER_CONTEXT), "")
             );
         }
@@ -408,7 +446,7 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
             int queuedRequests,
             int poolSize,
             String modelName,
-            double minimumConfidence
+            Map<LlmModerationCategory, LlmCategoryPolicy> categoryPolicy
     ) {
     }
 

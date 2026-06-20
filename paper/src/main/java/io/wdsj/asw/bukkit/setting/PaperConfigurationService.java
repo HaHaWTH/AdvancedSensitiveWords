@@ -9,9 +9,11 @@ import org.slf4j.Logger;
 
 import java.net.URI;
 import java.nio.file.Path;
-import java.util.HashSet;
+import java.util.Arrays;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Owns the Paper configuration snapshots and their ConfigLib stores.
@@ -52,6 +54,10 @@ public final class PaperConfigurationService {
         load();
     }
 
+    public Path dataDirectory() {
+        return dataDirectory;
+    }
+
     public <T> T get(SettingKey<T> key) {
         SettingsConfiguration snapshot = settings;
         if (snapshot == null) {
@@ -90,6 +96,8 @@ public final class PaperConfigurationService {
             case PLAYER_NOT_FOUND -> snapshot.plugin.noSuchPlayer;
             case ADMIN_REMINDER -> snapshot.plugin.noticeOperator;
             case ADMIN_REMINDER_PROXY -> snapshot.plugin.noticeOperatorProxy;
+            case AI_OBSERVATION -> snapshot.plugin.aiObservation;
+            case AI_OBSERVATION_PROXY -> snapshot.plugin.aiObservationProxy;
             case UPDATE_AVAILABLE -> snapshot.plugin.updateAvailable;
             case MESSAGE_ON_PLAYER_INFO -> snapshot.plugin.messageOnCommandInfo;
             case MESSAGE_ON_COMMAND_RESET -> snapshot.plugin.messageOnCommandReset;
@@ -110,7 +118,7 @@ public final class PaperConfigurationService {
         return store.update(messageFile);
     }
 
-    private void validateSettings(SettingsConfiguration settings) {
+    static void validateSettings(SettingsConfiguration settings) {
         SettingsConfiguration.Ai ai = settings.ai;
         if (ai == null) {
             throw new IllegalArgumentException("ai settings cannot be null");
@@ -136,10 +144,7 @@ public final class PaperConfigurationService {
         if (!Double.isFinite(ai.minimumEntropyBits) || ai.minimumEntropyBits < 0.0D) {
             throw new IllegalArgumentException("ai.minimum-entropy-bits must be a finite non-negative number");
         }
-        if (!Double.isFinite(ai.minimumConfidence) || ai.minimumConfidence < 0.0D || ai.minimumConfidence > 1.0D) {
-            throw new IllegalArgumentException("ai.minimum-confidence must be between 0.0 and 1.0");
-        }
-        validateEnforcedCategories(ai.enforcedCategories);
+        validateCategoryPolicy(ai.categoryPolicy);
 
         if (!ai.enabled) {
             return;
@@ -152,19 +157,35 @@ public final class PaperConfigurationService {
         }
     }
 
-    private void validateEnforcedCategories(java.util.List<String> categories) {
-        if (categories == null) {
-            throw new IllegalArgumentException("ai.enforced-categories cannot be null");
+    private static void validateCategoryPolicy(Map<String, SettingsConfiguration.Ai.CategoryPolicy> policies) {
+        if (policies == null) {
+            throw new IllegalArgumentException("ai.category-policy cannot be null");
         }
-        Set<LlmModerationCategory> parsed = new HashSet<>();
-        for (String categoryName : categories) {
-            LlmModerationCategory category = LlmModerationCategory.fromWireName(requireText(categoryName, "ai.enforced-categories entry"));
-            if (!category.isAutomaticallyEnforceable()) {
-                throw new IllegalArgumentException("ai.enforced-categories cannot include " + category.wireName());
+
+        Set<String> expectedKeys = Arrays.stream(LlmModerationCategory.values())
+                .map(LlmModerationCategory::configurationKey)
+                .collect(Collectors.toUnmodifiableSet());
+        if (!policies.keySet().equals(expectedKeys)) {
+            throw new IllegalArgumentException("ai.category-policy must configure every LLM category exactly once");
+        }
+
+        for (LlmModerationCategory category : LlmModerationCategory.values()) {
+            SettingsConfiguration.Ai.CategoryPolicy policy = policies.get(category.configurationKey());
+            if (policy == null) {
+                throw new IllegalArgumentException("Missing ai.category-policy value for " + category.configurationKey());
             }
-            if (!parsed.add(category)) {
-                throw new IllegalArgumentException("ai.enforced-categories contains duplicates");
+            validateCategoryThreshold(policy.notifyConfidence, category, "notify-confidence");
+            validateCategoryThreshold(policy.punishConfidence, category, "punish-confidence");
+            if (category == LlmModerationCategory.CLEAN
+                    && (policy.notifyConfidence != -1.0D || policy.punishConfidence != -1.0D)) {
+                throw new IllegalArgumentException("ai.category-policy.clean must keep both thresholds at -1.0");
             }
+        }
+    }
+
+    private static void validateCategoryThreshold(double threshold, LlmModerationCategory category, String thresholdName) {
+        if (!Double.isFinite(threshold) || (threshold != -1.0D && (threshold < 0.0D || threshold > 1.0D))) {
+            throw new IllegalArgumentException("Invalid ai.category-policy." + category.configurationKey() + "." + thresholdName);
         }
     }
 

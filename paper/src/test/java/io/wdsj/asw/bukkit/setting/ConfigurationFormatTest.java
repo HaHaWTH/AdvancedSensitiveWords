@@ -39,6 +39,10 @@ class ConfigurationFormatTest {
         assertTrue(output.contains("base-url: https://api.deepseek.com"));
         assertTrue(output.contains("model-name: deepseek-v4-flash"));
         assertTrue(output.contains("log-responses: false"));
+        assertTrue(output.contains("category-policy:"));
+        assertTrue(output.contains("sexual-minors:"));
+        assertTrue(output.contains("notify-confidence: 0.75"));
+        assertTrue(output.contains("punish-confidence: 0.9"));
         assertTrue(output.contains("manual-punishment: []"));
         assertTrue(output.contains("VL conditions in this manual punishment list use the player's total violations across all punishment modules."));
         assertTrue(output.contains("COMMAND|command; COMMAND_PROXY|command; DAMAGE|amount; HOSTILE|radius."));
@@ -47,6 +51,9 @@ class ConfigurationFormatTest {
         assertFalse(output.contains("Plugin:"));
         assertFalse(output.contains("enableDefaultWords"));
         assertFalse(output.contains("legacy-action"));
+        assertFalse(output.contains("minimum-confidence:"));
+        assertFalse(output.contains("enforced-categories:"));
+        assertFalse(output.contains("punishment-confidence:"));
     }
 
     @Test

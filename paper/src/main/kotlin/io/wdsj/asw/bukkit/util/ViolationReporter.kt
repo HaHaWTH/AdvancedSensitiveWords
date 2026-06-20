@@ -15,7 +15,12 @@ import org.bukkit.event.Event
 class ViolationReporter(private val configuration: PaperConfigurationService) {
     private val punishmentService = PunishmentService(configuration)
 
-    fun reportLlm(player: Player, content: String, result: LlmChatModerationResult) {
+    fun reportLlm(
+        player: Player,
+        content: String,
+        result: LlmChatModerationResult,
+        notifyOperators: Boolean,
+    ) {
         val categoryLabel = "LLM:${result.category().wireName()}"
         val logPrefix = "${player.name}(IP: ${Utils.getPlayerIp(player)})(AI)(LLM category=${result.category().wireName()}, severity=${result.severity().wireName()}, confidence=${result.confidence()})"
         reportWithCustomLogPrefix(
@@ -26,7 +31,17 @@ class ViolationReporter(private val configuration: PaperConfigurationService) {
             logPrefix = logPrefix,
             startTime = System.currentTimeMillis(),
             punishmentActions = configuration.get(PluginSettings.AI_PUNISHMENT),
+            notifyOperators = notifyOperators,
         )
+    }
+
+    fun reportLlmObservation(player: Player, content: String, result: LlmChatModerationResult) {
+        if (configuration.get(PluginSettings.HOOK_VELOCITY)) {
+            VelocitySender.sendAiObservation(player, content, result)
+        }
+        if (configuration.get(PluginSettings.NOTICE_OPERATOR)) {
+            Notifier.noticeAiObservation(player, content, result)
+        }
     }
 
     fun report(
@@ -75,6 +90,7 @@ class ViolationReporter(private val configuration: PaperConfigurationService) {
         punishmentActions: List<String>,
         event: Event? = null,
         notificationInteraction: Component? = null,
+        notifyOperators: Boolean = true,
     ) {
         Utils.messagesFilteredNum.getAndIncrement()
 
@@ -84,13 +100,13 @@ class ViolationReporter(private val configuration: PaperConfigurationService) {
 
         ViolationCounter.INSTANCE.incrementViolationCount(player, moduleType)
 
-        if (configuration.get(PluginSettings.HOOK_VELOCITY)) {
+        if (notifyOperators && configuration.get(PluginSettings.HOOK_VELOCITY)) {
             VelocitySender.sendNotifyMessage(player, moduleType, content, censoredWords)
         }
 
         TimingUtils.addProcessStatistic(System.currentTimeMillis(), startTime)
 
-        if (configuration.get(PluginSettings.NOTICE_OPERATOR)) {
+        if (notifyOperators && configuration.get(PluginSettings.NOTICE_OPERATOR)) {
             Notifier.notice(player, moduleType, content, censoredWords, notificationInteraction)
         }
 

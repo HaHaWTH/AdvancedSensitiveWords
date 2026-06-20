@@ -76,7 +76,7 @@ public abstract class MessagesConfiguration {
                 <dark_gray>  Submitted <aqua>%submitted% <dark_gray>| <gray>Dropped <aqua>%dropped% <dark_gray>| <gray>Failed <aqua>%failed%
                 <dark_gray>  Invalid <aqua>%invalid% <dark_gray>| <gray>Enforced <aqua>%enforced%
                 <dark_gray>  Queue <aqua>%active% active <gray>/ <aqua>%queued% queued <gray>/ <aqua>%pool_size% workers
-                <dark_gray>  Enforcement threshold <aqua>%threshold%""";
+                <dark_gray>  Notify/Punish thresholds <aqua>%thresholds%""";
         @Comment("Messages used by the test command.")
         public CommandTest commandTest = new CommandTest();
         @Comment("Messages used by the punishment command.")
@@ -101,6 +101,10 @@ public abstract class MessagesConfiguration {
         public String noticeOperator = "<gradient:#22d3ee:#4ade80><bold>ASWNotify</bold></gradient> <dark_gray>| <red>%player% <gray>triggered <aqua>%type% <gray>filtering <dark_gray>| <gray>VL <aqua>%violation%\n<dark_gray>  Message <white>%message%\n<dark_gray>  Matches <aqua>%censored_list%";
         @Comment("Staff notification for a violation received from Velocity.")
         public String noticeOperatorProxy = "<gradient:#22d3ee:#4ade80><bold>ASWNotify</bold></gradient> <dark_gray>| <red>%player% <gray>on <aqua>%server_name% <gray>triggered <aqua>%type% <gray>filtering <dark_gray>| <gray>VL <aqua>%violation%\n<dark_gray>  Message <white>%message%\n<dark_gray>  Matches <aqua>%censored_list%";
+        @Comment("Staff notification for an AI classification that does not reach the punishment threshold.")
+        public String aiObservation = "<gradient:#22d3ee:#4ade80><bold>ASWObserve</bold></gradient> <dark_gray>| <red>%player% <gray>was classified as <aqua>%category% <dark_gray>| <gray>Confidence <aqua>%confidence%\n<dark_gray>  Message <white>%message%";
+        @Comment("Staff notification for an AI observation received from Velocity.")
+        public String aiObservationProxy = "<gradient:#22d3ee:#4ade80><bold>ASWObserve</bold></gradient> <dark_gray>| <red>%player% <gray>on <aqua>%server_name% <gray>was classified as <aqua>%category% <dark_gray>| <gray>Confidence <aqua>%confidence%\n<dark_gray>  Message <white>%message%";
         @Comment("Update notification for staff.")
         public String updateAvailable = "<gradient:#22d3ee:#4ade80><bold>ASWNotify</bold></gradient> <dark_gray>| <yellow>Update available <dark_gray>| <gray>Latest <aqua>%latest_version% <dark_gray>| <gray>Current <aqua>%current_version%";
         @Comment("Player information command output.")

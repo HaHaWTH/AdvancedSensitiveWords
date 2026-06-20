@@ -3,6 +3,7 @@ package io.wdsj.asw.bukkit.proxy.velocity;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
+import io.wdsj.asw.bukkit.api.moderation.LlmChatModerationResult;
 import io.wdsj.asw.bukkit.manage.punish.ViolationCounter;
 import io.wdsj.asw.bukkit.type.ModuleType;
 import io.wdsj.asw.common.constant.networking.ChannelDataConstant;
@@ -31,6 +32,22 @@ public class VelocitySender {
         }
         byte[] data = out.toByteArray();
         violatedPlayer.sendPluginMessage(AdvancedSensitiveWords.getInstance(), VelocityChannel.CHANNEL, data);
+    }
+
+    public static void sendAiObservation(Player player, String originalMessage, LlmChatModerationResult result) {
+        LimitedByteArrayDataOutput out = LimitedByteArrayDataOutput.newDataOutput(32767);
+        try {
+            out.writeUTF(AdvancedSensitiveWords.PLUGIN_VERSION);
+            out.writeUTF(ChannelDataConstant.AI_OBSERVATION);
+            out.writeUTF(player.getName());
+            out.writeUTF(result.category().wireName());
+            out.writeUTF(String.valueOf(result.confidence()));
+            out.writeUTF(originalMessage);
+        } catch (Exception exception) {
+            LOGGER.warn("Failed to send AI observation to Velocity: {}", exception.getMessage());
+            return;
+        }
+        player.sendPluginMessage(AdvancedSensitiveWords.getInstance(), VelocityChannel.CHANNEL, out.toByteArray());
     }
 
     public static void executeVelocityCommand(Player violatedPlayer, String command) {

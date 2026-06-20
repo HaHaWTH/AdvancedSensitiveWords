@@ -1,5 +1,6 @@
 package io.wdsj.asw.bukkit.manage.notice;
 
+import io.wdsj.asw.bukkit.api.moderation.LlmChatModerationResult;
 import io.wdsj.asw.bukkit.manage.punish.ViolationCounter;
 import io.wdsj.asw.bukkit.permission.PermissionsEnum;
 import io.wdsj.asw.bukkit.permission.cache.CachingPermTool;
@@ -56,6 +57,19 @@ public class Notifier {
         }
     }
 
+    public static void noticeAiObservation(
+            Player violatedPlayer,
+            String originalMessage,
+            LlmChatModerationResult result
+    ) {
+        String message = MessageUtils.retrieveMessage(PluginMessages.AI_OBSERVATION)
+                .replace("%player%", violatedPlayer.getName())
+                .replace("%message%", stripFormatting(originalMessage))
+                .replace("%category%", result.category().wireName())
+                .replace("%confidence%", String.valueOf(result.confidence()));
+        normalNotice(message);
+    }
+
     /**
      * Notice Operator method used by the proxy receivers
      * @param violatedPlayer the player who violated the rules, with server name
@@ -71,6 +85,22 @@ public class Notifier {
                 MessageUtils.sendMessage(player, message);
             }
         }
+    }
+
+    public static void noticeAiObservationFromProxy(
+            String violatedPlayer,
+            String serverName,
+            String originalMessage,
+            String category,
+            String confidence
+    ) {
+        String message = MessageUtils.retrieveMessage(PluginMessages.AI_OBSERVATION_PROXY)
+                .replace("%player%", violatedPlayer)
+                .replace("%server_name%", serverName)
+                .replace("%message%", stripFormatting(originalMessage))
+                .replace("%category%", category)
+                .replace("%confidence%", confidence);
+        normalNotice(message);
     }
 
     private static String stripFormatting(String message) {

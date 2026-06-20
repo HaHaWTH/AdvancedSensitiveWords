@@ -38,7 +38,7 @@ public class PluginMessageForwarder {
                 warned = true;
             }
             switch (input.readUTF().toLowerCase(Locale.ROOT)) {
-                case ChannelDataConstant.NOTICE:
+                case ChannelDataConstant.NOTICE, ChannelDataConstant.AI_OBSERVATION:
                     server.getAllServers().forEach(server -> {
                         if (!server.getServerInfo().equals(serverInfo) && !server.getPlayersConnected().isEmpty()) {
                             var out = LimitedByteArrayDataOutput.newDataOutput(32767);

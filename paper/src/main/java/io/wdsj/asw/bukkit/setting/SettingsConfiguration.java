@@ -5,7 +5,9 @@ import de.exlll.configlib.Configuration;
 import io.wdsj.asw.bukkit.type.ProcessMethod;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Configuration
 public final class SettingsConfiguration {
@@ -195,24 +197,58 @@ public final class SettingsConfiguration {
         public int maximumMessageCodePoints = 256;
         @Comment("Minimum Shannon entropy in bits per visible Unicode code point. Must be finite and >= 0; 2.0-3.5 is a typical request-saving gate.")
         public double minimumEntropyBits = 2.5D;
-        @Comment("Minimum LLM confidence required for ASW automatic enforcement. Must be between 0.0 and 1.0; 0.85-0.95 is recommended.")
-        public double minimumConfidence = 0.90D;
-        @Comment("LLM categories that ASW may automatically enforce.")
-        public List<String> enforcedCategories = new ArrayList<>(List.of(
-                "harassment",
-                "hate",
-                "sexual",
-                "sexual_minors",
-                "self_harm",
-                "violence_threat",
-                "illegal",
-                "privacy_doxxing",
-                "spam_scam"
-        ));
+        @Comment({
+                "Per-category LLM notification and punishment confidence policies.",
+                "Use -1.0 to disable either action. Other values must be between 0.0 and 1.0.",
+                "Notification and punishment are independent, so silent punishment is supported.",
+                "The clean category must keep both values at -1.0. Configuration keys use kebab-case."
+        })
+        public Map<String, CategoryPolicy> categoryPolicy = defaultCategoryPolicy();
         @Comment("Punishment actions for enforced AI classifications. Leave empty to record and notify without automatic punishment.")
         public List<String> punishment = new ArrayList<>();
         @Comment("Trusted server context sent with each request. Leave blank unless required.")
         public String serverContext = "";
+
+        private static Map<String, CategoryPolicy> defaultCategoryPolicy() {
+            Map<String, CategoryPolicy> policies = new LinkedHashMap<>();
+            policies.put("clean", disabledPolicy());
+            policies.put("profanity", disabledPolicy());
+            policies.put("harassment", severePolicy());
+            policies.put("hate", severePolicy());
+            policies.put("sexual", severePolicy());
+            policies.put("sexual-minors", severePolicy());
+            policies.put("self-harm", severePolicy());
+            policies.put("violence-threat", severePolicy());
+            policies.put("illegal", severePolicy());
+            policies.put("privacy-doxxing", severePolicy());
+            policies.put("spam-scam", severePolicy());
+            policies.put("prompt-injection", disabledPolicy());
+            return policies;
+        }
+
+        private static CategoryPolicy disabledPolicy() {
+            return new CategoryPolicy(-1.0D, -1.0D);
+        }
+
+        private static CategoryPolicy severePolicy() {
+            return new CategoryPolicy(0.75D, 0.90D);
+        }
+
+        @Configuration
+        public static final class CategoryPolicy {
+            @Comment("Minimum confidence for staff notification. Use -1.0 to disable notifications for this category.")
+            public double notifyConfidence;
+            @Comment("Minimum confidence for violation recording and automatic punishment. Use -1.0 to disable enforcement for this category.")
+            public double punishConfidence;
+
+            public CategoryPolicy() {
+            }
+
+            private CategoryPolicy(double notifyConfidence, double punishConfidence) {
+                this.notifyConfidence = notifyConfidence;
+                this.punishConfidence = punishConfidence;
+            }
+        }
     }
 
     @Configuration

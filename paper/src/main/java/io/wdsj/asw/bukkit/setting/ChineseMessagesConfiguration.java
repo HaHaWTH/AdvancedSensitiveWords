@@ -25,7 +25,7 @@ public final class ChineseMessagesConfiguration extends MessagesConfiguration {
                 <dark_gray>  已提交 <aqua>%submitted% <dark_gray>| <gray>丢弃 <aqua>%dropped% <dark_gray>| <gray>失败 <aqua>%failed%
                 <dark_gray>  无效 <aqua>%invalid% <dark_gray>| <gray>已执行 <aqua>%enforced%
                 <dark_gray>  队列 <aqua>%active% 活跃 <gray>/ <aqua>%queued% 排队 <gray>/ <aqua>%pool_size% 线程
-                <dark_gray>  执行阈值 <aqua>%threshold%""";
+                <dark_gray>  通知/处罚阈值 <aqua>%thresholds%""";
         plugin.commandTest.testResultTrue = """
                 <gradient:#22d3ee:#4ade80><bold>鉴定报告</bold></gradient>
                 <dark_gray>  原消息 <red>%original_msg%
@@ -45,6 +45,8 @@ public final class ChineseMessagesConfiguration extends MessagesConfiguration {
         plugin.noSuchPlayer = "<red>找不到对应玩家.";
         plugin.noticeOperator = "<gradient:#22d3ee:#4ade80><bold>ASWNotify</bold></gradient> <dark_gray>| <gray>玩家 <red>%player% <gray>触发 <aqua>%type% <gray>检测 <dark_gray>| <gray>VL <aqua>%violation%\n<dark_gray>  原消息 <white>%message%\n<dark_gray>  匹配项 <aqua>%censored_list%";
         plugin.noticeOperatorProxy = "<gradient:#22d3ee:#4ade80><bold>ASWNotify</bold></gradient> <dark_gray>| <gray>玩家 <red>%player% <gray>在 <aqua>%server_name% <gray>触发 <aqua>%type% <gray>检测 <dark_gray>| <gray>VL <aqua>%violation%\n<dark_gray>  原消息 <white>%message%\n<dark_gray>  匹配项 <aqua>%censored_list%";
+        plugin.aiObservation = "<gradient:#22d3ee:#4ade80><bold>ASWObserve</bold></gradient> <dark_gray>| <gray>玩家 <red>%player% <gray>被 AI 分类为 <aqua>%category% <dark_gray>| <gray>置信度 <aqua>%confidence%\n<dark_gray>  原消息 <white>%message%";
+        plugin.aiObservationProxy = "<gradient:#22d3ee:#4ade80><bold>ASWObserve</bold></gradient> <dark_gray>| <gray>玩家 <red>%player% <gray>在 <aqua>%server_name% <gray>被 AI 分类为 <aqua>%category% <dark_gray>| <gray>置信度 <aqua>%confidence%\n<dark_gray>  原消息 <white>%message%";
         plugin.updateAvailable = "<gradient:#22d3ee:#4ade80><bold>ASWNotify</bold></gradient> <dark_gray>| <yellow>发现可用更新 <dark_gray>| <gray>最新 <aqua>%latest_version% <dark_gray>| <gray>当前 <aqua>%current_version%";
         plugin.messageOnCommandInfo = """
                 <gradient:#22d3ee:#4ade80><bold>AdvancedSensitiveWords</bold></gradient> <dark_gray>| <aqua>玩家违规信息

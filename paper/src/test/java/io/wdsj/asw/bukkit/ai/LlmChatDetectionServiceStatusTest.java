@@ -35,7 +35,14 @@ class LlmChatDetectionServiceStatusTest {
             assertEquals(0, status.queuedRequests());
             assertEquals(0, status.poolSize());
             assertEquals("deepseek-v4-flash", status.modelName());
-            assertEquals(0.90D, status.minimumConfidence());
+            LlmCategoryPolicy harassment = status.categoryPolicy().get(
+                    io.wdsj.asw.bukkit.api.moderation.LlmModerationCategory.HARASSMENT);
+            LlmCategoryPolicy clean = status.categoryPolicy().get(
+                    io.wdsj.asw.bukkit.api.moderation.LlmModerationCategory.CLEAN);
+            assertEquals(0.75D, harassment.notifyConfidence());
+            assertEquals(0.90D, harassment.punishConfidence());
+            assertEquals(-1.0D, clean.notifyConfidence());
+            assertEquals(-1.0D, clean.punishConfidence());
         }
     }
 }

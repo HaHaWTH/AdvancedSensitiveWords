@@ -3,6 +3,8 @@ package io.wdsj.asw.bukkit.command;
 import com.github.houbb.heaven.util.util.OsUtil;
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 import io.wdsj.asw.bukkit.ai.LlmChatDetectionService;
+import io.wdsj.asw.bukkit.ai.LlmCategoryPolicy;
+import io.wdsj.asw.bukkit.api.moderation.LlmModerationCategory;
 import io.wdsj.asw.bukkit.manage.punish.PunishmentService;
 import io.wdsj.asw.bukkit.manage.punish.ViolationCounter;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
@@ -24,7 +26,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public final class AswCommandService {
     private final AdvancedSensitiveWords plugin;
@@ -89,7 +93,7 @@ public final class AswCommandService {
                 .replace("%queued%", String.valueOf(status.queuedRequests()))
                 .replace("%pool_size%", String.valueOf(status.poolSize()))
                 .replace("%model%", status.modelName())
-                .replace("%threshold%", String.valueOf(status.minimumConfidence()));
+                .replace("%thresholds%", formatCategoryPolicies(status.categoryPolicy()));
         MessageUtils.sendMessage(sender, message);
     }
 
@@ -212,5 +216,16 @@ public final class AswCommandService {
 
     private List<String> toWordList(String[] words) {
         return new ArrayList<>(Arrays.asList(words));
+    }
+
+    private static String formatCategoryPolicies(Map<LlmModerationCategory, LlmCategoryPolicy> policies) {
+        String result = Arrays.stream(LlmModerationCategory.values())
+                .map(category -> Map.entry(category, policies.get(category)))
+                .filter(entry -> entry.getValue().notifyConfidence() >= 0.0D
+                        || entry.getValue().punishConfidence() >= 0.0D)
+                .map(entry -> entry.getKey().configurationKey() + "="
+                        + entry.getValue().notifyConfidence() + "/" + entry.getValue().punishConfidence())
+                .collect(Collectors.joining(", "));
+        return result.isEmpty() ? "none" : result;
     }
 }

@@ -39,6 +39,22 @@ public class VelocityReceiver implements PluginMessageListener {
                         Notifier.noticeFromProxy(playerName, serverName, moduleType, violationCount, originalMsg, censoredWordList);
                     }
                     break;
+                case ChannelDataConstant.AI_OBSERVATION:
+                    String observedPlayer = input.readUTF();
+                    String category = input.readUTF();
+                    String confidence = input.readUTF();
+                    String observedMessage = input.readUTF();
+                    String observationServer = input.readUTF();
+                    if (setting(PluginSettings.NOTICE_OPERATOR)) {
+                        Notifier.noticeAiObservationFromProxy(
+                                observedPlayer,
+                                observationServer,
+                                observedMessage,
+                                category,
+                                confidence
+                        );
+                    }
+                    break;
             }
         }
     }

@@ -7,8 +7,8 @@ import java.util.Locale;
  * Categories emitted by the LLM moderation classifier.
  *
  * <p>The lower-case {@linkplain #wireName() wire name} is used in configuration and provider JSON. Only
- * categories for which {@link #isAutomaticallyEnforceable()} returns {@code true} may appear in ASW's
- * automatic AI enforcement configuration.</p>
+ * categories for which {@link #isAutomaticallyEnforceable()} returns {@code true} may be enabled in ASW's
+ * {@code ai.category-policy} enforcement configuration.</p>
  */
 public enum LlmModerationCategory {
     CLEAN,
@@ -29,15 +29,18 @@ public enum LlmModerationCategory {
         return name().toLowerCase(Locale.ROOT);
     }
 
+    /** @return kebab-case configuration identifier for this category */
+    public String configurationKey() {
+        return wireName().replace('_', '-');
+    }
+
     /**
-     * @return whether ASW permits this category in {@code ai.enforced-categories}; profanity and prompt
-     * injection remain event-only classifications
+     * @return whether ASW permits automatic enforcement for this category
      */
     public boolean isAutomaticallyEnforceable() {
         return switch (this) {
-            case HARASSMENT, HATE, SEXUAL, SEXUAL_MINORS, SELF_HARM, VIOLENCE_THREAT,
-                    ILLEGAL, PRIVACY_DOXXING, SPAM_SCAM -> true;
-            case CLEAN, PROFANITY, PROMPT_INJECTION -> false;
+            case CLEAN -> false;
+            default -> true;
         };
     }
 
