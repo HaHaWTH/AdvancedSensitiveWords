@@ -4,7 +4,20 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
-/** A locally validated LLM classification response for one chat message. */
+/**
+ * Immutable, locally validated LLM classification response for one chat message.
+ *
+ * <p>Validates the category, severity, confidence, secondary categories, signal limits, and explanation
+ * length before constructing this record. {@code signals} and {@code explanation} remain untrusted provider
+ * text: they are useful for third-party review but must never be treated as commands or trusted instructions.</p>
+ *
+ * @param category primary moderation category
+ * @param secondaryCategories distinct non-primary categories
+ * @param confidence provider confidence from {@code 0.0} through {@code 1.0}
+ * @param severity moderation severity consistent with {@code category}
+ * @param signals up to five short, generic classification signals
+ * @param explanation concise provider explanation with a maximum of 180 Unicode code points
+ */
 public record LlmChatModerationResult(
         LlmModerationCategory category,
         List<LlmModerationCategory> secondaryCategories,

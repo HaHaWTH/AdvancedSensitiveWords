@@ -13,6 +13,7 @@ import com.github.houbb.sensitive.word.support.deny.WordDenys;
 import com.github.houbb.sensitive.word.support.resultcondition.WordResultConditions;
 import com.github.houbb.sensitive.word.support.tag.WordTags;
 import io.wdsj.asw.bukkit.command.AswCommandRegistrar;
+import io.wdsj.asw.bukkit.ai.LlmChatDetectionService;
 import io.wdsj.asw.bukkit.core.condition.WordResultConditionNumMatch;
 import io.wdsj.asw.bukkit.integration.placeholder.ASWExpansion;
 import io.wdsj.asw.bukkit.manage.punish.PlayerAltController;
@@ -74,6 +75,13 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
 
     public PaperConfigurationService getConfigurationService() {
         return configurationService;
+    }
+
+    public LlmChatDetectionService getLlmChatDetectionService() {
+        if (listenerService == null) {
+            throw new IllegalStateException("Listeners have not been initialized yet");
+        }
+        return listenerService.getLlmChatDetectionService();
     }
 
     public static <T> T setting(SettingKey<T> key) {

@@ -5,6 +5,7 @@ public final class CommandPermissions {
 
     public static final String HELP = PREFIX + "help";
     public static final String STATUS = PREFIX + "status";
+    public static final String AI_STATUS = PREFIX + "ai.status";
     public static final String RELOAD_ALL = PREFIX + "reload.all";
     public static final String RELOAD_CONFIG = PREFIX + "reload.config";
     public static final String TEST = PREFIX + "test";

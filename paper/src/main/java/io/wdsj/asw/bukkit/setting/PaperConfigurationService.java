@@ -74,6 +74,7 @@ public final class PaperConfigurationService {
             case MESSAGE_ON_COMMAND_RELOAD -> snapshot.plugin.messageOnCommandReload;
             case MESSAGE_ON_VIOLATION_RESET -> snapshot.plugin.messageOnViolationReset;
             case MESSAGE_ON_COMMAND_STATUS -> snapshot.plugin.messageOnCommandStatus;
+            case MESSAGE_ON_AI_STATUS -> snapshot.plugin.messageOnAiStatus;
             case MESSAGE_ON_COMMAND_TEST -> snapshot.plugin.commandTest.testResultTrue;
             case MESSAGE_ON_COMMAND_TEST_PASS -> snapshot.plugin.commandTest.testResultPass;
             case MESSAGE_ON_COMMAND_TEST_NOT_INIT -> snapshot.plugin.commandTest.testNotInit;
@@ -91,6 +92,7 @@ public final class PaperConfigurationService {
             case UPDATE_AVAILABLE -> snapshot.plugin.updateAvailable;
             case MESSAGE_ON_PLAYER_INFO -> snapshot.plugin.messageOnCommandInfo;
             case MESSAGE_ON_COMMAND_RESET -> snapshot.plugin.messageOnCommandReset;
+            case INVALID_VIOLATION_MODULE -> snapshot.plugin.invalidViolationModule;
         };
     }
 

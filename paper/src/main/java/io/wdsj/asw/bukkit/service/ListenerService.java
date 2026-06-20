@@ -63,6 +63,10 @@ public class ListenerService {
     public void reloadConfiguration() {
         llmChatDetectionService.reload();
     }
+
+    public LlmChatDetectionService getLlmChatDetectionService() {
+        return llmChatDetectionService;
+    }
     
     
     private void registerEventListener(Listener listener) {

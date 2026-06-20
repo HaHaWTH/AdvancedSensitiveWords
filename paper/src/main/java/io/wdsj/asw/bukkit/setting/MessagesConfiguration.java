@@ -61,15 +61,22 @@ public abstract class MessagesConfiguration {
         @Comment("Message sent after a successful reload.")
         public String messageOnCommandReload = "<green>AdvancedSensitiveWords has been reloaded.";
         @Comment("Message sent after all violation counters are reset.")
-        public String messageOnViolationReset = "<green><bold>All player violation counts have been reset.";
+        public String messageOnViolationReset = "<gradient:#22d3ee:#4ade80><bold>ASW</bold></gradient> <dark_gray>| <green>Reset all player violation counts.";
         @Comment("Status command output.")
         public String messageOnCommandStatus = """
-                <aqua>AdvancedSensitiveWords<reset>---<aqua> Plugin Status(%version%)(MC %mc_version%)
-                   <gray>System: <aqua>%platform% %bit% (Java %java_version% -- %java_vendor%)
-                   <gray>Initialized: %init%
-                   <gray>Detection mode: %mode%
-                   <gray>Filtered messages: %num%
-                   <gray>Average processing time over the last 20 checks: %ms%""";
+                <gradient:#22d3ee:#4ade80><bold>AdvancedSensitiveWords</bold></gradient> <dark_gray>| <aqua>Plugin Status
+                <dark_gray>  Version <gray>%version% <dark_gray>| <gray>MC %mc_version%
+                <dark_gray>  System <gray>%platform% %bit% <dark_gray>| <gray>Java %java_version% (%java_vendor%)
+                <dark_gray>  Initialized <aqua>%init% <dark_gray>| <gray>Mode <aqua>%mode%
+                <dark_gray>  Filtered <aqua>%num% <dark_gray>| <gray>Average <aqua>%ms%""";
+        @Comment("AI status command output.")
+        public String messageOnAiStatus = """
+                <gradient:#22d3ee:#4ade80><bold>AdvancedSensitiveWords</bold></gradient> <dark_gray>| <aqua>AI Moderation
+                <dark_gray>  Enabled <aqua>%enabled% <dark_gray>| <gray>Model <aqua>%model%
+                <dark_gray>  Submitted <aqua>%submitted% <dark_gray>| <gray>Dropped <aqua>%dropped% <dark_gray>| <gray>Failed <aqua>%failed%
+                <dark_gray>  Invalid <aqua>%invalid% <dark_gray>| <gray>Enforced <aqua>%enforced%
+                <dark_gray>  Queue <aqua>%active% active <gray>/ <aqua>%queued% queued <gray>/ <aqua>%pool_size% workers
+                <dark_gray>  Enforcement threshold <aqua>%threshold%""";
         @Comment("Messages used by the test command.")
         public CommandTest commandTest = new CommandTest();
         @Comment("Messages used by the punishment command.")
@@ -86,30 +93,35 @@ public abstract class MessagesConfiguration {
         public String unknownCommand = "<red>Unknown command. Use <gray>/asw help<red>.";
         @Comment("Message sent when command arguments are missing.")
         public String argsNotEnough = "<red>Missing arguments. Use <gray>/asw help<red>.";
+        @Comment("Message sent when a violation-counter module is invalid.")
+        public String invalidViolationModule = "<red>Unknown violation module. Choose chat, ai, book, sign, anvil, or item.";
         @Comment("Message sent when an online player cannot be found.")
         public String noSuchPlayer = "<red>That player could not be found.";
         @Comment("Staff notification for a local violation.")
-        public String noticeOperator = "<white>[<aqua>ASW<gray>Notify<white>] <red>%player% <gray>triggered %type% filtering. Message: <white>%message% <gray>Matches: <aqua>%censored_list%";
+        public String noticeOperator = "<gradient:#22d3ee:#4ade80><bold>ASWNotify</bold></gradient> <dark_gray>| <red>%player% <gray>triggered <aqua>%type% <gray>filtering <dark_gray>| <gray>VL <aqua>%violation%\n<dark_gray>  Message <white>%message%\n<dark_gray>  Matches <aqua>%censored_list%";
         @Comment("Staff notification for a violation received from Velocity.")
-        public String noticeOperatorProxy = "<white>[<aqua>ASW<gray>Notify<white>] <red>%player% <gray>on <aqua>%server_name% <gray>triggered %type% filtering. Message: <white>%message% <gray>Matches: <aqua>%censored_list%";
+        public String noticeOperatorProxy = "<gradient:#22d3ee:#4ade80><bold>ASWNotify</bold></gradient> <dark_gray>| <red>%player% <gray>on <aqua>%server_name% <gray>triggered <aqua>%type% <gray>filtering <dark_gray>| <gray>VL <aqua>%violation%\n<dark_gray>  Message <white>%message%\n<dark_gray>  Matches <aqua>%censored_list%";
         @Comment("Update notification for staff.")
-        public String updateAvailable = "<white>[<aqua>ASW<gray>Notify<white>] <gray>A new version is available. Latest: <aqua>%latest_version%<gray>, current: <aqua>%current_version%";
+        public String updateAvailable = "<gradient:#22d3ee:#4ade80><bold>ASWNotify</bold></gradient> <dark_gray>| <yellow>Update available <dark_gray>| <gray>Latest <aqua>%latest_version% <dark_gray>| <gray>Current <aqua>%current_version%";
         @Comment("Player information command output.")
         public String messageOnCommandInfo = """
-                <aqua>AdvancedSensitiveWords<reset>---<aqua> Player Info
-                   <gray>Name: <aqua>%player%
-                   <gray>Violations: <aqua>%violation%""";
+                <gradient:#22d3ee:#4ade80><bold>AdvancedSensitiveWords</bold></gradient> <dark_gray>| <aqua>Player Violations
+                <dark_gray>  Player <aqua>%player%
+                <dark_gray>  Chat <aqua>%chat_violation% <dark_gray>| <gray>AI <aqua>%ai_violation% <dark_gray>| <gray>Book <aqua>%book_violation%
+                <dark_gray>  Sign <aqua>%sign_violation% <dark_gray>| <gray>Anvil <aqua>%anvil_violation% <dark_gray>| <gray>Item <aqua>%item_violation%
+                <dark_gray>  Total VL <gradient:#fbbf24:#fb7185><bold>%violation%</bold></gradient>""";
         @Comment("Message sent after resetting a player's violation counter.")
-        public String messageOnCommandReset = "<green>Reset violation count for %player%.";
+        public String messageOnCommandReset = "<gradient:#22d3ee:#4ade80><bold>ASW</bold></gradient> <dark_gray>| <green>Reset <aqua>%module% <green>VL for <aqua>%player%<green>.";
     }
 
     @Configuration
     public static final class CommandTest {
         @Comment("Output when the test input contains blocked words.")
         public String testResultTrue = """
-                <gray>Original message: <red>%original_msg%
-                <gray>Filtered message: <green>%processed_msg%
-                <gray>Matched words: <aqua>%censored_list%""";
+                <gradient:#22d3ee:#4ade80><bold>Test Result</bold></gradient>
+                <dark_gray>  Original <red>%original_msg%
+                <dark_gray>  Filtered <green>%processed_msg%
+                <dark_gray>  Matches <aqua>%censored_list%""";
         @Comment("Output when the test input contains no blocked words.")
         public String testResultPass = "<green>No blocked words were found.";
         @Comment("Output while the word filter is still initializing.")

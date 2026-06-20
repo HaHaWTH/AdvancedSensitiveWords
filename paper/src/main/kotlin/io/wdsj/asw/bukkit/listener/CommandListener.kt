@@ -32,7 +32,7 @@ class CommandListener(private val configuration: PaperConfigurationService) : Li
         if (censoredWords.isEmpty()) return
 
         applyCommandAction(event, originalCommand)
-        recordViolation(player, originalCommand, censoredWords, startTime)
+        recordViolation(event, player, originalCommand, censoredWords, startTime)
     }
 
     private fun preprocess(message: String): String {
@@ -51,6 +51,7 @@ class CommandListener(private val configuration: PaperConfigurationService) : Li
     }
 
     private fun recordViolation(
+        event: PlayerCommandPreprocessEvent,
         player: Player,
         originalCommand: String,
         censoredWords: List<String>,
@@ -72,7 +73,8 @@ class CommandListener(private val configuration: PaperConfigurationService) : Li
             censoredWords = censoredWords,
             logSource = "Chat",
             startTime = startTime,
-            punish = configuration.get(PluginSettings.CHAT_PUNISH),
+            punishmentActions = configuration.get(PluginSettings.CHAT_PUNISHMENT),
+            event = event,
         )
     }
 

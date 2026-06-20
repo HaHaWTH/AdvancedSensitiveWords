@@ -48,8 +48,15 @@ public final class SettingsConfiguration {
         public boolean logViolation = true;
         @Comment("Whether to notify online staff about violations.")
         public boolean noticeOperator = true;
-        @Comment("Punishment actions executed for violations. Leave empty to disable punishment.")
-        public List<String> punishment = new ArrayList<>();
+        @Comment({
+                "VL conditions in this manual punishment list use the player's total violations across all punishment modules.",
+                "Default actions for /asw player punish <player> when no method is supplied.",
+                "Each item uses TYPE|argument...|VLcondition. An empty list disables default manual punishments.",
+                "COMMAND|command; COMMAND_PROXY|command; DAMAGE|amount; HOSTILE|radius.",
+                "EFFECT|effect[|seconds[|amplifier]]; SHADOW|seconds.",
+                "Use %player% or %PLAYER% in commands. Append VL=3, VL>3, or VL<3 to condition an action."
+        })
+        public List<String> manualPunishment = new ArrayList<>();
         @Comment("Violation counter reset interval in minutes.")
         public long violationResetTime = 20L;
         @Comment("Whether to reset only the violation counters of online players.")
@@ -138,8 +145,8 @@ public final class SettingsConfiguration {
         public boolean fakeMessageOnCancel = false;
         @Comment("Whether to send the player a violation message.")
         public boolean sendMessage = true;
-        @Comment("Whether to apply configured punishments.")
-        public boolean punish = true;
+        @Comment("Punishment actions for chat and command violations. Leave empty to disable automatic punishment.")
+        public List<String> punishment = new ArrayList<>();
         @Comment("Whether to check server broadcast messages.")
         public boolean broadcastCheck = false;
         @Comment("Whether to detect blocked words split across recent chat messages.")
@@ -202,6 +209,8 @@ public final class SettingsConfiguration {
                 "privacy_doxxing",
                 "spam_scam"
         ));
+        @Comment("Punishment actions for enforced AI classifications. Leave empty to record and notify without automatic punishment.")
+        public List<String> punishment = new ArrayList<>();
         @Comment("Trusted server context sent with each request. Leave blank unless required.")
         public String serverContext = "";
     }
@@ -216,8 +225,8 @@ public final class SettingsConfiguration {
         public boolean crossPageCheck = false;
         @Comment("Whether to send the player a violation message.")
         public boolean sendMessage = true;
-        @Comment("Whether to apply configured punishments.")
-        public boolean punish = true;
+        @Comment("Punishment actions for book violations. Leave empty to disable automatic punishment.")
+        public List<String> punishment = new ArrayList<>();
         @Comment("Book detection cache settings.")
         public Cache cache = new Cache();
     }
@@ -240,8 +249,8 @@ public final class SettingsConfiguration {
         public ProcessMethod method = ProcessMethod.REPLACE;
         @Comment("Whether cancelled edits should be shown only to their author through PacketEvents.")
         public boolean fakeOnCancel = false;
-        @Comment("Whether to apply configured punishments.")
-        public boolean punish = true;
+        @Comment("Punishment actions for sign violations. Leave empty to disable automatic punishment.")
+        public List<String> punishment = new ArrayList<>();
         @Comment("Whether to check words split across sign lines.")
         public boolean multiLineCheck = true;
         @Comment("Whether to check blocked words split across recently edited signs.")
@@ -260,8 +269,8 @@ public final class SettingsConfiguration {
         public ProcessMethod method = ProcessMethod.REPLACE;
         @Comment("Whether to send the player a violation message.")
         public boolean sendMessage = true;
-        @Comment("Whether to apply configured punishments.")
-        public boolean punish = true;
+        @Comment("Punishment actions for anvil violations. Leave empty to disable automatic punishment.")
+        public List<String> punishment = new ArrayList<>();
     }
 
     @Configuration
@@ -278,7 +287,7 @@ public final class SettingsConfiguration {
         public ProcessMethod method = ProcessMethod.REPLACE;
         @Comment("Whether to send the player a violation message.")
         public boolean sendMessage = true;
-        @Comment("Whether to apply configured punishments.")
-        public boolean punish = true;
+        @Comment("Punishment actions for item violations. Leave empty to disable automatic punishment.")
+        public List<String> punishment = new ArrayList<>();
     }
 }

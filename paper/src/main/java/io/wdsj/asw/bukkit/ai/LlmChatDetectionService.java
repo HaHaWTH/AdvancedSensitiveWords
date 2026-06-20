@@ -136,6 +136,25 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
         return enforcedResponses.sum();
     }
 
+    /** Returns a snapshot view of the configured AI moderation runtime and its lifetime counters. */
+    public LlmRuntimeStatus runtimeStatus() {
+        RuntimeState state = runtime;
+        ThreadPoolExecutor executor = state == null ? null : state.executor();
+        return new LlmRuntimeStatus(
+                configuration.get(PluginSettings.AI_ENABLED),
+                submittedRequests.sum(),
+                droppedRequests.sum(),
+                failedRequests.sum(),
+                invalidResponses.sum(),
+                enforcedResponses.sum(),
+                executor == null ? 0 : executor.getActiveCount(),
+                executor == null ? 0 : executor.getQueue().size(),
+                executor == null ? 0 : executor.getPoolSize(),
+                configuration.get(PluginSettings.AI_MODEL_NAME),
+                configuration.get(PluginSettings.AI_MINIMUM_CONFIDENCE)
+        );
+    }
+
     @Override
     public synchronized void close() {
         if (closed) {
@@ -375,6 +394,22 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
     }
 
     private record RuntimeState(long generation, LlmSettings settings, LlmChatClient client, ThreadPoolExecutor executor) {
+    }
+
+    /** Immutable runtime data consumed by administrative status commands. */
+    public record LlmRuntimeStatus(
+            boolean enabled,
+            long submittedRequests,
+            long droppedRequests,
+            long failedRequests,
+            long invalidResponses,
+            long enforcedResponses,
+            int activeRequests,
+            int queuedRequests,
+            int poolSize,
+            String modelName,
+            double minimumConfidence
+    ) {
     }
 
     private record Candidate(

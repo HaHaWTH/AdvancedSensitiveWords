@@ -2,6 +2,7 @@ package io.wdsj.asw.bukkit.command;
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
+import io.wdsj.asw.bukkit.type.ModuleType;
 import io.wdsj.asw.bukkit.util.message.MessageUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -18,11 +19,30 @@ import org.incendo.cloud.paper.PaperCommandManager;
 import org.incendo.cloud.paper.util.sender.PaperSimpleSenderMapper;
 import org.incendo.cloud.paper.util.sender.Source;
 import org.incendo.cloud.bukkit.parser.PlayerParser;
+import org.incendo.cloud.parser.ArgumentParseResult;
+import org.incendo.cloud.parser.ParserDescriptor;
 import org.incendo.cloud.parser.standard.StringArrayParser;
 import org.incendo.cloud.parser.standard.StringParser;
 import org.incendo.cloud.permission.PredicatePermission;
+import org.incendo.cloud.suggestion.SuggestionProvider;
+
+import java.util.Locale;
 
 public final class AswCommandRegistrar {
+    private static final SuggestionProvider<Source> VIOLATION_MODULE_SUGGESTIONS = SuggestionProvider.suggestingStrings(
+            ModuleType.violationModules().stream()
+                    .map(moduleType -> moduleType.name().toLowerCase(Locale.ROOT))
+                    .toList()
+    );
+    private static final ParserDescriptor<Source, ModuleType> VIOLATION_MODULE_PARSER =
+            StringParser.<Source>stringParser().flatMapSuccess(ModuleType.class, (context, value) -> {
+                ModuleType moduleType = ModuleType.parseViolationModule(value);
+                if (moduleType == null) {
+                    return ArgumentParseResult.failureFuture(new ViolationModuleParseException(value));
+                }
+                return ArgumentParseResult.successFuture(moduleType);
+            });
+
     private final AdvancedSensitiveWords plugin;
     private final AswCommandService commandService;
 
@@ -38,10 +58,11 @@ public final class AswCommandRegistrar {
         this.commandManager = PaperCommandManager.builder(PaperSimpleSenderMapper.simpleSenderMapper())
                 .executionCoordinator(ExecutionCoordinator.simpleCoordinator())
                 .buildOnEnable(plugin);
-        this.minecraftHelp = MinecraftHelp.create("/asw help", commandManager, source -> source.source());
+        this.minecraftHelp = MinecraftHelp.create("/asw help", commandManager, Source::source);
 
         registerExceptionHandlers();
         registerRootCommand();
+        registerAiCommands();
         registerReloadCommands();
         registerWordCommands();
         registerPlayerCommands();
@@ -84,6 +105,14 @@ public final class AswCommandRegistrar {
                 .handler(context -> commandService.reloadConfiguration(sender(context))));
     }
 
+    private void registerAiCommands() {
+        commandManager.command(root()
+                .literal("ai", Description.of("AI moderation commands"))
+                .literal("status", Description.of("Show AI moderation status"))
+                .permission(permission(CommandPermissions.AI_STATUS))
+                .handler(context -> commandService.showAiStatus(sender(context))));
+    }
+
     private void registerWordCommands() {
         commandManager.command(root()
                 .literal("word", Description.of("Manage blocked words"))
@@ -122,8 +151,13 @@ public final class AswCommandRegistrar {
                 .literal("player", Description.of("Manage player violations"))
                 .literal("reset", Description.of("Reset a player's violation count"))
                 .required("player", PlayerParser.playerParser())
+                .optional("module", VIOLATION_MODULE_PARSER, VIOLATION_MODULE_SUGGESTIONS)
                 .permission(permission(CommandPermissions.PLAYER_RESET))
-                .handler(context -> commandService.resetPlayerViolations(sender(context), context.get("player"))));
+                .handler(context -> commandService.resetPlayerViolations(
+                        sender(context),
+                        context.get("player"),
+                        context.getOrDefault("module", null)
+                )));
         commandManager.command(root()
                 .literal("player", Description.of("Manage player violations"))
                 .literal("punish", Description.of("Apply a punishment to a player"))
@@ -144,8 +178,13 @@ public final class AswCommandRegistrar {
                 context -> MessageUtils.sendMessage(sender(context.context()), PluginMessages.UNKNOWN_COMMAND));
         commandManager.exceptionController().registerHandler(InvalidSyntaxException.class,
                 context -> MessageUtils.sendMessage(sender(context.context()), PluginMessages.NOT_ENOUGH_ARGS));
-        commandManager.exceptionController().registerHandler(ArgumentParseException.class,
-                context -> MessageUtils.sendMessage(sender(context.context()), PluginMessages.PLAYER_NOT_FOUND));
+        commandManager.exceptionController().registerHandler(ArgumentParseException.class, context -> {
+            if (context.exception().getCause() instanceof ViolationModuleParseException) {
+                MessageUtils.sendMessage(sender(context.context()), PluginMessages.INVALID_VIOLATION_MODULE);
+                return;
+            }
+            MessageUtils.sendMessage(sender(context.context()), PluginMessages.PLAYER_NOT_FOUND);
+        });
     }
 
     private Command.Builder<Source> root() {
@@ -163,5 +202,11 @@ public final class AswCommandRegistrar {
 
     private CommandSender sender(CommandContext<Source> context) {
         return context.sender().source();
+    }
+
+    private static final class ViolationModuleParseException extends IllegalArgumentException {
+        private ViolationModuleParseException(String value) {
+            super("Unknown violation module: " + value);
+        }
     }
 }

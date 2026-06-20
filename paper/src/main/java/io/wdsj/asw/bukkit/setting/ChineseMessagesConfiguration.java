@@ -12,19 +12,25 @@ public final class ChineseMessagesConfiguration extends MessagesConfiguration {
         name.messageOnName = "<red>您的用户名包含敏感词,请修改您的用户名或联系管理员.";
         item.messageOnItem = "<red>您的物品包含敏感词.";
         plugin.messageOnCommandReload = "<green>AdvancedSensitiveWords 已重新加载.";
-        plugin.messageOnViolationReset = "<aqua>ASW<gray>Notify >> <green>已重置所有玩家的违规次数!";
+        plugin.messageOnViolationReset = "<gradient:#22d3ee:#4ade80><bold>ASW</bold></gradient> <dark_gray>| <green>已重置所有玩家的违规次数。";
         plugin.messageOnCommandStatus = """
-                <aqua>AdvancedSensitiveWords<reset>---<aqua>插件状态(%version%)(MC %mc_version%)
-                   <gray>系统信息: <aqua>%platform% %bit% (Java %java_version% -- %java_vendor%)
-                   <gray>初始化: %init%
-                   <gray>当前模式: %mode%
-                   <gray>已过滤消息数: %num%
-                   <gray>近20次处理平均耗时: %ms%""";
+                <gradient:#22d3ee:#4ade80><bold>AdvancedSensitiveWords</bold></gradient> <dark_gray>| <aqua>插件状态
+                <dark_gray>  版本 <aqua>%version% <dark_gray>| <gray>MC %mc_version%
+                <dark_gray>  系统 <gray>%platform% %bit% <dark_gray>| <gray>Java %java_version% (%java_vendor%)
+                <dark_gray>  初始化 <aqua>%init% <dark_gray>| <gray>模式 <aqua>%mode%
+                <dark_gray>  已过滤 <aqua>%num% <dark_gray>| <gray>平均耗时 <aqua>%ms%""";
+        plugin.messageOnAiStatus = """
+                <gradient:#22d3ee:#4ade80><bold>AdvancedSensitiveWords</bold></gradient> <dark_gray>| <aqua>AI 检测状态
+                <dark_gray>  已启用 <aqua>%enabled% <dark_gray>| <gray>模型 <aqua>%model%
+                <dark_gray>  已提交 <aqua>%submitted% <dark_gray>| <gray>丢弃 <aqua>%dropped% <dark_gray>| <gray>失败 <aqua>%failed%
+                <dark_gray>  无效 <aqua>%invalid% <dark_gray>| <gray>已执行 <aqua>%enforced%
+                <dark_gray>  队列 <aqua>%active% 活跃 <gray>/ <aqua>%queued% 排队 <gray>/ <aqua>%pool_size% 线程
+                <dark_gray>  执行阈值 <aqua>%threshold%""";
         plugin.commandTest.testResultTrue = """
-                <aqua>一眼丁真, 鉴定为敏感词(鉴定报告)
-                   <gray>原消息: <red>%original_msg%
-                   <gray>过滤后消息: <green>%processed_msg%
-                   <gray>敏感词列表: <aqua>%censored_list%""";
+                <gradient:#22d3ee:#4ade80><bold>鉴定报告</bold></gradient>
+                <dark_gray>  原消息 <red>%original_msg%
+                <dark_gray>  过滤后 <green>%processed_msg%
+                <dark_gray>  匹配项 <aqua>%censored_list%""";
         plugin.commandTest.testResultPass = "<green>待测消息中没有敏感词喵~";
         plugin.commandTest.testNotInit = "<red>插件还没有初始化完毕喵";
         plugin.commandPunish.parseError = "<red>解析方法出错, 请检查指令格式.";
@@ -35,14 +41,17 @@ public final class ChineseMessagesConfiguration extends MessagesConfiguration {
         plugin.noPermission = "<red>你没有权限执行该指令.";
         plugin.unknownCommand = "<red>未知命令, 请使用 <gray>/asw help";
         plugin.argsNotEnough = "<red>参数不足, 请使用 <gray>/asw help";
+        plugin.invalidViolationModule = "<red>未知违规模块，请选择 chat、ai、book、sign、anvil 或 item。";
         plugin.noSuchPlayer = "<red>找不到对应玩家.";
-        plugin.noticeOperator = "<aqua>ASW<gray>Notify >> <gray>玩家 <red>%player% <gray>触发了敏感词检测(%type%)(VL: %violation%)(原消息: %message%) 敏感词列表: <aqua>%censored_list%";
-        plugin.noticeOperatorProxy = "<aqua>ASW<gray>Notify >> <gray>玩家 <red>%player% (服务器: %server_name%) <gray>触发了敏感词检测(%type%)(VL: %violation%)(原消息: %message%) 敏感词列表: <aqua>%censored_list%";
-        plugin.updateAvailable = "<aqua>ASW<gray>Notify >> <gray>插件有可用更新(%latest_version%), 当前正在运行: <aqua>%current_version%.";
+        plugin.noticeOperator = "<gradient:#22d3ee:#4ade80><bold>ASWNotify</bold></gradient> <dark_gray>| <gray>玩家 <red>%player% <gray>触发 <aqua>%type% <gray>检测 <dark_gray>| <gray>VL <aqua>%violation%\n<dark_gray>  原消息 <white>%message%\n<dark_gray>  匹配项 <aqua>%censored_list%";
+        plugin.noticeOperatorProxy = "<gradient:#22d3ee:#4ade80><bold>ASWNotify</bold></gradient> <dark_gray>| <gray>玩家 <red>%player% <gray>在 <aqua>%server_name% <gray>触发 <aqua>%type% <gray>检测 <dark_gray>| <gray>VL <aqua>%violation%\n<dark_gray>  原消息 <white>%message%\n<dark_gray>  匹配项 <aqua>%censored_list%";
+        plugin.updateAvailable = "<gradient:#22d3ee:#4ade80><bold>ASWNotify</bold></gradient> <dark_gray>| <yellow>发现可用更新 <dark_gray>| <gray>最新 <aqua>%latest_version% <dark_gray>| <gray>当前 <aqua>%current_version%";
         plugin.messageOnCommandInfo = """
-                <aqua>AdvancedSensitiveWords<reset>---<aqua>玩家信息
-                    <gray>玩家名称: <aqua>%player%
-                    <gray>违规次数: <aqua>%violation%""";
-        plugin.messageOnCommandReset = "<green>已重置玩家 %player% 的违规次数.";
+                <gradient:#22d3ee:#4ade80><bold>AdvancedSensitiveWords</bold></gradient> <dark_gray>| <aqua>玩家违规信息
+                <dark_gray>  玩家 <aqua>%player%
+                <dark_gray>  聊天 <aqua>%chat_violation% <dark_gray>| <gray>AI <aqua>%ai_violation% <dark_gray>| <gray>书本 <aqua>%book_violation%
+                <dark_gray>  告示牌 <aqua>%sign_violation% <dark_gray>| <gray>铁砧 <aqua>%anvil_violation% <dark_gray>| <gray>物品 <aqua>%item_violation%
+                <dark_gray>  总 VL <gradient:#fbbf24:#fb7185><bold>%violation%</bold></gradient>""";
+        plugin.messageOnCommandReset = "<gradient:#22d3ee:#4ade80><bold>ASW</bold></gradient> <dark_gray>| <green>已重置玩家 <aqua>%player% <green>的 <aqua>%module% <green>VL。";
     }
 }

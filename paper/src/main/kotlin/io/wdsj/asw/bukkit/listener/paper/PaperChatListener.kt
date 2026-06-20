@@ -6,13 +6,11 @@ import io.wdsj.asw.bukkit.ai.LlmChatDetectionService
 import io.wdsj.asw.bukkit.annotation.PaperEventHandler
 import io.wdsj.asw.bukkit.integration.trchat.TrChatCompat
 import io.wdsj.asw.bukkit.listener.abstraction.AbstractFakeMessageExecutor
-import io.wdsj.asw.bukkit.manage.punish.Punishment
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.type.ModuleType
 import io.wdsj.asw.bukkit.util.PlayerProcessingGuard
-import io.wdsj.asw.bukkit.util.SchedulingUtils
 import io.wdsj.asw.bukkit.util.Utils
 import io.wdsj.asw.bukkit.util.ViolationReporter
 import io.wdsj.asw.bukkit.util.context.ChatContext
@@ -150,12 +148,9 @@ class PaperChatListener(
             censoredWords = censoredWords,
             logSource = source,
             startTime = startTime,
-            punish = configuration.get(PluginSettings.CHAT_PUNISH),
-        ) {
-            SchedulingUtils.runSyncIfEventAsync(event) {
-                Punishment.punish(player)
-            }
-        }
+            punishmentActions = configuration.get(PluginSettings.CHAT_PUNISHMENT),
+            event = event,
+        )
     }
 
     private fun isCancelMode(): Boolean {

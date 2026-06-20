@@ -17,7 +17,7 @@ public final class PluginSettings {
     public static final SettingKey<Long> ONLINE_WORDS_CACHE_TIMEOUT = key(settings -> settings.plugin.onlineWordsCacheTimeout);
     public static final SettingKey<Boolean> LOG_VIOLATION = key(settings -> settings.plugin.logViolation);
     public static final SettingKey<Boolean> NOTICE_OPERATOR = key(settings -> settings.plugin.noticeOperator);
-    public static final SettingKey<List<String>> PUNISHMENT = key(settings -> settings.plugin.punishment);
+    public static final SettingKey<List<String>> MANUAL_PUNISHMENT = key(settings -> settings.plugin.manualPunishment);
     public static final SettingKey<Long> VIOLATION_RESET_TIME = key(settings -> settings.plugin.violationResetTime);
     public static final SettingKey<Boolean> ONLY_RESET_ONLINE_PLAYERS = key(settings -> settings.plugin.onlyResetOnlinePlayers);
     public static final SettingKey<Boolean> PURGE_LOG_FILE = key(settings -> settings.plugin.purgeLogFile);
@@ -58,7 +58,7 @@ public final class PluginSettings {
     public static final SettingKey<ProcessMethod> CHAT_METHOD = key(settings -> settings.chat.method);
     public static final SettingKey<Boolean> CHAT_FAKE_MESSAGE_ON_CANCEL = key(settings -> settings.chat.fakeMessageOnCancel);
     public static final SettingKey<Boolean> CHAT_SEND_MESSAGE = key(settings -> settings.chat.sendMessage);
-    public static final SettingKey<Boolean> CHAT_PUNISH = key(settings -> settings.chat.punish);
+    public static final SettingKey<List<String>> CHAT_PUNISHMENT = key(settings -> settings.chat.punishment);
     public static final SettingKey<Boolean> CHAT_BROADCAST_CHECK = key(settings -> settings.chat.broadcastCheck);
     public static final SettingKey<Boolean> CHAT_CONTEXT_CHECK = key(settings -> settings.chat.contextCheck);
     public static final SettingKey<Integer> CHAT_CONTEXT_MAX_SIZE = key(settings -> settings.chat.contextMaxSize);
@@ -83,13 +83,14 @@ public final class PluginSettings {
     public static final SettingKey<Double> AI_MINIMUM_ENTROPY_BITS = key(settings -> settings.ai.minimumEntropyBits);
     public static final SettingKey<Double> AI_MINIMUM_CONFIDENCE = key(settings -> settings.ai.minimumConfidence);
     public static final SettingKey<List<String>> AI_ENFORCED_CATEGORIES = key(settings -> settings.ai.enforcedCategories);
+    public static final SettingKey<List<String>> AI_PUNISHMENT = key(settings -> settings.ai.punishment);
     public static final SettingKey<String> AI_SERVER_CONTEXT = key(settings -> settings.ai.serverContext);
 
     public static final SettingKey<ProcessMethod> BOOK_METHOD = key(settings -> settings.book.method);
     public static final SettingKey<Boolean> BOOK_IGNORE_NEWLINE = key(settings -> settings.book.ignoreNewLine);
     public static final SettingKey<Boolean> BOOK_CROSS_PAGE = key(settings -> settings.book.crossPageCheck);
     public static final SettingKey<Boolean> BOOK_SEND_MESSAGE = key(settings -> settings.book.sendMessage);
-    public static final SettingKey<Boolean> BOOK_PUNISH = key(settings -> settings.book.punish);
+    public static final SettingKey<List<String>> BOOK_PUNISHMENT = key(settings -> settings.book.punishment);
     public static final SettingKey<Boolean> BOOK_CACHE = key(settings -> settings.book.cache.enableCache);
     public static final SettingKey<Integer> BOOK_MAXIMUM_CACHE_SIZE = key(settings -> settings.book.cache.maximumCacheSize);
     public static final SettingKey<Integer> BOOK_CACHE_EXPIRE_TIME = key(settings -> settings.book.cache.expireTime);
@@ -97,7 +98,7 @@ public final class PluginSettings {
 
     public static final SettingKey<ProcessMethod> SIGN_METHOD = key(settings -> settings.sign.method);
     public static final SettingKey<Boolean> SIGN_FAKE_ON_CANCEL = key(settings -> settings.sign.fakeOnCancel);
-    public static final SettingKey<Boolean> SIGN_PUNISH = key(settings -> settings.sign.punish);
+    public static final SettingKey<List<String>> SIGN_PUNISHMENT = key(settings -> settings.sign.punishment);
     public static final SettingKey<Boolean> SIGN_MULTI_LINE_CHECK = key(settings -> settings.sign.multiLineCheck);
     public static final SettingKey<Boolean> SIGN_CONTEXT_CHECK = key(settings -> settings.sign.contextCheck);
     public static final SettingKey<Integer> SIGN_CONTEXT_MAX_SIZE = key(settings -> settings.sign.contextMaxSize);
@@ -106,12 +107,12 @@ public final class PluginSettings {
 
     public static final SettingKey<ProcessMethod> ANVIL_METHOD = key(settings -> settings.anvil.method);
     public static final SettingKey<Boolean> ANVIL_SEND_MESSAGE = key(settings -> settings.anvil.sendMessage);
-    public static final SettingKey<Boolean> ANVIL_PUNISH = key(settings -> settings.anvil.punish);
+    public static final SettingKey<List<String>> ANVIL_PUNISHMENT = key(settings -> settings.anvil.punishment);
     public static final SettingKey<Boolean> NAME_SEND_MESSAGE = key(settings -> settings.name.sendMessage);
     public static final SettingKey<Boolean> NAME_IGNORE_BEDROCK = key(settings -> settings.name.ignoreBedrock);
     public static final SettingKey<ProcessMethod> ITEM_METHOD = key(settings -> settings.item.method);
     public static final SettingKey<Boolean> ITEM_SEND_MESSAGE = key(settings -> settings.item.sendMessage);
-    public static final SettingKey<Boolean> ITEM_PUNISH = key(settings -> settings.item.punish);
+    public static final SettingKey<List<String>> ITEM_PUNISHMENT = key(settings -> settings.item.punishment);
 
     private PluginSettings() {
     }

@@ -26,7 +26,6 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.SignChangeEvent
 
-// TODO: Paper event handler
 class SignListener(private val configuration: PaperConfigurationService) : Listener {
     private val processingGuard = PlayerProcessingGuard(configuration)
     private val violationReporter = ViolationReporter(configuration)
@@ -70,7 +69,8 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
             censoredWords = violation.censoredWords,
             logPrefix = "${player.name}(IP: ${Utils.getPlayerIp(player)})(Sign)($locationLog)",
             startTime = startTime,
-            punish = configuration.get(PluginSettings.SIGN_PUNISH),
+            punishmentActions = configuration.get(PluginSettings.SIGN_PUNISHMENT),
+            event = event,
         )
     }
 

@@ -5,13 +5,21 @@ import io.wdsj.asw.bukkit.type.ModuleType;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Fired asynchronously after the LLM returns a response for a moderation request.
- * Event listeners must not access Bukkit world or entity directly.
+ * Fired asynchronously after the LLM provider returns a response for one moderation request.
+ *
+ * <p>Handlers run on ASW's virtual-thread request executor. They must not directly access Bukkit world,
+ * entity, or inventory APIs. Schedule Bukkit work before interacting with server state.</p>
+ *
+ * <p>Cancelling this event suppresses only ASW's built-in record/notify/punishment follow-up. It cannot
+ * retract the already-sent chat message or cancel the completed provider request. Handlers may replace the
+ * parsed result with {@link #setResult(LlmChatModerationResult)}. A {@code null} result suppresses built-in
+ * enforcement without cancelling the event.</p>
  */
 public final class AsyncModerationResponseEvent extends Event implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
@@ -27,6 +35,20 @@ public final class AsyncModerationResponseEvent extends Event implements Cancell
     private boolean cancelled;
     private LlmChatModerationResult result;
 
+    /**
+     * Creates an asynchronous LLM moderation response event.
+     *
+     * @param requestId unique identifier for this provider request
+     * @param source incoming content source, currently {@link ModuleType#CHAT}
+     * @param playerId player UUID captured before the asynchronous request
+     * @param playerName player name captured before the asynchronous request
+     * @param message single message sent to the provider
+     * @param entropy request-gating Shannon entropy in bits per visible code point
+     * @param rawResponse provider response, capped at 8 KiB UTF-8 without parsed-model modifications
+     * @param rawResponseTruncated whether {@code rawResponse} was truncated to the event exposure limit
+     * @param result locally validated result, or {@code null} when the provider response was invalid JSON
+     */
+    @ApiStatus.Internal
     public AsyncModerationResponseEvent(
             UUID requestId,
             ModuleType source,
@@ -50,42 +72,66 @@ public final class AsyncModerationResponseEvent extends Event implements Cancell
         this.result = result;
     }
 
+    /** @return unique identifier for this provider request */
     public UUID getRequestId() {
         return requestId;
     }
 
+    /**
+     * @return incoming content source; this remains {@link ModuleType#CHAT} even though an enforced LLM
+     * result is recorded in ASW's separate AI violation counter
+     */
     public ModuleType getSource() {
         return source;
     }
 
+    /** @return player UUID captured before dispatching the request */
     public UUID getPlayerId() {
         return playerId;
     }
 
+    /** @return player name captured before dispatching the request */
     public String getPlayerName() {
         return playerName;
     }
 
+    /** @return the one plain-text chat message sent to the provider */
     public String getMessage() {
         return message;
     }
 
+    /** @return request-gating Shannon entropy in bits per visible Unicode code point */
     public double getEntropy() {
         return entropy;
     }
 
+    /**
+     * @return raw provider response capped at 8 KiB UTF-8; treat it as untrusted data and never execute it
+     */
     public String getRawResponse() {
         return rawResponse;
     }
 
+    /** @return whether the raw response exceeded the 8 KiB event exposure limit */
     public boolean isRawResponseTruncated() {
         return rawResponseTruncated;
     }
 
+    /**
+     * @return locally validated classification result, or {@code null} when ASW rejected the provider output
+     */
     public LlmChatModerationResult getResult() {
         return result;
     }
 
+    /**
+     * Replaces the parsed classification result used by ASW after event dispatch.
+     *
+     * <p>The supplied immutable result has already enforced ASW's local schema invariants. Supplying
+     * {@code null} disables built-in enforcement while still allowing other handlers to observe the event.</p>
+     *
+     * @param result replacement validated result, or {@code null}
+     */
     public void setResult(LlmChatModerationResult result) {
         this.result = result;
     }

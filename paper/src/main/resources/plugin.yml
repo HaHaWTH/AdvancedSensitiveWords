@@ -5,9 +5,7 @@ api-version: '1.21'
 website: ${pluginWebsite}
 build-hash: ${gitCommitShort}
 authors:
-  - HeyWTF_IS_That
-  - HaHaWTH
-  - 0D00_0721
+  - Creeam
 description: ${pluginDescription}
 libraries:
   - dev.langchain4j:langchain4j-open-ai:${langchain4jVersion}

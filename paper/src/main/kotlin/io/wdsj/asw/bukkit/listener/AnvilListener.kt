@@ -65,7 +65,8 @@ class AnvilListener(private val configuration: PaperConfigurationService) : List
             censoredWords = censoredWords,
             logSource = "Anvil",
             startTime = startTime,
-            punish = configuration.get(PluginSettings.ANVIL_PUNISH),
+            punishmentActions = configuration.get(PluginSettings.ANVIL_PUNISHMENT),
+            event = event,
         )
     }
 

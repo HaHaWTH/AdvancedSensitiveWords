@@ -52,7 +52,8 @@ class BookListener(private val configuration: PaperConfigurationService) : Liste
             censoredWords = finalViolation.censoredWords,
             logSource = "Book",
             startTime = startTime,
-            punish = configuration.get(PluginSettings.BOOK_PUNISH),
+            punishmentActions = configuration.get(PluginSettings.BOOK_PUNISHMENT),
+            event = event,
         )
     }
 

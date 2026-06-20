@@ -2,11 +2,13 @@ package io.wdsj.asw.bukkit.command;
 
 import com.github.houbb.heaven.util.util.OsUtil;
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
-import io.wdsj.asw.bukkit.manage.punish.Punishment;
+import io.wdsj.asw.bukkit.ai.LlmChatDetectionService;
+import io.wdsj.asw.bukkit.manage.punish.PunishmentService;
 import io.wdsj.asw.bukkit.manage.punish.ViolationCounter;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService;
+import io.wdsj.asw.bukkit.type.ModuleType;
 import io.wdsj.asw.bukkit.util.TimingUtils;
 import io.wdsj.asw.bukkit.util.Utils;
 import io.wdsj.asw.bukkit.util.cache.BookCache;
@@ -17,14 +19,17 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public final class AswCommandService {
     private final AdvancedSensitiveWords plugin;
     private final PaperConfigurationService configuration;
+    private final PunishmentService punishmentService;
 
     public AswCommandService(AdvancedSensitiveWords plugin) {
         this.plugin = plugin;
         this.configuration = plugin.getConfigurationService();
+        this.punishmentService = new PunishmentService(configuration);
     }
 
     public void reloadAll(CommandSender sender) {
@@ -63,6 +68,23 @@ public final class AswCommandService {
                 .replace("%bit%", bitness)
                 .replace("%java_version%", TimingUtils.getJvmVersion())
                 .replace("%java_vendor%", TimingUtils.getJvmVendor());
+        MessageUtils.sendMessage(sender, message);
+    }
+
+    public void showAiStatus(CommandSender sender) {
+        LlmChatDetectionService.LlmRuntimeStatus status = plugin.getLlmChatDetectionService().runtimeStatus();
+        String message = MessageUtils.retrieveMessage(PluginMessages.MESSAGE_ON_AI_STATUS)
+                .replace("%enabled%", String.valueOf(status.enabled()))
+                .replace("%submitted%", String.valueOf(status.submittedRequests()))
+                .replace("%dropped%", String.valueOf(status.droppedRequests()))
+                .replace("%failed%", String.valueOf(status.failedRequests()))
+                .replace("%invalid%", String.valueOf(status.invalidResponses()))
+                .replace("%enforced%", String.valueOf(status.enforcedResponses()))
+                .replace("%active%", String.valueOf(status.activeRequests()))
+                .replace("%queued%", String.valueOf(status.queuedRequests()))
+                .replace("%pool_size%", String.valueOf(status.poolSize()))
+                .replace("%model%", status.modelName())
+                .replace("%threshold%", String.valueOf(status.minimumConfidence()));
         MessageUtils.sendMessage(sender, message);
     }
 
@@ -119,23 +141,32 @@ public final class AswCommandService {
     public void showPlayerInfo(CommandSender sender, Player player) {
         String message = MessageUtils.retrieveMessage(PluginMessages.MESSAGE_ON_PLAYER_INFO)
                 .replace("%player%", player.getName())
-                .replace("%violation%", String.valueOf(ViolationCounter.INSTANCE.getViolationCount(player)));
+                .replace("%violation%", String.valueOf(ViolationCounter.INSTANCE.getTotalViolationCount(player)));
+        for (ModuleType moduleType : ModuleType.violationModules()) {
+            String placeholder = "%" + moduleType.name().toLowerCase(Locale.ROOT) + "_violation%";
+            message = message.replace(placeholder, String.valueOf(ViolationCounter.INSTANCE.getViolationCount(player, moduleType)));
+        }
         MessageUtils.sendMessage(sender, message);
     }
 
-    public void resetPlayerViolations(CommandSender sender, Player player) {
-        ViolationCounter.INSTANCE.resetViolationCount(player);
+    public void resetPlayerViolations(CommandSender sender, Player player, ModuleType moduleType) {
+        if (moduleType == null) {
+            ViolationCounter.INSTANCE.resetViolationCount(player);
+        } else {
+            ViolationCounter.INSTANCE.resetViolationCount(player, moduleType);
+        }
         String message = MessageUtils.retrieveMessage(PluginMessages.MESSAGE_ON_COMMAND_RESET)
-                .replace("%player%", player.getName());
+                .replace("%player%", player.getName())
+                .replace("%module%", moduleType == null ? "ALL" : moduleType.name());
         MessageUtils.sendMessage(sender, message);
     }
 
     public void punishPlayer(CommandSender sender, Player player, String method) {
         try {
             if (method == null || method.isBlank()) {
-                Punishment.punish(player);
+                punishmentService.executeManual(player, configuration.get(PluginSettings.MANUAL_PUNISHMENT));
             } else {
-                Punishment.processSinglePunish(player, method);
+                punishmentService.executeManualMethod(player, method);
             }
         } catch (IllegalArgumentException exception) {
             MessageUtils.sendMessage(sender, PluginMessages.MESSAGE_ON_COMMAND_PUNISH_PARSE_ERROR);

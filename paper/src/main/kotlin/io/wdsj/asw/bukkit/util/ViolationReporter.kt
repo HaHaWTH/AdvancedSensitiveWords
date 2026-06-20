@@ -2,26 +2,29 @@ package io.wdsj.asw.bukkit.util
 
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.manage.notice.Notifier
-import io.wdsj.asw.bukkit.manage.punish.Punishment
+import io.wdsj.asw.bukkit.manage.punish.PunishmentService
 import io.wdsj.asw.bukkit.manage.punish.ViolationCounter
 import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.type.ModuleType
 import io.wdsj.asw.bukkit.api.moderation.LlmChatModerationResult
 import org.bukkit.entity.Player
+import org.bukkit.event.Event
 
 class ViolationReporter(private val configuration: PaperConfigurationService) {
+    private val punishmentService = PunishmentService(configuration)
+
     fun reportLlm(player: Player, content: String, result: LlmChatModerationResult) {
         val categoryLabel = "LLM:${result.category().wireName()}"
-        val logPrefix = "${player.name}(IP: ${Utils.getPlayerIp(player)})(Chat)(LLM category=${result.category().wireName()}, severity=${result.severity().wireName()}, confidence=${result.confidence()})"
+        val logPrefix = "${player.name}(IP: ${Utils.getPlayerIp(player)})(AI)(LLM category=${result.category().wireName()}, severity=${result.severity().wireName()}, confidence=${result.confidence()})"
         reportWithCustomLogPrefix(
             player = player,
-            moduleType = ModuleType.CHAT,
+            moduleType = ModuleType.AI,
             content = content,
             censoredWords = listOf(categoryLabel),
             logPrefix = logPrefix,
             startTime = System.currentTimeMillis(),
-            punish = configuration.get(PluginSettings.CHAT_PUNISH),
+            punishmentActions = configuration.get(PluginSettings.AI_PUNISHMENT),
         )
     }
 
@@ -32,9 +35,9 @@ class ViolationReporter(private val configuration: PaperConfigurationService) {
         censoredWords: List<String>,
         logSource: String,
         startTime: Long,
-        punish: Boolean,
+        punishmentActions: List<String>,
         logContent: String = content,
-        punishAction: () -> Unit = { Punishment.punish(player) },
+        event: Event? = null,
     ) {
         Utils.messagesFilteredNum.getAndIncrement()
 
@@ -45,7 +48,7 @@ class ViolationReporter(private val configuration: PaperConfigurationService) {
             )
         }
 
-        ViolationCounter.INSTANCE.incrementViolationCount(player)
+        ViolationCounter.INSTANCE.incrementViolationCount(player, moduleType)
 
         if (configuration.get(PluginSettings.HOOK_VELOCITY)) {
             VelocitySender.sendNotifyMessage(player, moduleType, content, censoredWords)
@@ -57,9 +60,7 @@ class ViolationReporter(private val configuration: PaperConfigurationService) {
             Notifier.notice(player, moduleType, content, censoredWords)
         }
 
-        if (punish) {
-            punishAction()
-        }
+        executePunishment(player, moduleType, punishmentActions, event)
     }
 
     fun reportWithCustomLogPrefix(
@@ -69,8 +70,8 @@ class ViolationReporter(private val configuration: PaperConfigurationService) {
         censoredWords: List<String>,
         logPrefix: String,
         startTime: Long,
-        punish: Boolean,
-        punishAction: () -> Unit = { Punishment.punish(player) },
+        punishmentActions: List<String>,
+        event: Event? = null,
     ) {
         Utils.messagesFilteredNum.getAndIncrement()
 
@@ -78,7 +79,7 @@ class ViolationReporter(private val configuration: PaperConfigurationService) {
             LoggingUtils.logViolation(logPrefix, content + censoredWords)
         }
 
-        ViolationCounter.INSTANCE.incrementViolationCount(player)
+        ViolationCounter.INSTANCE.incrementViolationCount(player, moduleType)
 
         if (configuration.get(PluginSettings.HOOK_VELOCITY)) {
             VelocitySender.sendNotifyMessage(player, moduleType, content, censoredWords)
@@ -90,8 +91,24 @@ class ViolationReporter(private val configuration: PaperConfigurationService) {
             Notifier.notice(player, moduleType, content, censoredWords)
         }
 
-        if (punish) {
-            punishAction()
+        executePunishment(player, moduleType, punishmentActions, event)
+    }
+
+    private fun executePunishment(
+        player: Player,
+        moduleType: ModuleType,
+        actions: List<String>,
+        event: Event?,
+    ) {
+        if (actions.isEmpty()) return
+
+        val execute = Runnable {
+            punishmentService.executeForModule(player, moduleType, actions)
         }
+        if (event?.isAsynchronous == true) {
+            SchedulingUtils.runSyncIfEventAsync(event, execute)
+            return
+        }
+        execute.run()
     }
 }

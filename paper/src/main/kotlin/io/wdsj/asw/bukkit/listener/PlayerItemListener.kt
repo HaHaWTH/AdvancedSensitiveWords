@@ -93,7 +93,7 @@ class PlayerItemListener(private val configuration: PaperConfigurationService) :
             censoredWords = censoredWords,
             logSource = "Item",
             startTime = startTime,
-            punish = configuration.get(PluginSettings.ITEM_PUNISH),
+            punishmentActions = configuration.get(PluginSettings.ITEM_PUNISHMENT),
         )
     }
 
