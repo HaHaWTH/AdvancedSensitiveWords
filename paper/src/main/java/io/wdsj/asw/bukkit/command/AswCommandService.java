@@ -13,6 +13,10 @@ import io.wdsj.asw.bukkit.util.TimingUtils;
 import io.wdsj.asw.bukkit.util.Utils;
 import io.wdsj.asw.bukkit.util.cache.BookCache;
 import io.wdsj.asw.bukkit.util.message.MessageUtils;
+import io.wdsj.asw.bukkit.util.SchedulingUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -20,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 public final class AswCommandService {
     private final AdvancedSensitiveWords plugin;
@@ -159,6 +164,20 @@ public final class AswCommandService {
                 .replace("%player%", player.getName())
                 .replace("%module%", moduleType == null ? "ALL" : moduleType.name());
         MessageUtils.sendMessage(sender, message);
+    }
+
+    public void teleportToReportedSign(CommandSender sender, UUID worldId, double x, double y, double z) {
+        if (!(sender instanceof Player player)) {
+            return;
+        }
+
+        World world = Bukkit.getWorld(worldId);
+        if (world == null) {
+            return;
+        }
+
+        Location destination = new Location(world, x + 0.5D, y + 1.0D, z + 0.5D);
+        SchedulingUtils.runSyncAtEntityIfFolia(player, () -> player.teleportAsync(destination));
     }
 
     public void punishPlayer(CommandSender sender, Player player, String method) {

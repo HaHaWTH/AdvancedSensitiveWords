@@ -8,6 +8,7 @@ import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.type.ModuleType
 import io.wdsj.asw.bukkit.api.moderation.LlmChatModerationResult
+import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 
@@ -38,6 +39,7 @@ class ViolationReporter(private val configuration: PaperConfigurationService) {
         punishmentActions: List<String>,
         logContent: String = content,
         event: Event? = null,
+        notificationInteraction: Component? = null,
     ) {
         Utils.messagesFilteredNum.getAndIncrement()
 
@@ -57,7 +59,7 @@ class ViolationReporter(private val configuration: PaperConfigurationService) {
         TimingUtils.addProcessStatistic(System.currentTimeMillis(), startTime)
 
         if (configuration.get(PluginSettings.NOTICE_OPERATOR)) {
-            Notifier.notice(player, moduleType, content, censoredWords)
+            Notifier.notice(player, moduleType, content, censoredWords, notificationInteraction)
         }
 
         executePunishment(player, moduleType, punishmentActions, event)
@@ -72,6 +74,7 @@ class ViolationReporter(private val configuration: PaperConfigurationService) {
         startTime: Long,
         punishmentActions: List<String>,
         event: Event? = null,
+        notificationInteraction: Component? = null,
     ) {
         Utils.messagesFilteredNum.getAndIncrement()
 
@@ -88,7 +91,7 @@ class ViolationReporter(private val configuration: PaperConfigurationService) {
         TimingUtils.addProcessStatistic(System.currentTimeMillis(), startTime)
 
         if (configuration.get(PluginSettings.NOTICE_OPERATOR)) {
-            Notifier.notice(player, moduleType, content, censoredWords)
+            Notifier.notice(player, moduleType, content, censoredWords, notificationInteraction)
         }
 
         executePunishment(player, moduleType, punishmentActions, event)

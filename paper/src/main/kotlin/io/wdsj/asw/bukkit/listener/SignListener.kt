@@ -17,6 +17,9 @@ import io.wdsj.asw.bukkit.util.context.SignContextEntry
 import io.wdsj.asw.bukkit.util.context.SignContextTarget
 import io.wdsj.asw.bukkit.util.message.MessageUtils
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.event.ClickEvent
+import net.kyori.adventure.text.event.HoverEvent
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.block.Sign
@@ -71,7 +74,25 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
             startTime = startTime,
             punishmentActions = configuration.get(PluginSettings.SIGN_PUNISHMENT),
             event = event,
+            notificationInteraction = signLocationInteraction(location),
         )
+    }
+
+    private fun signLocationInteraction(location: Location): Component {
+        val world = location.world ?: return Component.empty()
+        val hoverText = Component.text()
+            .append(Component.text("World: ", NamedTextColor.GRAY))
+            .append(Component.text(world.name, NamedTextColor.AQUA))
+            .append(Component.newline())
+            .append(Component.text("X: ${location.blockX}, Y: ${location.blockY}, Z: ${location.blockZ}", NamedTextColor.GRAY))
+            .append(Component.newline())
+            .append(Component.text("Click to teleport", NamedTextColor.GREEN))
+            .build()
+        return Component.empty()
+            .hoverEvent(HoverEvent.showText(hoverText))
+            .clickEvent(ClickEvent.runCommand(
+                "/asw teleport ${world.uid} ${location.blockX} ${location.blockY} ${location.blockZ}",
+            ))
     }
 
     private fun censorSingleLines(event: SignChangeEvent): SignLineScan {

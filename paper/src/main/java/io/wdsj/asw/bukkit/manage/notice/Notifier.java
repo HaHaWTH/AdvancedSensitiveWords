@@ -6,6 +6,7 @@ import io.wdsj.asw.bukkit.permission.cache.CachingPermTool;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
 import io.wdsj.asw.bukkit.type.ModuleType;
 import io.wdsj.asw.bukkit.util.message.MessageUtils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -21,11 +22,27 @@ public class Notifier {
      * @param censoredList censored list
      */
     public static void notice(Player violatedPlayer, ModuleType moduleType, String originalMessage, List<String> censoredList) {
+        notice(violatedPlayer, moduleType, originalMessage, censoredList, null);
+    }
+
+    public static void notice(
+            Player violatedPlayer,
+            ModuleType moduleType,
+            String originalMessage,
+            List<String> censoredList,
+            Component notificationInteraction
+    ) {
         Collection<? extends Player> players = Bukkit.getOnlinePlayers();
         String message = MessageUtils.retrieveMessage(PluginMessages.ADMIN_REMINDER).replace("%player%", violatedPlayer.getName()).replace("%type%", moduleType.toString()).replace("%message%", stripFormatting(originalMessage)).replace("%censored_list%", censoredList.toString()).replace("%violation%", String.valueOf(ViolationCounter.INSTANCE.getViolationCount(violatedPlayer, moduleType)));
+        Component notification = MessageUtils.deserialize(message);
+        if (notificationInteraction != null) {
+            notification = notification
+                    .hoverEvent(notificationInteraction.hoverEvent())
+                    .clickEvent(notificationInteraction.clickEvent());
+        }
         for (Player player : players) {
             if (CachingPermTool.hasPermission(PermissionsEnum.NOTICE, player)) {
-                MessageUtils.sendMessage(player, message);
+                player.sendMessage(notification);
             }
         }
     }

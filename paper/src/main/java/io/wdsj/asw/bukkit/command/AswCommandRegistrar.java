@@ -4,6 +4,7 @@ import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
 import io.wdsj.asw.bukkit.type.ModuleType;
 import io.wdsj.asw.bukkit.util.message.MessageUtils;
+import io.wdsj.asw.bukkit.permission.PermissionsEnum;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.incendo.cloud.Command;
@@ -23,6 +24,8 @@ import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.ParserDescriptor;
 import org.incendo.cloud.parser.standard.StringArrayParser;
 import org.incendo.cloud.parser.standard.StringParser;
+import org.incendo.cloud.parser.standard.DoubleParser;
+import org.incendo.cloud.parser.standard.UUIDParser;
 import org.incendo.cloud.permission.PredicatePermission;
 import org.incendo.cloud.suggestion.SuggestionProvider;
 
@@ -63,6 +66,7 @@ public final class AswCommandRegistrar {
         registerExceptionHandlers();
         registerRootCommand();
         registerAiCommands();
+        registerTeleportCommand();
         registerReloadCommands();
         registerWordCommands();
         registerPlayerCommands();
@@ -111,6 +115,23 @@ public final class AswCommandRegistrar {
                 .literal("status", Description.of("Show AI moderation status"))
                 .permission(permission(CommandPermissions.AI_STATUS))
                 .handler(context -> commandService.showAiStatus(sender(context))));
+    }
+
+    private void registerTeleportCommand() {
+        commandManager.command(root()
+                .literal("teleport", Description.of("Teleport to a reported sign"))
+                .required("world-id", UUIDParser.uuidParser())
+                .required("x", DoubleParser.doubleParser())
+                .required("y", DoubleParser.doubleParser())
+                .required("z", DoubleParser.doubleParser())
+                .permission(permission(PermissionsEnum.NOTICE.getPermission()))
+                .handler(context -> commandService.teleportToReportedSign(
+                        sender(context),
+                        context.get("world-id"),
+                        context.get("x"),
+                        context.get("y"),
+                        context.get("z")
+                )));
     }
 
     private void registerWordCommands() {
