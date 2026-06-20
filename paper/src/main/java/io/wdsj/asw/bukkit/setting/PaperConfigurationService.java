@@ -3,6 +3,7 @@ package io.wdsj.asw.bukkit.setting;
 import de.exlll.configlib.NameFormatters;
 import de.exlll.configlib.YamlConfigurationProperties;
 import de.exlll.configlib.YamlConfigurationStore;
+import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 import io.wdsj.asw.bukkit.api.moderation.LlmModerationCategory;
 import org.slf4j.Logger;
 
@@ -18,7 +19,7 @@ import java.util.Set;
 public final class PaperConfigurationService {
     private static final YamlConfigurationProperties PROPERTIES = YamlConfigurationProperties.newBuilder()
             .setNameFormatter(NameFormatters.LOWER_KEBAB_CASE)
-            .header("AdvancedSensitiveWords configuration. All keys use kebab-case.")
+            .header("AdvancedSensitiveWords configuration. (Version " + AdvancedSensitiveWords.PLUGIN_VERSION + ")")
             .build();
 
     private final Logger logger;
