@@ -20,10 +20,12 @@ public class PluginMessageForwarder {
     private boolean warned = false;
     private final Logger logger;
     private final ProxyServer server;
+
     public PluginMessageForwarder(Logger logger, ProxyServer server) {
         this.logger = logger;
         this.server = server;
     }
+
     @Subscribe
     public void onPluginMessage(PluginMessageEvent event) {
         if (event.getIdentifier().equals(CHANNEL) || event.getIdentifier().equals(LEGACY_CHANNEL)) {

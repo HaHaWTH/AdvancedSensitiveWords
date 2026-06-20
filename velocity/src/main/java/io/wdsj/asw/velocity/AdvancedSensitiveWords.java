@@ -35,9 +35,9 @@ public class AdvancedSensitiveWords {
     private final Metrics.Factory metricsFactory;
     private final File dataFolder;
     public static final MinecraftChannelIdentifier CHANNEL = MinecraftChannelIdentifier.create("asw", "main");
-    public static final ChannelIdentifier LEGACY_CHANNEL
-            = new LegacyChannelIdentifier("asw:main");
+    public static final ChannelIdentifier LEGACY_CHANNEL = new LegacyChannelIdentifier("asw:main");
     private static Config config;
+
     @Inject
     public AdvancedSensitiveWords(Logger logger, ProxyServer server, Metrics.Factory metricsFactory, @DataDirectory Path path) {
         this.logger = logger;
@@ -45,27 +45,50 @@ public class AdvancedSensitiveWords {
         this.metricsFactory = metricsFactory;
         this.dataFolder = path.toFile();
     }
+
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
         reloadConfiguration();
         server.getChannelRegistrar().register(CHANNEL, LEGACY_CHANNEL);
-        Metrics metrics = metricsFactory.make(this, 21637);
+        metricsFactory.make(this, 21637);
         server.getEventManager().register(this, new PluginMessageForwarder(logger, server));
         if (config.check_for_update) {
             server.getScheduler().buildTask(this, () -> {
                 logger.info("Checking for update...");
-                if (Updater.isUpdateAvailable()) {
+                Updater.UpdateResult result = Updater.checkNow();
+                if (result.isUpdateAvailable()) {
                     if (Updater.isDevChannel()) {
-                        logger.warn("There is a new development version available: {}, you're on: {}", Updater.getLatestVersion(), Updater.getCurrentVersion());
+                        if (result.isReleaseUpdateAvailable()) {
+                            if (result.isError()) {
+                                logger.warn(
+                                        "A newer stable release is available: {} (current {}). Unable to compare the development branch.",
+                                        result.getLatestReleaseVersion(),
+                                        PluginVersionTemplate.VERSION
+                                );
+                                return;
+                            }
+                            logger.warn(
+                                    "A newer stable release is available: {} (current {}). Latest development commit: {} ({} commit(s) behind).",
+                                    result.getLatestReleaseVersion(),
+                                    PluginVersionTemplate.VERSION,
+                                    result.getLatestVersion(),
+                                    result.getCommitsBehind()
+                            );
+                            return;
+                        }
+                        logger.warn(
+                                "This development build is {} commit(s) behind {} (current {}).",
+                                result.getCommitsBehind(),
+                                result.getLatestVersion(),
+                                PluginVersionTemplate.COMMIT_HASH_SHORT
+                        );
                     } else {
-                        logger.warn("There is a new version available: {}, you're on: {}", Updater.getLatestVersion(), Updater.getCurrentVersion());
+                        logger.warn("There is a new version available: {}, you're on: {}", result.getLatestVersion(), PluginVersionTemplate.VERSION);
                     }
+                } else if (!result.isError()) {
+                    logger.info("You are running the latest version.");
                 } else {
-                    if (!Updater.isErred()) {
-                        logger.info("You are running the latest version.");
-                    } else {
-                        logger.info("Unable to fetch version info.");
-                    }
+                    logger.info("Unable to fetch version info.");
                 }
             }).schedule();
         }
@@ -84,7 +107,7 @@ public class AdvancedSensitiveWords {
     public void createDirectory(File dir) throws IOException {
         try {
             Files.createDirectories(dir.toPath());
-        } catch (FileAlreadyExistsException e) { // Thrown if dir exists but is not a directory
+        } catch (FileAlreadyExistsException e) {
             if (dir.delete()) createDirectory(dir);
         }
     }

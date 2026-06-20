@@ -1,0 +1,91 @@
+name: AdvancedSensitiveWords
+version: ${pluginVersion}-${versionChannel}
+main: ${pluginMain}
+api-version: '1.21'
+website: ${pluginWebsite}
+build-hash: ${gitCommitShort}
+authors:
+  - Creeam
+description: ${pluginDescription}
+libraries:
+  - dev.langchain4j:langchain4j-open-ai:${langchain4jVersion}
+  - dev.langchain4j:langchain4j-http-client-jdk:${langchain4jVersion}
+loadbefore:
+  - YouCanUseThisToPrioritizeOtherChatPlugins
+softdepend:
+  - TrChat
+  - floodgate
+  - PlaceholderAPI
+  - AuthMe
+  - packetevents
+folia-supported: true
+permissions:
+  advancedsensitivewords.*:
+    description: All permissions of Advanced Sensitive Words.
+    default: false
+    children:
+      advancedsensitivewords.bypass: true
+      advancedsensitivewords.notice: true
+      advancedsensitivewords.update: true
+      advancedsensitivewords.command.*: true
+  advancedsensitivewords.command.*:
+    description: All Advanced Sensitive Words management commands.
+    default: false
+    children:
+      advancedsensitivewords.command.help: true
+      advancedsensitivewords.command.status: true
+      advancedsensitivewords.command.reload.all: true
+      advancedsensitivewords.command.reload.config: true
+      advancedsensitivewords.command.test: true
+      advancedsensitivewords.command.word.add: true
+      advancedsensitivewords.command.word.remove: true
+      advancedsensitivewords.command.allow.add: true
+      advancedsensitivewords.command.allow.remove: true
+      advancedsensitivewords.command.player.info: true
+      advancedsensitivewords.command.player.reset: true
+      advancedsensitivewords.command.player.punish: true
+  advancedsensitivewords.bypass:
+    description: Bypass the Advanced Sensitive Words filter.
+    default: false
+  advancedsensitivewords.notice:
+    description: Retrieve the notice message when player violated.
+    default: op
+  advancedsensitivewords.update:
+    description: Retrieve the update message.
+    default: op
+  advancedsensitivewords.command.help:
+    description: Show Advanced Sensitive Words command help.
+    default: op
+  advancedsensitivewords.command.status:
+    description: Show Advanced Sensitive Words status.
+    default: op
+  advancedsensitivewords.command.reload.all:
+    description: Reload all Advanced Sensitive Words configuration and dictionaries.
+    default: op
+  advancedsensitivewords.command.reload.config:
+    description: Reload Advanced Sensitive Words configuration only.
+    default: op
+  advancedsensitivewords.command.test:
+    description: Test text against the word filter.
+    default: op
+  advancedsensitivewords.command.word.add:
+    description: Add temporary blocked words.
+    default: op
+  advancedsensitivewords.command.word.remove:
+    description: Remove temporary blocked words.
+    default: op
+  advancedsensitivewords.command.allow.add:
+    description: Add temporary allowed words.
+    default: op
+  advancedsensitivewords.command.allow.remove:
+    description: Remove temporary allowed words.
+    default: op
+  advancedsensitivewords.command.player.info:
+    description: Show a player's violation count.
+    default: op
+  advancedsensitivewords.command.player.reset:
+    description: Reset a player's violation count.
+    default: op
+  advancedsensitivewords.command.player.punish:
+    description: Apply a punishment to a player.
+    default: op

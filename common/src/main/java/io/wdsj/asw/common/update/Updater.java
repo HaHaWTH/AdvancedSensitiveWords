@@ -3,108 +3,207 @@ package io.wdsj.asw.common.update;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.wdsj.asw.common.template.PluginVersionTemplate;
-import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
-public class Updater {
-    private static String currentVersion = PluginVersionTemplate.VERSION;
-    private static String latestVersion;
-    private static boolean isUpdateAvailable = false;
-    private static boolean isErred = false;
-    private static final String USER_NAME = "HaHaWTH";
-    private static final String REPOSITORY = "AdvancedSensitiveWords";
-    private static final String RELEASE_URL = "https://api.github.com/repos/" + USER_NAME + "/" + REPOSITORY + "/releases/latest";
-    private static final String COMMITS_URL = "https://api.github.com/repos/" + USER_NAME + "/" + REPOSITORY + "/commits/" + PluginVersionTemplate.COMMIT_BRANCH;
-    @SuppressWarnings("ConstantConditions") // IDE doesn't know this will be replaced
-    private static final boolean isDevChannel = PluginVersionTemplate.VERSION_CHANNEL.equalsIgnoreCase("dev");
+/**
+ * Checks GitHub releases for stable builds and compares commits for development builds.
+ */
+public final class Updater {
+    private static final String GITHUB_USERNAME = "HaHaWTH";
+    private static final String GITHUB_REPOSITORY = "AdvancedSensitiveWords";
+    private static final String API_ROOT = "https://api.github.com/repos/"
+            + GITHUB_USERNAME + "/" + GITHUB_REPOSITORY;
+    private static final String RELEASE_URL = API_ROOT + "/releases/latest";
+    private static final String COMMITS_URL = API_ROOT + "/commits/";
+    private static final String COMPARE_URL = API_ROOT + "/compare/";
+    private static final boolean DEV_CHANNEL = "dev".equalsIgnoreCase(PluginVersionTemplate.VERSION_CHANNEL);
 
-    /**
-     * Check if there is an update available
-     * Note: This method will perform a network request!
-     * @return true if there is an update available, false otherwise
-     */
-    public static boolean isUpdateAvailable() {
-        currentVersion = PluginVersionTemplate.VERSION;
-        if (isDevChannel) {
-            return isDevUpdateAvailable();
+    private Updater() {
+    }
+
+    public static final class UpdateResult {
+        private final boolean updateAvailable;
+        private final String latestVersion;
+        private final boolean error;
+        private final int commitsBehind;
+        private final String latestReleaseVersion;
+        private final boolean releaseUpdateAvailable;
+
+        public UpdateResult(
+                boolean updateAvailable,
+                String latestVersion,
+                boolean error,
+                int commitsBehind,
+                String latestReleaseVersion,
+                boolean releaseUpdateAvailable
+        ) {
+            this.updateAvailable = updateAvailable;
+            this.latestVersion = latestVersion;
+            this.error = error;
+            this.commitsBehind = commitsBehind;
+            this.latestReleaseVersion = latestReleaseVersion;
+            this.releaseUpdateAvailable = releaseUpdateAvailable;
         }
-        URI uri = URI.create(RELEASE_URL);
-        try {
-            URL url = uri.toURL();
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setConnectTimeout(10000);
-            conn.setReadTimeout(10000);
-            conn.setRequestMethod("GET");
-            conn.setRequestProperty("Accept", "application/vnd.github+json");
-            try (InputStreamReader reader = new InputStreamReader(conn.getInputStream())) {
-                JsonObject jsonObject = new JsonParser().parse(reader).getAsJsonObject();
-                String latest = jsonObject.get("tag_name").getAsString();
-                latestVersion = latest;
-                isUpdateAvailable = !currentVersion.equals(latest);
-                reader.close();
-                return isUpdateAvailable;
-            }
-        } catch (Exception e) {
-            isErred = true;
-            isUpdateAvailable = false;
-            return false;
+
+        public static UpdateResult noUpdate() {
+            return new UpdateResult(false, null, false, 0, null, false);
+        }
+
+        public static UpdateResult error() {
+            return new UpdateResult(false, null, true, 0, null, false);
+        }
+
+        public boolean isUpdateAvailable() {
+            return updateAvailable;
+        }
+
+        public String getLatestVersion() {
+            return latestVersion;
+        }
+
+        public boolean isError() {
+            return error;
+        }
+
+        /**
+         * Returns the number of commits the current development build is behind its source branch.
+         */
+        public int getCommitsBehind() {
+            return commitsBehind;
+        }
+
+        public String getLatestReleaseVersion() {
+            return latestReleaseVersion;
+        }
+
+        public boolean isReleaseUpdateAvailable() {
+            return releaseUpdateAvailable;
         }
     }
 
-    protected static boolean isDevUpdateAvailable() {
-        URI uri = URI.create(COMMITS_URL);
+    /**
+     * Performs a synchronous GitHub API request. Call this from an asynchronous task.
+     */
+    public static UpdateResult checkNow() {
         try {
-            URL url = uri.toURL();
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setConnectTimeout(10000);
-            connection.setReadTimeout(10000);
-            connection.setRequestProperty("Accept", "application/vnd.github+json");
-            int responseCode = connection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                try (InputStreamReader reader = new InputStreamReader(connection.getInputStream())) {
-                    JsonObject jsonObject = new JsonParser().parse(reader).getAsJsonObject();
-                    String latestHash = jsonObject.get("sha").getAsString();
-                    latestVersion = latestHash.substring(0, 7);
-                    currentVersion = PluginVersionTemplate.COMMIT_HASH_SHORT;
-                    isUpdateAvailable = !PluginVersionTemplate.COMMIT_HASH.equals(latestHash);
-                    reader.close();
-                    return isUpdateAvailable;
-                }
-            }
+            return DEV_CHANNEL ? checkDevelopmentUpdate() : checkReleaseUpdate();
         } catch (Exception ignored) {
+            return UpdateResult.error();
         }
-        isErred = true;
-        isUpdateAvailable = false;
-        return false;
-    }
-
-    public static String getLatestVersion() {
-        return latestVersion;
-    }
-    @NotNull
-    public static String getCurrentVersion() {
-        return currentVersion;
-    }
-
-    /**
-     * Returns true if there is an update available, false otherwise
-     * Must be called after {@link Updater#isUpdateAvailable()}
-     * @return A boolean indicating whether there is an update available
-     */
-    public static boolean hasUpdate() {
-        return isUpdateAvailable;
-    }
-
-    public static boolean isErred() {
-        return isErred;
     }
 
     public static boolean isDevChannel() {
-        return isDevChannel;
+        return DEV_CHANNEL;
+    }
+
+    private static UpdateResult checkReleaseUpdate() throws IOException {
+        JsonObject release = requestJson(RELEASE_URL);
+        String latestVersion = release.get("tag_name").getAsString();
+        int comparison = compareVersions(parseSemanticVersion(latestVersion), parseSemanticVersion(PluginVersionTemplate.VERSION));
+        return new UpdateResult(comparison > 0, latestVersion, false, 0, latestVersion, comparison > 0);
+    }
+
+    private static UpdateResult checkDevelopmentUpdate() throws IOException {
+        UpdateResult releaseResult = checkReleaseUpdate();
+        String localCommit = PluginVersionTemplate.COMMIT_HASH;
+        String branch = PluginVersionTemplate.COMMIT_BRANCH;
+        final UpdateResult errorResult = new UpdateResult(
+                releaseResult.isReleaseUpdateAvailable(),
+                branch,
+                true,
+                0,
+                releaseResult.getLatestReleaseVersion(),
+                releaseResult.isReleaseUpdateAvailable()
+        );
+        if (isUnknown(localCommit) || isUnknown(branch)) {
+            return errorResult;
+        }
+
+        try {
+            JsonObject latestCommit = requestJson(COMMITS_URL + encodeReference(branch));
+            String compareReference = encodeReference(localCommit) + "..." + encodeReference(branch);
+            JsonObject comparison = requestJson(COMPARE_URL + compareReference);
+            int commitsBehind = comparison.get("ahead_by").getAsInt();
+            return new UpdateResult(
+                    releaseResult.isReleaseUpdateAvailable() || commitsBehind > 0,
+                    shortCommit(latestCommit.get("sha").getAsString()),
+                    false,
+                    commitsBehind,
+                    releaseResult.getLatestReleaseVersion(),
+                    releaseResult.isReleaseUpdateAvailable()
+            );
+        } catch (Exception ignored) {
+            return errorResult;
+        }
+    }
+
+    private static JsonObject requestJson(String endpoint) throws IOException {
+        HttpURLConnection connection = (HttpURLConnection) URI.create(endpoint).toURL().openConnection();
+        try {
+            connection.setRequestProperty("User-Agent", GITHUB_REPOSITORY + "-Updater");
+            connection.setRequestProperty("Accept", "application/vnd.github+json");
+            connection.setConnectTimeout(10_000);
+            connection.setReadTimeout(7_000);
+            connection.setRequestMethod("GET");
+
+            if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                throw new IOException("GitHub API returned HTTP " + connection.getResponseCode());
+            }
+
+            try (InputStreamReader reader = new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8)) {
+                return JsonParser.parseReader(reader).getAsJsonObject();
+            }
+        } finally {
+            connection.disconnect();
+        }
+    }
+
+    private static String shortCommit(String sha) {
+        return sha.substring(0, Math.min(7, sha.length()));
+    }
+
+    private static String encodeReference(String reference) {
+        return URLEncoder.encode(reference, StandardCharsets.UTF_8);
+    }
+
+    private static boolean isUnknown(String value) {
+        return value == null || value.isBlank() || "unknown".equalsIgnoreCase(value);
+    }
+
+    private static int compareVersions(int[] remote, int[] local) {
+        int length = Math.max(remote.length, local.length);
+        for (int index = 0; index < length; index++) {
+            int remotePart = index < remote.length ? remote[index] : 0;
+            int localPart = index < local.length ? local[index] : 0;
+            if (remotePart != localPart) {
+                return Integer.compare(remotePart, localPart);
+            }
+        }
+        return 0;
+    }
+
+    private static int[] parseSemanticVersion(String version) {
+        String normalized = version.startsWith("v") || version.startsWith("V") ? version.substring(1) : version;
+        int suffixIndex = normalized.indexOf('-');
+        if (suffixIndex >= 0) {
+            normalized = normalized.substring(0, suffixIndex);
+        }
+
+        String[] parts = normalized.split("\\.");
+        int[] parsed = new int[parts.length];
+        for (int index = 0; index < parts.length; index++) {
+            try {
+                parsed[index] = Integer.parseInt(parts[index]);
+            } catch (NumberFormatException ignored) {
+                parsed[index] = 0;
+            }
+        }
+        return parsed;
     }
 }

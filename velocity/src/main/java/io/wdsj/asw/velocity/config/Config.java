@@ -17,13 +17,9 @@ public class Config {
 
     public Config(AdvancedSensitiveWords plugin, File dataFolder) throws Exception {
         this.plugin = plugin;
-        // Load config.yml with ConfigMaster
         this.config = ConfigFile.loadConfig(new File(dataFolder, "config.yml"));
         config.set("plugin-version", PluginVersionTemplate.VERSION);
-
-        // Pre-structure to force order
         structureConfig();
-
         this.check_for_update = getBoolean("plugin.check-update", true, """
                 If set to true, will check for update on plugin startup.""");
     }
@@ -108,14 +104,14 @@ public class Config {
     public ConfigSection getConfigSection(String path, Map<String, Object> defaultKeyValue) {
         config.addDefault(path, null);
         config.makeSectionLenient(path);
-        defaultKeyValue.forEach((string, object) -> config.addExample(path+"."+string, object));
+        defaultKeyValue.forEach((string, object) -> config.addExample(path + "." + string, object));
         return config.getConfigSection(path);
     }
 
     public ConfigSection getConfigSection(String path, Map<String, Object> defaultKeyValue, String comment) {
         config.addDefault(path, null, comment);
         config.makeSectionLenient(path);
-        defaultKeyValue.forEach((string, object) -> config.addExample(path+"."+string, object));
+        defaultKeyValue.forEach((string, object) -> config.addExample(path + "." + string, object));
         return config.getConfigSection(path);
     }
 

@@ -6,21 +6,14 @@ import com.google.common.io.ByteStreams;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-/**
- * A utility class for writing data to a byte array with a size limit.
- * It wraps a {@link ByteArrayDataOutput} to write various data types such as integers, floats, and UTF-8 strings,
- * while ensuring that the total data does not exceed the specified maximum size.
- *
- * <p>Throws an {@link IOException} if data exceeds the allowed size during the writing process.
- **/
 public final class LimitedByteArrayDataOutput {
-    private static final int doubleSize = Double.BYTES;
-    private static final int floatSize = Float.BYTES;
-    private static final int intSize = Integer.BYTES;
-    private static final int longSize = Long.BYTES;
-    private static final int charSize = Character.BYTES;
-    private static final int shortSize = Short.BYTES;
-    private static final int booleanSize = 1;
+    private static final int DOUBLE_SIZE = Double.BYTES;
+    private static final int FLOAT_SIZE = Float.BYTES;
+    private static final int INT_SIZE = Integer.BYTES;
+    private static final int LONG_SIZE = Long.BYTES;
+    private static final int CHAR_SIZE = Character.BYTES;
+    private static final int SHORT_SIZE = Short.BYTES;
+    private static final int BOOLEAN_SIZE = 1;
     private final ByteArrayDataOutput output;
     private final int maxSize;
     private int currentSize;
@@ -43,79 +36,67 @@ public final class LimitedByteArrayDataOutput {
     }
 
     public void write(byte[] bytes) throws IOException {
-        if (currentSize + bytes.length > maxSize) {
-            throw new IOException("Data exceeds maximum size of " + maxSize + " bytes");
-        }
+        ensureWritable(bytes.length);
         output.write(bytes);
         currentSize += bytes.length;
     }
 
     public void writeInt(int value) throws IOException {
-        if (currentSize + intSize > maxSize) {
-            throw new IOException("Data exceeds maximum size of " + maxSize + " bytes");
-        }
+        ensureWritable(INT_SIZE);
         output.writeInt(value);
-        currentSize += intSize;
+        currentSize += INT_SIZE;
     }
 
     public void writeLong(long value) throws IOException {
-        if (currentSize + longSize > maxSize) {
-            throw new IOException("Data exceeds maximum size of " + maxSize + " bytes");
-        }
+        ensureWritable(LONG_SIZE);
         output.writeLong(value);
-        currentSize += longSize;
+        currentSize += LONG_SIZE;
     }
 
     public void writeBoolean(boolean value) throws IOException {
-        if (currentSize + booleanSize > maxSize) {
-            throw new IOException("Data exceeds maximum size of " + maxSize + " bytes");
-        }
+        ensureWritable(BOOLEAN_SIZE);
         output.writeBoolean(value);
-        currentSize += booleanSize;
+        currentSize += BOOLEAN_SIZE;
     }
 
     public void writeUTF(String value) throws IOException {
         byte[] utfBytes = value.getBytes(StandardCharsets.UTF_8);
-        if (currentSize + utfBytes.length + 2 > maxSize) {  // 2 bytes for UTF string length
-            throw new IOException("Data exceeds maximum size of " + maxSize + " bytes");
-        }
+        ensureWritable(utfBytes.length + 2);
         output.writeUTF(value);
         currentSize += utfBytes.length + 2;
     }
 
     public void writeDouble(double value) throws IOException {
-        if (currentSize + doubleSize > maxSize) {
-            throw new IOException("Data exceeds maximum size of " + maxSize + " bytes");
-        }
+        ensureWritable(DOUBLE_SIZE);
         output.writeDouble(value);
-        currentSize += doubleSize;
+        currentSize += DOUBLE_SIZE;
     }
 
     public void writeFloat(float value) throws IOException {
-        if (currentSize + floatSize > maxSize) {
-            throw new IOException("Data exceeds maximum size of " + maxSize + " bytes");
-        }
+        ensureWritable(FLOAT_SIZE);
         output.writeFloat(value);
-        currentSize += floatSize;
+        currentSize += FLOAT_SIZE;
     }
 
     public void writeShort(short value) throws IOException {
-        if (currentSize + shortSize > maxSize) {
-            throw new IOException("Data exceeds maximum size of " + maxSize + " bytes");
-        }
+        ensureWritable(SHORT_SIZE);
         output.writeShort(value);
-        currentSize += shortSize;
+        currentSize += SHORT_SIZE;
     }
 
     public void writeChar(char value) throws IOException {
-        if (currentSize + charSize > maxSize) {
-            throw new IOException("Data exceeds maximum size of " + maxSize + " bytes");
-        }
+        ensureWritable(CHAR_SIZE);
         output.writeChar(value);
-        currentSize += charSize;
+        currentSize += CHAR_SIZE;
     }
 
     public int getCurrentSize() {
         return currentSize;
+    }
+
+    private void ensureWritable(int bytes) throws IOException {
+        if (currentSize + bytes > maxSize) {
+            throw new IOException("Data exceeds maximum size of " + maxSize + " bytes");
+        }
     }
 }
