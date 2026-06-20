@@ -3,12 +3,11 @@ package io.wdsj.asw.bukkit.listener.paper
 import io.papermc.paper.event.player.AsyncChatEvent
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.sensitiveWordBs
 import io.wdsj.asw.bukkit.ai.LlmChatDetectionService
-import io.wdsj.asw.bukkit.annotation.PaperEventHandler
 import io.wdsj.asw.bukkit.integration.trchat.TrChatCompat
 import io.wdsj.asw.bukkit.listener.abstraction.AbstractFakeMessageExecutor
+import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
-import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.type.ModuleType
 import io.wdsj.asw.bukkit.util.PlayerProcessingGuard
 import io.wdsj.asw.bukkit.util.Utils
@@ -24,7 +23,6 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 
 @Suppress("UNUSED")
-@PaperEventHandler
 class PaperChatListener(
     private val configuration: PaperConfigurationService,
     private val llmChatDetectionService: LlmChatDetectionService,

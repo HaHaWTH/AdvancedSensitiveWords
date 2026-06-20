@@ -1,4 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.gradle.api.tasks.JavaExec
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -11,6 +12,13 @@ plugins {
 val pluginMain = "io.wdsj.asw.bukkit.AdvancedSensitiveWords"
 val pluginWebsite = "https://github.com/HaHaWTH/AdvancedSensitiveWords"
 val pluginDescription = "Ultimate chat moderation solution for Minecraft"
+
+val jmh: SourceSet by sourceSets.creating {
+    java.srcDir("src/jmh/java")
+    resources.srcDir("src/jmh/resources")
+    compileClasspath += sourceSets.main.get().output
+    runtimeClasspath += sourceSets.main.get().output
+}
 
 java {
     toolchain {
@@ -49,6 +57,14 @@ dependencies {
     testImplementation("dev.langchain4j:langchain4j-open-ai:${property("langchain4jVersion")}")
     testImplementation("dev.langchain4j:langchain4j-http-client-jdk:${property("langchain4jVersion")}")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.11.4")
+
+    add(jmh.implementationConfigurationName, "org.openjdk.jmh:jmh-core:${property("jmhVersion")}")
+    add(jmh.annotationProcessorConfigurationName, "org.openjdk.jmh:jmh-generator-annprocess:${property("jmhVersion")}")
+    add(jmh.runtimeOnlyConfigurationName, "com.google.guava:guava:33.4.0-jre")
+}
+
+configurations.named(jmh.implementationConfigurationName) {
+    extendsFrom(configurations.implementation.get())
 }
 
 tasks.withType<JavaCompile>().configureEach {
@@ -65,6 +81,15 @@ tasks.withType<KotlinCompile>().configureEach {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.register<JavaExec>("jmh") {
+    group = "verification"
+    description = "Runs the sensitive-word benchmark suite with JMH."
+    dependsOn(tasks.named(jmh.classesTaskName))
+    classpath = jmh.runtimeClasspath
+    mainClass.set("org.openjdk.jmh.Main")
+    args("SensitiveWordBookBenchmark")
 }
 
 tasks.processResources {

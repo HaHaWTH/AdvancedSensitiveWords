@@ -47,14 +47,17 @@ object BookCache {
 
     @JvmStatic
     fun initialize() {
+        initialize(
+            setting(PluginSettings.BOOK_MAXIMUM_CACHE_SIZE).toLong(),
+            setting(PluginSettings.BOOK_CACHE_EXPIRE_TIME).toLong(),
+        )
+    }
+
+    @JvmStatic
+    fun initialize(maximumSize: Long, expireTimeMinutes: Long) {
         cache = CacheBuilder.newBuilder()
-            .maximumSize(
-                setting(PluginSettings.BOOK_MAXIMUM_CACHE_SIZE).toLong()
-            )
-            .expireAfterWrite(
-                setting(PluginSettings.BOOK_CACHE_EXPIRE_TIME).toLong(),
-                TimeUnit.MINUTES
-            )
+            .maximumSize(maximumSize)
+            .expireAfterWrite(expireTimeMinutes, TimeUnit.MINUTES)
             .build()
     }
 
