@@ -16,14 +16,14 @@ dependencies {
     implementation("org.bstats:bstats-velocity:3.1.0")
     implementation("com.github.thatsmusic99:ConfigurationMaster-API:v2.0.0-rc.3")
 
-    compileOnly("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
+    compileOnly("com.velocitypowered:velocity-api:3.5.0-SNAPSHOT")
     compileOnly("com.google.guava:guava:33.4.0-jre")
-    annotationProcessor("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
+    annotationProcessor("com.velocitypowered:velocity-api:3.5.0-SNAPSHOT")
 }
 
 tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
-    options.release.set(17)
+    options.release.set(21)
 }
 
 tasks.named<Jar>("jar") {
