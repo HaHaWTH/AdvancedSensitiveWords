@@ -34,7 +34,6 @@ class PaperChatListener(
     @EventHandler(priority = EventPriority.LOWEST)
     fun onChat(event: AsyncChatEvent) {
         if (!configuration.get(PluginSettings.ENABLE_CHAT_CHECK)) return
-        if (!isInitialized) return
 
         val player = event.player
         if (processingGuard.shouldSkip(player)) return
