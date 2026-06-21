@@ -1,6 +1,9 @@
 package io.wdsj.asw.bukkit.setting;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+
 import io.wdsj.asw.bukkit.ai.LlmApiMode;
 import io.wdsj.asw.bukkit.type.ProcessMethod;
 
@@ -85,7 +88,7 @@ public final class PluginSettings {
     public static final SettingKey<Integer> AI_MINIMUM_MESSAGE_CODE_POINTS = key(settings -> settings.ai.minimumMessageCodePoints);
     public static final SettingKey<Integer> AI_MAXIMUM_MESSAGE_CODE_POINTS = key(settings -> settings.ai.maximumMessageCodePoints);
     public static final SettingKey<Double> AI_MINIMUM_ENTROPY_BITS = key(settings -> settings.ai.minimumEntropyBits);
-    public static final SettingKey<java.util.Map<String, SettingsConfiguration.Ai.CategoryPolicy>> AI_CATEGORY_POLICY = key(settings -> settings.ai.categoryPolicy);
+    public static final SettingKey<Map<String, SettingsConfiguration.Ai.CategoryPolicy>> AI_CATEGORY_POLICY = key(settings -> settings.ai.categoryPolicy);
     public static final SettingKey<String> AI_SERVER_CONTEXT = key(settings -> settings.ai.serverContext);
     public static final SettingKey<Boolean> AI_SERVER_CONTEXT_CAN_OVERRIDE = key(settings -> settings.ai.serverContextCanOverride);
 
@@ -120,7 +123,7 @@ public final class PluginSettings {
     private PluginSettings() {
     }
 
-    private static <T> SettingKey<T> key(java.util.function.Function<SettingsConfiguration, T> accessor) {
+    private static <T> SettingKey<T> key(Function<SettingsConfiguration, T> accessor) {
         return new SettingKey<>(accessor);
     }
 }
