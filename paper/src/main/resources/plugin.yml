@@ -45,6 +45,7 @@ permissions:
       advancedsensitivewords.command.player.info: true
       advancedsensitivewords.command.player.reset: true
       advancedsensitivewords.command.player.punish: true
+      advancedsensitivewords.command.ai.status: true
   advancedsensitivewords.bypass:
     description: Bypass the Advanced Sensitive Words filter.
     default: false
@@ -89,4 +90,7 @@ permissions:
     default: op
   advancedsensitivewords.command.player.punish:
     description: Apply a punishment to a player.
+    default: op
+  advancedsensitivewords.command.ai.status:
+    description: Show AI status.
     default: op

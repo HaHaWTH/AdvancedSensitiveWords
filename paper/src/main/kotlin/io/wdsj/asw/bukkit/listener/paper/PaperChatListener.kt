@@ -1,6 +1,7 @@
 package io.wdsj.asw.bukkit.listener.paper
 
 import io.papermc.paper.event.player.AsyncChatEvent
+import io.wdsj.asw.bukkit.AdvancedSensitiveWords.isInitialized
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.sensitiveWordBs
 import io.wdsj.asw.bukkit.ai.LlmChatDetectionService
 import io.wdsj.asw.bukkit.integration.trchat.TrChatCompat
@@ -33,6 +34,7 @@ class PaperChatListener(
     @EventHandler(priority = EventPriority.LOWEST)
     fun onChat(event: AsyncChatEvent) {
         if (!configuration.get(PluginSettings.ENABLE_CHAT_CHECK)) return
+        if (!isInitialized) return
 
         val player = event.player
         if (processingGuard.shouldSkip(player)) return
