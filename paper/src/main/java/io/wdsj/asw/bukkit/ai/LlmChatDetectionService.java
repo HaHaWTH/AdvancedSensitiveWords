@@ -9,6 +9,7 @@ import io.wdsj.asw.bukkit.setting.PluginSettings;
 import io.wdsj.asw.bukkit.type.ModuleType;
 import io.wdsj.asw.bukkit.util.SchedulingUtils;
 import io.wdsj.asw.bukkit.util.ViolationReporter;
+import io.wdsj.asw.common.utils.MessageEntropy;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -32,7 +33,6 @@ import java.util.function.Function;
 import java.nio.charset.StandardCharsets;
 import io.wdsj.asw.bukkit.setting.SettingsConfiguration;
 
-/** Coordinates asynchronous, single-message LLM moderation requests. */
 public final class LlmChatDetectionService implements Listener, AutoCloseable {
     private final PaperConfigurationService configuration;
     private final ViolationReporter violationReporter;
@@ -94,12 +94,12 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
         if (rawCodePoints > settings.maximumMessageCodePoints()) {
             return;
         }
-        int visibleCodePoints = io.wdsj.asw.common.utils.ChatEntropy.visibleCodePointCount(message);
+        int visibleCodePoints = MessageEntropy.visibleCodePointCount(message);
         if (visibleCodePoints < settings.minimumMessageCodePoints()) {
             return;
         }
 
-        double entropy = io.wdsj.asw.common.utils.ChatEntropy.shannonEntropyBits(message);
+        double entropy = MessageEntropy.shannonEntropyBits(message);
         if (entropy < settings.minimumEntropyBits()) {
             return;
         }

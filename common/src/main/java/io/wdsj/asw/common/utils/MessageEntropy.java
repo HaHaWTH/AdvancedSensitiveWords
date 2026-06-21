@@ -4,8 +4,8 @@ import java.text.Normalizer;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class ChatEntropy {
-    private ChatEntropy() {
+public final class MessageEntropy {
+    private MessageEntropy() {
     }
 
     public static int visibleCodePointCount(String message) {

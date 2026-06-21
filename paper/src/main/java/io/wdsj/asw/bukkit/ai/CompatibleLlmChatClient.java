@@ -11,7 +11,6 @@ import dev.langchain4j.model.openai.OpenAiResponsesChatModel;
 
 import java.time.Duration;
 
-/** Routes one moderation request through the configured OpenAI- or Anthropic-compatible protocol. */
 final class CompatibleLlmChatClient implements LlmChatClient {
     private final ChatModel model;
 

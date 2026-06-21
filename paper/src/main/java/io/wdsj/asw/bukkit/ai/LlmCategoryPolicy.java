@@ -4,7 +4,6 @@ import io.wdsj.asw.bukkit.api.moderation.LlmChatModerationResult;
 
 import java.util.List;
 
-/** Immutable notification and enforcement thresholds for one LLM moderation category. */
 public record LlmCategoryPolicy(
         double notifyConfidence,
         double punishConfidence,
