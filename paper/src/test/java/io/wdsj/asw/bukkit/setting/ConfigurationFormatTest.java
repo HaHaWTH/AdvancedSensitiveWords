@@ -25,7 +25,7 @@ class ConfigurationFormatTest {
     @Test
     void resetsLegacyCamelCaseSettingsToKebabCaseDefaults() throws IOException {
         Path file = temporaryDirectory.resolve("config.yml");
-        Files.writeString(file, "Plugin:\n  enableDefaultWords: false\n  punishment:\n    - legacy-action\n");
+        Files.writeString(file, "Plugin:\n  enableDefaultWords: false\nai:\n  punishment:\n    - legacy-ai-action\n");
 
         SettingsConfiguration settings = new YamlConfigurationStore<>(SettingsConfiguration.class, PROPERTIES).update(file);
         String output = Files.readString(file);
@@ -48,6 +48,7 @@ class ConfigurationFormatTest {
         assertTrue(output.contains("sexual-minors:"));
         assertTrue(output.contains("notify-confidence: 0.75"));
         assertTrue(output.contains("punish-confidence: 0.9"));
+        assertTrue(settings.ai.categoryPolicy.values().stream().allMatch(policy -> policy.punishment.isEmpty()));
         assertTrue(output.contains("manual-punishment: []"));
         assertTrue(output.contains("VL conditions in this manual punishment list use the player's total violations across all punishment modules."));
         assertTrue(output.contains("COMMAND|command; COMMAND_PROXY|command; DAMAGE|amount; HOSTILE|radius."));
@@ -55,7 +56,7 @@ class ConfigurationFormatTest {
         assertTrue(output.contains("punishment: []"));
         assertFalse(output.contains("Plugin:"));
         assertFalse(output.contains("enableDefaultWords"));
-        assertFalse(output.contains("legacy-action"));
+        assertFalse(output.contains("legacy-ai-action"));
         assertFalse(output.contains("minimum-confidence:"));
         assertFalse(output.contains("enforced-categories:"));
         assertFalse(output.contains("punishment-confidence:"));

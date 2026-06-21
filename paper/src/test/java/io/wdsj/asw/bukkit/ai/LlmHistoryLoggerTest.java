@@ -41,7 +41,7 @@ class LlmHistoryLoggerTest {
                     LlmApiMode.ANTHROPIC_MESSAGES, 2.5D,
                     "{\"message\":\"你好\"}");
             logger.logResponse(requestId, "{\"category\":\"harassment\"}", result(), result(),
-                    false, new LlmCategoryPolicy(0.75D, 0.90D), true, true, false);
+                    false, new LlmCategoryPolicy(0.75D, 0.90D, List.of()), true, true, false);
             logger.logFailure(requestId, IllegalStateException.class);
         }
 

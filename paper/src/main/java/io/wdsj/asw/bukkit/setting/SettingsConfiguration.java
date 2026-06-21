@@ -205,14 +205,12 @@ public final class SettingsConfiguration {
         @Comment("Minimum Shannon entropy in bits per visible Unicode code point. Must be finite and >= 0; 2.0-3.5 is a typical request-saving gate.")
         public double minimumEntropyBits = 2.5D;
         @Comment({
-                "Per-category LLM notification and punishment confidence policies.",
+                "Per-category LLM notification, punishment confidence, and punishment action policies.",
                 "Use -1.0 to disable either action. Other values must be between 0.0 and 1.0.",
                 "Notification and punishment are independent, so silent punishment is supported.",
                 "The clean category must keep both values at -1.0. Configuration keys use kebab-case."
         })
         public Map<String, CategoryPolicy> categoryPolicy = defaultCategoryPolicy();
-        @Comment("Punishment actions for enforced AI classifications. Leave empty to record and notify without automatic punishment.")
-        public List<String> punishment = new ArrayList<>();
         @Comment({
                 "Whether server-context may override the model's default classification. Disabled means it only provides interpretation context.",
                 "Disclaimer: enabling this lets the server owner reduce or remove moderation classifications. The server owner is solely responsible for the policy and its consequences."
@@ -255,6 +253,8 @@ public final class SettingsConfiguration {
             public double notifyConfidence;
             @Comment("Minimum confidence for violation recording and automatic punishment. Use -1.0 to disable enforcement for this category.")
             public double punishConfidence;
+            @Comment("Punishment actions for this category. Leave empty to record and notify without automatic punishment. Uses the standard punishment action syntax.")
+            public List<String> punishment = new ArrayList<>();
 
             public CategoryPolicy() {
             }

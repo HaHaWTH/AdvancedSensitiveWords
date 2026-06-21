@@ -323,7 +323,13 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
                 return;
             }
             if (eligibleForEnforcement) {
-                violationReporter.reportLlm(player, candidate.message(), result, eligibleForNotification);
+                violationReporter.reportLlm(
+                        player,
+                        candidate.message(),
+                        result,
+                        policy.punishmentActions(),
+                        eligibleForNotification
+                );
                 enforcedResponses.increment();
                 return;
             }
@@ -383,7 +389,11 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
         Map<LlmModerationCategory, LlmCategoryPolicy> policies = new java.util.EnumMap<>(LlmModerationCategory.class);
         for (LlmModerationCategory category : LlmModerationCategory.values()) {
             SettingsConfiguration.Ai.CategoryPolicy policy = configuredPolicies.get(category.configurationKey());
-            policies.put(category, new LlmCategoryPolicy(policy.notifyConfidence, policy.punishConfidence));
+            policies.put(category, new LlmCategoryPolicy(
+                    policy.notifyConfidence,
+                    policy.punishConfidence,
+                    policy.punishment
+            ));
         }
         return policies;
     }

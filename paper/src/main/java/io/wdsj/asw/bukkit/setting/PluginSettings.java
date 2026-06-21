@@ -86,7 +86,6 @@ public final class PluginSettings {
     public static final SettingKey<Integer> AI_MAXIMUM_MESSAGE_CODE_POINTS = key(settings -> settings.ai.maximumMessageCodePoints);
     public static final SettingKey<Double> AI_MINIMUM_ENTROPY_BITS = key(settings -> settings.ai.minimumEntropyBits);
     public static final SettingKey<java.util.Map<String, SettingsConfiguration.Ai.CategoryPolicy>> AI_CATEGORY_POLICY = key(settings -> settings.ai.categoryPolicy);
-    public static final SettingKey<List<String>> AI_PUNISHMENT = key(settings -> settings.ai.punishment);
     public static final SettingKey<String> AI_SERVER_CONTEXT = key(settings -> settings.ai.serverContext);
     public static final SettingKey<Boolean> AI_SERVER_CONTEXT_CAN_OVERRIDE = key(settings -> settings.ai.serverContextCanOverride);
 

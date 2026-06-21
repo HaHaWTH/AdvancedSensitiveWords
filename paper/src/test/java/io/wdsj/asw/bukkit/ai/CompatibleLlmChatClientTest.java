@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -115,7 +116,7 @@ class CompatibleLlmChatClientTest {
                 1,
                 256,
                 2.5D,
-                Map.of(LlmModerationCategory.CLEAN, new LlmCategoryPolicy(-1.0D, -1.0D)),
+                Map.of(LlmModerationCategory.CLEAN, new LlmCategoryPolicy(-1.0D, -1.0D, List.of())),
                 "",
                 false
         ));

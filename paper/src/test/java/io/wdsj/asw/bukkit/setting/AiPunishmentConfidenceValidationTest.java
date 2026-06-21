@@ -3,6 +3,8 @@ package io.wdsj.asw.bukkit.setting;
 import org.junit.jupiter.api.Test;
 import io.wdsj.asw.bukkit.ai.LlmApiMode;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -20,6 +22,16 @@ class AiPunishmentConfidenceValidationTest {
         cleanEnabled.ai.categoryPolicy.get("clean").notifyConfidence = 0.9D;
         assertThrows(IllegalArgumentException.class,
                 () -> PaperConfigurationService.validateSettings(cleanEnabled));
+
+        SettingsConfiguration cleanActions = new SettingsConfiguration();
+        cleanActions.ai.categoryPolicy.get("clean").punishment = List.of("COMMAND|say unexpected");
+        assertThrows(IllegalArgumentException.class,
+                () -> PaperConfigurationService.validateSettings(cleanActions));
+
+        SettingsConfiguration missingPunishment = new SettingsConfiguration();
+        missingPunishment.ai.categoryPolicy.get("hate").punishment = null;
+        assertThrows(IllegalArgumentException.class,
+                () -> PaperConfigurationService.validateSettings(missingPunishment));
 
         SettingsConfiguration invalidThreshold = new SettingsConfiguration();
         invalidThreshold.ai.categoryPolicy.get("profanity").punishConfidence = -0.5D;

@@ -19,6 +19,7 @@ class ViolationReporter(private val configuration: PaperConfigurationService) {
         player: Player,
         content: String,
         result: LlmChatModerationResult,
+        punishmentActions: List<String>,
         notifyOperators: Boolean,
     ) {
         val categoryLabel = "LLM:${result.category().wireName()}"
@@ -30,7 +31,7 @@ class ViolationReporter(private val configuration: PaperConfigurationService) {
             censoredWords = listOf(categoryLabel),
             logPrefix = logPrefix,
             startTime = System.currentTimeMillis(),
-            punishmentActions = configuration.get(PluginSettings.AI_PUNISHMENT),
+            punishmentActions = punishmentActions,
             notifyOperators = notifyOperators,
         )
     }

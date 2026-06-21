@@ -183,9 +183,13 @@ public final class PaperConfigurationService {
             }
             validateCategoryThreshold(policy.notifyConfidence, category, "notify-confidence");
             validateCategoryThreshold(policy.punishConfidence, category, "punish-confidence");
+            if (policy.punishment == null) {
+                throw new IllegalArgumentException("Missing ai.category-policy."
+                        + category.configurationKey() + ".punishment");
+            }
             if (category == LlmModerationCategory.CLEAN
-                    && (policy.notifyConfidence != -1.0D || policy.punishConfidence != -1.0D)) {
-                throw new IllegalArgumentException("ai.category-policy.clean must keep both thresholds at -1.0");
+                    && (policy.notifyConfidence != -1.0D || policy.punishConfidence != -1.0D || !policy.punishment.isEmpty())) {
+                throw new IllegalArgumentException("ai.category-policy.clean must keep both thresholds at -1.0 and no punishment actions");
             }
         }
     }
