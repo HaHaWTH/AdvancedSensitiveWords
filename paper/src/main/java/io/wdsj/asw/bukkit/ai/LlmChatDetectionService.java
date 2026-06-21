@@ -257,7 +257,11 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
                     candidate.entropy(),
                     userMessage
             );
-            String rawResponse = state.client().classify(LlmModerationPrompt.SYSTEM_PROMPT, userMessage);
+            String systemPrompt = LlmModerationPrompt.createSystemPrompt(
+                    state.settings().serverContext(),
+                    state.settings().serverContextCanOverride()
+            );
+            String rawResponse = state.client().classify(systemPrompt, userMessage);
             handleResponse(state, candidate, rawResponse == null ? "" : rawResponse, !isCurrent(state));
         } catch (RuntimeException exception) {
             historyLogger.logFailure(candidate.requestId(), exception.getClass());
@@ -402,7 +406,8 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
             int maximumMessageCodePoints,
             double minimumEntropyBits,
             Map<LlmModerationCategory, LlmCategoryPolicy> categoryPolicy,
-            String serverContext
+            String serverContext,
+            boolean serverContextCanOverride
     ) {
         static LlmSettings from(PaperConfigurationService configuration) {
             return new LlmSettings(
@@ -423,7 +428,8 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
                     configuration.get(PluginSettings.AI_MAXIMUM_MESSAGE_CODE_POINTS),
                     configuration.get(PluginSettings.AI_MINIMUM_ENTROPY_BITS),
                     Map.copyOf(toCategoryPolicies(configuration.get(PluginSettings.AI_CATEGORY_POLICY))),
-                    Objects.requireNonNullElse(configuration.get(PluginSettings.AI_SERVER_CONTEXT), "")
+                    Objects.requireNonNullElse(configuration.get(PluginSettings.AI_SERVER_CONTEXT), ""),
+                    configuration.get(PluginSettings.AI_SERVER_CONTEXT_CAN_OVERRIDE)
             );
         }
 

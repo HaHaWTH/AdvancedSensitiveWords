@@ -116,7 +116,8 @@ class CompatibleLlmChatClientTest {
                 256,
                 2.5D,
                 Map.of(LlmModerationCategory.CLEAN, new LlmCategoryPolicy(-1.0D, -1.0D)),
-                ""
+                "",
+                false
         ));
     }
 

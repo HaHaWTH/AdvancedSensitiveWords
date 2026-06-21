@@ -44,4 +44,16 @@ class LlmModerationResponseParserTest {
         assertEquals("chat", payload.get("source").textValue());
         assertEquals("trusted context", payload.get("server_context").textValue());
     }
+
+    @Test
+    void addsConfiguredServerPolicyOnlyWhenOverridesAreEnabled() {
+        String context = "Local policy permits a configured category downgrade.";
+
+        String ordinaryPrompt = LlmModerationPrompt.createSystemPrompt(context, false);
+        String overridingPrompt = LlmModerationPrompt.createSystemPrompt(context, true);
+
+        assertFalse(ordinaryPrompt.contains(context));
+        assertTrue(overridingPrompt.contains(context));
+        assertTrue(overridingPrompt.contains("TRUSTED SERVER POLICY OVERRIDE"));
+    }
 }

@@ -41,6 +41,7 @@ class ConfigurationFormatTest {
         assertTrue(output.contains("api-mode: CHAT_COMPLETIONS"));
         assertTrue(output.contains("anthropic-version: 2023-06-01"));
         assertTrue(output.contains("anthropic-thinking-enabled: false"));
+        assertTrue(output.contains("server-context-can-override: false"));
         assertTrue(output.contains("model-name: deepseek-v4-flash"));
         assertTrue(output.contains("log-responses: false"));
         assertTrue(output.contains("category-policy:"));

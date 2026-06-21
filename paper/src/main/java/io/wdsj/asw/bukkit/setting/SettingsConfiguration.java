@@ -213,7 +213,15 @@ public final class SettingsConfiguration {
         public Map<String, CategoryPolicy> categoryPolicy = defaultCategoryPolicy();
         @Comment("Punishment actions for enforced AI classifications. Leave empty to record and notify without automatic punishment.")
         public List<String> punishment = new ArrayList<>();
-        @Comment("Trusted server context sent with each request. Leave blank unless required.")
+        @Comment({
+                "Whether server-context may override the model's default classification. Disabled means it only provides interpretation context.",
+                "Disclaimer: enabling this lets the server owner reduce or remove moderation classifications. The server owner is solely responsible for the policy and its consequences."
+        })
+        public boolean serverContextCanOverride = false;
+        @Comment({
+                "Trusted server context sent with each request. Leave blank unless required.",
+                "When server-context-can-override is enabled, this policy may downgrade classifications. Do not include player-controlled text, API keys, private data, or secrets."
+        })
         public String serverContext = "";
 
         private static Map<String, CategoryPolicy> defaultCategoryPolicy() {

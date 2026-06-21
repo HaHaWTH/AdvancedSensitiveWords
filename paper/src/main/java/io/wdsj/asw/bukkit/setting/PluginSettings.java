@@ -88,6 +88,7 @@ public final class PluginSettings {
     public static final SettingKey<java.util.Map<String, SettingsConfiguration.Ai.CategoryPolicy>> AI_CATEGORY_POLICY = key(settings -> settings.ai.categoryPolicy);
     public static final SettingKey<List<String>> AI_PUNISHMENT = key(settings -> settings.ai.punishment);
     public static final SettingKey<String> AI_SERVER_CONTEXT = key(settings -> settings.ai.serverContext);
+    public static final SettingKey<Boolean> AI_SERVER_CONTEXT_CAN_OVERRIDE = key(settings -> settings.ai.serverContextCanOverride);
 
     public static final SettingKey<ProcessMethod> BOOK_METHOD = key(settings -> settings.book.method);
     public static final SettingKey<Boolean> BOOK_IGNORE_NEWLINE = key(settings -> settings.book.ignoreNewLine);
