@@ -1,6 +1,7 @@
 package io.wdsj.asw.bukkit.setting;
 
 import java.util.List;
+import io.wdsj.asw.bukkit.ai.LlmApiMode;
 import io.wdsj.asw.bukkit.type.ProcessMethod;
 
 /**
@@ -68,6 +69,9 @@ public final class PluginSettings {
 
     public static final SettingKey<Boolean> AI_ENABLED = key(settings -> settings.ai.enabled);
     public static final SettingKey<String> AI_BASE_URL = key(settings -> settings.ai.baseUrl);
+    public static final SettingKey<LlmApiMode> AI_API_MODE = key(settings -> settings.ai.apiMode);
+    public static final SettingKey<String> AI_ANTHROPIC_VERSION = key(settings -> settings.ai.anthropicVersion);
+    public static final SettingKey<Boolean> AI_ANTHROPIC_THINKING_ENABLED = key(settings -> settings.ai.anthropicThinkingEnabled);
     public static final SettingKey<String> AI_API_KEY_ENVIRONMENT = key(settings -> settings.ai.apiKeyEnvironment);
     public static final SettingKey<String> AI_API_KEY = key(settings -> settings.ai.apiKey);
     public static final SettingKey<String> AI_MODEL_NAME = key(settings -> settings.ai.modelName);

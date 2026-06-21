@@ -2,6 +2,7 @@ package io.wdsj.asw.bukkit.ai;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wdsj.asw.bukkit.api.moderation.LlmChatModerationResult;
+import io.wdsj.asw.bukkit.api.moderation.LlmModerationCategory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,6 +63,7 @@ final class LlmHistoryLogger implements AutoCloseable {
             UUID playerId,
             String playerName,
             String modelName,
+            LlmApiMode apiMode,
             double entropy,
             String userPayload
     ) {
@@ -69,6 +71,7 @@ final class LlmHistoryLogger implements AutoCloseable {
         entry.put("player_uuid", playerId.toString());
         entry.put("player_name", playerName);
         entry.put("model", modelName);
+        entry.put("api_mode", apiMode.name());
         entry.put("entropy", entropy);
         entry.put("user_payload", userPayload);
         submit(entry);
@@ -193,7 +196,7 @@ final class LlmHistoryLogger implements AutoCloseable {
         Map<String, Object> value = new LinkedHashMap<>();
         value.put("category", result.category().wireName());
         value.put("secondary_categories", result.secondaryCategories().stream()
-                .map(category -> category.wireName())
+                .map(LlmModerationCategory::wireName)
                 .toList());
         value.put("confidence", result.confidence());
         value.put("severity", result.severity().wireName());

@@ -9,6 +9,7 @@ authors:
 description: ${pluginDescription}
 libraries:
   - dev.langchain4j:langchain4j-open-ai:${langchain4jVersion}
+  - dev.langchain4j:langchain4j-anthropic:${langchain4jVersion}
   - dev.langchain4j:langchain4j-http-client-jdk:${langchain4jVersion}
 loadbefore:
   - YouCanUseThisToPrioritizeOtherChatPlugins

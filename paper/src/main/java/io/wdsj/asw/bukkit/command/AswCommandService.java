@@ -93,6 +93,7 @@ public final class AswCommandService {
                 .replace("%queued%", String.valueOf(status.queuedRequests()))
                 .replace("%pool_size%", String.valueOf(status.poolSize()))
                 .replace("%model%", status.modelName())
+                .replace("%api_mode%", status.apiMode().name())
                 .replace("%thresholds%", formatCategoryPolicies(status.categoryPolicy()));
         MessageUtils.sendMessage(sender, message);
     }

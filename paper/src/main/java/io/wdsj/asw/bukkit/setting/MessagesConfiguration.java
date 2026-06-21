@@ -72,7 +72,7 @@ public abstract class MessagesConfiguration {
         @Comment("AI status command output.")
         public String messageOnAiStatus = """
                 <gradient:#22d3ee:#4ade80><bold>AdvancedSensitiveWords</bold></gradient> <dark_gray>| <aqua>AI Moderation
-                <dark_gray>  Enabled <aqua>%enabled% <dark_gray>| <gray>Model <aqua>%model%
+                <dark_gray>  Enabled <aqua>%enabled% <dark_gray>| <gray>Model <aqua>%model% <dark_gray>| <gray>API <aqua>%api_mode%
                 <dark_gray>  Submitted <aqua>%submitted% <dark_gray>| <gray>Dropped <aqua>%dropped% <dark_gray>| <gray>Failed <aqua>%failed%
                 <dark_gray>  Invalid <aqua>%invalid% <dark_gray>| <gray>Enforced <aqua>%enforced%
                 <dark_gray>  Queue <aqua>%active% active <gray>/ <aqua>%queued% queued <gray>/ <aqua>%pool_size% workers

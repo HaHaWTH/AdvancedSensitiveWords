@@ -21,7 +21,7 @@ public final class ChineseMessagesConfiguration extends MessagesConfiguration {
                 <dark_gray>  已过滤 <aqua>%num% <dark_gray>| <gray>平均耗时 <aqua>%ms%""";
         plugin.messageOnAiStatus = """
                 <gradient:#22d3ee:#4ade80><bold>AdvancedSensitiveWords</bold></gradient> <dark_gray>| <aqua>AI 检测状态
-                <dark_gray>  已启用 <aqua>%enabled% <dark_gray>| <gray>模型 <aqua>%model%
+                <dark_gray>  已启用 <aqua>%enabled% <dark_gray>| <gray>模型 <aqua>%model% <dark_gray>| <gray>接口 <aqua>%api_mode%
                 <dark_gray>  已提交 <aqua>%submitted% <dark_gray>| <gray>丢弃 <aqua>%dropped% <dark_gray>| <gray>失败 <aqua>%failed%
                 <dark_gray>  无效 <aqua>%invalid% <dark_gray>| <gray>已执行 <aqua>%enforced%
                 <dark_gray>  队列 <aqua>%active% 活跃 <gray>/ <aqua>%queued% 排队 <gray>/ <aqua>%pool_size% 线程

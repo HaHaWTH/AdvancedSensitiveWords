@@ -4,6 +4,7 @@ import de.exlll.configlib.NameFormatters;
 import de.exlll.configlib.YamlConfigurationProperties;
 import de.exlll.configlib.YamlConfigurationStore;
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
+import io.wdsj.asw.bukkit.ai.LlmApiMode;
 import io.wdsj.asw.bukkit.api.moderation.LlmModerationCategory;
 import org.slf4j.Logger;
 
@@ -123,6 +124,9 @@ public final class PaperConfigurationService {
         if (ai == null) {
             throw new IllegalArgumentException("ai settings cannot be null");
         }
+        if (ai.apiMode == null) {
+            throw new IllegalArgumentException("ai.api-mode cannot be null");
+        }
         if (ai.requestTimeoutSeconds < 1) {
             throw new IllegalArgumentException("ai.request-timeout-seconds must be at least 1");
         }
@@ -151,6 +155,9 @@ public final class PaperConfigurationService {
         }
 
         validateHttpUrl(ai.baseUrl, "ai.base-url");
+        if (ai.apiMode == LlmApiMode.ANTHROPIC_MESSAGES) {
+            requireText(ai.anthropicVersion, "ai.anthropic-version");
+        }
         requireText(ai.modelName, "ai.model-name");
         if (resolveApiKey(ai).isBlank()) {
             throw new IllegalArgumentException("AI is enabled but no API key is configured");

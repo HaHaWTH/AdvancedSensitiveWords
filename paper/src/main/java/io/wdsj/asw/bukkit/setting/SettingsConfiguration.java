@@ -2,6 +2,7 @@ package io.wdsj.asw.bukkit.setting;
 
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
+import io.wdsj.asw.bukkit.ai.LlmApiMode;
 import io.wdsj.asw.bukkit.type.ProcessMethod;
 
 import java.util.ArrayList;
@@ -169,8 +170,14 @@ public final class SettingsConfiguration {
     public static final class Ai {
         @Comment("Whether to enable LLM-assisted chat moderation.")
         public boolean enabled = false;
-        @Comment("OpenAI-compatible API base URL.")
+        @Comment("LLM API base URL. Do not include /chat/completions, /responses, or /messages.")
         public String baseUrl = "https://api.deepseek.com";
+        @Comment("LLM endpoint: CHAT_COMPLETIONS sends /chat/completions; RESPONSES sends /responses; ANTHROPIC_MESSAGES sends /messages.")
+        public LlmApiMode apiMode = LlmApiMode.CHAT_COMPLETIONS;
+        @Comment("Anthropic API version sent only with ANTHROPIC_MESSAGES. Must not be blank when that mode is enabled.")
+        public String anthropicVersion = "2023-06-01";
+        @Comment("Whether ANTHROPIC_MESSAGES requests may use provider reasoning. Keep disabled for moderation: reasoning consumes max-output-tokens before the JSON result.")
+        public boolean anthropicThinkingEnabled = false;
         @Comment("Environment variable that contains the API key. It overrides api-key when set.")
         public String apiKeyEnvironment = "DEEPSEEK_API_KEY";
         @Comment("Fallback API key. Prefer an environment variable instead.")

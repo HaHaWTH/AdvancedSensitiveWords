@@ -43,6 +43,7 @@ dependencies {
     compileOnly("org.jetbrains:annotations:26.0.2")
     compileOnly("com.google.guava:guava:33.4.0-jre")
     compileOnly("dev.langchain4j:langchain4j-open-ai:${property("langchain4jVersion")}")
+    compileOnly("dev.langchain4j:langchain4j-anthropic:${property("langchain4jVersion")}")
     compileOnly("dev.langchain4j:langchain4j-http-client-jdk:${property("langchain4jVersion")}")
 
     implementation(kotlin("stdlib"))
@@ -55,6 +56,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
     testImplementation("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
     testImplementation("dev.langchain4j:langchain4j-open-ai:${property("langchain4jVersion")}")
+    testImplementation("dev.langchain4j:langchain4j-anthropic:${property("langchain4jVersion")}")
     testImplementation("dev.langchain4j:langchain4j-http-client-jdk:${property("langchain4jVersion")}")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.11.4")
 

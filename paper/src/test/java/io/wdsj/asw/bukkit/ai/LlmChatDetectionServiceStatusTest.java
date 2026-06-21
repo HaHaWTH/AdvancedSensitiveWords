@@ -35,6 +35,7 @@ class LlmChatDetectionServiceStatusTest {
             assertEquals(0, status.queuedRequests());
             assertEquals(0, status.poolSize());
             assertEquals("deepseek-v4-flash", status.modelName());
+            assertEquals(LlmApiMode.CHAT_COMPLETIONS, status.apiMode());
             LlmCategoryPolicy harassment = status.categoryPolicy().get(
                     io.wdsj.asw.bukkit.api.moderation.LlmModerationCategory.HARASSMENT);
             LlmCategoryPolicy clean = status.categoryPolicy().get(

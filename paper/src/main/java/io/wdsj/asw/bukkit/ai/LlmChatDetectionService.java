@@ -51,7 +51,7 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
     private volatile boolean closed;
 
     public LlmChatDetectionService(PaperConfigurationService configuration) {
-        this(configuration, new ViolationReporter(configuration), OpenAiLlmChatClient::new,
+        this(configuration, new ViolationReporter(configuration), CompatibleLlmChatClient::new,
                 new LlmHistoryLogger(configuration.dataDirectory()));
     }
 
@@ -154,6 +154,7 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
                 executor == null ? 0 : executor.getQueue().size(),
                 executor == null ? 0 : executor.getPoolSize(),
                 configuration.get(PluginSettings.AI_MODEL_NAME),
+                configuration.get(PluginSettings.AI_API_MODE),
                 Map.copyOf(toCategoryPolicies(configuration.get(PluginSettings.AI_CATEGORY_POLICY)))
         );
     }
@@ -252,6 +253,7 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
                     candidate.playerId(),
                     candidate.playerName(),
                     state.settings().modelName(),
+                    state.settings().apiMode(),
                     candidate.entropy(),
                     userMessage
             );
@@ -384,6 +386,9 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
 
     record LlmSettings(
             String baseUrl,
+            LlmApiMode apiMode,
+            String anthropicVersion,
+            boolean anthropicThinkingEnabled,
             String apiKey,
             String modelName,
             int requestTimeoutSeconds,
@@ -402,6 +407,9 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
         static LlmSettings from(PaperConfigurationService configuration) {
             return new LlmSettings(
                     configuration.get(PluginSettings.AI_BASE_URL).trim(),
+                    configuration.get(PluginSettings.AI_API_MODE),
+                    configuration.get(PluginSettings.AI_ANTHROPIC_VERSION).trim(),
+                    configuration.get(PluginSettings.AI_ANTHROPIC_THINKING_ENABLED),
                     resolveApiKey(configuration),
                     configuration.get(PluginSettings.AI_MODEL_NAME).trim(),
                     configuration.get(PluginSettings.AI_REQUEST_TIMEOUT_SECONDS),
@@ -446,6 +454,7 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
             int queuedRequests,
             int poolSize,
             String modelName,
+            LlmApiMode apiMode,
             Map<LlmModerationCategory, LlmCategoryPolicy> categoryPolicy
     ) {
     }

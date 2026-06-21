@@ -37,7 +37,8 @@ class LlmHistoryLoggerTest {
                 temporaryDirectory,
                 Clock.fixed(Instant.parse("2026-06-20T12:00:00Z"), ZoneOffset.UTC)
         )) {
-            logger.logRequest(requestId, UUID.randomUUID(), "Tester", "deepseek-v4-flash", 2.5D,
+            logger.logRequest(requestId, UUID.randomUUID(), "Tester", "deepseek-v4-flash",
+                    LlmApiMode.ANTHROPIC_MESSAGES, 2.5D,
                     "{\"message\":\"你好\"}");
             logger.logResponse(requestId, "{\"category\":\"harassment\"}", result(), result(),
                     false, new LlmCategoryPolicy(0.75D, 0.90D), true, true, false);
@@ -51,6 +52,7 @@ class LlmHistoryLoggerTest {
         JsonNode request = OBJECT_MAPPER.readTree(lines.getFirst());
         assertEquals("request", request.get("type").asText());
         assertEquals("{\"message\":\"你好\"}", request.get("user_payload").asText());
+        assertEquals("ANTHROPIC_MESSAGES", request.get("api_mode").asText());
 
         JsonNode response = OBJECT_MAPPER.readTree(lines.get(1));
         assertEquals("response", response.get("type").asText());

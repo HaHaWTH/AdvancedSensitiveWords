@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ConfigurationFormatTest {
@@ -37,6 +38,9 @@ class ConfigurationFormatTest {
         assertTrue(output.contains("method: REPLACE"));
         assertTrue(output.contains("ai:"));
         assertTrue(output.contains("base-url: https://api.deepseek.com"));
+        assertTrue(output.contains("api-mode: CHAT_COMPLETIONS"));
+        assertTrue(output.contains("anthropic-version: 2023-06-01"));
+        assertTrue(output.contains("anthropic-thinking-enabled: false"));
         assertTrue(output.contains("model-name: deepseek-v4-flash"));
         assertTrue(output.contains("log-responses: false"));
         assertTrue(output.contains("category-policy:"));
@@ -71,7 +75,17 @@ class ConfigurationFormatTest {
         assertTrue(output.contains("<gradient:#22d3ee:#4ade80>"));
         assertTrue(output.contains("%chat_violation%"));
         assertTrue(output.contains("%ai_violation%"));
+        assertTrue(output.contains("%api_mode%"));
         assertTrue(output.contains("%module%"));
         assertFalse(output.contains("messageOnChat"));
+    }
+
+    @Test
+    void rejectsAnUnknownLlmApiMode() throws IOException {
+        Path file = temporaryDirectory.resolve("invalid-api-mode.yml");
+        Files.writeString(file, "ai:\n  api-mode: INVALID\n");
+
+        assertThrows(RuntimeException.class,
+                () -> new YamlConfigurationStore<>(SettingsConfiguration.class, PROPERTIES).update(file));
     }
 }
