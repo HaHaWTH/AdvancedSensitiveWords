@@ -159,12 +159,12 @@ final class LlmModerationPrompt {
         return BASE_SYSTEM_PROMPT + SERVER_POLICY_OVERRIDE.formatted(serverContext);
     }
 
-    static String createUserMessage(String message, String serverContext) {
+    static String createUserMessage(String message, String serverContext, boolean serverContextCanOverride) {
         Map<String, String> payload = new LinkedHashMap<>();
         payload.put("message", message);
         payload.put("source", "chat");
         payload.put("language_hint", "auto");
-        payload.put("server_context", serverContext);
+        payload.put("server_context", serverContextCanOverride ? "" : serverContext);
         try {
             return OBJECT_MAPPER.writeValueAsString(payload);
         } catch (JsonProcessingException exception) {

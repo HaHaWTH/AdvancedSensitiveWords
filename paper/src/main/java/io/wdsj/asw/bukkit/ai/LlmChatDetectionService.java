@@ -247,7 +247,11 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
 
     private void process(RuntimeState state, Candidate candidate) {
         try {
-            String userMessage = LlmModerationPrompt.createUserMessage(candidate.message(), state.settings().serverContext());
+            String userMessage = LlmModerationPrompt.createUserMessage(
+                    candidate.message(),
+                    state.settings().serverContext(),
+                    state.settings().serverContextCanOverride()
+            );
             historyLogger.logRequest(
                     candidate.requestId(),
                     candidate.playerId(),
