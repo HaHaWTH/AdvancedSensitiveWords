@@ -6,14 +6,12 @@ import de.exlll.configlib.YamlConfigurationStore;
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 import io.wdsj.asw.bukkit.ai.LlmApiMode;
 import io.wdsj.asw.bukkit.api.moderation.LlmModerationCategory;
+import io.wdsj.asw.bukkit.listener.command.CommandArgumentRuleSet;
 import org.slf4j.Logger;
 
 import java.net.URI;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -32,6 +30,7 @@ public final class PaperConfigurationService {
 
     private volatile SettingsConfiguration settings;
     private volatile MessagesConfiguration messages;
+    private volatile CommandArgumentRuleSet commandArgumentRules = CommandArgumentRuleSet.compile(List.of());
 
     public PaperConfigurationService(Logger logger, Path dataDirectory) {
         this.logger = logger;
@@ -42,9 +41,11 @@ public final class PaperConfigurationService {
         try {
             SettingsConfiguration loadedSettings = settingsStore.update(dataDirectory.resolve("config.yml"));
             validateSettings(loadedSettings);
+            CommandArgumentRuleSet loadedCommandArgumentRules = CommandArgumentRuleSet.compile(loadedSettings.chat.commandWhiteList);
             MessagesConfiguration loadedMessages = loadMessages(loadedSettings.plugin.language);
             settings = loadedSettings;
             messages = loadedMessages;
+            commandArgumentRules = loadedCommandArgumentRules;
         } catch (RuntimeException exception) {
             logger.error("Failed to load AdvancedSensitiveWords configuration from {}.", dataDirectory, exception);
             throw new IllegalStateException("Unable to load AdvancedSensitiveWords configuration", exception);
@@ -65,6 +66,18 @@ public final class PaperConfigurationService {
             throw new IllegalStateException("Configuration has not been loaded yet");
         }
         return key.get(snapshot);
+    }
+
+    public CommandArgumentRuleSet commandArgumentRules() {
+        return commandArgumentRules;
+    }
+
+    public boolean shouldInspectCommand(CommandArgumentRuleSet.CommandSelection selection) {
+        return shouldInspectCommand(selection.listed(), get(PluginSettings.CHAT_INVERT_WHITELIST));
+    }
+
+    static boolean shouldInspectCommand(boolean commandListed, boolean invertedWhitelist) {
+        return commandListed == invertedWhitelist;
     }
 
     public String message(PluginMessages key) {
@@ -149,6 +162,7 @@ public final class PaperConfigurationService {
             throw new IllegalArgumentException("ai.minimum-entropy-bits must be a finite non-negative number");
         }
         validateCategoryPolicy(ai.categoryPolicy);
+        CommandArgumentRuleSet.compile(settings.chat.commandWhiteList);
 
         if (!ai.enabled) {
             return;

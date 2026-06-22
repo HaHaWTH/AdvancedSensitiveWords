@@ -160,9 +160,21 @@ public final class SettingsConfiguration {
         public int contextMaxTime = 90;
         @Comment("Whether command whitelist matching is inverted into a blacklist.")
         public boolean invertCommandWhiteList = true;
-        @Comment("Commands excluded from filtering unless the whitelist is inverted.")
+        @Comment({
+                "Commands included in or excluded from filtering depending on invert-command-white-list.",
+                "A plain path such as /tell checks all arguments. Optional directives select arguments after the command path.",
+                "Use [default:include] or [default:ignore], then [include:2..] or [ignore:1,-1].",
+                "Arguments are one-based; -1 means the final argument. Rules may include subcommands, for example /mail send."
+        })
         public List<String> commandWhiteList = new ArrayList<>(List.of(
-                "/tell", "/msg", "/normal", "/message", "/private", "/msg", "/w", "/whisper", "/m"
+                "[default:include] /tell [ignore:1]",
+                "[default:include] /msg [ignore:1]",
+                "[default:include] /normal",
+                "[default:include] /message [ignore:1]",
+                "[default:include] /private [ignore:1]",
+                "[default:include] /w [ignore:1]",
+                "[default:include] /whisper [ignore:1]",
+                "[default:include] /m [ignore:1]"
         ));
     }
 

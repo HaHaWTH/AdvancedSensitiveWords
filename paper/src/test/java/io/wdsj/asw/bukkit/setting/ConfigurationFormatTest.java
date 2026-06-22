@@ -54,6 +54,8 @@ class ConfigurationFormatTest {
         assertTrue(output.contains("COMMAND|command; COMMAND_PROXY|command; DAMAGE|amount; HOSTILE|radius."));
         assertTrue(output.contains("Use %player% or %PLAYER% in commands. Append VL=3, VL>3, or VL<3 to condition an action."));
         assertTrue(output.contains("punishment: []"));
+        assertTrue(output.contains("[default:include] /tell [ignore:1]"));
+        assertTrue(output.contains("Arguments are one-based; -1 means the final argument."));
         assertFalse(output.contains("Plugin:"));
         assertFalse(output.contains("enableDefaultWords"));
         assertFalse(output.contains("legacy-ai-action"));

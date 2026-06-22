@@ -10,10 +10,8 @@ import io.wdsj.asw.bukkit.setting.PluginSettings
 import org.bukkit.entity.Player
 
 class PlayerProcessingGuard(private val configuration: PaperConfigurationService) {
-    fun shouldSkip(player: Player, commandMessage: String? = null): Boolean {
+    fun shouldSkip(player: Player): Boolean {
         if (shouldSkipBasic(player)) return true
-        if (commandMessage != null && Utils.isCommandAndWhiteListed(commandMessage)) return true
-
         return isUnauthenticated(player)
     }
 

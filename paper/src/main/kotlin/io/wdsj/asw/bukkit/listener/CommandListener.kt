@@ -1,6 +1,7 @@
 package io.wdsj.asw.bukkit.listener
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.sensitiveWordBs
+import io.wdsj.asw.bukkit.listener.command.CommandArgumentRuleSet
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
@@ -23,16 +24,19 @@ class CommandListener(private val configuration: PaperConfigurationService) : Li
     fun onCommand(event: PlayerCommandPreprocessEvent) {
         if (!configuration.get(PluginSettings.ENABLE_CHAT_CHECK)) return
 
-        val player = event.player
         val originalCommand = preprocess(event.message)
-        if (processingGuard.shouldSkip(player, originalCommand)) return
+        val player = event.player
+        if (processingGuard.shouldSkip(player)) return
+
+        val selection = configuration.commandArgumentRules().select(originalCommand)
+        if (!configuration.shouldInspectCommand(selection) || selection.segments().isEmpty()) return
 
         val startTime = System.currentTimeMillis()
-        val censoredWords = sensitiveWordBs.findAll(originalCommand)
+        val censoredWords = selection.segments().flatMap { segment -> sensitiveWordBs.findAll(segment.content()) }
         if (censoredWords.isEmpty()) return
 
-        applyCommandAction(event, originalCommand)
-        recordViolation(event, player, originalCommand, censoredWords, startTime)
+        applyCommandAction(event, selection)
+        recordViolation(event, player, selection.scannedContent(), censoredWords, startTime)
     }
 
     private fun preprocess(message: String): String {
@@ -40,13 +44,16 @@ class CommandListener(private val configuration: PaperConfigurationService) : Li
         return message.replace(Utils.preProcessRegex.toRegex(), "")
     }
 
-    private fun applyCommandAction(event: PlayerCommandPreprocessEvent, originalCommand: String) {
+    private fun applyCommandAction(
+        event: PlayerCommandPreprocessEvent,
+        selection: CommandArgumentRuleSet.CommandSelection,
+    ) {
         if (isCancelMode()) {
             event.isCancelled = true
             return
         }
 
-        val processedCommand = sensitiveWordBs.replace(originalCommand)
+        val processedCommand = selection.replaceSelected(sensitiveWordBs::replace)
         event.message = if (Utils.isCommand(processedCommand)) processedCommand else "/$processedCommand"
     }
 
