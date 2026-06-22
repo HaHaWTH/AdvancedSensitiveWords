@@ -12,7 +12,7 @@ public final class ChineseMessagesConfiguration extends MessagesConfiguration {
         name.messageOnName = "<red>您的用户名包含敏感词,请修改您的用户名或联系管理员.";
         item.messageOnItem = "<red>您的物品包含敏感词.";
         plugin.messageOnCommandReload = "<green>AdvancedSensitiveWords 已重新加载.";
-        plugin.messageOnViolationReset = "<gradient:#22d3ee:#4ade80><bold>ASW</bold></gradient> <dark_gray>| <green>已重置所有玩家的违规次数。";
+        plugin.messageOnViolationReset = "<gradient:#22d3ee:#4ade80><bold>ASWNotify</bold></gradient> <dark_gray>| <green>已重置所有玩家的违规次数。";
         plugin.messageOnCommandStatus = """
                 <gradient:#22d3ee:#4ade80><bold>AdvancedSensitiveWords</bold></gradient> <dark_gray>| <aqua>插件状态
                 <dark_gray>  版本 <aqua>%version% <dark_gray>| <gray>MC %mc_version%
@@ -54,6 +54,6 @@ public final class ChineseMessagesConfiguration extends MessagesConfiguration {
                 <dark_gray>  聊天 <aqua>%chat_violation% <dark_gray>| <gray>AI <aqua>%ai_violation% <dark_gray>| <gray>书本 <aqua>%book_violation%
                 <dark_gray>  告示牌 <aqua>%sign_violation% <dark_gray>| <gray>铁砧 <aqua>%anvil_violation% <dark_gray>| <gray>物品 <aqua>%item_violation%
                 <dark_gray>  总 VL <gradient:#fbbf24:#fb7185><bold>%violation%</bold></gradient>""";
-        plugin.messageOnCommandReset = "<gradient:#22d3ee:#4ade80><bold>ASW</bold></gradient> <dark_gray>| <green>已重置玩家 <aqua>%player% <green>的 <aqua>%module% <green>VL。";
+        plugin.messageOnCommandReset = "<gradient:#22d3ee:#4ade80><bold>AdvancedSensitiveWords</bold></gradient> <dark_gray>| <green>已重置玩家 <aqua>%player% <green>的 <aqua>%module% <green>VL。";
     }
 }

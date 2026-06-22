@@ -61,7 +61,7 @@ public abstract class MessagesConfiguration {
         @Comment("Message sent after a successful reload.")
         public String messageOnCommandReload = "<green>AdvancedSensitiveWords has been reloaded.";
         @Comment("Message sent after all violation counters are reset.")
-        public String messageOnViolationReset = "<gradient:#22d3ee:#4ade80><bold>ASW</bold></gradient> <dark_gray>| <green>Reset all player violation counts.";
+        public String messageOnViolationReset = "<gradient:#22d3ee:#4ade80><bold>ASWNotify</bold></gradient> <dark_gray>| <green>Reset all player violation counts.";
         @Comment("Status command output.")
         public String messageOnCommandStatus = """
                 <gradient:#22d3ee:#4ade80><bold>AdvancedSensitiveWords</bold></gradient> <dark_gray>| <aqua>Plugin Status
@@ -115,7 +115,7 @@ public abstract class MessagesConfiguration {
                 <dark_gray>  Sign <aqua>%sign_violation% <dark_gray>| <gray>Anvil <aqua>%anvil_violation% <dark_gray>| <gray>Item <aqua>%item_violation%
                 <dark_gray>  Total VL <gradient:#fbbf24:#fb7185><bold>%violation%</bold></gradient>""";
         @Comment("Message sent after resetting a player's violation counter.")
-        public String messageOnCommandReset = "<gradient:#22d3ee:#4ade80><bold>ASW</bold></gradient> <dark_gray>| <green>Reset <aqua>%module% <green>VL for <aqua>%player%<green>.";
+        public String messageOnCommandReset = "<gradient:#22d3ee:#4ade80><bold>AdvancedSensitiveWords</bold></gradient> <dark_gray>| <green>Reset <aqua>%module% <green>VL for <aqua>%player%<green>.";
     }
 
     @Configuration
