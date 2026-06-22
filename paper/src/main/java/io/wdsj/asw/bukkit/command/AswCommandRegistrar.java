@@ -119,13 +119,13 @@ public final class AswCommandRegistrar {
 
     private void registerTeleportCommand() {
         commandManager.command(root()
-                .literal("teleport", Description.of("Teleport to a reported sign"))
+                .literal("teleport", Description.of("Teleport to a reported location"))
                 .required("world-id", UUIDParser.uuidParser())
                 .required("x", DoubleParser.doubleParser())
                 .required("y", DoubleParser.doubleParser())
                 .required("z", DoubleParser.doubleParser())
                 .permission(permission(PermissionsEnum.NOTICE.getPermission()))
-                .handler(context -> commandService.teleportToReportedSign(
+                .handler(context -> commandService.teleportToReportedLocation(
                         sender(context),
                         context.get("world-id"),
                         context.get("x"),
@@ -228,6 +228,11 @@ public final class AswCommandRegistrar {
     private static final class ViolationModuleParseException extends IllegalArgumentException {
         private ViolationModuleParseException(String value) {
             super("Unknown violation module: " + value);
+        }
+
+        @Override
+        public Throwable fillInStackTrace() {
+            return this;
         }
     }
 }

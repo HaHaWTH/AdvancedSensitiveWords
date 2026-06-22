@@ -171,7 +171,7 @@ public final class AswCommandService {
         MessageUtils.sendMessage(sender, message);
     }
 
-    public void teleportToReportedSign(CommandSender sender, UUID worldId, double x, double y, double z) {
+    public void teleportToReportedLocation(CommandSender sender, UUID worldId, double x, double y, double z) {
         if (!(sender instanceof Player player)) {
             return;
         }

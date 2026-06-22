@@ -39,7 +39,7 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("org.geysermc.floodgate:api:2.2.2-SNAPSHOT")
     compileOnly("fr.xephi:authme:5.7.0-SNAPSHOT")
-    compileOnly("com.github.retrooper:packetevents-spigot:2.12.2")
+    compileOnly("com.github.retrooper:packetevents-spigot:2.13.0")
     compileOnly("org.jetbrains:annotations:26.0.2")
     compileOnly("com.google.guava:guava:33.4.0-jre")
     compileOnly("dev.langchain4j:langchain4j-open-ai:${property("langchain4jVersion")}")
