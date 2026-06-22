@@ -61,6 +61,40 @@ class CommandArgumentRuleSetTest {
     }
 
     @Test
+    void replaceSelectedDoesNotBreakQuotesWhenQuotesAreInTheMiddleOfTheMessage() {
+        CommandArgumentRuleSet rules = CommandArgumentRuleSet.compile(List.of(
+                "[default:include] /tell [ignore:1]"
+        ));
+
+        CommandArgumentRuleSet.CommandSelection selection = rules.select("/tell Player \"blocked message\" world");
+        CommandArgumentRuleSet.CommandSelection selection2 = rules.select("/tell Player world of \"blocked message\"");
+        assertEquals("/tell Player [\"blocked message\" world]", selection.replaceSelected(content -> "[" + content + "]"));
+        assertEquals("/tell Player [world of \"blocked message\"]", selection2.replaceSelected(content -> "[" + content + "]"));
+    }
+
+    @Test
+    void quotesAreInTheMiddleOfTheMessage() {
+        CommandArgumentRuleSet rules = CommandArgumentRuleSet.compile(List.of(
+                "[default:include] /tell [ignore:1]"
+        ));
+
+        CommandArgumentRuleSet.CommandSelection selection = rules.select("/tell Player \"blocked message\" world");
+        CommandArgumentRuleSet.CommandSelection selection2 = rules.select("/tell Player world of \"blocked message\"");
+        assertEquals("\"blocked message\" world", selection.scannedContent());
+        assertEquals("world of \"blocked message\"", selection2.scannedContent());
+    }
+
+    @Test
+    void quotesTokenBehaveSameAsBrigadier() {
+        CommandArgumentRuleSet rules = CommandArgumentRuleSet.compile(List.of(
+                "[default:include] /tell [ignore:1,3]"
+        ));
+
+        CommandArgumentRuleSet.CommandSelection selection = rules.select("/tell Player \"科比布莱恩特说 我要打\\\"篮球\"");
+        assertEquals("/tell Player \"[科比布莱恩特说 我要打\\\"篮球]\"", selection.replaceSelected(content -> "[" + content + "]"));
+    }
+
+    @Test
     void longestCommandPathWinsAndIndexesAfterThePath() {
         CommandArgumentRuleSet rules = CommandArgumentRuleSet.compile(List.of(
                 "[default:ignore] /mail [include:1]",

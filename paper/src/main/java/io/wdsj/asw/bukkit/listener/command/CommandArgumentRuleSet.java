@@ -170,26 +170,48 @@ public final class CommandArgumentRuleSet {
 
     private static List<SelectedSegment> selectedSegments(String command, List<Token> arguments, boolean[] selected) {
         List<SelectedSegment> segments = new ObjectArrayList<>();
-        int segmentStart = -1;
-        int segmentEnd = -1;
+        int runStartIndex = -1;
+
         for (int index = 0; index < selected.length; index++) {
             if (!selected[index]) {
-                if (segmentStart >= 0) {
-                    segments.add(new SelectedSegment(segmentStart, segmentEnd, command.substring(segmentStart, segmentEnd)));
-                    segmentStart = -1;
+                if (runStartIndex >= 0) {
+                    addSelectedSegment(command, arguments, segments, runStartIndex, index - 1);
+                    runStartIndex = -1;
                 }
                 continue;
             }
-            Token token = arguments.get(index);
-            if (segmentStart < 0) {
-                segmentStart = token.contentStart();
+
+            if (runStartIndex < 0) {
+                runStartIndex = index;
             }
-            segmentEnd = token.contentEnd();
         }
-        if (segmentStart >= 0) {
-            segments.add(new SelectedSegment(segmentStart, segmentEnd, command.substring(segmentStart, segmentEnd)));
+
+        if (runStartIndex >= 0) {
+            addSelectedSegment(command, arguments, segments, runStartIndex, selected.length - 1);
         }
+
         return List.copyOf(segments);
+    }
+
+    private static void addSelectedSegment(
+            String command,
+            List<Token> arguments,
+            List<SelectedSegment> segments,
+            int runStartIndex,
+            int runEndIndex
+    ) {
+        Token first = arguments.get(runStartIndex);
+        Token last = arguments.get(runEndIndex);
+
+        boolean singleTokenRun = runStartIndex == runEndIndex;
+        int segmentStart = singleTokenRun ? first.contentStart() : first.start();
+        int segmentEnd = singleTokenRun ? first.contentEnd() : last.end();
+
+        segments.add(new SelectedSegment(
+                segmentStart,
+                segmentEnd,
+                command.substring(segmentStart, segmentEnd)
+        ));
     }
 
     private static List<Token> tokenize(String input) {
