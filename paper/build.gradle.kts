@@ -36,7 +36,7 @@ dependencies {
     implementation("org.incendo:cloud-minecraft-extras:${property("cloudVersion")}")
 
     compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
-    compileOnly("me.clip:placeholderapi:2.11.6")
+    compileOnly("me.clip:placeholderapi:2.12.2")
     compileOnly("org.geysermc.floodgate:api:2.2.2-SNAPSHOT")
     compileOnly("fr.xephi:authme:5.7.0-SNAPSHOT")
     compileOnly("com.github.retrooper:packetevents-spigot:2.13.0")
