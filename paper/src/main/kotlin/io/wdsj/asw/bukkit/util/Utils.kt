@@ -79,7 +79,7 @@ object Utils {
 
     @JvmStatic
     val minecraftVersion: String
-        get() = Bukkit.getBukkitVersion().split("-".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
+        get() = Bukkit.getMinecraftVersion()
 
     fun isNotCommand(command: String): Boolean {
         return !command.startsWith("/")
