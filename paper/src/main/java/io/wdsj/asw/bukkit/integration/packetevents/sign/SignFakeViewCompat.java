@@ -19,7 +19,7 @@ public final class SignFakeViewCompat {
         }
 
         if (!AdvancedSensitiveWords.setting(PluginSettings.SIGN_METHOD).isCancel()) {
-            AdvancedSensitiveWords.LOGGER.info("Sign.fakeOnCancel is enabled but Sign.method is not cancel; sign fake view is disabled.");
+            AdvancedSensitiveWords.LOGGER.info("Sign fake view is enabled in config but method is not cancel; sign fake view will be disabled.");
             return;
         }
 
@@ -51,6 +51,6 @@ public final class SignFakeViewCompat {
             return;
         }
         unavailableLogged = true;
-        AdvancedSensitiveWords.LOGGER.warn("Sign.fakeOnCancel requires PacketEvents. Falling back to normal sign cancel behavior.");
+        AdvancedSensitiveWords.LOGGER.warn("Sign fake view requires PacketEvents. Falling back to normal sign cancel behavior.");
     }
 }
