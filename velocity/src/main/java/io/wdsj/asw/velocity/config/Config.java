@@ -2,7 +2,7 @@ package io.wdsj.asw.velocity.config;
 
 import io.github.thatsmusic99.configurationmaster.api.ConfigFile;
 import io.github.thatsmusic99.configurationmaster.api.ConfigSection;
-import io.wdsj.asw.common.template.PluginVersionTemplate;
+import io.wdsj.asw.common.environment.PluginBuildInfo;
 import io.wdsj.asw.velocity.AdvancedSensitiveWords;
 
 import java.io.File;
@@ -18,7 +18,7 @@ public class Config {
     public Config(AdvancedSensitiveWords plugin, File dataFolder) throws Exception {
         this.plugin = plugin;
         this.config = ConfigFile.loadConfig(new File(dataFolder, "config.yml"));
-        config.set("plugin-version", PluginVersionTemplate.VERSION);
+        config.set("plugin-version", PluginBuildInfo.VERSION);
         structureConfig();
         this.check_for_update = getBoolean("plugin.check-update", true, """
                 If set to true, will check for update on plugin startup.""");

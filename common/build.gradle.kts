@@ -16,8 +16,8 @@ dependencies {
 }
 
 buildConfig {
-    packageName("io.wdsj.asw.common.template")
-    className("PluginVersionTemplate")
+    packageName("io.wdsj.asw.common.environment")
+    className("PluginBuildInfo")
     useJavaOutput()
 
     buildConfigField("VERSION", project.version.toString())

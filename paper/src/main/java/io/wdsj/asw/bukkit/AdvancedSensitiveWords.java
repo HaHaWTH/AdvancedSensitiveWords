@@ -34,7 +34,7 @@ import io.wdsj.asw.bukkit.util.TimingUtils;
 import io.wdsj.asw.bukkit.util.cache.BookCache;
 import io.wdsj.asw.bukkit.util.context.ChatContext;
 import io.wdsj.asw.bukkit.util.context.SignContext;
-import io.wdsj.asw.common.template.PluginVersionTemplate;
+import io.wdsj.asw.common.environment.PluginBuildInfo;
 import io.wdsj.asw.common.update.Updater;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
@@ -52,7 +52,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     public static volatile boolean isInitialized = false;
     public static SensitiveWordBs sensitiveWordBs;
     public static boolean isAuthMeAvailable;
-    public static final String PLUGIN_VERSION = PluginVersionTemplate.VERSION;
+    public static final String PLUGIN_VERSION = PluginBuildInfo.VERSION;
     private static AdvancedSensitiveWords instance;
     private static TaskScheduler scheduler;
     public static Logger LOGGER;
@@ -122,7 +122,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         long endTime = System.currentTimeMillis();
         LOGGER.info("AdvancedSensitiveWords is enabled!(took {}ms)", endTime - startTime);
         if (Updater.isDevChannel()) {
-            LOGGER.info("You are running a development version of AdvancedSensitiveWords! Branch: " + PluginVersionTemplate.COMMIT_BRANCH);
+            LOGGER.info("You are running a development version of AdvancedSensitiveWords! Branch: " + PluginBuildInfo.COMMIT_BRANCH);
         }
         checkForUpdatesAsync();
     }
@@ -256,7 +256,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
                 "This development build is {} commit(s) behind {} (current {}).",
                     result.getCommitsBehind(),
                     result.getLatestVersion(),
-                    PluginVersionTemplate.COMMIT_HASH_SHORT
+                    PluginBuildInfo.COMMIT_HASH_SHORT
             );
             return;
         }

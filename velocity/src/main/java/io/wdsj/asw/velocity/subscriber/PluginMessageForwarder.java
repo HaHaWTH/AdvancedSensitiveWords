@@ -7,7 +7,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.ServerConnection;
 import io.wdsj.asw.common.constant.networking.ChannelDataConstant;
 import io.wdsj.asw.common.datatype.io.LimitedByteArrayDataOutput;
-import io.wdsj.asw.common.template.PluginVersionTemplate;
+import io.wdsj.asw.common.environment.PluginBuildInfo;
 import org.slf4j.Logger;
 
 import java.util.Locale;
@@ -33,7 +33,7 @@ public class PluginMessageForwarder {
             var serverInfo = ((ServerConnection) event.getSource()).getServerInfo();
             byte[] message = event.getData();
             var input = ByteStreams.newDataInput(message);
-            if (!input.readUTF().equals(PluginVersionTemplate.VERSION) && !warned) {
+            if (!input.readUTF().equals(PluginBuildInfo.VERSION) && !warned) {
                 logger.warn("Plugin version mismatch! Things may not work properly.");
                 warned = true;
             }

@@ -2,7 +2,7 @@ package io.wdsj.asw.common.update;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import io.wdsj.asw.common.template.PluginVersionTemplate;
+import io.wdsj.asw.common.environment.PluginBuildInfo;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,7 +22,7 @@ public final class Updater {
     private static final String RELEASE_URL = API_ROOT + "/releases/latest";
     private static final String COMMITS_URL = API_ROOT + "/commits/";
     private static final String COMPARE_URL = API_ROOT + "/compare/";
-    private static final boolean DEV_CHANNEL = "dev".equalsIgnoreCase(PluginVersionTemplate.VERSION_CHANNEL);
+    private static final boolean DEV_CHANNEL = "dev".equalsIgnoreCase(PluginBuildInfo.VERSION_CHANNEL);
 
     private Updater() {
     }
@@ -105,14 +105,14 @@ public final class Updater {
     private static UpdateResult checkReleaseUpdate() throws IOException {
         JsonObject release = requestJson(RELEASE_URL);
         String latestVersion = release.get("tag_name").getAsString();
-        int comparison = compareVersions(parseSemanticVersion(latestVersion), parseSemanticVersion(PluginVersionTemplate.VERSION));
+        int comparison = compareVersions(parseSemanticVersion(latestVersion), parseSemanticVersion(PluginBuildInfo.VERSION));
         return new UpdateResult(comparison > 0, latestVersion, false, 0, latestVersion, comparison > 0);
     }
 
     private static UpdateResult checkDevelopmentUpdate() throws IOException {
         UpdateResult releaseResult = checkReleaseUpdate();
-        String localCommit = PluginVersionTemplate.COMMIT_HASH;
-        String branch = PluginVersionTemplate.COMMIT_BRANCH;
+        String localCommit = PluginBuildInfo.COMMIT_HASH;
+        String branch = PluginBuildInfo.COMMIT_BRANCH;
         final UpdateResult errorResult = new UpdateResult(
                 releaseResult.isReleaseUpdateAvailable(),
                 branch,

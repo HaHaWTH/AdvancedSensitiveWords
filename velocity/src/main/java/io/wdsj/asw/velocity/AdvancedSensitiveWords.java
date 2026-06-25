@@ -9,7 +9,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
-import io.wdsj.asw.common.template.PluginVersionTemplate;
+import io.wdsj.asw.common.environment.PluginBuildInfo;
 import io.wdsj.asw.common.update.Updater;
 import io.wdsj.asw.velocity.config.Config;
 import io.wdsj.asw.velocity.subscriber.PluginMessageForwarder;
@@ -25,7 +25,7 @@ import java.nio.file.Path;
 @Plugin(
         id = "advancedsensitivewords",
         name = "AdvancedSensitiveWords",
-        version = PluginVersionTemplate.VERSION + "-" + PluginVersionTemplate.VERSION_CHANNEL,
+        version = PluginBuildInfo.VERSION + "-" + PluginBuildInfo.VERSION_CHANNEL,
         authors = {"HaHaWTH"}
 )
 public class AdvancedSensitiveWords {
@@ -63,14 +63,14 @@ public class AdvancedSensitiveWords {
                                 logger.warn(
                                         "A newer stable release is available: {} (current {}). Unable to compare the development branch.",
                                         result.getLatestReleaseVersion(),
-                                        PluginVersionTemplate.VERSION
+                                        PluginBuildInfo.VERSION
                                 );
                                 return;
                             }
                             logger.warn(
                                     "A newer stable release is available: {} (current {}). Latest development commit: {} ({} commit(s) behind).",
                                     result.getLatestReleaseVersion(),
-                                    PluginVersionTemplate.VERSION,
+                                    PluginBuildInfo.VERSION,
                                     result.getLatestVersion(),
                                     result.getCommitsBehind()
                             );
@@ -80,10 +80,10 @@ public class AdvancedSensitiveWords {
                                 "This development build is {} commit(s) behind {} (current {}).",
                                 result.getCommitsBehind(),
                                 result.getLatestVersion(),
-                                PluginVersionTemplate.COMMIT_HASH_SHORT
+                                PluginBuildInfo.COMMIT_HASH_SHORT
                         );
                     } else {
-                        logger.warn("There is a new version available: {}, you're on: {}", result.getLatestVersion(), PluginVersionTemplate.VERSION);
+                        logger.warn("There is a new version available: {}, you're on: {}", result.getLatestVersion(), PluginBuildInfo.VERSION);
                     }
                 } else if (!result.isError()) {
                     logger.info("You are running the latest version.");
