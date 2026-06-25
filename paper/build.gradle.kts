@@ -7,6 +7,7 @@ plugins {
     java
     kotlin("jvm")
     id("com.gradleup.shadow")
+    id("xyz.jpenilla.run-paper") version "3.0.2"
 }
 
 val pluginMain = "io.wdsj.asw.bukkit.AdvancedSensitiveWords"
@@ -155,4 +156,8 @@ tasks.named<ShadowJar>("shadowJar") {
 
 tasks.build {
     dependsOn(tasks.shadowJar)
+}
+
+tasks.runServer {
+    minecraftVersion("1.21.11")
 }
