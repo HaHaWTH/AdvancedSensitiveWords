@@ -13,7 +13,6 @@ public final class SignFakeViewCompat {
     }
 
     public static void tryRegister(AdvancedSensitiveWords plugin) {
-        SignFakeViewService.setOperational(false);
         if (!AdvancedSensitiveWords.setting(PluginSettings.ENABLE_SIGN_EDIT_CHECK)
                 || !AdvancedSensitiveWords.setting(PluginSettings.SIGN_FAKE_ON_CANCEL)) {
             return;
@@ -28,7 +27,7 @@ public final class SignFakeViewCompat {
             logPacketEventsUnavailable();
             return;
         }
-
+        SignFakeViewService.setOperational(false);
         SignFakeViewPacketListener.register();
         SignFakeViewService.setOperational(true);
         registered = true;
