@@ -37,9 +37,9 @@ public final class SignFakeViewCompat {
     public static void unregister() {
         if (registered && isPacketEventsAvailable()) {
             SignFakeViewPacketListener.unregister();
+            SignFakeViewService.setOperational(false);
         }
         registered = false;
-        SignFakeViewService.setOperational(false);
     }
 
     private static boolean isPacketEventsAvailable() {
