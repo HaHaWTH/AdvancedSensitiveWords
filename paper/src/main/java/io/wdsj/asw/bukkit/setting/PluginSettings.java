@@ -14,6 +14,7 @@ public final class PluginSettings {
     public static final SettingKey<String> PLUGIN_LANGUAGE = key(settings -> settings.plugin.language);
     public static final SettingKey<Boolean> ENABLE_DEFAULT_WORDS = key(settings -> settings.plugin.enableDefaultWords);
     public static final SettingKey<Boolean> CHECK_FOR_UPDATE = key(settings -> settings.plugin.checkForUpdate);
+    public static final SettingKey<Boolean> DISABLE_COMPATIBILITY_CHECKER = key(settings -> settings.plugin.disableCompatibilityChecker);
     public static final SettingKey<Boolean> ENABLE_ONLINE_WORDS = key(settings -> settings.plugin.enableOnlineWords);
     public static final SettingKey<String> ONLINE_WORDS_URL = key(settings -> settings.plugin.onlineWordsUrl);
     public static final SettingKey<String> ONLINE_WORDS_ENCODING = key(settings -> settings.plugin.onlineWordsEncoding);

@@ -5,6 +5,7 @@ import io.wdsj.asw.bukkit.ai.LlmChatDetectionService;
 import io.wdsj.asw.bukkit.integration.packetevents.sign.SignFakeViewCompat;
 import io.wdsj.asw.bukkit.integration.trchat.TrChatCompat;
 import io.wdsj.asw.bukkit.listener.*;
+import io.wdsj.asw.bukkit.listener.compatibility.CompatibilityChecker;
 import io.wdsj.asw.bukkit.listener.paper.PaperChatListener;
 import io.wdsj.asw.bukkit.listener.paper.PaperFakeMessageExecutor;
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService;
@@ -25,6 +26,9 @@ public class ListenerService {
     }
 
     public void registerListeners() {
+        if (!configuration.get(PluginSettings.DISABLE_COMPATIBILITY_CHECKER)) {
+            registerEventListener(new CompatibilityChecker());
+        }
         TrChatCompat.tryRegister(plugin);
         registerChatBookEventListeners();
         registerEventListener(new ShadowListener(configuration));

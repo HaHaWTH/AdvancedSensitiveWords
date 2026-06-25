@@ -37,6 +37,8 @@ public final class SettingsConfiguration {
         public boolean enableDefaultWords = true;
         @Comment("Whether to check GitHub for updates after startup.")
         public boolean checkForUpdate = true;
+        @Comment("Disable compatibility checker.")
+        public boolean disableCompatibilityChecker = false;
         @Comment("Whether to load blocked words from the configured remote source.")
         public boolean enableOnlineWords = false;
         @Comment("Remote word-list URL.")
