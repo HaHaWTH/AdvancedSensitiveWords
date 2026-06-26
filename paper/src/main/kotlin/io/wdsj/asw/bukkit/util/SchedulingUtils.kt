@@ -6,6 +6,7 @@ import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Entity
+import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import java.util.concurrent.Callable
 import java.util.UUID
@@ -61,7 +62,7 @@ object SchedulingUtils {
     }
 
     @JvmStatic
-    fun runForOnlinePlayer(playerId: UUID, action: Consumer<org.bukkit.entity.Player>) {
+    fun runForOnlinePlayer(playerId: UUID, action: Consumer<Player>) {
         AdvancedSensitiveWords.getScheduler().runTask {
             val player = Bukkit.getPlayer(playerId) ?: return@runTask
             if (!player.isOnline) return@runTask

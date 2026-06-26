@@ -193,6 +193,10 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         Metrics metrics = new Metrics(this, pluginId);
         metrics.addCustomChart(new SimplePie("default_list", () -> String.valueOf(configurationService.get(PluginSettings.ENABLE_DEFAULT_WORDS))));
         metrics.addCustomChart(new SimplePie("java_vendor", TimingUtils::getJvmVendor));
+        metrics.addCustomChart(new SimplePie("ai_enable_rate", () -> String.valueOf(configurationService.get(PluginSettings.AI_ENABLED))));
+        if (configurationService.get(PluginSettings.AI_ENABLED)) {
+            metrics.addCustomChart(new SimplePie("ai_model_used", () -> configurationService.get(PluginSettings.AI_MODEL_NAME)));
+        }
         metrics.addCustomChart(new SingleLineChart("total_filtered_messages", () -> (int) messagesFilteredNum.get()));
     }
 

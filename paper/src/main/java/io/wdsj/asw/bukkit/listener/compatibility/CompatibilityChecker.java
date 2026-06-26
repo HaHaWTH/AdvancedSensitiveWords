@@ -39,7 +39,7 @@ public class CompatibilityChecker implements Listener {
             }
 
             LOGGER.warn("Since AdvancedSensitiveWords utilizes Paper's modern AsyncChatEvent which is fired after the Spigot one,");
-            LOGGER.warn("these legacy plugins might bypass the chat filter or cause conflicts.");
+            LOGGER.warn("these legacy plugins might bypass the chat filter or cause conflicts. (Especially plugins that forward messages)");
             LOGGER.warn("Consider updating these plugins or requesting their authors to migrate to AsyncChatEvent.");
             LOGGER.warn("You can disable this warning in the config \"{}\" if you acknowledged the risk.", "disable-compatibility-checker");
             LOGGER.warn("========================================");

@@ -42,6 +42,11 @@ final class SignFakeRecord {
         return createdAtMillis;
     }
 
+    /**
+     * Whether the viewer can see the original lines
+     * @param viewer the viewer
+     * @return true if the viewer can see the original lines, false otherwise
+     */
     boolean canSeeOriginal(UUID viewer) {
         return placer.equals(viewer);
     }

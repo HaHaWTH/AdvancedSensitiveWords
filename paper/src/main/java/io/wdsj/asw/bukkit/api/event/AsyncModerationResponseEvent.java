@@ -72,7 +72,9 @@ public final class AsyncModerationResponseEvent extends Event implements Cancell
         this.result = result;
     }
 
-    /** @return unique identifier for this provider request */
+    /**
+     * @return unique identifier for this provider request
+     */
     public UUID getRequestId() {
         return requestId;
     }
@@ -85,22 +87,30 @@ public final class AsyncModerationResponseEvent extends Event implements Cancell
         return source;
     }
 
-    /** @return player UUID captured before dispatching the request */
+    /**
+     * @return player UUID captured before dispatching the request
+     */
     public UUID getPlayerId() {
         return playerId;
     }
 
-    /** @return player name captured before dispatching the request */
+    /**
+     * @return player name captured before dispatching the request
+     */
     public String getPlayerName() {
         return playerName;
     }
 
-    /** @return the one plain-text chat message sent to the provider */
+    /**
+     * @return the one plain-text chat message sent to the provider
+     */
     public String getMessage() {
         return message;
     }
 
-    /** @return request-gating Shannon entropy in bits per visible Unicode code point */
+    /**
+     * @return request-gating Shannon entropy in bits per visible Unicode code point
+     */
     public double getEntropy() {
         return entropy;
     }
@@ -112,7 +122,9 @@ public final class AsyncModerationResponseEvent extends Event implements Cancell
         return rawResponse;
     }
 
-    /** @return whether the raw response exceeded the 8 KiB event exposure limit */
+    /**
+     * @return whether the raw response exceeded the 8 KiB event exposure limit
+     */
     public boolean isRawResponseTruncated() {
         return rawResponseTruncated;
     }

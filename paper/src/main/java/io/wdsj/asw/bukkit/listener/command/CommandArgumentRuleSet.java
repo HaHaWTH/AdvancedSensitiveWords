@@ -237,6 +237,7 @@ public final class CommandArgumentRuleSet {
                     }
                     escaped = !escaped && current == '\\';
                     if (current != '\\') {
+                        //noinspection DataFlowIssue
                         escaped = false;
                     }
                     index++;
