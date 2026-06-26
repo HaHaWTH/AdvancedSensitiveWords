@@ -27,7 +27,7 @@ public class VelocitySender {
             out.writeUTF(originalMessage);
             out.writeUTF(censoredList.toString());
         } catch (Exception e) {
-            LOGGER.warn("Failed to send message to Velocity: " + e.getMessage());
+            LOGGER.warn("Failed to send message to Velocity", e);
             return;
         }
         byte[] data = out.toByteArray();
@@ -43,8 +43,8 @@ public class VelocitySender {
             out.writeUTF(result.category().wireName());
             out.writeUTF(String.valueOf(result.confidence()));
             out.writeUTF(originalMessage);
-        } catch (Exception exception) {
-            LOGGER.warn("Failed to send AI observation to Velocity: {}", exception.getMessage());
+        } catch (Exception e) {
+            LOGGER.warn("Failed to send AI observation to Velocity", e);
             return;
         }
         player.sendPluginMessage(AdvancedSensitiveWords.getInstance(), VelocityChannel.CHANNEL, out.toByteArray());

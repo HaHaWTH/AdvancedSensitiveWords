@@ -1,6 +1,5 @@
 package io.wdsj.asw.bukkit.listener.compatibility;
 
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;

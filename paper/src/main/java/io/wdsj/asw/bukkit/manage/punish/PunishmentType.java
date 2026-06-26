@@ -6,15 +6,10 @@ import java.util.Locale;
 
 public enum PunishmentType {
     COMMAND,
-
     COMMAND_PROXY,
-
     HOSTILE,
-
     DAMAGE,
-
     EFFECT,
-    
     SHADOW;
 
     @Nullable

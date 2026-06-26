@@ -33,8 +33,9 @@ public final class CachingPermTool implements Listener {
 
     public void disable() {
         HandlerList.unregisterAll(this);
-        for (Map.Entry<UUID, Cache<PermissionsEnum, Boolean>> entry : permissionCacheMap.entrySet())
+        for (Map.Entry<UUID, Cache<PermissionsEnum, Boolean>> entry : permissionCacheMap.entrySet()) {
             entry.getValue().cleanUp();
+        }
         permissionCacheMap.clear();
     }
 

@@ -21,7 +21,9 @@ import java.util.Map;
 
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER;
 
-/** Executes configured punishment actions against online players. */
+/**
+ * Executes configured punishment actions against online players.
+ */
 public final class PunishmentService {
     private static final Map<String, String> LEGACY_EFFECT_ALIASES = Map.ofEntries(
             Map.entry("slow", "slowness"),
@@ -41,17 +43,23 @@ public final class PunishmentService {
         this.configuration = configuration;
     }
 
-    /** Executes actions using the violation count of the supplied detection module. */
+    /**
+     * Executes actions using the violation count of the supplied detection module.
+     */
     public void executeForModule(Player player, ModuleType moduleType, List<String> actions) {
         executeActions(player, actions, ViolationCounter.INSTANCE.getViolationCount(player, moduleType));
     }
 
-    /** Executes manual default actions using the player's total violations across all modules. */
+    /**
+     * Executes manual default actions using the player's total violations across all modules.
+     */
     public void executeManual(Player player, List<String> actions) {
         executeActions(player, actions, ViolationCounter.INSTANCE.getTotalViolationCount(player));
     }
 
-    /** Executes one administrator-supplied action using the player's total violations across all modules. */
+    /**
+     * Executes one administrator-supplied action using the player's total violations across all modules.
+     */
     public void executeManualMethod(Player player, String method) {
         processSinglePunish(player, method, ViolationCounter.INSTANCE.getTotalViolationCount(player));
     }

@@ -29,7 +29,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.GZIPOutputStream;
 
-/** Writes LLM request and response audit records as UTF-8 JSON Lines. */
 final class LlmHistoryLogger implements AutoCloseable {
     private static final String ACTIVE_FILE_NAME = "llm-history.log";
     private static final DateTimeFormatter ARCHIVE_DATE = DateTimeFormatter.ISO_LOCAL_DATE;

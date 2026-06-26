@@ -1,8 +1,12 @@
 package io.wdsj.asw.bukkit.listener.command;
 
+import com.github.houbb.heaven.util.lang.StringUtil;
+import com.github.houbb.sensitive.word.bs.SensitiveWordBs;
+import com.github.houbb.sensitive.word.support.deny.WordDenys;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -119,5 +123,22 @@ class CommandArgumentRuleSetTest {
                 () -> CommandArgumentRuleSet.compile(List.of("/tell [ignore:0]")));
         assertThrows(IllegalArgumentException.class,
                 () -> CommandArgumentRuleSet.compile(List.of("/tell", "/TELL [ignore:1]")));
+    }
+
+    @Test
+    void testQuoteEscapesFiltering() {
+        SensitiveWordBs sensitiveWordBs = SensitiveWordBs.newInstance()
+                .wordDeny(WordDenys.defaults())
+                .charIgnore((i, s, ignored) -> {
+                    Set<Character> SET = StringUtil.toCharSet("\\\"");
+                    char c = s.charAt(i);
+                    return SET.contains(c);
+                })
+                .init();
+        CommandArgumentRuleSet rules = CommandArgumentRuleSet.compile(List.of(
+                "[default:include] /tell [ignore:1,3]"
+        ));
+        CommandArgumentRuleSet.CommandSelection selection = rules.select("/tell Player s\\\"b");
+        assertEquals("/tell Player ****", selection.replaceSelected(sensitiveWordBs::replace));
     }
 }

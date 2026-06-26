@@ -24,12 +24,16 @@ public enum LlmModerationCategory {
     SPAM_SCAM,
     PROMPT_INJECTION;
 
-    /** @return lower-case provider/configuration identifier for this category */
+    /**
+     * @return lower-case provider/configuration identifier for this category
+     */
     public String wireName() {
         return name().toLowerCase(Locale.ROOT);
     }
 
-    /** @return kebab-case configuration identifier for this category */
+    /**
+     * @return kebab-case configuration identifier for this category
+     */
     public String configurationKey() {
         return wireName().replace('_', '-');
     }
