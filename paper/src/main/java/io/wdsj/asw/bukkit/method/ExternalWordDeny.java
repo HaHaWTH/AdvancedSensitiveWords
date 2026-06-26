@@ -32,7 +32,7 @@ public class ExternalWordDeny implements IWordDeny {
             try {
                 Files.createDirectories(dataFolder.toPath());
             } catch (IOException e) {
-                LOGGER.error("Error occurred while creating external deny directory: " + e.getMessage());
+                LOGGER.error("Error occurred while creating external deny directory", e);
             }
         }
         try (Stream<Path> paths = Files.walk(dataFolder.toPath())) {
@@ -53,12 +53,12 @@ public class ExternalWordDeny implements IWordDeny {
                                 } else reader.lines().forEach(totalList::add);
                             }
                         } catch (IOException e) {
-                            LOGGER.error("Error reading file: " + file.getName());
+                            LOGGER.error("Error reading file: {}", file.getName());
                         }
                     });
-            LOGGER.info("Loaded " + files.size() + " external deny file(s). " + "Total words: " + totalList.size());
+            LOGGER.info("Loaded {} external deny file(s). Total words: {}", files.size(), totalList.size());
         } catch (IOException e) {
-            LOGGER.error("Error occurred while loading external deny files: " + e.getMessage());
+            LOGGER.error("Error occurred while loading external deny files", e);
             return Collections.emptyList();
         }
         return totalList;

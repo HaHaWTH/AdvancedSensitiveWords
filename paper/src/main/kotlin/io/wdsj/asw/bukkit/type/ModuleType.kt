@@ -18,6 +18,8 @@ enum class ModuleType(val isViolationTracked: Boolean) {
 
         @JvmStatic
         fun parseViolationModule(value: String): ModuleType? =
-            entries.firstOrNull { it.isViolationTracked && it.name.equals(value, ignoreCase = true) }
+            entries.firstOrNull {
+                it.isViolationTracked && it.name.equals(value, ignoreCase = true)
+            }
     }
 }

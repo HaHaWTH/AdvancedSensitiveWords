@@ -59,6 +59,13 @@ object MessageUtils {
     }
 
     @JvmStatic
+    fun sendMessage(sender: CommandSender, component: Component) {
+        if (plainTextSerializer.serialize(component).isNotEmpty()) {
+            sender.sendMessage(component)
+        }
+    }
+
+    @JvmStatic
     fun sendMessage(sender: CommandSender, message: String) {
         if (message.isNotEmpty()) {
             sender.sendMessage(deserialize(message))

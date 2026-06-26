@@ -32,7 +32,7 @@ public class ExternalWordAllow implements IWordAllow {
             try {
                 Files.createDirectories(dataFolder.toPath());
             } catch (IOException e) {
-                LOGGER.error("Error occurred while creating external allow directory: {}", e.getMessage());
+                LOGGER.error("Error occurred while creating external allow directory", e);
             }
         }
         try (Stream<Path> paths = Files.walk(dataFolder.toPath())) {
@@ -53,12 +53,12 @@ public class ExternalWordAllow implements IWordAllow {
                                 } else reader.lines().forEach(totalList::add);
                             }
                         } catch (IOException e) {
-                            LOGGER.error("Error reading file: " + file.getName());
+                            LOGGER.error("Error reading file: {}", file.getName());
                         }
                     });
             LOGGER.info("Loaded {} external allow file(s). Total words: {}", files.size(), totalList.size());
         } catch (IOException e) {
-            LOGGER.error("Error occurred while loading external allow files: {}", e.getMessage());
+            LOGGER.error("Error occurred while loading external allow files", e);
             return Collections.emptyList();
         }
         return totalList;

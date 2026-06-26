@@ -1,7 +1,6 @@
 package io.wdsj.asw.bukkit.method;
 
 import com.github.houbb.sensitive.word.api.IWordDeny;
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
 import org.bukkit.plugin.Plugin;
 
@@ -18,10 +17,6 @@ import java.util.List;
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER;
 import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.setting;
 
-/**
- * OnlineWordDeny for ASW.
- * @since Dragon
- */
 public class OnlineWordDeny implements IWordDeny {
     private final File dataFolder;
     private final File cacheFile;
@@ -34,14 +29,15 @@ public class OnlineWordDeny implements IWordDeny {
         this.cacheFile = new File(dataFolder, "cache_online_deny_words.txt");
         this.timestampFile = new File(dataFolder, "cache_online_deny_words_timestamp.txt");
     }
+
     @Override
     public List<String> deny() {
         if (isCacheEnabled && cacheFile.exists() && !isCacheExpired()) {
             try {
-                LOGGER.info("Loading cached words from file.");
+                LOGGER.info("Loading cached words from file...");
                 return Files.readAllLines(cacheFile.toPath());
             } catch (IOException e) {
-                LOGGER.warn("Failed to load cached words from file: " + e.getMessage());
+                LOGGER.warn("Failed to load cached words from file: {}", e.getMessage());
             }
         }
 
@@ -53,7 +49,7 @@ public class OnlineWordDeny implements IWordDeny {
             URL url = uri.toURL();
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setConnectTimeout(4000);
-            connection.setReadTimeout(10000);
+            connection.setReadTimeout(15000);
 
             try (BufferedReader reader = new BufferedReader(
                     new InputStreamReader(connection.getInputStream(), charset))) {

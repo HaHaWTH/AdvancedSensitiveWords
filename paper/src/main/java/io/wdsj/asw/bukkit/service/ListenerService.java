@@ -48,7 +48,7 @@ public class ListenerService {
             registerEventListener(new PlayerItemListener(configuration));
         }
         if (configuration.get(PluginSettings.CHAT_BROADCAST_CHECK)) {
-            registerEventListener(new BroadCastListener(configuration));
+            registerEventListener(new BroadcastListener(configuration));
         }
         if (configuration.get(PluginSettings.CLEAN_PLAYER_DATA_CACHE)) {
             registerEventListener(new QuitDataCleaner(configuration));

@@ -13,9 +13,9 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.server.BroadcastMessageEvent
 
-class BroadCastListener(private val configuration: PaperConfigurationService) : Listener {
+class BroadcastListener(private val configuration: PaperConfigurationService) : Listener {
     @EventHandler(priority = EventPriority.LOWEST)
-    fun onBroadCast(event: BroadcastMessageEvent) {
+    fun onBroadcast(event: BroadcastMessageEvent) {
         if (!isInitialized) return
         if (!configuration.get(PluginSettings.CHAT_BROADCAST_CHECK)) return
 
