@@ -16,7 +16,9 @@ import static io.wdsj.asw.bukkit.AdvancedSensitiveWords.LOGGER;
 public class CompatibilityChecker implements Listener {
     private static final Set<String> compatibilityVerifiedPlugins = Set.of(
             "TrChat",
-            "AdvancedSensitiveWords" // yes myself
+            "AdvancedSensitiveWords", // yes myself
+            "Intave",
+            "Vulcan"
     );
     @EventHandler
     public void onServerLoad(ServerLoadEvent event) {
