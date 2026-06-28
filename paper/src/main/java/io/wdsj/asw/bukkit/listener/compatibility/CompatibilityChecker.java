@@ -18,8 +18,14 @@ public class CompatibilityChecker implements Listener {
             "TrChat",
             "AdvancedSensitiveWords", // yes myself
             "Intave",
-            "Vulcan"
+            "Vulcan",
+            "ItemsAdder",
+            "CraftEngine",
+            "Nexo",
+            "PlaceholderAPI",
+            "EssentialsX"
     );
+
     @EventHandler
     public void onServerLoad(ServerLoadEvent event) {
         Set<String> legacyPlugins = new HashSet<>();
