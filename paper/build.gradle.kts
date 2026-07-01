@@ -54,7 +54,7 @@ dependencies {
     implementation("de.exlll:configlib-yaml:4.8.1")
     runtimeOnly("org.snakeyaml:snakeyaml-engine:2.7")
 
-    testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
+    testImplementation("org.junit.jupiter:junit-jupiter:6.1.0")
     testImplementation("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
     testImplementation("dev.langchain4j:langchain4j-open-ai:${property("langchain4jVersion")}")
     testImplementation("dev.langchain4j:langchain4j-anthropic:${property("langchain4jVersion")}")
