@@ -59,7 +59,7 @@ dependencies {
     testImplementation("dev.langchain4j:langchain4j-open-ai:${property("langchain4jVersion")}")
     testImplementation("dev.langchain4j:langchain4j-anthropic:${property("langchain4jVersion")}")
     testImplementation("dev.langchain4j:langchain4j-http-client-jdk:${property("langchain4jVersion")}")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.11.4")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.1.0")
 
     add(jmh.implementationConfigurationName, "org.openjdk.jmh:jmh-core:${property("jmhVersion")}")
     add(jmh.annotationProcessorConfigurationName, "org.openjdk.jmh:jmh-generator-annprocess:${property("jmhVersion")}")
