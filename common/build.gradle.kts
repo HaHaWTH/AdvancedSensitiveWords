@@ -12,7 +12,7 @@ java {
 dependencies {
     compileOnly("org.jetbrains:annotations:26.1.0")
     compileOnly("com.google.code.gson:gson:2.12.1")
-    compileOnly("com.google.guava:guava:33.4.0-jre")
+    compileOnly("com.google.guava:guava:33.6.0-jre")
 }
 
 buildConfig {

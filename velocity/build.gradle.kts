@@ -17,7 +17,7 @@ dependencies {
     implementation("com.github.thatsmusic99:ConfigurationMaster-API:v2.0.0-rc.3")
 
     compileOnly("com.velocitypowered:velocity-api:3.5.0-SNAPSHOT")
-    compileOnly("com.google.guava:guava:33.4.0-jre")
+    compileOnly("com.google.guava:guava:33.6.0-jre")
     annotationProcessor("com.velocitypowered:velocity-api:3.5.0-SNAPSHOT")
 }
 

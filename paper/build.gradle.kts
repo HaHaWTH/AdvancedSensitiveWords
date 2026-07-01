@@ -42,7 +42,7 @@ dependencies {
     compileOnly("fr.xephi:authme:5.7.0-SNAPSHOT")
     compileOnly("com.github.retrooper:packetevents-spigot:2.13.0")
     compileOnly("org.jetbrains:annotations:26.1.0")
-    compileOnly("com.google.guava:guava:33.4.0-jre")
+    compileOnly("com.google.guava:guava:33.6.0-jre")
     compileOnly("dev.langchain4j:langchain4j-open-ai:${property("langchain4jVersion")}")
     compileOnly("dev.langchain4j:langchain4j-anthropic:${property("langchain4jVersion")}")
     compileOnly("dev.langchain4j:langchain4j-http-client-jdk:${property("langchain4jVersion")}")
@@ -63,7 +63,7 @@ dependencies {
 
     add(jmh.implementationConfigurationName, "org.openjdk.jmh:jmh-core:${property("jmhVersion")}")
     add(jmh.annotationProcessorConfigurationName, "org.openjdk.jmh:jmh-generator-annprocess:${property("jmhVersion")}")
-    add(jmh.runtimeOnlyConfigurationName, "com.google.guava:guava:33.4.0-jre")
+    add(jmh.runtimeOnlyConfigurationName, "com.google.guava:guava:33.6.0-jre")
 }
 
 configurations.named(jmh.implementationConfigurationName) {
