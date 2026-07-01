@@ -6,6 +6,7 @@ package io.wdsj.asw.bukkit.api;
 @SuppressWarnings("unused")
 public final class AdvancedSensitiveWordsApi {
     private static final ShadowBanApi SHADOW_BAN_API = new ShadowBanApi();
+    private static final CoreApi CORE_API = new CoreApi();
 
     private AdvancedSensitiveWordsApi() {
     }
@@ -17,5 +18,14 @@ public final class AdvancedSensitiveWordsApi {
      */
     public static ShadowBanApi shadowBan() {
         return SHADOW_BAN_API;
+    }
+
+    /**
+     * Get the core API.
+     *
+     * @return core API
+     */
+    public static CoreApi core() {
+        return CORE_API;
     }
 }
