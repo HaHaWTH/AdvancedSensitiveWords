@@ -2,9 +2,8 @@ package io.wdsj.asw.bukkit.util
 
 import io.wdsj.asw.bukkit.api.event.SensitiveFilterPostProcessEvent
 import io.wdsj.asw.bukkit.type.ModuleType
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
-import java.util.UUID
+import java.util.*
 
 object SensitiveFilterEvents {
     fun post(
@@ -25,15 +24,13 @@ object SensitiveFilterEvents {
         originalContent: String,
         censoredWords: List<String>,
     ) {
-        Bukkit.getPluginManager().callEvent(
-            SensitiveFilterPostProcessEvent(
-                asynchronous,
-                moduleType,
-                playerId,
-                playerName,
-                originalContent,
-                censoredWords,
-            ),
-        )
+        SensitiveFilterPostProcessEvent(
+            asynchronous,
+            moduleType,
+            playerId,
+            playerName,
+            originalContent,
+            censoredWords,
+        ).callEvent()
     }
 }
