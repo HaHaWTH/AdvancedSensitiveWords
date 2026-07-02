@@ -26,9 +26,20 @@ permissions:
     default: false
     children:
       advancedsensitivewords.bypass: true
+      advancedsensitivewords.bypass.*: true
       advancedsensitivewords.notice: true
       advancedsensitivewords.update: true
       advancedsensitivewords.command.*: true
+  advancedsensitivewords.bypass.*:
+    description: Bypass all player-owned Advanced Sensitive Words filters.
+    default: false
+    children:
+      advancedsensitivewords.bypass.chat: true
+      advancedsensitivewords.bypass.command: true
+      advancedsensitivewords.bypass.book: true
+      advancedsensitivewords.bypass.sign: true
+      advancedsensitivewords.bypass.anvil: true
+      advancedsensitivewords.bypass.item: true
   advancedsensitivewords.command.*:
     description: All Advanced Sensitive Words management commands.
     default: false
@@ -47,7 +58,25 @@ permissions:
       advancedsensitivewords.command.player.punish: true
       advancedsensitivewords.command.ai.status: true
   advancedsensitivewords.bypass:
-    description: Bypass the Advanced Sensitive Words filter.
+    description: Global bypass for all player-owned Advanced Sensitive Words filters.
+    default: false
+  advancedsensitivewords.bypass.chat:
+    description: Bypass chat, chat anti-spam, and chat LLM checks.
+    default: false
+  advancedsensitivewords.bypass.command:
+    description: Bypass command argument checks.
+    default: false
+  advancedsensitivewords.bypass.book:
+    description: Bypass book checks.
+    default: false
+  advancedsensitivewords.bypass.sign:
+    description: Bypass sign checks.
+    default: false
+  advancedsensitivewords.bypass.anvil:
+    description: Bypass anvil rename checks.
+    default: false
+  advancedsensitivewords.bypass.item:
+    description: Bypass item name and lore checks.
     default: false
   advancedsensitivewords.notice:
     description: Retrieve the notice message when player violated.

@@ -1,6 +1,7 @@
 package io.wdsj.asw.bukkit.listener
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.sensitiveWordBs
+import io.wdsj.asw.bukkit.permission.PermissionsEnum
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
@@ -27,7 +28,7 @@ class BookListener(private val configuration: PaperConfigurationService) : Liste
         if (!configuration.get(PluginSettings.ENABLE_BOOK_EDIT_CHECK)) return
 
         val player = event.player
-        if (processingGuard.shouldSkipBasic(player)) return
+        if (processingGuard.shouldSkipBasic(player, PermissionsEnum.BYPASS_BOOK)) return
 
         val startTime = System.currentTimeMillis()
         val bookMeta = event.newBookMeta

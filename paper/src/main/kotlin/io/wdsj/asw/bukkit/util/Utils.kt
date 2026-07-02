@@ -4,7 +4,6 @@ import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
-import java.util.*
 import java.util.concurrent.atomic.AtomicLong
 
 object Utils {
@@ -40,7 +39,7 @@ object Utils {
         return try {
             val url = className.replace(".", "/") + ".class"
             return Thread.currentThread().contextClassLoader.getResource(url) != null
-        } catch (ignored: Throwable) {
+        } catch (_: Throwable) {
             false
         }
     }

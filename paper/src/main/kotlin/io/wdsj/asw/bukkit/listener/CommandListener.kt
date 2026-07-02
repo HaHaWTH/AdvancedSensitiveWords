@@ -2,6 +2,7 @@ package io.wdsj.asw.bukkit.listener
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.sensitiveWordBs
 import io.wdsj.asw.bukkit.listener.command.CommandArgumentRuleSet
+import io.wdsj.asw.bukkit.permission.PermissionsEnum
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
@@ -27,7 +28,7 @@ class CommandListener(private val configuration: PaperConfigurationService) : Li
 
         val originalCommand = preprocess(event.message)
         val player = event.player
-        if (processingGuard.shouldSkip(player)) return
+        if (processingGuard.shouldSkip(player, PermissionsEnum.BYPASS_COMMAND)) return
 
         val selection = configuration.commandArgumentRules().select(originalCommand)
         if (!configuration.shouldInspectCommand(selection) || selection.segments().isEmpty()) return

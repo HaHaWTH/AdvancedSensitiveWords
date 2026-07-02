@@ -10,14 +10,16 @@ import io.wdsj.asw.bukkit.setting.PluginSettings
 import org.bukkit.entity.Player
 
 class PlayerProcessingGuard(private val configuration: PaperConfigurationService) {
-    fun shouldSkip(player: Player): Boolean {
-        if (shouldSkipBasic(player)) return true
+    fun shouldSkip(player: Player, bypassPermission: PermissionsEnum): Boolean {
+        if (shouldSkipBasic(player, bypassPermission)) return true
         return isUnauthenticated(player)
     }
 
-    fun shouldSkipBasic(player: Player): Boolean {
+    fun shouldSkipBasic(player: Player, bypassPermission: PermissionsEnum): Boolean {
         if (!isInitialized) return true
-        return CachingPermTool.hasPermission(PermissionsEnum.BYPASS, player)
+        return CachingPermTool.hasPermission(PermissionsEnum.BYPASS, player) ||
+            CachingPermTool.hasPermission(PermissionsEnum.BYPASS_ALL, player) ||
+            CachingPermTool.hasPermission(bypassPermission, player)
     }
 
     private fun isUnauthenticated(player: Player): Boolean {

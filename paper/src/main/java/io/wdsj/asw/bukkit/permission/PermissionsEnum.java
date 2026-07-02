@@ -5,6 +5,13 @@ package io.wdsj.asw.bukkit.permission;
  */
 public enum PermissionsEnum {
     BYPASS("bypass"),
+    BYPASS_ALL("bypass.*"),
+    BYPASS_CHAT("bypass.chat"),
+    BYPASS_COMMAND("bypass.command"),
+    BYPASS_BOOK("bypass.book"),
+    BYPASS_SIGN("bypass.sign"),
+    BYPASS_ANVIL("bypass.anvil"),
+    BYPASS_ITEM("bypass.item"),
     NOTICE("notice"),
     UPDATE("update");
 

@@ -5,6 +5,7 @@ import io.wdsj.asw.bukkit.AdvancedSensitiveWords.sensitiveWordBs
 import io.wdsj.asw.bukkit.ai.LlmChatDetectionService
 import io.wdsj.asw.bukkit.integration.trchat.TrChatCompat
 import io.wdsj.asw.bukkit.listener.abstraction.AbstractFakeMessageExecutor
+import io.wdsj.asw.bukkit.permission.PermissionsEnum
 import io.wdsj.asw.bukkit.service.chat.antispam.ChatAntiSpamService
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.setting.PluginMessages
@@ -38,7 +39,7 @@ class PaperChatListener(
         if (!configuration.get(PluginSettings.ENABLE_CHAT_CHECK)) return
 
         val player = event.player
-        if (processingGuard.shouldSkip(player)) return
+        if (processingGuard.shouldSkip(player, PermissionsEnum.BYPASS_CHAT)) return
 
         val startTime = System.currentTimeMillis()
         val originalMessage = preprocess(event.message())
