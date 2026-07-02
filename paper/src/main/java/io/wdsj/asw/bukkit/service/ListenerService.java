@@ -50,9 +50,7 @@ public class ListenerService {
         if (configuration.get(PluginSettings.CHAT_BROADCAST_CHECK)) {
             registerEventListener(new BroadcastListener(configuration));
         }
-        if (configuration.get(PluginSettings.CLEAN_PLAYER_DATA_CACHE)) {
-            registerEventListener(new QuitDataCleaner(configuration));
-        }
+        registerEventListener(new QuitDataCleaner());
         if (configuration.get(PluginSettings.CHECK_FOR_UPDATE)) {
             registerEventListener(new JoinUpdateNotifier(configuration));
         }

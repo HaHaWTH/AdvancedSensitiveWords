@@ -16,6 +16,7 @@ import io.wdsj.asw.bukkit.command.AswCommandRegistrar;
 import io.wdsj.asw.bukkit.ai.LlmChatDetectionService;
 import io.wdsj.asw.bukkit.core.condition.WordResultConditionNumMatch;
 import io.wdsj.asw.bukkit.integration.placeholder.ASWExpansion;
+import io.wdsj.asw.bukkit.service.chat.antispam.ChatAntiSpamService;
 import io.wdsj.asw.bukkit.manage.punish.PlayerAltController;
 import io.wdsj.asw.bukkit.manage.punish.PlayerShadowController;
 import io.wdsj.asw.bukkit.manage.punish.ViolationCounter;
@@ -170,6 +171,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         TimingUtils.resetStatistics();
         ChatContext.forceClearContext();
         SignContext.forceClearContext();
+        ChatAntiSpamService.clearAll();
         PlayerShadowController.clear();
         PlayerAltController.clear();
         BookCache.invalidateAll();

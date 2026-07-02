@@ -17,7 +17,7 @@ object LoggingUtils {
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd-HH:mm:ss")
     private val loggingThreadPool = Executors.newSingleThreadExecutor(
         ThreadFactoryBuilder()
-            .setNameFormat("ASW Logging Thread")
+            .setNameFormat("ASW Violation Logger")
             .setThreadFactory(Thread.ofVirtual().factory())
             .setDaemon(true)
             .build()
@@ -32,7 +32,7 @@ object LoggingUtils {
                 try {
                     logFile.createNewFile()
                 } catch (e: IOException) {
-                    LOGGER.warn("Failed to create violations.log file: " + e.message)
+                    LOGGER.warn("Failed to create violations.log file", e)
                     return@submit
                 }
             }
@@ -41,7 +41,7 @@ object LoggingUtils {
                     writer.write(logMessage + System.lineSeparator())
                 }
             } catch (e: IOException) {
-                LOGGER.warn("Failed to write to violations.log file: " + e.message)
+                LOGGER.warn("Failed to write to violations.log file", e)
             }
         }
     }
@@ -51,7 +51,7 @@ object LoggingUtils {
         val logFile = File(AdvancedSensitiveWords.getInstance().dataFolder, "violations.log")
         if (!logFile.exists()) return
         FileUtil.deleteFile(logFile)
-        LOGGER.info("Successfully purged violations")
+        LOGGER.info("Successfully purged violations.")
     }
 
 }

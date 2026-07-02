@@ -8,6 +8,7 @@ import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.type.ModuleType
 import io.wdsj.asw.bukkit.util.LoggingUtils
+import io.wdsj.asw.bukkit.util.SensitiveFilterEvents
 import io.wdsj.asw.bukkit.util.TimingUtils
 import io.wdsj.asw.bukkit.util.Utils
 import io.wdsj.asw.bukkit.util.message.MessageUtils
@@ -26,6 +27,14 @@ class PlayerLoginListener(private val configuration: PaperConfigurationService) 
         val playerName = event.playerProfile.name ?: return
         val startTime = System.currentTimeMillis()
         val censoredWords = sensitiveWordBs.findAll(playerName)
+        SensitiveFilterEvents.post(
+            event.isAsynchronous,
+            ModuleType.NAME,
+            event.playerProfile.id,
+            playerName,
+            playerName,
+            censoredWords,
+        )
         if (censoredWords.isEmpty()) return
 
         denyLogin(event)

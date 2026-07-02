@@ -10,7 +10,8 @@ enum class ModuleType(val isViolationTracked: Boolean) {
     ANVIL(true),
     BOOK(true),
     NAME(false),
-    ITEM(true);
+    ITEM(true),
+    BROADCAST(false);
 
     companion object {
         @JvmStatic

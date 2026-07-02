@@ -6,6 +6,7 @@ import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.type.ModuleType
 import io.wdsj.asw.bukkit.util.PlayerProcessingGuard
+import io.wdsj.asw.bukkit.util.SensitiveFilterEvents
 import io.wdsj.asw.bukkit.util.Utils
 import io.wdsj.asw.bukkit.util.ViolationReporter
 import io.wdsj.asw.bukkit.util.message.MessageUtils
@@ -39,6 +40,7 @@ class AnvilListener(private val configuration: PaperConfigurationService) : List
         val originalItemName = preprocess(MessageUtils.plainText(originalNameComponent))
         val startTime = System.currentTimeMillis()
         val censoredWords = sensitiveWordBs.findAll(originalItemName)
+        SensitiveFilterEvents.post(event.isAsynchronous, ModuleType.ANVIL, player, originalItemName, censoredWords)
         if (censoredWords.isEmpty()) return
 
         if (isCancelMode()) {

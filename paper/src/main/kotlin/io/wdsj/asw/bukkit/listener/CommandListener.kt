@@ -7,6 +7,7 @@ import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.type.ModuleType
 import io.wdsj.asw.bukkit.util.PlayerProcessingGuard
+import io.wdsj.asw.bukkit.util.SensitiveFilterEvents
 import io.wdsj.asw.bukkit.util.Utils
 import io.wdsj.asw.bukkit.util.ViolationReporter
 import io.wdsj.asw.bukkit.util.message.MessageUtils
@@ -33,6 +34,7 @@ class CommandListener(private val configuration: PaperConfigurationService) : Li
 
         val startTime = System.currentTimeMillis()
         val censoredWords = selection.segments().flatMap { segment -> sensitiveWordBs.findAll(segment.content()) }
+        SensitiveFilterEvents.post(event.isAsynchronous, ModuleType.CHAT, player, selection.scannedContent(), censoredWords)
         if (censoredWords.isEmpty()) return
 
         applyCommandAction(event, selection)

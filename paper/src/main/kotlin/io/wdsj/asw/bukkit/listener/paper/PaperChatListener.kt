@@ -1,16 +1,17 @@
 package io.wdsj.asw.bukkit.listener.paper
 
 import io.papermc.paper.event.player.AsyncChatEvent
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords.isInitialized
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.sensitiveWordBs
 import io.wdsj.asw.bukkit.ai.LlmChatDetectionService
 import io.wdsj.asw.bukkit.integration.trchat.TrChatCompat
 import io.wdsj.asw.bukkit.listener.abstraction.AbstractFakeMessageExecutor
+import io.wdsj.asw.bukkit.service.chat.antispam.ChatAntiSpamService
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.type.ModuleType
 import io.wdsj.asw.bukkit.util.PlayerProcessingGuard
+import io.wdsj.asw.bukkit.util.SensitiveFilterEvents
 import io.wdsj.asw.bukkit.util.Utils
 import io.wdsj.asw.bukkit.util.ViolationReporter
 import io.wdsj.asw.bukkit.util.context.ChatContext
@@ -30,6 +31,7 @@ class PaperChatListener(
 ) : Listener {
     private val processingGuard = PlayerProcessingGuard(configuration)
     private val violationReporter = ViolationReporter(configuration)
+    private val antiSpamService = ChatAntiSpamService(configuration)
 
     @EventHandler(priority = EventPriority.LOWEST)
     fun onChat(event: AsyncChatEvent) {
@@ -41,7 +43,23 @@ class PaperChatListener(
         val startTime = System.currentTimeMillis()
         val originalMessage = preprocess(event.message())
         val originalPlainText = PlainTextComponentSerializer.plainText().serialize(originalMessage)
+
+        if (antiSpamService.check(player.uniqueId, originalPlainText) == ChatAntiSpamService.Result.SPAM) {
+            event.isCancelled = true
+            if (configuration.get(PluginSettings.CHAT_ANTI_SPAM_SEND_MESSAGE)) {
+                MessageUtils.sendMessage(player, configuration.message(PluginMessages.MESSAGE_ON_CHAT_ANTI_SPAM))
+            }
+            return
+        }
+
         val censoredWords = sensitiveWordBs.findAll(originalPlainText)
+        SensitiveFilterEvents.post(
+            event.isAsynchronous,
+            ModuleType.CHAT,
+            player,
+            originalPlainText,
+            censoredWords,
+        )
 
         if (censoredWords.isNotEmpty()) {
             handleDirectMessage(event, player, originalMessage, originalPlainText, censoredWords, startTime)
@@ -108,6 +126,7 @@ class PaperChatListener(
         ChatContext.addMessage(player, originalPlainText)
         val originalContext = ChatContext.getHistory(player).joinToString("")
         val censoredWords = sensitiveWordBs.findAll(originalContext)
+        SensitiveFilterEvents.post(event.isAsynchronous, ModuleType.CHAT, player, originalContext, censoredWords)
         if (censoredWords.isEmpty()) return false
 
         ChatContext.pollPlayerContext(player)

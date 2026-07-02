@@ -86,8 +86,6 @@ public final class SettingsConfiguration {
         public boolean enablePlayerItemCheck = false;
         @Comment("Whether to track alternate accounts by IP address.")
         public boolean enableAltsCheck = false;
-        @Comment("Whether to clear player-related caches when players leave.")
-        public boolean cleanPlayerDataCache = true;
         @Comment("Whether to enable PlaceholderAPI support.")
         public boolean enablePlaceholder = false;
         @Comment("Whether to send violation notifications through Velocity.")
@@ -150,6 +148,8 @@ public final class SettingsConfiguration {
         public boolean fakeMessageOnCancel = false;
         @Comment("Whether to send the player a violation message.")
         public boolean sendMessage = true;
+        @Comment("Chat anti-spam settings. This runs before sensitive-word matching and only cancels spam by default.")
+        public AntiSpam antiSpam = new AntiSpam();
         @Comment("Punishment actions for chat and command violations. Leave empty to disable automatic punishment.")
         public List<String> punishment = new ArrayList<>();
         @Comment("Whether to check server broadcast messages.")
@@ -178,6 +178,34 @@ public final class SettingsConfiguration {
                 "[default:include] /whisper [ignore:1]",
                 "[default:include] /m [ignore:1]"
         ));
+    }
+
+    @Configuration
+    public static final class AntiSpam {
+        @Comment("Whether to enable chat anti-spam before sensitive-word filtering.")
+        public boolean enabled = false;
+        @Comment("Regular expression removed before anti-spam checks. Defaults to legacy color and formatting codes.")
+        public String preprocessRegex = "[§&][0-9A-Fa-fK-Ok-oRr]";
+        @Comment("Minimum visible code points before entropy-based anti-spam checks run. Must be >= 1; 4-8 avoids noisy entropy results on very short text.")
+        public int minimumEntropyCodePoints = 4;
+        @Comment("Minimum visible code points before repeated/similar message checks run. Must be >= 1; use 1 to catch short spam like repeated punctuation.")
+        public int minimumSimilarityCodePoints = 1;
+        @Comment("Minimum Shannon entropy in bits. Messages below this value are treated as spam. Use -1.0 to disable.")
+        public double minimumEntropyBits = -1.0D;
+        @Comment("Minimum normalized entropy. Messages below this value are treated as spam. Use -1.0 to disable.")
+        public double minimumAverageEntropy = -1.0D;
+        @Comment("Maximum recent chat messages retained per player for similarity checks.")
+        public int historySize = 6;
+        @Comment("Maximum age in seconds for retained anti-spam history.")
+        public int historyMaxAgeSeconds = 30;
+        @Comment("How many recent messages are compared for repeated/similar message spam.")
+        public int similarCheckAmount = 3;
+        @Comment("Maximum edit distance still considered too similar. Use -1 to disable distance checks.")
+        public int similarMinDistance = 2;
+        @Comment("Similarity threshold from 0.0 to 1.0. Messages at or above this value are treated as spam. Use 1.1 to disable.")
+        public double similarMaxSimilarity = 0.90D;
+        @Comment("Whether to send a message when anti-spam cancels chat.")
+        public boolean sendMessage = true;
     }
 
     @Configuration
@@ -212,12 +240,12 @@ public final class SettingsConfiguration {
         public int queueCapacity = 32;
         @Comment("Minimum seconds between LLM requests from the same player. Must be >= 0; 5-20 reduces spam and provider cost.")
         public int perPlayerCooldownSeconds = 10;
-        @Comment("Minimum visible Unicode code points before an LLM request is considered. Must be >= 1; 4-8 saves requests for short messages.")
-        public int minimumMessageCodePoints = 6;
+        @Comment("Minimum visible Unicode code points before an LLM request is considered. Must be >= 1; 3-4 keeps short semantic abuse eligible.")
+        public int minimumMessageCodePoints = 3;
         @Comment("Maximum total Unicode code points accepted by the LLM request gate. Must be >= minimum-message-code-points; 128-512 is recommended.")
         public int maximumMessageCodePoints = 256;
-        @Comment("Minimum Shannon entropy in bits per visible Unicode code point. Must be finite and >= 0; 2.0-3.5 is a typical request-saving gate.")
-        public double minimumEntropyBits = 2.5D;
+        @Comment("Minimum Shannon entropy in bits per visible Unicode code point. Use 0.0 to disable this cost-saving gate; 2.0-3.5 reduces requests but may miss short natural abuse.")
+        public double minimumEntropyBits = 0.0D;
         @Comment({
                 "Per-category LLM notification, punishment confidence, and punishment action policies.",
                 "Use -1.0 to disable either action. Other values must be between 0.0 and 1.0.",

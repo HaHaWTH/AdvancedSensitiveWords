@@ -10,6 +10,7 @@ import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.type.ModuleType
 import io.wdsj.asw.bukkit.util.PlayerProcessingGuard
+import io.wdsj.asw.bukkit.util.SensitiveFilterEvents
 import io.wdsj.asw.bukkit.util.Utils
 import io.wdsj.asw.bukkit.util.ViolationReporter
 import io.wdsj.asw.bukkit.util.context.SignContext
@@ -43,7 +44,7 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
 
         val startTime = System.currentTimeMillis()
         val attemptedLines = event.lines().toList()
-        val lineScan = censorSingleLines(event)
+        val lineScan = censorSingleLines(event, player)
         val violation = lineScan.violation
             ?: censorMultiLine(event, lineScan)
             ?: censorContext(event, player)
@@ -95,7 +96,7 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
             ))
     }
 
-    private fun censorSingleLines(event: SignChangeEvent): SignLineScan {
+    private fun censorSingleLines(event: SignChangeEvent, player: Player): SignLineScan {
         var violation: SignViolation? = null
         val cleanLineIndexes = mutableListOf<Int>()
         val cleanLineContent = StringBuilder()
@@ -104,6 +105,7 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
             val originalComponent = event.line(lineIndex) ?: continue
             val originalMessage = preprocess(MessageUtils.plainText(originalComponent))
             val censoredWords = sensitiveWordBs.findAll(originalMessage)
+            SensitiveFilterEvents.post(event.isAsynchronous, ModuleType.SIGN, player, originalMessage, censoredWords)
 
             if (censoredWords.isEmpty()) {
                 if (originalMessage.trim().isNotEmpty()) {
@@ -129,19 +131,21 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
         if (!configuration.get(PluginSettings.SIGN_MULTI_LINE_CHECK)) return null
         if (lineScan.cleanLineIndexes.isEmpty()) return null
 
-        val censoredWords = sensitiveWordBs.findAll(lineScan.cleanLineContent)
+        val originalContent = lineScan.cleanLineContent
+        val censoredWords = sensitiveWordBs.findAll(originalContent)
+        SensitiveFilterEvents.post(event.isAsynchronous, ModuleType.SIGN, event.player, originalContent, censoredWords)
         if (censoredWords.isEmpty()) return null
 
         if (isCancelMode()) {
             event.isCancelled = true
         } else {
-            val processedMessage = sensitiveWordBs.replace(lineScan.cleanLineContent)
+            val processedMessage = sensitiveWordBs.replace(originalContent)
             for (lineIndex in lineScan.cleanLineIndexes) {
                 event.line(lineIndex, MessageUtils.plainTextComponent(processedMessage))
             }
         }
 
-        return SignViolation(lineScan.cleanLineContent, censoredWords)
+        return SignViolation(originalContent, censoredWords)
     }
 
     private fun censorContext(event: SignChangeEvent, player: Player): SignViolation? {
@@ -152,6 +156,7 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
         val entries = SignContext.getHistory(player)
         val originalContext = entries.joinToString("") { it.content }
         val censoredWords = sensitiveWordBs.findAll(originalContext)
+        SensitiveFilterEvents.post(event.isAsynchronous, ModuleType.SIGN, player, originalContext, censoredWords)
         if (censoredWords.isEmpty()) return null
 
         val resolution = resolveContext(entries, originalContext)

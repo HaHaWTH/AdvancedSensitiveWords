@@ -13,6 +13,8 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * Owns the Paper configuration snapshots and their ConfigLib stores.
@@ -87,6 +89,7 @@ public final class PaperConfigurationService {
         }
         return switch (key) {
             case MESSAGE_ON_CHAT -> snapshot.chat.messageOnChat;
+            case MESSAGE_ON_CHAT_ANTI_SPAM -> snapshot.chat.messageOnChatAntiSpam;
             case MESSAGE_ON_SIGN -> snapshot.sign.messageOnSign;
             case MESSAGE_ON_ANVIL_RENAME -> snapshot.anvil.messageOnAnvilRename;
             case MESSAGE_ON_BOOK -> snapshot.book.messageOnBook;
@@ -162,6 +165,7 @@ public final class PaperConfigurationService {
             throw new IllegalArgumentException("ai.minimum-entropy-bits must be a finite non-negative number");
         }
         validateCategoryPolicy(ai.categoryPolicy);
+        validateAntiSpam(settings.chat.antiSpam);
         CommandArgumentRuleSet.compile(settings.chat.commandWhiteList);
 
         if (!ai.enabled) {
@@ -211,6 +215,39 @@ public final class PaperConfigurationService {
     private static void validateCategoryThreshold(double threshold, LlmModerationCategory category, String thresholdName) {
         if (!Double.isFinite(threshold) || (threshold != -1.0D && (threshold < 0.0D || threshold > 1.0D))) {
             throw new IllegalArgumentException("Invalid ai.category-policy." + category.configurationKey() + "." + thresholdName);
+        }
+    }
+
+    private static void validateAntiSpam(SettingsConfiguration.AntiSpam antiSpam) {
+        if (antiSpam == null) {
+            throw new IllegalArgumentException("chat.anti-spam cannot be null");
+        }
+        try {
+            Pattern.compile(antiSpam.preprocessRegex == null ? "" : antiSpam.preprocessRegex);
+        } catch (PatternSyntaxException exception) {
+            throw new IllegalArgumentException("chat.anti-spam.preprocess-regex must be a valid regular expression", exception);
+        }
+        if (antiSpam.minimumEntropyCodePoints < 1 || antiSpam.minimumSimilarityCodePoints < 1) {
+            throw new IllegalArgumentException("chat.anti-spam minimum code point settings must be at least 1");
+        }
+        if (!Double.isFinite(antiSpam.minimumEntropyBits)
+                || (antiSpam.minimumEntropyBits != -1.0D && antiSpam.minimumEntropyBits < 0.0D)) {
+            throw new IllegalArgumentException("chat.anti-spam.minimum-entropy-bits must be -1.0 or a finite non-negative number");
+        }
+        if (!Double.isFinite(antiSpam.minimumAverageEntropy)
+                || (antiSpam.minimumAverageEntropy != -1.0D && antiSpam.minimumAverageEntropy < 0.0D)) {
+            throw new IllegalArgumentException("chat.anti-spam.minimum-average-entropy must be -1.0 or a finite non-negative number");
+        }
+        if (antiSpam.historySize < 1 || antiSpam.historyMaxAgeSeconds < 1 || antiSpam.similarCheckAmount < 1) {
+            throw new IllegalArgumentException("chat.anti-spam history settings must be at least 1");
+        }
+        if (antiSpam.similarMinDistance < -1) {
+            throw new IllegalArgumentException("chat.anti-spam.similar-min-distance must be -1 or greater");
+        }
+        if (!Double.isFinite(antiSpam.similarMaxSimilarity)
+                || antiSpam.similarMaxSimilarity < 0.0D
+                || antiSpam.similarMaxSimilarity > 1.1D) {
+            throw new IllegalArgumentException("chat.anti-spam.similar-max-similarity must be between 0.0 and 1.1");
         }
     }
 

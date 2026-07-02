@@ -16,10 +16,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -195,7 +192,7 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
         ThreadPoolExecutor executor = new ThreadPoolExecutor(
                 settings.maxConcurrentRequests(),
                 settings.maxConcurrentRequests(),
-                30L,
+                5L,
                 TimeUnit.SECONDS,
                 new ArrayBlockingQueue<>(settings.queueCapacity()),
                 Thread.ofVirtual().name("ASW LangChain Moderation", 0L).factory(),
@@ -390,7 +387,7 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
     private static Map<LlmModerationCategory, LlmCategoryPolicy> toCategoryPolicies(
             Map<String, SettingsConfiguration.Ai.CategoryPolicy> configuredPolicies
     ) {
-        Map<LlmModerationCategory, LlmCategoryPolicy> policies = new java.util.EnumMap<>(LlmModerationCategory.class);
+        Map<LlmModerationCategory, LlmCategoryPolicy> policies = new EnumMap<>(LlmModerationCategory.class);
         for (LlmModerationCategory category : LlmModerationCategory.values()) {
             SettingsConfiguration.Ai.CategoryPolicy policy = configuredPolicies.get(category.configurationKey());
             policies.put(category, new LlmCategoryPolicy(

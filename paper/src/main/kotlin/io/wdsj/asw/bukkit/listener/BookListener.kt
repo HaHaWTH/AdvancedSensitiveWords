@@ -6,6 +6,7 @@ import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.type.ModuleType
 import io.wdsj.asw.bukkit.util.PlayerProcessingGuard
+import io.wdsj.asw.bukkit.util.SensitiveFilterEvents
 import io.wdsj.asw.bukkit.util.Utils
 import io.wdsj.asw.bukkit.util.ViolationReporter
 import io.wdsj.asw.bukkit.util.cache.BookCache
@@ -65,6 +66,7 @@ class BookListener(private val configuration: PaperConfigurationService) : Liste
             val page = bookMeta.page(pageIndex)
             val originalPage = preprocessPage(page)
             val censoredWords = findPageCensoredWords(originalPage)
+            SensitiveFilterEvents.post(event.isAsynchronous, ModuleType.BOOK, event.player, originalPage, censoredWords)
             if (censoredWords.isEmpty()) continue
 
             violation = BookViolation(originalPage, censoredWords)
@@ -85,6 +87,7 @@ class BookListener(private val configuration: PaperConfigurationService) : Liste
             .joinToString("") { MessageUtils.plainText(event.newBookMeta.page(it)) }
             .let { preprocessPageText(it) }
         val censoredWords = sensitiveWordBs.findAll(originalPageCrossed)
+        SensitiveFilterEvents.post(event.isAsynchronous, ModuleType.BOOK, event.player, originalPageCrossed, censoredWords)
         if (censoredWords.isEmpty()) return null
 
         event.isCancelled = true
@@ -95,6 +98,7 @@ class BookListener(private val configuration: PaperConfigurationService) : Liste
         val author = event.newBookMeta.author() ?: return null
         val originalAuthor = preprocessText(MessageUtils.plainText(author))
         val censoredWords = sensitiveWordBs.findAll(originalAuthor)
+        SensitiveFilterEvents.post(event.isAsynchronous, ModuleType.BOOK, event.player, originalAuthor, censoredWords)
         if (censoredWords.isEmpty()) return null
 
         if (isCancelMode()) {
@@ -109,6 +113,7 @@ class BookListener(private val configuration: PaperConfigurationService) : Liste
         val title = event.newBookMeta.title() ?: return null
         val originalTitle = preprocessText(MessageUtils.plainText(title))
         val censoredWords = sensitiveWordBs.findAll(originalTitle)
+        SensitiveFilterEvents.post(event.isAsynchronous, ModuleType.BOOK, event.player, originalTitle, censoredWords)
         if (censoredWords.isEmpty()) return null
 
         if (isCancelMode()) {

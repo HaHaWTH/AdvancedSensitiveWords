@@ -11,6 +11,7 @@ public final class ChineseMessagesConfiguration extends MessagesConfiguration {
         book.messageOnBook = "<red>请勿在书中写入敏感词汇.";
         name.messageOnName = "<red>您的用户名包含敏感词,请修改您的用户名或联系管理员.";
         item.messageOnItem = "<red>您的物品包含敏感词.";
+        chat.messageOnChatAntiSpam = "<yellow>请放慢聊天速度，避免重复或相似刷屏。";
         plugin.messageOnCommandReload = "<green>AdvancedSensitiveWords 已重新加载.";
         plugin.messageOnViolationReset = "<gradient:#22d3ee:#4ade80><bold>ASWNotify</bold></gradient> <dark_gray>| <green>已重置所有玩家的违规次数。";
         plugin.messageOnCommandStatus = """

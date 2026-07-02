@@ -5,6 +5,7 @@ package io.wdsj.asw.bukkit.setting;
  */
 public enum PluginMessages {
     MESSAGE_ON_CHAT,
+    MESSAGE_ON_CHAT_ANTI_SPAM,
     MESSAGE_ON_SIGN,
     MESSAGE_ON_ANVIL_RENAME,
     MESSAGE_ON_BOOK,

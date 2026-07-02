@@ -35,7 +35,6 @@ public final class PluginSettings {
     public static final SettingKey<Boolean> ENABLE_PLAYER_NAME_CHECK = key(settings -> settings.plugin.enablePlayerNameCheck);
     public static final SettingKey<Boolean> ENABLE_PLAYER_ITEM_CHECK = key(settings -> settings.plugin.enablePlayerItemCheck);
     public static final SettingKey<Boolean> ENABLE_ALTS_CHECK = key(settings -> settings.plugin.enableAltsCheck);
-    public static final SettingKey<Boolean> CLEAN_PLAYER_DATA_CACHE = key(settings -> settings.plugin.cleanPlayerDataCache);
     public static final SettingKey<Boolean> ENABLE_PLACEHOLDER = key(settings -> settings.plugin.enablePlaceholder);
     public static final SettingKey<Boolean> HOOK_VELOCITY = key(settings -> settings.plugin.hookVelocity);
     public static final SettingKey<Boolean> ENABLE_AUTHME_COMPATIBILITY = key(settings -> settings.plugin.compatibility.authMe);
@@ -63,6 +62,18 @@ public final class PluginSettings {
     public static final SettingKey<ProcessMethod> CHAT_METHOD = key(settings -> settings.chat.method);
     public static final SettingKey<Boolean> CHAT_FAKE_MESSAGE_ON_CANCEL = key(settings -> settings.chat.fakeMessageOnCancel);
     public static final SettingKey<Boolean> CHAT_SEND_MESSAGE = key(settings -> settings.chat.sendMessage);
+    public static final SettingKey<Boolean> CHAT_ANTI_SPAM_ENABLED = key(settings -> settings.chat.antiSpam.enabled);
+    public static final SettingKey<String> CHAT_ANTI_SPAM_PREPROCESS_REGEX = key(settings -> settings.chat.antiSpam.preprocessRegex);
+    public static final SettingKey<Integer> CHAT_ANTI_SPAM_MINIMUM_ENTROPY_CODE_POINTS = key(settings -> settings.chat.antiSpam.minimumEntropyCodePoints);
+    public static final SettingKey<Integer> CHAT_ANTI_SPAM_MINIMUM_SIMILARITY_CODE_POINTS = key(settings -> settings.chat.antiSpam.minimumSimilarityCodePoints);
+    public static final SettingKey<Double> CHAT_ANTI_SPAM_MINIMUM_ENTROPY_BITS = key(settings -> settings.chat.antiSpam.minimumEntropyBits);
+    public static final SettingKey<Double> CHAT_ANTI_SPAM_MINIMUM_AVERAGE_ENTROPY = key(settings -> settings.chat.antiSpam.minimumAverageEntropy);
+    public static final SettingKey<Integer> CHAT_ANTI_SPAM_HISTORY_SIZE = key(settings -> settings.chat.antiSpam.historySize);
+    public static final SettingKey<Integer> CHAT_ANTI_SPAM_HISTORY_MAX_AGE_SECONDS = key(settings -> settings.chat.antiSpam.historyMaxAgeSeconds);
+    public static final SettingKey<Integer> CHAT_ANTI_SPAM_SIMILAR_CHECK_AMOUNT = key(settings -> settings.chat.antiSpam.similarCheckAmount);
+    public static final SettingKey<Integer> CHAT_ANTI_SPAM_SIMILAR_MIN_DISTANCE = key(settings -> settings.chat.antiSpam.similarMinDistance);
+    public static final SettingKey<Double> CHAT_ANTI_SPAM_SIMILAR_MAX_SIMILARITY = key(settings -> settings.chat.antiSpam.similarMaxSimilarity);
+    public static final SettingKey<Boolean> CHAT_ANTI_SPAM_SEND_MESSAGE = key(settings -> settings.chat.antiSpam.sendMessage);
     public static final SettingKey<List<String>> CHAT_PUNISHMENT = key(settings -> settings.chat.punishment);
     public static final SettingKey<Boolean> CHAT_BROADCAST_CHECK = key(settings -> settings.chat.broadcastCheck);
     public static final SettingKey<Boolean> CHAT_CONTEXT_CHECK = key(settings -> settings.chat.contextCheck);

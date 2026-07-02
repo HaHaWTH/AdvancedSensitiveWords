@@ -4,7 +4,9 @@ import io.wdsj.asw.bukkit.AdvancedSensitiveWords.isInitialized
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.sensitiveWordBs
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.setting.PluginSettings
+import io.wdsj.asw.bukkit.type.ModuleType
 import io.wdsj.asw.bukkit.util.LoggingUtils
+import io.wdsj.asw.bukkit.util.SensitiveFilterEvents
 import io.wdsj.asw.bukkit.util.TimingUtils
 import io.wdsj.asw.bukkit.util.Utils
 import io.wdsj.asw.bukkit.util.message.MessageUtils
@@ -23,6 +25,14 @@ class BroadcastListener(private val configuration: PaperConfigurationService) : 
         val originalMessage = preprocess(MessageUtils.plainText(originalComponent))
         val startTime = System.currentTimeMillis()
         val censoredWords = sensitiveWordBs.findAll(originalMessage)
+        SensitiveFilterEvents.post(
+            event.isAsynchronous,
+            ModuleType.BROADCAST,
+            null,
+            null,
+            originalMessage,
+            censoredWords,
+        )
         if (censoredWords.isEmpty()) return
 
         Utils.messagesFilteredNum.getAndIncrement()

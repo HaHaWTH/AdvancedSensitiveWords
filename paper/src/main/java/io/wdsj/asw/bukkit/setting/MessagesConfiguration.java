@@ -24,6 +24,8 @@ public abstract class MessagesConfiguration {
     public static final class Chat {
         @Comment("Message sent when chat or command content is blocked.")
         public String messageOnChat = "<red>Your message contains blocked words.";
+        @Comment("Message sent when chat anti-spam cancels a message.")
+        public String messageOnChatAntiSpam = "<yellow>Please slow down and avoid repeating similar messages.";
     }
 
     @Configuration

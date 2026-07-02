@@ -6,11 +6,13 @@ import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.type.ModuleType
 import io.wdsj.asw.bukkit.util.PlayerProcessingGuard
+import io.wdsj.asw.bukkit.util.SensitiveFilterEvents
 import io.wdsj.asw.bukkit.util.Utils
 import io.wdsj.asw.bukkit.util.ViolationReporter
 import io.wdsj.asw.bukkit.util.message.MessageUtils
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
+import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -66,7 +68,9 @@ class PlayerItemListener(private val configuration: PaperConfigurationService) :
         val originalNameComponent = meta.displayName() ?: return
         val originalName = preprocess(MessageUtils.plainText(originalNameComponent))
         val startTime = System.currentTimeMillis()
+        val asynchronous = (event as? Event)?.isAsynchronous ?: false
         val censoredWords = sensitiveWordBs.findAll(originalName)
+        SensitiveFilterEvents.post(asynchronous, ModuleType.ITEM, player, originalName, censoredWords)
         if (censoredWords.isEmpty()) return
 
         if (isCancelMode()) {
