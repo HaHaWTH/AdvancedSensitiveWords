@@ -49,51 +49,10 @@ object Utils {
         return command.startsWith("/")
     }
 
-    fun getSplitCommandArgs(command: String): String {
-        val splitCommand = command.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        if (splitCommand.size <= 1) return ""
-        return java.lang.String.join(" ", *Arrays.copyOfRange(splitCommand, 1, splitCommand.size))
-    }
-
-    fun getSplitCommandHeaders(command: String): String {
-        val splitCommand = command.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        if (splitCommand.isEmpty()) return ""
-        return splitCommand[0]
-    }
-
     val preProcessRegex: String
         get() = AdvancedSensitiveWords.setting(PluginSettings.PRE_PROCESS_REGEX)
-
-
-    fun isCommandAndWhiteListed(command: String): Boolean {
-        if (!command.startsWith("/")) return false
-        val whitelist = AdvancedSensitiveWords.setting(PluginSettings.CHAT_COMMAND_WHITE_LIST)
-        val splitCommand = command.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        for (s in whitelist) {
-            if (splitCommand[0].equals(s, ignoreCase = true)) {
-                return !AdvancedSensitiveWords.setting(PluginSettings.CHAT_INVERT_WHITELIST)
-            }
-        }
-        return AdvancedSensitiveWords.setting(PluginSettings.CHAT_INVERT_WHITELIST)
-    }
 
     @JvmStatic
     val minecraftVersion: String
         get() = Bukkit.getMinecraftVersion()
-
-    fun isNotCommand(command: String): Boolean {
-        return !command.startsWith("/")
-    }
-
-    /**
-     * Checks if the given object is null, and returns the fallback value if it is.
-     * @param obj The object to check
-     * @param fallback The fallback value to return if the object is null
-     */
-    fun <T> checkNotNullWithFallback(obj: T?, fallback: T): T {
-        if (obj == null) {
-            return fallback
-        }
-        return obj
-    }
 }
