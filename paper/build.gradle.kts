@@ -50,7 +50,7 @@ dependencies {
     implementation(kotlin("stdlib"))
     implementation("com.github.houbb:sensitive-word:0.29.5")
     implementation("com.github.Anon8281:UniversalScheduler:0.1.7")
-    implementation("org.bstats:bstats-bukkit:3.1.0")
+    implementation("org.bstats:bstats-bukkit:3.2.1")
     implementation("de.exlll:configlib-yaml:4.8.1")
     runtimeOnly("org.snakeyaml:snakeyaml-engine:2.7")
 
