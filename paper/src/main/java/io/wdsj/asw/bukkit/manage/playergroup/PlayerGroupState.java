@@ -1,4 +1,4 @@
-package io.wdsj.asw.bukkit.playergroup;
+package io.wdsj.asw.bukkit.manage.playergroup;
 
 import java.util.Objects;
 import java.util.UUID;

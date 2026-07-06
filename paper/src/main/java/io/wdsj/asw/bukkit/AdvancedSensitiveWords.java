@@ -18,7 +18,7 @@ import io.wdsj.asw.bukkit.command.AswCommandRegistrar;
 import io.wdsj.asw.bukkit.ai.LlmChatDetectionService;
 import io.wdsj.asw.bukkit.core.condition.WordResultConditionNumMatch;
 import io.wdsj.asw.bukkit.integration.placeholder.ASWExpansion;
-import io.wdsj.asw.bukkit.playergroup.PlayerGroupService;
+import io.wdsj.asw.bukkit.manage.playergroup.PlayerGroupService;
 import io.wdsj.asw.bukkit.service.chat.antispam.ChatAntiSpamService;
 import io.wdsj.asw.bukkit.manage.punish.PlayerAltController;
 import io.wdsj.asw.bukkit.manage.punish.PlayerShadowController;

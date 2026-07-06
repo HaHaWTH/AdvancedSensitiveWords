@@ -5,7 +5,7 @@ import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.ai.LlmChatDetectionService
 import io.wdsj.asw.bukkit.integration.trchat.TrChatCompat
 import io.wdsj.asw.bukkit.listener.abstraction.AbstractFakeMessageExecutor
-import io.wdsj.asw.bukkit.playergroup.GroupModule
+import io.wdsj.asw.bukkit.manage.playergroup.GroupModule
 import io.wdsj.asw.bukkit.permission.PermissionsEnum
 import io.wdsj.asw.bukkit.service.chat.antispam.ChatAntiSpamService
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService

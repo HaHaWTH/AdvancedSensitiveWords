@@ -6,6 +6,7 @@ import de.exlll.configlib.YamlConfigurationStore;
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 import io.wdsj.asw.bukkit.ai.LlmApiMode;
 import io.wdsj.asw.bukkit.api.moderation.LlmModerationCategory;
+import io.wdsj.asw.bukkit.core.persistence.StorageType;
 import io.wdsj.asw.bukkit.listener.command.CommandArgumentRuleSet;
 import org.slf4j.Logger;
 
@@ -267,6 +268,12 @@ public final class PaperConfigurationService {
         if (!Double.isFinite(playerGroups.playerThreshold) || playerGroups.playerThreshold < 0.0D) {
             throw new IllegalArgumentException("player-groups.player-threshold must be a finite non-negative number");
         }
+        if (playerGroups.serverId == null || playerGroups.serverId.isBlank()) {
+            throw new IllegalArgumentException("player-groups.server-id cannot be blank");
+        }
+        if (playerGroups.serverId.length() > 64) {
+            throw new IllegalArgumentException("player-groups.server-id cannot be longer than 64 characters");
+        }
         if (playerGroups.refreshIntervalSeconds < 1) {
             throw new IllegalArgumentException("player-groups.refresh-interval-seconds must be at least 1");
         }
@@ -295,7 +302,7 @@ public final class PaperConfigurationService {
         if (storage.connectionTimeoutMillis < 1L) {
             throw new IllegalArgumentException("player-groups.storage.connection-timeout-millis must be positive");
         }
-        if (storage.type == io.wdsj.asw.bukkit.persistence.StorageType.MYSQL) {
+        if (storage.type == StorageType.MYSQL) {
             SettingsConfiguration.Mysql mysql = storage.mysql;
             if (mysql == null
                     || mysql.host == null || mysql.host.isBlank()

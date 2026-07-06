@@ -1,7 +1,7 @@
 package io.wdsj.asw.bukkit.command;
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
-import io.wdsj.asw.bukkit.playergroup.PlayerGroup;
+import io.wdsj.asw.bukkit.manage.playergroup.PlayerGroup;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
 import io.wdsj.asw.bukkit.type.ModuleType;
 import io.wdsj.asw.bukkit.util.message.MessageUtils;

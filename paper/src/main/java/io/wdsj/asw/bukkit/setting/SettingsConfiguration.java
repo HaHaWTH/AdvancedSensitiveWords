@@ -3,14 +3,15 @@ package io.wdsj.asw.bukkit.setting;
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
 import io.wdsj.asw.bukkit.ai.LlmApiMode;
-import io.wdsj.asw.bukkit.persistence.StorageType;
-import io.wdsj.asw.bukkit.playergroup.GroupModuleMode;
+import io.wdsj.asw.bukkit.core.persistence.StorageType;
+import io.wdsj.asw.bukkit.manage.playergroup.GroupModuleMode;
 import io.wdsj.asw.bukkit.type.ProcessMethod;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Configuration
 public final class SettingsConfiguration {
@@ -394,6 +395,8 @@ public final class SettingsConfiguration {
         public boolean enabled = false;
         @Comment("Activity score required to be treated as PLAYER instead of NEWBIE.")
         public double playerThreshold = 70000.0D;
+        @Comment("Unique identifier for this backend server when aggregating activity across servers. Generated as a numeric string by default; keep it different on every backend server.")
+        public String serverId = Long.toUnsignedString(ThreadLocalRandom.current().nextLong());
         @Comment("How often online player statistics are refreshed on the server thread.")
         public int refreshIntervalSeconds = 60;
         @Comment("Persistent storage for cross-server group states and manual group overrides.")

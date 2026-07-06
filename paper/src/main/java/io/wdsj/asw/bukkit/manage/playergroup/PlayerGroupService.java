@@ -1,4 +1,4 @@
-package io.wdsj.asw.bukkit.playergroup;
+package io.wdsj.asw.bukkit.manage.playergroup;
 
 import com.github.Anon8281.universalScheduler.UniversalRunnable;
 import com.github.Anon8281.universalScheduler.scheduling.tasks.MyScheduledTask;
@@ -9,9 +9,9 @@ import com.github.houbb.sensitive.word.support.resultcondition.WordResultConditi
 import com.github.houbb.sensitive.word.support.tag.WordTags;
 import com.zaxxer.hikari.HikariDataSource;
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
+import io.wdsj.asw.bukkit.core.persistence.*;
 import io.wdsj.asw.bukkit.method.CharIgnore;
 import io.wdsj.asw.bukkit.method.WordReplace;
-import io.wdsj.asw.bukkit.persistence.*;
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
@@ -30,12 +30,7 @@ import java.time.Duration;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 public final class PlayerGroupService implements AutoCloseable {
@@ -50,6 +45,8 @@ public final class PlayerGroupService implements AutoCloseable {
     private final Logger logger;
     private final HikariDataSource dataSource;
     private final WriteBackCache<UUID, PlayerGroupState> groupStates;
+    private final PlayerGroupActivityRepository activityRepository;
+    private final WriteBackCache<UUID, PlayerGroupActivityState> localActivityStates;
     private final ExecutorService statisticExecutor;
     private final ConcurrentMap<UUID, PlayerActivitySnapshot> activitySnapshots = new ConcurrentHashMap<>();
     private final ConcurrentMap<UUID, TokenBucket> tokenBuckets = new ConcurrentHashMap<>();
@@ -75,12 +72,24 @@ public final class PlayerGroupService implements AutoCloseable {
         this.dataSource = DataSourceFactory.create(storageConfig);
         PlayerGroupStateRepository repository = new PlayerGroupStateRepository(dataSource, storageConfig.type());
         repository.initialize();
+        String serverId = groups.serverId.trim();
+        this.activityRepository = new PlayerGroupActivityRepository(dataSource, storageConfig.type(), serverId);
+        activityRepository.initialize();
         this.groupStates = new WriteBackCache<>(
                 "PlayerGroups",
                 repository,
                 logger,
                 Caffeine.newBuilder().expireAfterWrite(30L, TimeUnit.MINUTES).maximumSize(10_000L),
-                Duration.ofMinutes(2L),
+                Duration.ofSeconds(30L),
+                Duration.ofSeconds(10L),
+                FlushPolicy.PERIODIC
+        );
+        this.localActivityStates = new WriteBackCache<>(
+                "PlayerGroupActivity",
+                activityRepository,
+                logger,
+                Caffeine.newBuilder().expireAfterWrite(30L, TimeUnit.MINUTES).maximumSize(10_000L),
+                Duration.ofSeconds(30L),
                 Duration.ofSeconds(10L),
                 FlushPolicy.PERIODIC
         );
@@ -176,6 +185,18 @@ public final class PlayerGroupService implements AutoCloseable {
         return true;
     }
 
+    public void preload(UUID playerId, String playerName) {
+        if (!isEnabled()) {
+            return;
+        }
+        try {
+            logger.info("Loading group info for player {}", playerName);
+            groupStates.getAsync(playerId).join();
+        } catch (Exception exception) {
+            logger.warn("Unable to preload player group information for {}.", playerId, exception);
+        }
+    }
+
     public void handleJoin(Player player) {
         if (!isEnabled()) {
             return;
@@ -193,7 +214,19 @@ public final class PlayerGroupService implements AutoCloseable {
         });
     }
 
-    public void handleQuit(UUID playerId) {
+    public void handleQuit(Player player) {
+        UUID playerId = player.getUniqueId();
+        if (isEnabled()) {
+            persistLocalActivityOnQuit(player).whenComplete((ignored, exception) -> {
+                if (exception != null) {
+                    logger.error("Failed to persist final player activity snapshot for {}.", playerId, exception);
+                    return;
+                }
+                localActivityStates.invalidate(playerId);
+            });
+        } else {
+            localActivityStates.invalidate(playerId);
+        }
         activitySnapshots.remove(playerId);
         tokenBuckets.remove(playerId);
         groupStates.invalidate(playerId);
@@ -324,19 +357,50 @@ public final class PlayerGroupService implements AutoCloseable {
     }
 
     private CompletableFuture<PlayerActivitySnapshot> refreshSnapshotAsync(Player player) {
+        if (!player.isOnline()) {
+            return CompletableFuture.completedFuture(PlayerActivitySnapshot.empty());
+        }
         UUID playerId = player.getUniqueId();
         SettingsConfiguration.ActivityWeights weights = configuration.get(PluginSettings.PLAYER_GROUPS).weights;
-        return CompletableFuture.supplyAsync(() -> {
-            if (!player.isOnline()) {
-                return PlayerActivitySnapshot.empty();
-            }
-            PlayerActivitySnapshot snapshot = calculateSnapshot(player, weights);
-            activitySnapshots.put(playerId, snapshot);
-            return snapshot;
-        }, statisticExecutor).exceptionally(exception -> {
-            logger.error("Failed to refresh player activity snapshot for {}.", playerId, exception);
-            return activitySnapshots.getOrDefault(playerId, PlayerActivitySnapshot.empty());
-        });
+        return CompletableFuture.supplyAsync(() -> calculateSnapshot(player, weights), statisticExecutor).thenCompose(localSnapshot -> persistAndAggregateActivity(player, localSnapshot, weights))
+                .exceptionally(exception -> {
+                    logger.error("Failed to refresh player activity snapshot for {}.", playerId, exception);
+                    return activitySnapshots.getOrDefault(playerId, PlayerActivitySnapshot.empty());
+                });
+    }
+
+    private CompletableFuture<Void> persistLocalActivityOnQuit(Player player) {
+        UUID playerId = player.getUniqueId();
+        SettingsConfiguration.ActivityWeights weights = configuration.get(PluginSettings.PLAYER_GROUPS).weights;
+        return CompletableFuture.supplyAsync(() -> calculateSnapshot(player, weights), statisticExecutor)
+                .thenCompose(snapshot -> localActivityStates.putAndFlushAsync(playerId, new PlayerGroupActivityState(
+                        playerId,
+                        normalizeName(player.getName()),
+                        snapshot,
+                        System.currentTimeMillis()
+                )));
+    }
+
+    private CompletableFuture<PlayerActivitySnapshot> persistAndAggregateActivity(
+            Player player,
+            PlayerActivitySnapshot localSnapshot,
+            SettingsConfiguration.ActivityWeights weights
+    ) {
+        UUID playerId = player.getUniqueId();
+        PlayerGroupActivityState localState = new PlayerGroupActivityState(
+                playerId,
+                normalizeName(player.getName()),
+                localSnapshot,
+                System.currentTimeMillis()
+        );
+        return localActivityStates.putAndFlushAsync(playerId, localState)
+                .thenCompose(ignored -> localActivityStates.queryAsync(() -> activityRepository.loadRemoteTotal(playerId)))
+                .thenApply(remoteSnapshot -> {
+                    PlayerActivitySnapshot totalRaw = localSnapshot.merge(remoteSnapshot);
+                    PlayerActivitySnapshot total = PlayerActivitySnapshot.withScore(totalRaw, calculateScore(totalRaw, weights));
+                    activitySnapshots.put(playerId, total);
+                    return total;
+                });
     }
 
     private CompletableFuture<Void> synchronizeAutomaticState(
@@ -383,21 +447,25 @@ public final class PlayerGroupService implements AutoCloseable {
         long enchantedItems = statistic(player, "ITEM_ENCHANTED");
         long fishCaught = statistic(player, "FISH_CAUGHT");
         long villagerTrades = statistic(player, "TRADED_WITH_VILLAGER");
-        double score = playHours * weights.playTimeHours
-                + minedBlocks * weights.minedBlocks
-                + movedBlocks * weights.movedBlocks
-                + mobKills * weights.mobKills
-                + usedItems * weights.usedItems
-                + brokenItems * weights.brokenItems
-                + craftedItems * weights.craftedItems
-                + damageDealt * weights.damageDealt
-                + damageTaken * weights.damageTaken
-                + deaths * weights.deaths
-                + enchantedItems * weights.enchantedItems
-                + fishCaught * weights.fishCaught
-                + villagerTrades * weights.villagerTrades;
-        return new PlayerActivitySnapshot(score, playHours, minedBlocks, movedBlocks, mobKills, usedItems,
+        PlayerActivitySnapshot snapshot = new PlayerActivitySnapshot(0.0D, playHours, minedBlocks, movedBlocks, mobKills, usedItems,
                 brokenItems, craftedItems, damageDealt, damageTaken, deaths, enchantedItems, fishCaught, villagerTrades);
+        return PlayerActivitySnapshot.withScore(snapshot, calculateScore(snapshot, weights));
+    }
+
+    private static double calculateScore(PlayerActivitySnapshot snapshot, SettingsConfiguration.ActivityWeights weights) {
+        return snapshot.playTimeHours() * weights.playTimeHours
+                + snapshot.minedBlocks() * weights.minedBlocks
+                + snapshot.movedBlocks() * weights.movedBlocks
+                + snapshot.mobKills() * weights.mobKills
+                + snapshot.usedItems() * weights.usedItems
+                + snapshot.brokenItems() * weights.brokenItems
+                + snapshot.craftedItems() * weights.craftedItems
+                + snapshot.damageDealt() * weights.damageDealt
+                + snapshot.damageTaken() * weights.damageTaken
+                + snapshot.deaths() * weights.deaths
+                + snapshot.enchantedItems() * weights.enchantedItems
+                + snapshot.fishCaught() * weights.fishCaught
+                + snapshot.villagerTrades() * weights.villagerTrades;
     }
 
     private long distanceCentimeters(Player player) {
@@ -504,6 +572,7 @@ public final class PlayerGroupService implements AutoCloseable {
         closed = true;
         SchedulingUtils.cancelTaskSafely(refreshTask);
         statisticExecutor.shutdownNow();
+        localActivityStates.close();
         groupStates.close();
         dataSource.close();
         clearNewbieLinkWordBs();

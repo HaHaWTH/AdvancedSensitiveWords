@@ -1,7 +1,7 @@
-package io.wdsj.asw.bukkit.playergroup;
+package io.wdsj.asw.bukkit.manage.playergroup;
 
-import io.wdsj.asw.bukkit.persistence.StorageType;
-import io.wdsj.asw.bukkit.persistence.WriteBackRepository;
+import io.wdsj.asw.bukkit.core.persistence.StorageType;
+import io.wdsj.asw.bukkit.core.persistence.WriteBackRepository;
 
 import javax.sql.DataSource;
 import java.sql.Connection;

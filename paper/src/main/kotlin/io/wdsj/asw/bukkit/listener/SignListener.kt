@@ -3,7 +3,7 @@ package io.wdsj.asw.bukkit.listener
 import com.github.houbb.sensitive.word.api.IWordResult
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.permission.PermissionsEnum
-import io.wdsj.asw.bukkit.playergroup.GroupModule
+import io.wdsj.asw.bukkit.manage.playergroup.GroupModule
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.integration.packetevents.sign.SignFakeViewService
 import io.wdsj.asw.bukkit.setting.PluginMessages

@@ -29,7 +29,7 @@ class QuitDataCleaner : Listener {
         ChatContext.clearPlayerContext(player)
         SignContext.clearPlayerContext(player)
         ChatAntiSpamService.clear(player.uniqueId)
-        AdvancedSensitiveWords.getInstance().playerGroupService?.handleQuit(player.uniqueId)
+        AdvancedSensitiveWords.getInstance().playerGroupService?.handleQuit(player)
         PlayerShadowController.unshadowPlayer(player)
     }
 }

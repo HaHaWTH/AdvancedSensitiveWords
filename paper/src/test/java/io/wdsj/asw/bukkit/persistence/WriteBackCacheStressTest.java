@@ -1,6 +1,9 @@
 package io.wdsj.asw.bukkit.persistence;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
+import io.wdsj.asw.bukkit.core.persistence.FlushPolicy;
+import io.wdsj.asw.bukkit.core.persistence.WriteBackCache;
+import io.wdsj.asw.bukkit.core.persistence.WriteBackRepository;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 

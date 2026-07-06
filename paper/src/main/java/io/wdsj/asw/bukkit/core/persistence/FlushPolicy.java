@@ -1,4 +1,4 @@
-package io.wdsj.asw.bukkit.persistence;
+package io.wdsj.asw.bukkit.core.persistence;
 
 public enum FlushPolicy {
     /**

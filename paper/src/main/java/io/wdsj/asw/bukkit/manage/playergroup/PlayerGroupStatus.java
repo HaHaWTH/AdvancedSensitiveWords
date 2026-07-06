@@ -1,4 +1,4 @@
-package io.wdsj.asw.bukkit.playergroup;
+package io.wdsj.asw.bukkit.manage.playergroup;
 
 public record PlayerGroupStatus(
         PlayerGroup group,
