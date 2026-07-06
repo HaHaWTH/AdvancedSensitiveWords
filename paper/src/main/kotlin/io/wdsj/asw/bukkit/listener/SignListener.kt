@@ -1,10 +1,9 @@
 package io.wdsj.asw.bukkit.listener
 
 import com.github.houbb.sensitive.word.api.IWordResult
-import com.github.houbb.sensitive.word.support.result.WordResultHandlers
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords.sensitiveWordBs
 import io.wdsj.asw.bukkit.permission.PermissionsEnum
+import io.wdsj.asw.bukkit.playergroup.GroupModule
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.integration.packetevents.sign.SignFakeViewService
 import io.wdsj.asw.bukkit.setting.PluginMessages
@@ -37,11 +36,13 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onSign(event: SignChangeEvent) {
-        if (!configuration.get(PluginSettings.ENABLE_SIGN_EDIT_CHECK)) return
+        val globalEnabled = configuration.get(PluginSettings.ENABLE_SIGN_EDIT_CHECK)
+        if (!globalEnabled) return
         if (event.lines().isEmpty()) return
 
         val player = event.player
         if (processingGuard.shouldSkipBasic(player, PermissionsEnum.BYPASS_SIGN)) return
+        if (processingGuard.shouldSkipGroupModule(player, GroupModule.SIGN, globalEnabled)) return
 
         val startTime = System.currentTimeMillis()
         val attemptedLines = event.lines().toList()
@@ -105,7 +106,7 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
         for (lineIndex in event.lines().indices) {
             val originalComponent = event.line(lineIndex) ?: continue
             val originalMessage = preprocess(MessageUtils.plainText(originalComponent))
-            val censoredWords = sensitiveWordBs.findAll(originalMessage)
+            val censoredWords = AdvancedSensitiveWords.findAllSensitive(originalMessage)
             SensitiveFilterEvents.post(event.isAsynchronous, ModuleType.SIGN, player, originalMessage, censoredWords)
 
             if (censoredWords.isEmpty()) {
@@ -121,7 +122,7 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
                 event.isCancelled = true
                 continue
             }
-            val processedMessage = sensitiveWordBs.replace(originalMessage)
+            val processedMessage = AdvancedSensitiveWords.replaceSensitive(originalMessage)
             event.line(lineIndex, MessageUtils.replaceLiteral(originalComponent, originalMessage, processedMessage))
         }
 
@@ -133,14 +134,14 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
         if (lineScan.cleanLineIndexes.isEmpty()) return null
 
         val originalContent = lineScan.cleanLineContent
-        val censoredWords = sensitiveWordBs.findAll(originalContent)
+        val censoredWords = AdvancedSensitiveWords.findAllSensitive(originalContent)
         SensitiveFilterEvents.post(event.isAsynchronous, ModuleType.SIGN, event.player, originalContent, censoredWords)
         if (censoredWords.isEmpty()) return null
 
         if (isCancelMode()) {
             event.isCancelled = true
         } else {
-            val processedMessage = sensitiveWordBs.replace(originalContent)
+            val processedMessage = AdvancedSensitiveWords.replaceSensitive(originalContent)
             for (lineIndex in lineScan.cleanLineIndexes) {
                 event.line(lineIndex, MessageUtils.plainTextComponent(processedMessage))
             }
@@ -156,7 +157,7 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
         SignContext.addMessage(player, entry)
         val entries = SignContext.getHistory(player)
         val originalContext = entries.joinToString("") { it.content }
-        val censoredWords = sensitiveWordBs.findAll(originalContext)
+        val censoredWords = AdvancedSensitiveWords.findAllSensitive(originalContext)
         SensitiveFilterEvents.post(event.isAsynchronous, ModuleType.SIGN, player, originalContext, censoredWords)
         if (censoredWords.isEmpty()) return null
 
@@ -236,7 +237,7 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
 
         val replacements = Array(entries.size) { StringBuilder() }
         val affectedEntries = linkedSetOf<SignContextEntry>()
-        val results = sensitiveWordBs.findAll(context, WordResultHandlers.raw())
+        val results = AdvancedSensitiveWords.findAllSensitiveRaw(context)
             .sortedWith(compareBy<IWordResult> { it.startIndex() }.thenByDescending { it.endIndex() })
         var cursor = 0
         for (result in results) {

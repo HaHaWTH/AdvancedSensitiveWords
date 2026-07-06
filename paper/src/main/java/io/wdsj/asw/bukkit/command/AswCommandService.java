@@ -7,6 +7,10 @@ import io.wdsj.asw.bukkit.ai.LlmCategoryPolicy;
 import io.wdsj.asw.bukkit.api.moderation.LlmModerationCategory;
 import io.wdsj.asw.bukkit.manage.punish.PunishmentService;
 import io.wdsj.asw.bukkit.manage.punish.ViolationCounter;
+import io.wdsj.asw.bukkit.playergroup.PlayerActivitySnapshot;
+import io.wdsj.asw.bukkit.playergroup.PlayerGroup;
+import io.wdsj.asw.bukkit.playergroup.PlayerGroupService;
+import io.wdsj.asw.bukkit.playergroup.PlayerGroupStatus;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService;
@@ -48,6 +52,9 @@ public final class AswCommandService {
 
         plugin.reloadPluginConfiguration();
         AdvancedSensitiveWords.sensitiveWordBs.destroy();
+        if (AdvancedSensitiveWords.networkSensitiveWordBs != null) {
+            AdvancedSensitiveWords.networkSensitiveWordBs.destroy();
+        }
         plugin.doInitTasks();
         if (configuration.get(PluginSettings.BOOK_CACHE_CLEAR_ON_RELOAD)
                 && configuration.get(PluginSettings.BOOK_CACHE)) {
@@ -103,7 +110,7 @@ public final class AswCommandService {
             return;
         }
 
-        List<String> censoredWords = AdvancedSensitiveWords.sensitiveWordBs.findAll(text);
+        List<String> censoredWords = AdvancedSensitiveWords.findAllSensitive(text);
         if (censoredWords.isEmpty()) {
             MessageUtils.sendMessage(sender, PluginMessages.MESSAGE_ON_COMMAND_TEST_PASS);
             return;
@@ -111,7 +118,7 @@ public final class AswCommandService {
 
         String message = MessageUtils.retrieveMessage(PluginMessages.MESSAGE_ON_COMMAND_TEST)
                 .replace("%original_msg%", text)
-                .replace("%processed_msg%", AdvancedSensitiveWords.sensitiveWordBs.replace(text))
+                .replace("%processed_msg%", AdvancedSensitiveWords.replaceSensitive(text))
                 .replace("%censored_list%", censoredWords.toString());
         MessageUtils.sendMessage(sender, message);
     }
@@ -171,6 +178,59 @@ public final class AswCommandService {
         MessageUtils.sendMessage(sender, message);
     }
 
+    public void showPlayerGroupInfo(CommandSender sender, Player player) {
+        PlayerGroupService service = plugin.getPlayerGroupService();
+        if (service == null) {
+            MessageUtils.sendMessage(sender, PluginMessages.PLAYER_GROUP_DISABLED);
+            return;
+        }
+        service.statusAsync(player).whenComplete((status, exception) ->
+                SchedulingUtils.runSyncIfNotOnMainThread(() -> {
+                    if (exception != null) {
+                        MessageUtils.sendMessage(sender, PluginMessages.PLAYER_GROUP_DISABLED);
+                        return;
+                    }
+                    MessageUtils.sendMessage(sender, formatGroupInfo(player, status));
+                }));
+    }
+
+    public void setPlayerGroup(CommandSender sender, Player player, PlayerGroup group) {
+        PlayerGroupService service = plugin.getPlayerGroupService();
+        if (service == null) {
+            MessageUtils.sendMessage(sender, PluginMessages.PLAYER_GROUP_DISABLED);
+            return;
+        }
+        service.setManualGroup(player, group, sender).whenComplete((ignored, exception) ->
+                SchedulingUtils.runSyncIfNotOnMainThread(() -> {
+                    if (exception != null) {
+                        MessageUtils.sendMessage(sender, PluginMessages.PLAYER_GROUP_STORAGE_ERROR);
+                        return;
+                    }
+                    String message = MessageUtils.retrieveMessage(PluginMessages.PLAYER_GROUP_SET)
+                            .replace("%player%", player.getName())
+                            .replace("%group%", group.name());
+                    MessageUtils.sendMessage(sender, message);
+                }));
+    }
+
+    public void clearPlayerGroup(CommandSender sender, Player player) {
+        PlayerGroupService service = plugin.getPlayerGroupService();
+        if (service == null) {
+            MessageUtils.sendMessage(sender, PluginMessages.PLAYER_GROUP_DISABLED);
+            return;
+        }
+        service.clearManualGroup(player).whenComplete((ignored, exception) ->
+                SchedulingUtils.runSyncIfNotOnMainThread(() -> {
+                    if (exception != null) {
+                        MessageUtils.sendMessage(sender, PluginMessages.PLAYER_GROUP_STORAGE_ERROR);
+                        return;
+                    }
+                    String message = MessageUtils.retrieveMessage(PluginMessages.PLAYER_GROUP_CLEAR)
+                            .replace("%player%", player.getName());
+                    MessageUtils.sendMessage(sender, message);
+                }));
+    }
+
     public void teleportToReportedLocation(CommandSender sender, UUID worldId, double x, double y, double z) {
         if (!(sender instanceof Player player)) {
             return;
@@ -228,5 +288,32 @@ public final class AswCommandService {
                         + entry.getValue().notifyConfidence() + "/" + entry.getValue().punishConfidence())
                 .collect(Collectors.joining(", "));
         return result.isEmpty() ? "none" : result;
+    }
+
+    private static String formatGroupInfo(Player player, PlayerGroupStatus status) {
+        PlayerActivitySnapshot activity = status.activity();
+        return MessageUtils.retrieveMessage(PluginMessages.PLAYER_GROUP_INFO)
+                .replace("%player%", player.getName())
+                .replace("%group%", status.group().name())
+                .replace("%source%", status.source().name())
+                .replace("%score%", formatDouble(activity.score()))
+                .replace("%threshold%", formatDouble(status.threshold()))
+                .replace("%play_hours%", formatDouble(activity.playTimeHours()))
+                .replace("%moved_blocks%", formatDouble(activity.movedBlocks()))
+                .replace("%mined_blocks%", String.valueOf(activity.minedBlocks()))
+                .replace("%mob_kills%", String.valueOf(activity.mobKills()))
+                .replace("%used_items%", String.valueOf(activity.usedItems()))
+                .replace("%broken_items%", String.valueOf(activity.brokenItems()))
+                .replace("%crafted_items%", String.valueOf(activity.craftedItems()))
+                .replace("%damage_dealt%", String.valueOf(activity.damageDealt()))
+                .replace("%damage_taken%", String.valueOf(activity.damageTaken()))
+                .replace("%deaths%", String.valueOf(activity.deaths()))
+                .replace("%enchanted_items%", String.valueOf(activity.enchantedItems()))
+                .replace("%fish_caught%", String.valueOf(activity.fishCaught()))
+                .replace("%villager_trades%", String.valueOf(activity.villagerTrades()));
+    }
+
+    private static String formatDouble(double value) {
+        return String.format(Locale.ROOT, "%.2f", value);
     }
 }

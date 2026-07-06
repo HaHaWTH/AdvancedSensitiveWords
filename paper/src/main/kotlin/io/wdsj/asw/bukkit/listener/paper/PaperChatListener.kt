@@ -1,10 +1,11 @@
 package io.wdsj.asw.bukkit.listener.paper
 
 import io.papermc.paper.event.player.AsyncChatEvent
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords.sensitiveWordBs
+import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.ai.LlmChatDetectionService
 import io.wdsj.asw.bukkit.integration.trchat.TrChatCompat
 import io.wdsj.asw.bukkit.listener.abstraction.AbstractFakeMessageExecutor
+import io.wdsj.asw.bukkit.playergroup.GroupModule
 import io.wdsj.asw.bukkit.permission.PermissionsEnum
 import io.wdsj.asw.bukkit.service.chat.antispam.ChatAntiSpamService
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
@@ -36,14 +37,17 @@ class PaperChatListener(
 
     @EventHandler(priority = EventPriority.LOWEST)
     fun onChat(event: AsyncChatEvent) {
-        if (!configuration.get(PluginSettings.ENABLE_CHAT_CHECK)) return
+        val globalEnabled = configuration.get(PluginSettings.ENABLE_CHAT_CHECK)
+        if (!globalEnabled) return
 
         val player = event.player
         if (processingGuard.shouldSkip(player, PermissionsEnum.BYPASS_CHAT)) return
+        if (processingGuard.shouldSkipGroupModule(player, GroupModule.CHAT, globalEnabled)) return
 
         val startTime = System.currentTimeMillis()
         val originalMessage = preprocess(event.message())
         val originalPlainText = PlainTextComponentSerializer.plainText().serialize(originalMessage)
+        if (handleNewbieRestrictions(event, player, originalPlainText)) return
 
         if (antiSpamService.check(player.uniqueId, originalPlainText) == ChatAntiSpamService.Result.SPAM) {
             event.isCancelled = true
@@ -53,7 +57,7 @@ class PaperChatListener(
             return
         }
 
-        val censoredWords = sensitiveWordBs.findAll(originalPlainText)
+        val censoredWords = AdvancedSensitiveWords.findAllSensitive(originalPlainText)
         SensitiveFilterEvents.post(
             event.isAsynchronous,
             ModuleType.CHAT,
@@ -63,13 +67,28 @@ class PaperChatListener(
         )
 
         if (censoredWords.isNotEmpty()) {
-            handleDirectMessage(event, player, originalMessage, originalPlainText, censoredWords, startTime)
+            handleDirectMessage(event, player, originalMessage, originalPlainText = originalPlainText, censoredWords, startTime)
             return
         }
 
         if (!handleContextMessage(event, player, originalPlainText, startTime)) {
             llmChatDetectionService.submit(player.uniqueId, player.name, originalPlainText)
         }
+    }
+
+    private fun handleNewbieRestrictions(event: AsyncChatEvent, player: Player, content: String): Boolean {
+        val service = AdvancedSensitiveWords.getInstance().playerGroupService ?: return false
+        if (!service.consumeNewbieToken(player)) {
+            event.isCancelled = true
+            MessageUtils.sendMessage(player, PluginMessages.PLAYER_GROUP_NEWBIE_RATE_LIMIT)
+            return true
+        }
+        if (service.containsNewbieLink(player, content)) {
+            event.isCancelled = true
+            MessageUtils.sendMessage(player, PluginMessages.PLAYER_GROUP_NEWBIE_LINK_BLOCKED)
+            return true
+        }
+        return false
     }
 
     private fun preprocess(message: Component): Component {
@@ -108,7 +127,7 @@ class PaperChatListener(
             return
         }
 
-        val processedMessage = sensitiveWordBs.replace(originalPlainText)
+        val processedMessage = AdvancedSensitiveWords.replaceSensitive(originalPlainText)
         val replacementConfig = TextReplacementConfig.builder()
             .matchLiteral(originalPlainText)
             .replacement(processedMessage)
@@ -126,7 +145,7 @@ class PaperChatListener(
 
         ChatContext.addMessage(player, originalPlainText)
         val originalContext = ChatContext.getHistory(player).joinToString("")
-        val censoredWords = sensitiveWordBs.findAll(originalContext)
+        val censoredWords = AdvancedSensitiveWords.findAllSensitive(originalContext)
         SensitiveFilterEvents.post(event.isAsynchronous, ModuleType.CHAT, player, originalContext, censoredWords)
         if (censoredWords.isEmpty()) return false
 

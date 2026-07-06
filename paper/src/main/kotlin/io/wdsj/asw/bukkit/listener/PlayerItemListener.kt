@@ -1,6 +1,7 @@
 package io.wdsj.asw.bukkit.listener
 
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords.sensitiveWordBs
+import io.wdsj.asw.bukkit.AdvancedSensitiveWords
+import io.wdsj.asw.bukkit.playergroup.GroupModule
 import io.wdsj.asw.bukkit.permission.PermissionsEnum
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.setting.PluginMessages
@@ -29,10 +30,12 @@ class PlayerItemListener(private val configuration: PaperConfigurationService) :
 
     @EventHandler(priority = EventPriority.LOW)
     fun onPlayerHeldItem(event: PlayerItemHeldEvent) {
-        if (!configuration.get(PluginSettings.ENABLE_PLAYER_ITEM_CHECK)) return
+        val globalEnabled = configuration.get(PluginSettings.ENABLE_PLAYER_ITEM_CHECK)
+        if (!globalEnabled) return
 
         val player = event.player
         if (processingGuard.shouldSkipBasic(player, PermissionsEnum.BYPASS_ITEM)) return
+        if (processingGuard.shouldSkipGroupModule(player, GroupModule.ITEM, globalEnabled)) return
 
         val item = player.inventory.getItem(event.newSlot) ?: return
         censorItemName(player, item, event)
@@ -40,20 +43,24 @@ class PlayerItemListener(private val configuration: PaperConfigurationService) :
 
     @EventHandler(priority = EventPriority.LOW)
     fun onDrop(event: PlayerDropItemEvent) {
-        if (!configuration.get(PluginSettings.ENABLE_PLAYER_ITEM_CHECK)) return
+        val globalEnabled = configuration.get(PluginSettings.ENABLE_PLAYER_ITEM_CHECK)
+        if (!globalEnabled) return
 
         val player = event.player
         if (processingGuard.shouldSkipBasic(player, PermissionsEnum.BYPASS_ITEM)) return
+        if (processingGuard.shouldSkipGroupModule(player, GroupModule.ITEM, globalEnabled)) return
 
         censorItemName(player, event.itemDrop.itemStack, event)
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onClick(event: InventoryClickEvent) {
-        if (!configuration.get(PluginSettings.ENABLE_PLAYER_ITEM_CHECK)) return
+        val globalEnabled = configuration.get(PluginSettings.ENABLE_PLAYER_ITEM_CHECK)
+        if (!globalEnabled) return
 
         val player = event.whoClicked as? Player ?: return
         if (processingGuard.shouldSkipBasic(player, PermissionsEnum.BYPASS_ITEM)) return
+        if (processingGuard.shouldSkipGroupModule(player, GroupModule.ITEM, globalEnabled)) return
         if (event.clickedInventory?.type != InventoryType.PLAYER) return
 
         val item = event.currentItem ?: return
@@ -70,7 +77,7 @@ class PlayerItemListener(private val configuration: PaperConfigurationService) :
         val originalName = preprocess(MessageUtils.plainText(originalNameComponent))
         val startTime = System.currentTimeMillis()
         val asynchronous = (event as? Event)?.isAsynchronous ?: false
-        val censoredWords = sensitiveWordBs.findAll(originalName)
+        val censoredWords = AdvancedSensitiveWords.findAllSensitive(originalName)
         SensitiveFilterEvents.post(asynchronous, ModuleType.ITEM, player, originalName, censoredWords)
         if (censoredWords.isEmpty()) return
 
@@ -81,7 +88,7 @@ class PlayerItemListener(private val configuration: PaperConfigurationService) :
                 MessageUtils.replaceLiteral(
                     originalNameComponent,
                     originalName,
-                    sensitiveWordBs.replace(originalName),
+                    AdvancedSensitiveWords.replaceSensitive(originalName),
                 ),
             )
             item.setItemMeta(meta)

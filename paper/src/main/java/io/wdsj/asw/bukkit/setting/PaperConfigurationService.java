@@ -99,6 +99,14 @@ public final class PaperConfigurationService {
             case MESSAGE_ON_VIOLATION_RESET -> snapshot.plugin.messageOnViolationReset;
             case MESSAGE_ON_COMMAND_STATUS -> snapshot.plugin.messageOnCommandStatus;
             case MESSAGE_ON_AI_STATUS -> snapshot.plugin.messageOnAiStatus;
+            case PLAYER_GROUP_NEWBIE_JOIN -> snapshot.plugin.playerGroupNewbieJoin;
+            case PLAYER_GROUP_NEWBIE_RATE_LIMIT -> snapshot.plugin.playerGroupNewbieRateLimit;
+            case PLAYER_GROUP_NEWBIE_LINK_BLOCKED -> snapshot.plugin.playerGroupNewbieLinkBlocked;
+            case PLAYER_GROUP_INFO -> snapshot.plugin.playerGroupInfo;
+            case PLAYER_GROUP_SET -> snapshot.plugin.playerGroupSet;
+            case PLAYER_GROUP_CLEAR -> snapshot.plugin.playerGroupClear;
+            case PLAYER_GROUP_DISABLED -> snapshot.plugin.playerGroupDisabled;
+            case PLAYER_GROUP_STORAGE_ERROR -> snapshot.plugin.playerGroupStorageError;
             case MESSAGE_ON_COMMAND_TEST -> snapshot.plugin.commandTest.testResultTrue;
             case MESSAGE_ON_COMMAND_TEST_PASS -> snapshot.plugin.commandTest.testResultPass;
             case MESSAGE_ON_COMMAND_TEST_NOT_INIT -> snapshot.plugin.commandTest.testNotInit;
@@ -166,6 +174,7 @@ public final class PaperConfigurationService {
         }
         validateCategoryPolicy(ai.categoryPolicy);
         validateAntiSpam(settings.chat.antiSpam);
+        validatePlayerGroups(settings.playerGroups);
         CommandArgumentRuleSet.compile(settings.chat.commandWhiteList);
 
         if (!ai.enabled) {
@@ -248,6 +257,80 @@ public final class PaperConfigurationService {
                 || antiSpam.similarMaxSimilarity < 0.0D
                 || antiSpam.similarMaxSimilarity > 1.1D) {
             throw new IllegalArgumentException("chat.anti-spam.similar-max-similarity must be between 0.0 and 1.1");
+        }
+    }
+
+    private static void validatePlayerGroups(SettingsConfiguration.PlayerGroups playerGroups) {
+        if (playerGroups == null) {
+            throw new IllegalArgumentException("player-groups settings cannot be null");
+        }
+        if (!Double.isFinite(playerGroups.playerThreshold) || playerGroups.playerThreshold < 0.0D) {
+            throw new IllegalArgumentException("player-groups.player-threshold must be a finite non-negative number");
+        }
+        if (playerGroups.refreshIntervalSeconds < 1) {
+            throw new IllegalArgumentException("player-groups.refresh-interval-seconds must be at least 1");
+        }
+        validateGroupStorage(playerGroups.storage);
+        validateWeights(playerGroups.weights);
+        validateGroupPolicy(playerGroups.newbie, "newbie");
+        validateGroupPolicy(playerGroups.player, "player");
+    }
+
+    private static void validateGroupStorage(SettingsConfiguration.GroupStorage storage) {
+        if (storage == null) {
+            throw new IllegalArgumentException("player-groups.storage cannot be null");
+        }
+        if (storage.type == null) {
+            throw new IllegalArgumentException("player-groups.storage.type cannot be null");
+        }
+        if (storage.sqliteFile == null || storage.sqliteFile.isBlank()) {
+            throw new IllegalArgumentException("player-groups.storage.sqlite-file cannot be blank");
+        }
+        if (storage.poolName == null || storage.poolName.isBlank()) {
+            throw new IllegalArgumentException("player-groups.storage.pool-name cannot be blank");
+        }
+        if (storage.maximumPoolSize < 1 || storage.minimumIdle < 0 || storage.minimumIdle > storage.maximumPoolSize) {
+            throw new IllegalArgumentException("player-groups.storage Hikari pool settings are invalid");
+        }
+        if (storage.connectionTimeoutMillis < 1L) {
+            throw new IllegalArgumentException("player-groups.storage.connection-timeout-millis must be positive");
+        }
+        if (storage.type == io.wdsj.asw.bukkit.persistence.StorageType.MYSQL) {
+            SettingsConfiguration.Mysql mysql = storage.mysql;
+            if (mysql == null
+                    || mysql.host == null || mysql.host.isBlank()
+                    || mysql.port <= 0
+                    || mysql.database == null || mysql.database.isBlank()
+                    || mysql.username == null
+                    || mysql.password == null) {
+                throw new IllegalArgumentException("player-groups.storage.mysql host, port, database, username and password are required");
+            }
+        }
+    }
+
+    private static void validateWeights(SettingsConfiguration.ActivityWeights weights) {
+        if (weights == null) {
+            throw new IllegalArgumentException("player-groups.weights cannot be null");
+        }
+        double[] values = {
+                weights.playTimeHours, weights.minedBlocks, weights.movedBlocks, weights.mobKills,
+                weights.usedItems, weights.brokenItems, weights.craftedItems, weights.damageDealt,
+                weights.damageTaken, weights.deaths, weights.enchantedItems, weights.fishCaught,
+                weights.villagerTrades
+        };
+        for (double value : values) {
+            if (!Double.isFinite(value) || value < 0.0D) {
+                throw new IllegalArgumentException("player-groups weights must be finite non-negative numbers");
+            }
+        }
+    }
+
+    private static void validateGroupPolicy(SettingsConfiguration.GroupPolicy policy, String name) {
+        if (policy == null || policy.modules == null || policy.rateLimit == null || policy.linkCheck == null) {
+            throw new IllegalArgumentException("player-groups.groups." + name + " is incomplete");
+        }
+        if (policy.rateLimit.capacity < 1 || policy.rateLimit.refillIntervalSeconds < 1) {
+            throw new IllegalArgumentException("player-groups.groups." + name + ".rate-limit settings must be at least 1");
         }
     }
 

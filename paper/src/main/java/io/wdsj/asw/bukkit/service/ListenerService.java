@@ -18,6 +18,7 @@ public class ListenerService {
     private final AdvancedSensitiveWords plugin;
     private final PaperConfigurationService configuration;
     private final LlmChatDetectionService llmChatDetectionService;
+    private boolean playerGroupListenerRegistered;
 
     public ListenerService(AdvancedSensitiveWords plugin) {
         this.plugin = plugin;
@@ -51,6 +52,7 @@ public class ListenerService {
             registerEventListener(new BroadcastListener(configuration));
         }
         registerEventListener(new QuitDataCleaner());
+        registerPlayerGroupListenerIfNeeded();
         if (configuration.get(PluginSettings.CHECK_FOR_UPDATE)) {
             registerEventListener(new JoinUpdateNotifier(configuration));
         }
@@ -64,6 +66,7 @@ public class ListenerService {
 
     public void reloadConfiguration() {
         llmChatDetectionService.reload();
+        registerPlayerGroupListenerIfNeeded();
     }
 
     public LlmChatDetectionService getLlmChatDetectionService() {
@@ -73,6 +76,14 @@ public class ListenerService {
     
     private void registerEventListener(Listener listener) {
         Bukkit.getPluginManager().registerEvents(listener, plugin);
+    }
+
+    private void registerPlayerGroupListenerIfNeeded() {
+        if (playerGroupListenerRegistered || plugin.getPlayerGroupService() == null) {
+            return;
+        }
+        registerEventListener(new PlayerGroupListener(plugin.getPlayerGroupService()));
+        playerGroupListenerRegistered = true;
     }
 
     private void registerChatBookEventListeners() {

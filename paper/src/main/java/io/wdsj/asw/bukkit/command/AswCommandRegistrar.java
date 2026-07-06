@@ -1,6 +1,7 @@
 package io.wdsj.asw.bukkit.command;
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
+import io.wdsj.asw.bukkit.playergroup.PlayerGroup;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
 import io.wdsj.asw.bukkit.type.ModuleType;
 import io.wdsj.asw.bukkit.util.message.MessageUtils;
@@ -38,12 +39,22 @@ public final class AswCommandRegistrar {
                     .toList()
     );
     private static final ParserDescriptor<Source, ModuleType> VIOLATION_MODULE_PARSER =
-            StringParser.<Source>stringParser().flatMapSuccess(ModuleType.class, (context, value) -> {
+            StringParser.<Source>stringParser().flatMapSuccess(ModuleType.class, (ignored, value) -> {
                 ModuleType moduleType = ModuleType.parseViolationModule(value);
                 if (moduleType == null) {
                     return ArgumentParseResult.failureFuture(new ViolationModuleParseException(value));
                 }
                 return ArgumentParseResult.successFuture(moduleType);
+            });
+    private static final SuggestionProvider<Source> PLAYER_GROUP_SUGGESTIONS =
+            SuggestionProvider.suggestingStrings("newbie", "player");
+    private static final ParserDescriptor<Source, PlayerGroup> PLAYER_GROUP_PARSER =
+            StringParser.<Source>stringParser().flatMapSuccess(PlayerGroup.class, (ignored, value) -> {
+                PlayerGroup group = PlayerGroup.parse(value);
+                if (group == null) {
+                    return ArgumentParseResult.failureFuture(new PlayerGroupParseException(value));
+                }
+                return ArgumentParseResult.successFuture(group);
             });
 
     private final AdvancedSensitiveWords plugin;
@@ -70,6 +81,7 @@ public final class AswCommandRegistrar {
         registerReloadCommands();
         registerWordCommands();
         registerPlayerCommands();
+        registerGroupCommands();
     }
 
     private void registerRootCommand() {
@@ -192,6 +204,32 @@ public final class AswCommandRegistrar {
                 )));
     }
 
+    private void registerGroupCommands() {
+        commandManager.command(root()
+                .literal("group", Description.of("Manage activity groups"))
+                .literal("info", Description.of("Show a player's activity group"))
+                .required("player", PlayerParser.playerParser())
+                .permission(permission(CommandPermissions.GROUP_INFO))
+                .handler(context -> commandService.showPlayerGroupInfo(sender(context), context.get("player"))));
+        commandManager.command(root()
+                .literal("group", Description.of("Manage activity groups"))
+                .literal("set", Description.of("Set a manual activity group"))
+                .required("player", PlayerParser.playerParser())
+                .required("group", PLAYER_GROUP_PARSER, PLAYER_GROUP_SUGGESTIONS)
+                .permission(permission(CommandPermissions.GROUP_SET))
+                .handler(context -> commandService.setPlayerGroup(
+                        sender(context),
+                        context.get("player"),
+                        context.get("group")
+                )));
+        commandManager.command(root()
+                .literal("group", Description.of("Manage activity groups"))
+                .literal("clear", Description.of("Clear a manual activity group"))
+                .required("player", PlayerParser.playerParser())
+                .permission(permission(CommandPermissions.GROUP_CLEAR))
+                .handler(context -> commandService.clearPlayerGroup(sender(context), context.get("player"))));
+    }
+
     private void registerExceptionHandlers() {
         commandManager.exceptionController().registerHandler(NoPermissionException.class,
                 context -> MessageUtils.sendMessage(sender(context.context()), PluginMessages.NO_PERMISSION));
@@ -202,6 +240,10 @@ public final class AswCommandRegistrar {
         commandManager.exceptionController().registerHandler(ArgumentParseException.class, context -> {
             if (context.exception().getCause() instanceof ViolationModuleParseException) {
                 MessageUtils.sendMessage(sender(context.context()), PluginMessages.INVALID_VIOLATION_MODULE);
+                return;
+            }
+            if (context.exception().getCause() instanceof PlayerGroupParseException) {
+                MessageUtils.sendMessage(sender(context.context()), PluginMessages.NOT_ENOUGH_ARGS);
                 return;
             }
             MessageUtils.sendMessage(sender(context.context()), PluginMessages.PLAYER_NOT_FOUND);
@@ -228,6 +270,17 @@ public final class AswCommandRegistrar {
     private static final class ViolationModuleParseException extends IllegalArgumentException {
         private ViolationModuleParseException(String value) {
             super("Unknown violation module: " + value);
+        }
+
+        @Override
+        public Throwable fillInStackTrace() {
+            return this;
+        }
+    }
+
+    private static final class PlayerGroupParseException extends IllegalArgumentException {
+        private PlayerGroupParseException(String value) {
+            super("Unknown player group: " + value);
         }
 
         @Override

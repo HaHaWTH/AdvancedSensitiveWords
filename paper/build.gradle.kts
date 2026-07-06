@@ -36,13 +36,15 @@ dependencies {
     implementation("org.incendo:cloud-paper:${property("cloudVersion")}")
     implementation("org.incendo:cloud-minecraft-extras:${property("cloudVersion")}")
 
-    compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:${property("paperVersion")}")
     compileOnly("me.clip:placeholderapi:2.12.2")
     compileOnly("org.geysermc.floodgate:api:2.2.5-SNAPSHOT")
     compileOnly("fr.xephi:authme:5.7.0-SNAPSHOT")
     compileOnly("com.github.retrooper:packetevents-spigot:2.13.0")
     compileOnly("org.jetbrains:annotations:26.1.0")
     compileOnly("com.google.guava:guava:33.4.0-jre")
+    compileOnly("com.github.ben-manes.caffeine:caffeine:${property("caffeineVersion")}")
+    compileOnly("com.zaxxer:HikariCP:${property("hikariCPVersion")}")
     compileOnly("dev.langchain4j:langchain4j-open-ai:${property("langchain4jVersion")}")
     compileOnly("dev.langchain4j:langchain4j-anthropic:${property("langchain4jVersion")}")
     compileOnly("dev.langchain4j:langchain4j-http-client-jdk:${property("langchain4jVersion")}")
@@ -55,15 +57,18 @@ dependencies {
     runtimeOnly("org.snakeyaml:snakeyaml-engine:2.7")
 
     testImplementation("org.junit.jupiter:junit-jupiter:6.1.1")
-    testImplementation("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
+    testImplementation("io.papermc.paper:paper-api:${property("paperVersion")}")
     testImplementation("dev.langchain4j:langchain4j-open-ai:${property("langchain4jVersion")}")
     testImplementation("dev.langchain4j:langchain4j-anthropic:${property("langchain4jVersion")}")
     testImplementation("dev.langchain4j:langchain4j-http-client-jdk:${property("langchain4jVersion")}")
+    testImplementation("com.zaxxer:HikariCP:${property("hikariCPVersion")}")
+    testImplementation("com.github.ben-manes.caffeine:caffeine:${property("caffeineVersion")}")
+    testRuntimeOnly("org.slf4j:slf4j-nop:2.0.17")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.1.0")
 
     add(jmh.implementationConfigurationName, "org.openjdk.jmh:jmh-core:${property("jmhVersion")}")
     add(jmh.annotationProcessorConfigurationName, "org.openjdk.jmh:jmh-generator-annprocess:${property("jmhVersion")}")
-    add(jmh.runtimeOnlyConfigurationName, "com.google.guava:guava:33.4.0-jre")
+    add(jmh.runtimeOnlyConfigurationName, "com.google.guava:guava:${property("guavaVersion")}")
 }
 
 configurations.named(jmh.implementationConfigurationName) {
@@ -105,6 +110,8 @@ tasks.processResources {
         "pluginDescription" to pluginDescription,
         "gitCommitShort" to rootProject.extra["gitCommitShort"],
         "langchain4jVersion" to project.property("langchain4jVersion"),
+        "caffeineVersion" to project.property("caffeineVersion"),
+        "hikariCPVersion" to project.property("hikariCPVersion"),
     )
     inputs.properties(properties)
     filesMatching("plugin.yml") {

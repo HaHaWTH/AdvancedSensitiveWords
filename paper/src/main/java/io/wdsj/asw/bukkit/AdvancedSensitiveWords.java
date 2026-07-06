@@ -5,17 +5,20 @@ import com.github.Anon8281.universalScheduler.scheduling.schedulers.TaskSchedule
 import com.github.Anon8281.universalScheduler.scheduling.tasks.MyScheduledTask;
 import com.github.houbb.sensitive.word.api.IWordAllow;
 import com.github.houbb.sensitive.word.api.IWordDeny;
+import com.github.houbb.sensitive.word.api.IWordResult;
 import com.github.houbb.sensitive.word.api.IWordResultCondition;
 import com.github.houbb.sensitive.word.bs.SensitiveWordBs;
 import com.github.houbb.sensitive.word.support.allow.WordAllows;
 import com.github.houbb.sensitive.word.support.check.WordChecks;
 import com.github.houbb.sensitive.word.support.deny.WordDenys;
+import com.github.houbb.sensitive.word.support.result.WordResultHandlers;
 import com.github.houbb.sensitive.word.support.resultcondition.WordResultConditions;
 import com.github.houbb.sensitive.word.support.tag.WordTags;
 import io.wdsj.asw.bukkit.command.AswCommandRegistrar;
 import io.wdsj.asw.bukkit.ai.LlmChatDetectionService;
 import io.wdsj.asw.bukkit.core.condition.WordResultConditionNumMatch;
 import io.wdsj.asw.bukkit.integration.placeholder.ASWExpansion;
+import io.wdsj.asw.bukkit.playergroup.PlayerGroupService;
 import io.wdsj.asw.bukkit.service.chat.antispam.ChatAntiSpamService;
 import io.wdsj.asw.bukkit.manage.punish.PlayerAltController;
 import io.wdsj.asw.bukkit.manage.punish.PlayerShadowController;
@@ -44,6 +47,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.slf4j.Logger;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+
 import static io.wdsj.asw.bukkit.util.LoggingUtils.purgeLog;
 import static io.wdsj.asw.bukkit.util.TimingUtils.resetStatistics;
 import static io.wdsj.asw.bukkit.util.Utils.*;
@@ -52,6 +59,7 @@ import static io.wdsj.asw.bukkit.util.Utils.*;
 public final class AdvancedSensitiveWords extends JavaPlugin {
     public static volatile boolean isInitialized = false;
     public static SensitiveWordBs sensitiveWordBs;
+    public static SensitiveWordBs networkSensitiveWordBs;
     public static boolean isAuthMeAvailable;
     public static final String PLUGIN_VERSION = PluginBuildInfo.VERSION;
     private static AdvancedSensitiveWords instance;
@@ -62,6 +70,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     private PaperConfigurationService configurationService;
     private volatile Updater.UpdateResult updateResult = Updater.UpdateResult.noUpdate();
     private AswCommandRegistrar commandRegistrar;
+    private PlayerGroupService playerGroupService;
     public static TaskScheduler getScheduler() {
         return scheduler;
     }
@@ -83,6 +92,10 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
             throw new IllegalStateException("Listeners have not been initialized yet");
         }
         return listenerService.getLlmChatDetectionService();
+    }
+
+    public PlayerGroupService getPlayerGroupService() {
+        return playerGroupService;
     }
 
     public static <T> T setting(SettingKey<T> key) {
@@ -112,6 +125,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         BookCache.initialize();
         doInitTasks();
         if (configurationService.get(PluginSettings.PURGE_LOG_FILE)) purgeLog();
+        initializePlayerGroups();
         listenerService = new ListenerService(this);
         listenerService.registerListeners();
         commandRegistrar = new AswCommandRegistrar(this);
@@ -134,6 +148,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         IWordAllow wA = WordAllows.chains(WordAllows.defaults(), new WordAllow(), new ExternalWordAllow(this));
         isInitialized = false;
         sensitiveWordBs = null;
+        networkSensitiveWordBs = null;
         IWordResultCondition condition = createWordResultCondition();
         getScheduler().runTaskAsynchronously(() -> {
             IWordDeny wordDeny = createWordDeny();
@@ -145,20 +160,20 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
                     .ignoreEnglishStyle(configurationService.get(PluginSettings.IGNORE_ENGLISH_STYLE))
                     .ignoreRepeat(configurationService.get(PluginSettings.IGNORE_REPEAT))
                     .enableNumCheck(configurationService.get(PluginSettings.ENABLE_NUM_CHECK))
-                    .enableEmailCheck(configurationService.get(PluginSettings.ENABLE_EMAIL_CHECK))
-                    .enableUrlCheck(configurationService.get(PluginSettings.ENABLE_URL_CHECK))
+                    .enableEmailCheck(false)
+                    .enableUrlCheck(false)
                     .enableWordCheck(configurationService.get(PluginSettings.ENABLE_WORD_CHECK))
                     .wordResultCondition(condition)
-                    .wordCheckUrl(configurationService.get(PluginSettings.URL_CHECK_NO_PREFIX) ? WordChecks.urlNoPrefix() : WordChecks.url())
                     .wordDeny(wordDeny)
                     .wordAllow(wA)
                     .numCheckLen(configurationService.get(PluginSettings.NUM_CHECK_LEN))
                     .wordReplace(new WordReplace())
                     .wordTag(WordTags.none())
-                    .charIgnore(new CharIgnore())
-                    .enableIpv4Check(configurationService.get(PluginSettings.ENABLE_IP_CHECK))
+                    .charIgnore(new CharIgnore(configurationService.get(PluginSettings.IGNORE_CHAR)))
+                    .enableIpv4Check(false)
                     .wordFailFast(configurationService.get(PluginSettings.FAIL_FAST))
                     .init();
+            networkSensitiveWordBs = createNetworkSensitiveWordBs();
             isInitialized = true;
         });
     }
@@ -178,13 +193,27 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         ViolationCounter.INSTANCE.resetAllViolations();
         SchedulingUtils.cancelTaskSafely(violationResetTask);
         if (permCache != null) permCache.disable();
-        if (isInitialized) sensitiveWordBs.destroy();
+        if (playerGroupService != null) {
+            playerGroupService.close();
+            playerGroupService = null;
+        }
+        if (isInitialized) {
+            sensitiveWordBs.destroy();
+            if (networkSensitiveWordBs != null) {
+                networkSensitiveWordBs.destroy();
+            }
+        }
         commandRegistrar = null;
         LOGGER.info("AdvancedSensitiveWords is disabled.");
     }
 
     public void reloadPluginConfiguration() {
         configurationService.reload();
+        if (playerGroupService == null && configurationService.get(PluginSettings.PLAYER_GROUPS_ENABLED)) {
+            initializePlayerGroups();
+        } else if (playerGroupService != null) {
+            playerGroupService.reloadConfiguration();
+        }
         if (listenerService != null) {
             listenerService.reloadConfiguration();
         }
@@ -218,6 +247,19 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     private void scheduleViolationResetTask() {
         long resetIntervalTicks = configurationService.get(PluginSettings.VIOLATION_RESET_TIME) * 20L * 60L;
         violationResetTask = new ViolationResetTask().runTaskTimerAsynchronously(this, resetIntervalTicks, resetIntervalTicks);
+    }
+
+    private void initializePlayerGroups() {
+        if (!configurationService.get(PluginSettings.PLAYER_GROUPS_ENABLED)) {
+            return;
+        }
+        try {
+            playerGroupService = new PlayerGroupService(this);
+            playerGroupService.start();
+        } catch (Exception exception) {
+            LOGGER.error("Failed to initialize player group storage.", exception);
+            throw new IllegalStateException("Unable to initialize player group storage", exception);
+        }
     }
 
     private void checkForUpdatesAsync() {
@@ -282,6 +324,34 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         };
     }
 
+    private SensitiveWordBs createNetworkSensitiveWordBs() {
+        boolean enableEmail = configurationService.get(PluginSettings.ENABLE_EMAIL_CHECK);
+        boolean enableUrl = configurationService.get(PluginSettings.ENABLE_URL_CHECK);
+        boolean enableIp = configurationService.get(PluginSettings.ENABLE_IP_CHECK);
+        if (!enableEmail && !enableUrl && !enableIp) {
+            return null;
+        }
+        return SensitiveWordBs.newInstance()
+                .ignoreCase(configurationService.get(PluginSettings.IGNORE_CASE))
+                .ignoreWidth(configurationService.get(PluginSettings.IGNORE_WIDTH))
+                .ignoreNumStyle(configurationService.get(PluginSettings.IGNORE_NUM_STYLE))
+                .ignoreChineseStyle(configurationService.get(PluginSettings.IGNORE_CHINESE_STYLE))
+                .ignoreEnglishStyle(configurationService.get(PluginSettings.IGNORE_ENGLISH_STYLE))
+                .ignoreRepeat(configurationService.get(PluginSettings.IGNORE_REPEAT))
+                .enableNumCheck(false)
+                .enableEmailCheck(enableEmail)
+                .enableUrlCheck(enableUrl)
+                .enableWordCheck(false)
+                .wordResultCondition(WordResultConditions.alwaysTrue())
+                .wordCheckUrl(configurationService.get(PluginSettings.URL_CHECK_NO_PREFIX) ? WordChecks.urlNoPrefix() : WordChecks.url())
+                .wordReplace(new WordReplace())
+                .wordTag(WordTags.none())
+                .charIgnore(new CharIgnore(configurationService.get(PluginSettings.IGNORE_CHAR), CharIgnore.NETWORK_SYNTAX_CHARS))
+                .enableIpv4Check(enableIp)
+                .wordFailFast(configurationService.get(PluginSettings.FAIL_FAST))
+                .init();
+    }
+
     private IWordDeny createWordDeny() {
         boolean enableDefaultWords = configurationService.get(PluginSettings.ENABLE_DEFAULT_WORDS);
         boolean enableOnlineWords = configurationService.get(PluginSettings.ENABLE_ONLINE_WORDS);
@@ -295,6 +365,39 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
             return WordDenys.chains(new OnlineWordDeny(this), new WordDeny(), new ExternalWordDeny(this));
         }
         return WordDenys.chains(new WordDeny(), new ExternalWordDeny(this));
+    }
+
+    public static List<String> findAllSensitive(String text) {
+        LinkedHashSet<String> results = new LinkedHashSet<>();
+        SensitiveWordBs wordBs = sensitiveWordBs;
+        if (wordBs != null) {
+            results.addAll(wordBs.findAll(text));
+        }
+        SensitiveWordBs networkWordBs = networkSensitiveWordBs;
+        if (networkWordBs != null) {
+            results.addAll(networkWordBs.findAll(text));
+        }
+        return List.copyOf(results);
+    }
+
+    public static List<IWordResult> findAllSensitiveRaw(String text) {
+        List<IWordResult> results = new ArrayList<>();
+        SensitiveWordBs wordBs = sensitiveWordBs;
+        if (wordBs != null) {
+            results.addAll(wordBs.findAll(text, WordResultHandlers.raw()));
+        }
+        SensitiveWordBs networkWordBs = networkSensitiveWordBs;
+        if (networkWordBs != null) {
+            results.addAll(networkWordBs.findAll(text, WordResultHandlers.raw()));
+        }
+        return results;
+    }
+
+    public static String replaceSensitive(String text) {
+        SensitiveWordBs wordBs = sensitiveWordBs;
+        String result = wordBs == null ? text : wordBs.replace(text);
+        SensitiveWordBs networkWordBs = networkSensitiveWordBs;
+        return networkWordBs == null ? result : networkWordBs.replace(result);
     }
 
 }

@@ -1,6 +1,7 @@
 package io.wdsj.asw.bukkit.listener
 
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords.sensitiveWordBs
+import io.wdsj.asw.bukkit.AdvancedSensitiveWords
+import io.wdsj.asw.bukkit.playergroup.GroupModule
 import io.wdsj.asw.bukkit.permission.PermissionsEnum
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.setting.PluginMessages
@@ -24,12 +25,14 @@ class AnvilListener(private val configuration: PaperConfigurationService) : List
 
     @EventHandler(priority = EventPriority.LOWEST)
     fun onAnvil(event: InventoryClickEvent) {
-        if (!configuration.get(PluginSettings.ENABLE_ANVIL_EDIT_CHECK)) return
+        val globalEnabled = configuration.get(PluginSettings.ENABLE_ANVIL_EDIT_CHECK)
+        if (!globalEnabled) return
         if (event.inventory.type != InventoryType.ANVIL) return
         if (event.rawSlot != 2) return
 
         val player = event.whoClicked as? Player ?: return
         if (processingGuard.shouldSkipBasic(player, PermissionsEnum.BYPASS_ANVIL)) return
+        if (processingGuard.shouldSkipGroupModule(player, GroupModule.ANVIL, globalEnabled)) return
 
         val outputItem = event.currentItem ?: return
         if (!outputItem.hasItemMeta()) return
@@ -40,7 +43,7 @@ class AnvilListener(private val configuration: PaperConfigurationService) : List
         val originalNameComponent = itemMeta.displayName() ?: return
         val originalItemName = preprocess(MessageUtils.plainText(originalNameComponent))
         val startTime = System.currentTimeMillis()
-        val censoredWords = sensitiveWordBs.findAll(originalItemName)
+        val censoredWords = AdvancedSensitiveWords.findAllSensitive(originalItemName)
         SensitiveFilterEvents.post(event.isAsynchronous, ModuleType.ANVIL, player, originalItemName, censoredWords)
         if (censoredWords.isEmpty()) return
 
@@ -51,7 +54,7 @@ class AnvilListener(private val configuration: PaperConfigurationService) : List
                 MessageUtils.replaceLiteral(
                     originalNameComponent,
                     originalItemName,
-                    sensitiveWordBs.replace(originalItemName),
+                    AdvancedSensitiveWords.replaceSensitive(originalItemName),
                 ),
             )
             outputItem.setItemMeta(itemMeta)

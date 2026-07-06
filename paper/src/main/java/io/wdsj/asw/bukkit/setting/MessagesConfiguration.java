@@ -79,6 +79,29 @@ public abstract class MessagesConfiguration {
                 <dark_gray>  Invalid <aqua>%invalid% <dark_gray>| <gray>Enforced <aqua>%enforced%
                 <dark_gray>  Queue <aqua>%active% active <gray>/ <aqua>%queued% queued <gray>/ <aqua>%pool_size% workers
                 <dark_gray>  Notify/Punish thresholds <aqua>%thresholds%""";
+        @Comment("Message sent to NEWBIE players when they join.")
+        public String playerGroupNewbieJoin = "<yellow>New players are temporarily moderated more strictly. Please avoid spam, long repeated messages, and links.";
+        @Comment("Message sent when NEWBIE rate limiting cancels chat or a command.")
+        public String playerGroupNewbieRateLimit = "<yellow>Please slow down. New players have a temporary chat rate limit.";
+        @Comment("Message sent when NEWBIE link checking cancels chat or a command.")
+        public String playerGroupNewbieLinkBlocked = "<red>New players cannot send links yet.";
+        @Comment("Player group information command output.")
+        public String playerGroupInfo = """
+                <gradient:#22d3ee:#4ade80><bold>Player Group</bold></gradient> <dark_gray>| <aqua>%player%
+                <dark_gray>  Group <aqua>%group% <dark_gray>| <gray>Source <aqua>%source%
+                <dark_gray>  Activity <aqua>%score% <gray>/ <aqua>%threshold%
+                <dark_gray>  Play <aqua>%play_hours%h <dark_gray>| <gray>Move <aqua>%moved_blocks% <gray>blocks <dark_gray>| <gray>Mined <aqua>%mined_blocks%
+                <dark_gray>  Mobs <aqua>%mob_kills% <dark_gray>| <gray>Use <aqua>%used_items% <dark_gray>| <gray>Break <aqua>%broken_items% <dark_gray>| <gray>Craft <aqua>%crafted_items%
+                <dark_gray>  Damage <aqua>%damage_dealt%/%damage_taken% <dark_gray>| <gray>Deaths <aqua>%deaths% <dark_gray>| <gray>Enchant <aqua>%enchanted_items%
+                <dark_gray>  Fish <aqua>%fish_caught% <dark_gray>| <gray>Trades <aqua>%villager_trades%""";
+        @Comment("Message sent after manually setting a player group.")
+        public String playerGroupSet = "<green>Set <aqua>%player% <green>to group <aqua>%group%<green>.";
+        @Comment("Message sent after clearing a manual player group override.")
+        public String playerGroupClear = "<green>Cleared manual group override for <aqua>%player%<green>.";
+        @Comment("Message sent when player groups are disabled.")
+        public String playerGroupDisabled = "<red>Player groups are disabled.";
+        @Comment("Message sent when player group storage fails.")
+        public String playerGroupStorageError = "<red>Player group storage operation failed.";
         @Comment("Messages used by the test command.")
         public CommandTest commandTest = new CommandTest();
         @Comment("Messages used by the punishment command.")

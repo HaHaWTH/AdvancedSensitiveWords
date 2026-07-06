@@ -3,6 +3,8 @@ package io.wdsj.asw.bukkit.setting;
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
 import io.wdsj.asw.bukkit.ai.LlmApiMode;
+import io.wdsj.asw.bukkit.persistence.StorageType;
+import io.wdsj.asw.bukkit.playergroup.GroupModuleMode;
 import io.wdsj.asw.bukkit.type.ProcessMethod;
 
 import java.util.ArrayList;
@@ -28,6 +30,8 @@ public final class SettingsConfiguration {
     public Name name = new Name();
     @Comment({"Item filtering settings."})
     public Item item = new Item();
+    @Comment({"Player activity group settings."})
+    public PlayerGroups playerGroups = new PlayerGroups();
 
     @Configuration
     public static final class Plugin {
@@ -92,10 +96,10 @@ public final class SettingsConfiguration {
         public boolean hookVelocity = false;
         @Comment("Plugin compatibility settings.")
         public Compatibility compatibility = new Compatibility();
-        @Comment("Characters ignored by the sensitive-word matcher.")
-        public String ignoreChar = "`-—=~～!！@#$%^&§*()_+[]{}\\|;:'\"“”,，.。、（）<>?？¥【】《》 ";
+        @Comment("Characters ignored by the sensitive-word matcher. URL/IP/email syntax characters are protected automatically when those checks are enabled.")
+        public String ignoreChar = "`-—=~～!！@#$%^&§*()_+[]{}\\|;:'\"“”,，。、（）<>?？¥【】《》 ";
         @Comment("Whether to remove formatting before detection.")
-        public boolean enablePreProcess = false;
+        public boolean enablePreProcess = true;
         @Comment("Regular expression used by preprocessing.")
         public String preProcessRegex = "[§&][0-9A-Fa-fK-Ok-oRr]";
         @Comment("Whether to ignore letter case.")
@@ -121,7 +125,7 @@ public final class SettingsConfiguration {
         @Comment("Whether to check URLs.")
         public boolean enableUrlCheck = true;
         @Comment("Whether URLs without an HTTP(S) prefix should be checked.")
-        public boolean urlCheckNoPrefix = false;
+        public boolean urlCheckNoPrefix = true;
         @Comment("Whether to check sensitive English words.")
         public boolean enableWordCheck = true;
         @Comment("Whether to check IPv4 addresses.")
@@ -382,5 +386,141 @@ public final class SettingsConfiguration {
         public boolean sendMessage = true;
         @Comment("Punishment actions for item violations. Leave empty to disable automatic punishment.")
         public List<String> punishment = new ArrayList<>();
+    }
+
+    @Configuration
+    public static final class PlayerGroups {
+        @Comment("Whether to enable activity-based player groups.")
+        public boolean enabled = false;
+        @Comment("Activity score required to be treated as PLAYER instead of NEWBIE.")
+        public double playerThreshold = 70000.0D;
+        @Comment("How often online player statistics are refreshed on the server thread.")
+        public int refreshIntervalSeconds = 60;
+        @Comment("Persistent storage for cross-server group states and manual group overrides.")
+        public GroupStorage storage = new GroupStorage();
+        @Comment("Statistic weights used to calculate activity score.")
+        public ActivityWeights weights = new ActivityWeights();
+        @Comment("NEWBIE group policy.")
+        public GroupPolicy newbie = GroupPolicy.newbie();
+        @Comment("PLAYER group policy.")
+        public GroupPolicy player = GroupPolicy.player();
+    }
+
+    @Configuration
+    public static final class GroupStorage {
+        @Comment("Storage backend for player group states: SQLITE or MYSQL.")
+        public StorageType type = StorageType.SQLITE;
+        @Comment("SQLite database path relative to the plugin data folder.")
+        public String sqliteFile = "player-groups/groups.db";
+        @Comment("Whether SQLite should use WAL journal mode.")
+        public boolean sqliteWal = true;
+        @Comment("HikariCP pool name.")
+        public String poolName = "ASW-PlayerGroups";
+        @Comment("Maximum HikariCP pool size. SQLite is capped internally to 3.")
+        public int maximumPoolSize = 3;
+        @Comment("Minimum idle HikariCP connections.")
+        public int minimumIdle = 1;
+        @Comment("Connection timeout in milliseconds.")
+        public long connectionTimeoutMillis = 5000L;
+        @Comment("MySQL storage settings. Used only when type is MYSQL.")
+        public Mysql mysql = new Mysql();
+    }
+
+    @Configuration
+    public static final class Mysql {
+        @Comment("MySQL host.")
+        public String host = "127.0.0.1";
+        @Comment("MySQL port.")
+        public int port = 3306;
+        @Comment("MySQL database.")
+        public String database = "advanced_sensitive_words";
+        @Comment("MySQL username.")
+        public String username = "root";
+        @Comment("MySQL password.")
+        public String password = "";
+    }
+
+    @Configuration
+    public static final class ActivityWeights {
+        @Comment("Weight per hour of play time.")
+        public double playTimeHours = 1.0D;
+        @Comment("Weight per mined block.")
+        public double minedBlocks = 0.2D;
+        @Comment("Weight per moved block.")
+        public double movedBlocks = 0.001D;
+        @Comment("Weight per mob kill.")
+        public double mobKills = 1.0D;
+        @Comment("Weight per used item statistic.")
+        public double usedItems = 0.02D;
+        @Comment("Weight per broken item statistic.")
+        public double brokenItems = 1.0D;
+        @Comment("Weight per crafted item statistic.")
+        public double craftedItems = 0.1D;
+        @Comment("Weight per raw damage-dealt statistic point.")
+        public double damageDealt = 0.01D;
+        @Comment("Weight per raw damage-taken statistic point.")
+        public double damageTaken = 0.01D;
+        @Comment("Weight per death.")
+        public double deaths = 1.0D;
+        @Comment("Weight per enchanted item.")
+        public double enchantedItems = 1.0D;
+        @Comment("Weight per fish caught.")
+        public double fishCaught = 1.0D;
+        @Comment("Weight per villager trade.")
+        public double villagerTrades = 1.0D;
+    }
+
+    @Configuration
+    public static final class GroupPolicy {
+        @Comment({
+                "Per-module overrides. DEFAULT inherits the global enable switch.",
+                "ENABLED only has an effect when the global module switch is already enabled.",
+                "DISABLED skips this module for players in this group."
+        })
+        public GroupModules modules = new GroupModules();
+        @Comment("Whether players in this group receive a join message.")
+        public boolean sendJoinMessage = false;
+        @Comment("NEWBIE-only token-bucket chat/command rate limit.")
+        public RateLimit rateLimit = new RateLimit();
+        @Comment("NEWBIE-only link check for chat and selected command arguments.")
+        public LinkCheck linkCheck = new LinkCheck();
+
+        private static GroupPolicy newbie() {
+            GroupPolicy policy = new GroupPolicy();
+            policy.sendJoinMessage = true;
+            policy.rateLimit.enabled = true;
+            policy.linkCheck.enabled = true;
+            return policy;
+        }
+
+        private static GroupPolicy player() {
+            return new GroupPolicy();
+        }
+    }
+
+    @Configuration
+    public static final class GroupModules {
+        public GroupModuleMode chat = GroupModuleMode.DEFAULT;
+        public GroupModuleMode command = GroupModuleMode.DEFAULT;
+        public GroupModuleMode book = GroupModuleMode.DEFAULT;
+        public GroupModuleMode sign = GroupModuleMode.DEFAULT;
+        public GroupModuleMode anvil = GroupModuleMode.DEFAULT;
+        public GroupModuleMode item = GroupModuleMode.DEFAULT;
+    }
+
+    @Configuration
+    public static final class RateLimit {
+        @Comment("Whether to enable the NEWBIE token bucket.")
+        public boolean enabled = false;
+        @Comment("Maximum stored tokens, also the allowed burst size.")
+        public int capacity = 3;
+        @Comment("Seconds needed to refill the full bucket.")
+        public int refillIntervalSeconds = 15;
+    }
+
+    @Configuration
+    public static final class LinkCheck {
+        @Comment("Whether NEWBIE players are blocked from sending links in chat and selected command arguments.")
+        public boolean enabled = false;
     }
 }

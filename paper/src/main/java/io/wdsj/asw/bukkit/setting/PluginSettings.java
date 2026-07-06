@@ -131,6 +131,8 @@ public final class PluginSettings {
     public static final SettingKey<ProcessMethod> ITEM_METHOD = key(settings -> settings.item.method);
     public static final SettingKey<Boolean> ITEM_SEND_MESSAGE = key(settings -> settings.item.sendMessage);
     public static final SettingKey<List<String>> ITEM_PUNISHMENT = key(settings -> settings.item.punishment);
+    public static final SettingKey<SettingsConfiguration.PlayerGroups> PLAYER_GROUPS = key(settings -> settings.playerGroups);
+    public static final SettingKey<Boolean> PLAYER_GROUPS_ENABLED = key(settings -> settings.playerGroups.enabled);
 
     private PluginSettings() {
     }
