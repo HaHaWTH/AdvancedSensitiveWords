@@ -24,7 +24,6 @@ public final class PluginSettings {
     public static final SettingKey<Boolean> NOTICE_OPERATOR = key(settings -> settings.plugin.noticeOperator);
     public static final SettingKey<List<String>> MANUAL_PUNISHMENT = key(settings -> settings.plugin.manualPunishment);
     public static final SettingKey<Long> VIOLATION_RESET_TIME = key(settings -> settings.plugin.violationResetTime);
-    public static final SettingKey<Boolean> ONLY_RESET_ONLINE_PLAYERS = key(settings -> settings.plugin.onlyResetOnlinePlayers);
     public static final SettingKey<Boolean> PURGE_LOG_FILE = key(settings -> settings.plugin.purgeLogFile);
     public static final SettingKey<String> REPLACEMENT = key(settings -> settings.plugin.replacement);
     public static final SettingKey<List<String>> DEFINED_REPLACEMENT = key(settings -> settings.plugin.definedReplacement);

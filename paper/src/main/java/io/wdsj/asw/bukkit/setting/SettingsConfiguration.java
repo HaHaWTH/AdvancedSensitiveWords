@@ -69,8 +69,6 @@ public final class SettingsConfiguration {
         public List<String> manualPunishment = new ArrayList<>();
         @Comment("Violation counter reset interval in minutes.")
         public long violationResetTime = 20L;
-        @Comment("Whether to reset only the violation counters of online players.")
-        public boolean onlyResetOnlinePlayers = false;
         @Comment("Whether to clear old violation logs on startup.")
         public boolean purgeLogFile = false;
         @Comment("Replacement character used for blocked content.")
@@ -394,7 +392,7 @@ public final class SettingsConfiguration {
         @Comment("Whether to enable activity-based player groups.")
         public boolean enabled = false;
         @Comment("Activity score required to be treated as PLAYER instead of NEWBIE.")
-        public double playerThreshold = 70000.0D;
+        public double playerThreshold = 6000.0D;
         @Comment("Unique identifier for this backend server when aggregating activity across servers. Generated as a numeric string by default; keep it different on every backend server.")
         public String serverId = Long.toUnsignedString(ThreadLocalRandom.current().nextLong());
         @Comment("How often online player statistics are refreshed on the server thread.")
@@ -481,7 +479,7 @@ public final class SettingsConfiguration {
                 "DISABLED skips this module for players in this group."
         })
         public GroupModules modules = new GroupModules();
-        @Comment("Whether players in this group receive a join message.")
+        @Comment("NEWBIE-only whether players in this group receive a join message.")
         public boolean sendJoinMessage = false;
         @Comment("NEWBIE-only token-bucket chat/command rate limit.")
         public RateLimit rateLimit = new RateLimit();
@@ -518,7 +516,7 @@ public final class SettingsConfiguration {
         @Comment("Maximum stored tokens, also the allowed burst size.")
         public int capacity = 3;
         @Comment("Seconds needed to refill the full bucket.")
-        public int refillIntervalSeconds = 15;
+        public int refillIntervalSeconds = 30;
     }
 
     @Configuration
