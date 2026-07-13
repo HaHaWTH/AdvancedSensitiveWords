@@ -15,7 +15,6 @@ import java.util.Locale;
 import static io.wdsj.asw.velocity.AdvancedSensitiveWords.CHANNEL;
 import static io.wdsj.asw.velocity.AdvancedSensitiveWords.LEGACY_CHANNEL;
 
-@SuppressWarnings("UnstableApiUsage")
 public class PluginMessageForwarder {
     private boolean warned = false;
     private final Logger logger;

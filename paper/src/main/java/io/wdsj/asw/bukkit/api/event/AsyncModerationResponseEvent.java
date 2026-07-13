@@ -1,7 +1,7 @@
 package io.wdsj.asw.bukkit.api.event;
 
 import io.wdsj.asw.bukkit.api.moderation.LlmChatModerationResult;
-import io.wdsj.asw.bukkit.type.ModuleType;
+import io.wdsj.asw.common.type.ModuleType;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;

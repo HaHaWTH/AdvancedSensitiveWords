@@ -7,7 +7,7 @@ import io.wdsj.asw.bukkit.manage.punish.PunishmentService
 import io.wdsj.asw.bukkit.manage.punish.ViolationCounter
 import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender
 import io.wdsj.asw.bukkit.setting.PluginSettings
-import io.wdsj.asw.bukkit.type.ModuleType
+import io.wdsj.asw.common.type.ModuleType
 import io.wdsj.asw.bukkit.api.moderation.LlmChatModerationResult
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player

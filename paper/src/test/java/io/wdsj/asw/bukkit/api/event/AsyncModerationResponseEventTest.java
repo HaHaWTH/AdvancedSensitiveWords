@@ -3,7 +3,7 @@ package io.wdsj.asw.bukkit.api.event;
 import io.wdsj.asw.bukkit.api.moderation.LlmChatModerationResult;
 import io.wdsj.asw.bukkit.api.moderation.LlmModerationCategory;
 import io.wdsj.asw.bukkit.api.moderation.LlmModerationSeverity;
-import io.wdsj.asw.bukkit.type.ModuleType;
+import io.wdsj.asw.common.type.ModuleType;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

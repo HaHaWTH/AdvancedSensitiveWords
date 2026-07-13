@@ -2,7 +2,7 @@ package io.wdsj.asw.bukkit.command;
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
-import io.wdsj.asw.bukkit.type.ModuleType;
+import io.wdsj.asw.common.type.ModuleType;
 import io.wdsj.asw.bukkit.util.message.MessageUtils;
 import io.wdsj.asw.bukkit.permission.PermissionsEnum;
 import org.bukkit.command.CommandSender;

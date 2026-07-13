@@ -1,6 +1,6 @@
 package io.wdsj.asw.bukkit.manage.punish;
 
-import io.wdsj.asw.bukkit.type.ModuleType;
+import io.wdsj.asw.common.type.ModuleType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 

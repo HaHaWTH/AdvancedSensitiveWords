@@ -1,7 +1,7 @@
 package io.wdsj.asw.bukkit.util
 
 import io.wdsj.asw.bukkit.api.event.SensitiveFilterPostProcessEvent
-import io.wdsj.asw.bukkit.type.ModuleType
+import io.wdsj.asw.common.type.ModuleType
 import org.bukkit.entity.Player
 import java.util.*
 

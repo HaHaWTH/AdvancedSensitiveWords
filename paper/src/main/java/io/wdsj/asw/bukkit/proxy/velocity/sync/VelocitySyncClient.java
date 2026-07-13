@@ -9,7 +9,7 @@ import io.wdsj.asw.bukkit.manage.punish.ViolationCounter;
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
-import io.wdsj.asw.bukkit.type.ModuleType;
+import io.wdsj.asw.common.type.ModuleType;
 import io.wdsj.asw.bukkit.util.message.MessageUtils;
 import io.wdsj.asw.common.environment.PluginBuildInfo;
 import io.wdsj.asw.common.sync.VelocitySyncProtocol;

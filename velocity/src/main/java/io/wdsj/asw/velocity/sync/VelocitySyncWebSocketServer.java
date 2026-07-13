@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.wdsj.asw.common.sync.VelocitySyncProtocol;
+import io.wdsj.asw.common.type.ModuleType;
 import io.wdsj.asw.velocity.AdvancedSensitiveWords;
 import io.wdsj.asw.velocity.config.Config;
 import org.java_websocket.WebSocket;
@@ -13,9 +14,7 @@ import org.slf4j.Logger;
 
 import java.net.InetSocketAddress;
 import java.time.Instant;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -25,7 +24,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public final class VelocitySyncWebSocketServer implements AutoCloseable {
     private static final long AUTH_WINDOW_MILLIS = 60_000L;
-    private static final Set<String> TRACKED_MODULES = Set.of("CHAT", "AI", "BOOK", "SIGN", "ANVIL", "ITEM");
 
     private final AdvancedSensitiveWords plugin;
     private final Logger logger;
@@ -34,7 +32,7 @@ public final class VelocitySyncWebSocketServer implements AutoCloseable {
     private final ScheduledExecutorService scheduler;
     private final Map<WebSocket, Session> sessions = new ConcurrentHashMap<>();
     private final Map<String, Long> nonceHistory = new ConcurrentHashMap<>();
-    private final Map<UUID, Map<String, AtomicLong>> counts = new ConcurrentHashMap<>();
+    private final Map<UUID, Map<ModuleType, AtomicLong>> counts = new ConcurrentHashMap<>();
 
     public VelocitySyncWebSocketServer(AdvancedSensitiveWords plugin, Logger logger, Config config) {
         this.plugin = plugin;
@@ -137,7 +135,7 @@ public final class VelocitySyncWebSocketServer implements AutoCloseable {
 
     private void handleIncrement(WebSocket socket, JsonObject message) {
         UUID playerId = uuid(message, "playerUuid");
-        String module = normalizeModule(string(message, "module"));
+        ModuleType module = parseModule(string(message, "module"));
         long delta = longValue(message, "delta", 0L);
         if (playerId == null || module == null || delta <= 0L) {
             return;
@@ -153,11 +151,11 @@ public final class VelocitySyncWebSocketServer implements AutoCloseable {
         if (playerId == null) {
             return;
         }
-        String module = normalizeModule(string(message, "module"));
+        ModuleType module = parseModule(string(message, "module"));
         if (module == null) {
             counts.remove(playerId);
         } else {
-            Map<String, AtomicLong> playerCounts = counts.get(playerId);
+            Map<ModuleType, AtomicLong> playerCounts = counts.get(playerId);
             if (playerCounts != null) {
                 playerCounts.remove(module);
                 if (playerCounts.isEmpty()) {
@@ -194,19 +192,19 @@ public final class VelocitySyncWebSocketServer implements AutoCloseable {
         JsonObject message = base(VelocitySyncProtocol.TYPE_VL_SYNC);
         message.addProperty("playerUuid", playerId.toString());
         JsonObject values = new JsonObject();
-        Map<String, AtomicLong> playerCounts = counts.getOrDefault(playerId, Map.of());
-        for (String module : TRACKED_MODULES) {
-            values.addProperty(module, playerCounts.getOrDefault(module, new AtomicLong()).get());
+        Map<ModuleType, AtomicLong> playerCounts = counts.getOrDefault(playerId, Map.of());
+        for (ModuleType module : ModuleType.violationModules()) {
+            values.addProperty(module.name(), playerCounts.getOrDefault(module, new AtomicLong()).get());
         }
         message.add("counts", values);
         return message;
     }
 
-    private void broadcastReset(UUID playerId, String module) {
+    private void broadcastReset(UUID playerId, ModuleType module) {
         JsonObject message = base(VelocitySyncProtocol.TYPE_VL_RESET);
         message.addProperty("playerUuid", playerId.toString());
         if (module != null) {
-            message.addProperty("module", module);
+            message.addProperty("module", module.name());
         }
         broadcast(message);
     }
@@ -239,12 +237,8 @@ public final class VelocitySyncWebSocketServer implements AutoCloseable {
         });
     }
 
-    private static String normalizeModule(String module) {
-        if (module == null) {
-            return null;
-        }
-        String normalized = module.toUpperCase(Locale.ROOT);
-        return TRACKED_MODULES.contains(normalized) ? normalized : null;
+    private static ModuleType parseModule(String module) {
+        return ModuleType.parseViolationModule(module);
     }
 
     private static UUID uuid(JsonObject object, String key) {

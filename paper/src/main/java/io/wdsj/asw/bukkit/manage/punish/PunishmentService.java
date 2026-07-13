@@ -3,7 +3,7 @@ package io.wdsj.asw.bukkit.manage.punish;
 import io.wdsj.asw.bukkit.proxy.velocity.VelocitySender;
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
-import io.wdsj.asw.bukkit.type.ModuleType;
+import io.wdsj.asw.common.type.ModuleType;
 import io.wdsj.asw.bukkit.util.SchedulingUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;

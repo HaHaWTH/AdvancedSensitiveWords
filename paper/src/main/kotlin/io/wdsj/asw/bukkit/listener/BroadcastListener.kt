@@ -4,7 +4,7 @@ import io.wdsj.asw.bukkit.AdvancedSensitiveWords.isInitialized
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.setting.PluginSettings
-import io.wdsj.asw.bukkit.type.ModuleType
+import io.wdsj.asw.common.type.ModuleType
 import io.wdsj.asw.bukkit.util.LoggingUtils
 import io.wdsj.asw.bukkit.util.SensitiveFilterEvents
 import io.wdsj.asw.bukkit.util.TimingUtils

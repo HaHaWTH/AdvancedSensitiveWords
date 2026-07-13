@@ -5,7 +5,7 @@ import io.wdsj.asw.bukkit.manage.punish.ViolationCounter;
 import io.wdsj.asw.bukkit.permission.PermissionsEnum;
 import io.wdsj.asw.bukkit.permission.cache.CachingPermTool;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
-import io.wdsj.asw.bukkit.type.ModuleType;
+import io.wdsj.asw.common.type.ModuleType;
 import io.wdsj.asw.bukkit.util.message.MessageUtils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;

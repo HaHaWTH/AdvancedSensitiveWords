@@ -1,6 +1,6 @@
 package io.wdsj.asw.bukkit.manage.punish;
 
-import io.wdsj.asw.bukkit.type.ModuleType;
+import io.wdsj.asw.common.type.ModuleType;
 import org.bukkit.entity.Player;
 
 import java.util.Map;

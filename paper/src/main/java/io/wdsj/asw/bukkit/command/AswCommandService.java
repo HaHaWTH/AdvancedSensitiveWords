@@ -10,7 +10,7 @@ import io.wdsj.asw.bukkit.manage.punish.ViolationCounter;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService;
-import io.wdsj.asw.bukkit.type.ModuleType;
+import io.wdsj.asw.common.type.ModuleType;
 import io.wdsj.asw.bukkit.util.TimingUtils;
 import io.wdsj.asw.bukkit.util.Utils;
 import io.wdsj.asw.bukkit.util.cache.BookCache;

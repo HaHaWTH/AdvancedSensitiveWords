@@ -9,7 +9,7 @@ import io.wdsj.asw.bukkit.permission.option.PlayerOptions
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
-import io.wdsj.asw.bukkit.type.ModuleType
+import io.wdsj.asw.common.type.ModuleType
 import io.wdsj.asw.bukkit.util.PlayerProcessingGuard
 import io.wdsj.asw.bukkit.util.SensitiveFilterEvents
 import io.wdsj.asw.bukkit.util.Utils
