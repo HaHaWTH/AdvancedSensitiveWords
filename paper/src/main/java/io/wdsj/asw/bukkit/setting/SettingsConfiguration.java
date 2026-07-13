@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Configuration
 public final class SettingsConfiguration {
@@ -28,6 +29,8 @@ public final class SettingsConfiguration {
     public Name name = new Name();
     @Comment({"Item filtering settings."})
     public Item item = new Item();
+    @Comment({"Velocity WebSocket cross-server VL synchronization settings."})
+    public VelocitySync velocitySync = new VelocitySync();
 
     @Configuration
     public static final class Plugin {
@@ -86,8 +89,6 @@ public final class SettingsConfiguration {
         public boolean enableAltsCheck = false;
         @Comment("Whether to enable PlaceholderAPI support.")
         public boolean enablePlaceholder = false;
-        @Comment("Whether to send violation notifications through Velocity.")
-        public boolean hookVelocity = false;
         @Comment("Plugin compatibility settings.")
         public Compatibility compatibility = new Compatibility();
         @Comment("Characters ignored by the sensitive-word matcher. URL/IP/email syntax characters are protected automatically when those checks are enabled.")
@@ -392,6 +393,28 @@ public final class SettingsConfiguration {
         public boolean sendMessage = true;
         @Comment("Punishment actions for item violations. Leave empty to disable automatic punishment.")
         public List<String> punishment = new ArrayList<>();
+    }
+
+    @Configuration
+    public static final class VelocitySync {
+        @Comment("Whether to send violation notifications and proxy commands through the legacy Velocity plugin-message channel.")
+        public boolean enableActionForwarding = false;
+        @Comment("Whether to connect to a Velocity ASW WebSocket server for cross-server VL synchronization.")
+        public boolean enableViolationSync = false;
+        @Comment("WebSocket client settings for the Paper backend.")
+        public WebSocket websocket = new WebSocket();
+    }
+
+    @Configuration
+    public static final class WebSocket {
+        @Comment("Velocity ASW WebSocket URI. The path must be /asw.")
+        public String uri = "ws://127.0.0.1:28645/asw";
+        @Comment("Unique backend server id allowed by the Velocity ASW configuration.")
+        public String serverId = "server-" + Long.toUnsignedString(ThreadLocalRandom.current().nextLong());
+        @Comment("Shared secret used for HMAC authentication. Change this on every production network.")
+        public String secret = "change-me";
+        @Comment("Seconds between reconnect attempts after the WebSocket connection is lost.")
+        public int reconnectIntervalSeconds = 5;
     }
 
 }

@@ -124,7 +124,7 @@ public final class PunishmentService {
 
     private void executeProxyCommand(Player player, String[] parts) {
         requireArgument(parts, 1);
-        if (configuration.get(PluginSettings.HOOK_VELOCITY)) {
+        if (configuration.get(PluginSettings.ENABLE_ACTION_FORWARDING)) {
             VelocitySender.executeVelocityCommand(player, replacePlayerPlaceholder(parts[1], player));
         }
     }

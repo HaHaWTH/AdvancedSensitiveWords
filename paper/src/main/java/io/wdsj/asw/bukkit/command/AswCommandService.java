@@ -163,10 +163,14 @@ public final class AswCommandService {
     }
 
     public void resetPlayerViolations(CommandSender sender, Player player, ModuleType moduleType) {
-        if (moduleType == null) {
-            ViolationCounter.INSTANCE.resetViolationCount(player);
-        } else {
-            ViolationCounter.INSTANCE.resetViolationCount(player, moduleType);
+        boolean handledByProxy = plugin.getVelocitySyncClient() != null
+                && plugin.getVelocitySyncClient().requestReset(player, moduleType);
+        if (!handledByProxy) {
+            if (moduleType == null) {
+                ViolationCounter.INSTANCE.resetViolationCount(player);
+            } else {
+                ViolationCounter.INSTANCE.resetViolationCount(player, moduleType);
+            }
         }
         String message = MessageUtils.retrieveMessage(PluginMessages.MESSAGE_ON_COMMAND_RESET)
                 .replace("%player%", player.getName())

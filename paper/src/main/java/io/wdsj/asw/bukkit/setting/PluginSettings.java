@@ -35,7 +35,7 @@ public final class PluginSettings {
     public static final SettingKey<Boolean> ENABLE_PLAYER_ITEM_CHECK = key(settings -> settings.plugin.enablePlayerItemCheck);
     public static final SettingKey<Boolean> ENABLE_ALTS_CHECK = key(settings -> settings.plugin.enableAltsCheck);
     public static final SettingKey<Boolean> ENABLE_PLACEHOLDER = key(settings -> settings.plugin.enablePlaceholder);
-    public static final SettingKey<Boolean> HOOK_VELOCITY = key(settings -> settings.plugin.hookVelocity);
+    public static final SettingKey<Boolean> ENABLE_ACTION_FORWARDING = key(settings -> settings.velocitySync.enableActionForwarding);
     public static final SettingKey<Boolean> ENABLE_AUTHME_COMPATIBILITY = key(settings -> settings.plugin.compatibility.authMe);
     public static final SettingKey<String> IGNORE_CHAR = key(settings -> settings.plugin.ignoreChar);
     public static final SettingKey<Boolean> PRE_PROCESS = key(settings -> settings.plugin.enablePreProcess);
@@ -133,6 +133,11 @@ public final class PluginSettings {
     public static final SettingKey<ProcessMethod> ITEM_METHOD = key(settings -> settings.item.method);
     public static final SettingKey<Boolean> ITEM_SEND_MESSAGE = key(settings -> settings.item.sendMessage);
     public static final SettingKey<List<String>> ITEM_PUNISHMENT = key(settings -> settings.item.punishment);
+    public static final SettingKey<Boolean> VELOCITY_SYNC_ENABLED = key(settings -> settings.velocitySync.enableViolationSync);
+    public static final SettingKey<String> VELOCITY_SYNC_URI = key(settings -> settings.velocitySync.websocket.uri);
+    public static final SettingKey<String> VELOCITY_SYNC_SERVER_ID = key(settings -> settings.velocitySync.websocket.serverId);
+    public static final SettingKey<String> VELOCITY_SYNC_SECRET = key(settings -> settings.velocitySync.websocket.secret);
+    public static final SettingKey<Integer> VELOCITY_SYNC_RECONNECT_SECONDS = key(settings -> settings.velocitySync.websocket.reconnectIntervalSeconds);
 
     private PluginSettings() {
     }

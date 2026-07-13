@@ -52,6 +52,7 @@ dependencies {
     implementation("com.github.Anon8281:UniversalScheduler:0.1.7")
     implementation("org.bstats:bstats-bukkit:3.2.1")
     implementation("de.exlll:configlib-yaml:4.8.1")
+    implementation("org.java-websocket:Java-WebSocket:${property("javaWebSocketVersion")}")
     runtimeOnly("org.snakeyaml:snakeyaml-engine:2.7")
 
     testImplementation("org.junit.jupiter:junit-jupiter:6.1.1")
@@ -138,6 +139,7 @@ tasks.named<ShadowJar>("shadowJar") {
     relocate("org.snakeyaml.engine.external", "io.wdsj.asw.bukkit.libs.snakeyaml.engine.external")
     relocate("org.incendo", "io.wdsj.asw.bukkit.libs.incendo")
     relocate("io.leangen.geantyref", "io.wdsj.asw.bukkit.libs.geantyref")
+    relocate("org.java_websocket", "io.wdsj.asw.bukkit.libs.websocket")
 
     exclude("org/slf4j/**")
     exclude("net/kyori/**")
@@ -151,6 +153,7 @@ tasks.named<ShadowJar>("shadowJar") {
         exclude(dependency("org.incendo:.*:.*"))
         exclude(dependency("de.exlll:.*:.*"))
         exclude(dependency("org.snakeyaml:snakeyaml-engine:.*"))
+        exclude(dependency("org.java-websocket:Java-WebSocket:.*"))
     }
 }
 

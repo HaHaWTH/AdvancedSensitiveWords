@@ -1,6 +1,7 @@
 package io.wdsj.asw.bukkit.util
 
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
+import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.manage.notice.Notifier
 import io.wdsj.asw.bukkit.manage.punish.PunishmentService
 import io.wdsj.asw.bukkit.manage.punish.ViolationCounter
@@ -37,7 +38,7 @@ class ViolationReporter(private val configuration: PaperConfigurationService) {
     }
 
     fun reportLlmObservation(player: Player, content: String, result: LlmChatModerationResult) {
-        if (configuration.get(PluginSettings.HOOK_VELOCITY)) {
+        if (configuration.get(PluginSettings.ENABLE_ACTION_FORWARDING)) {
             VelocitySender.sendAiObservation(player, content, result)
         }
         if (configuration.get(PluginSettings.NOTICE_OPERATOR)) {
@@ -67,8 +68,9 @@ class ViolationReporter(private val configuration: PaperConfigurationService) {
         }
 
         ViolationCounter.INSTANCE.incrementViolationCount(player, moduleType)
+        AdvancedSensitiveWords.getInstance().velocitySyncClient?.sendIncrement(player, moduleType, 1L)
 
-        if (configuration.get(PluginSettings.HOOK_VELOCITY)) {
+        if (configuration.get(PluginSettings.ENABLE_ACTION_FORWARDING)) {
             VelocitySender.sendNotifyMessage(player, moduleType, content, censoredWords)
         }
 
@@ -100,8 +102,9 @@ class ViolationReporter(private val configuration: PaperConfigurationService) {
         }
 
         ViolationCounter.INSTANCE.incrementViolationCount(player, moduleType)
+        AdvancedSensitiveWords.getInstance().velocitySyncClient?.sendIncrement(player, moduleType, 1L)
 
-        if (notifyOperators && configuration.get(PluginSettings.HOOK_VELOCITY)) {
+        if (notifyOperators && configuration.get(PluginSettings.ENABLE_ACTION_FORWARDING)) {
             VelocitySender.sendNotifyMessage(player, moduleType, content, censoredWords)
         }
 

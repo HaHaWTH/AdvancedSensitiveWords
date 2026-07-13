@@ -26,6 +26,7 @@ import io.wdsj.asw.bukkit.method.*;
 import io.wdsj.asw.bukkit.permission.cache.CachingPermTool;
 import io.wdsj.asw.bukkit.proxy.velocity.VelocityChannel;
 import io.wdsj.asw.bukkit.proxy.velocity.VelocityReceiver;
+import io.wdsj.asw.bukkit.proxy.velocity.sync.VelocitySyncClient;
 import io.wdsj.asw.bukkit.service.ListenerService;
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
@@ -69,6 +70,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     private PaperConfigurationService configurationService;
     private volatile Updater.UpdateResult updateResult = Updater.UpdateResult.noUpdate();
     private AswCommandRegistrar commandRegistrar;
+    private VelocitySyncClient velocitySyncClient;
     public static TaskScheduler getScheduler() {
         return scheduler;
     }
@@ -90,6 +92,10 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
             throw new IllegalStateException("Listeners have not been initialized yet");
         }
         return listenerService.getLlmChatDetectionService();
+    }
+
+    public VelocitySyncClient getVelocitySyncClient() {
+        return velocitySyncClient;
     }
 
     public static <T> T setting(SettingKey<T> key) {
@@ -125,6 +131,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         commandRegistrar.register();
         setupMetrics();
         registerVelocityChannel();
+        startVelocitySyncClient();
         registerPlaceholderExpansion();
         scheduleViolationResetTask();
         long endTime = System.currentTimeMillis();
@@ -173,6 +180,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        stopVelocitySyncClient();
         listenerService.unregisterListeners();
         getServer().getMessenger().unregisterOutgoingPluginChannel(this);
         getServer().getMessenger().unregisterIncomingPluginChannel(this);
@@ -201,6 +209,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         if (listenerService != null) {
             listenerService.reloadConfiguration();
         }
+        restartVelocitySyncClient();
     }
 
     private void setupMetrics() {
@@ -220,6 +229,26 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         getServer().getMessenger().registerIncomingPluginChannel(this, VelocityChannel.CHANNEL, new VelocityReceiver());
     }
 
+    private void startVelocitySyncClient() {
+        stopVelocitySyncClient();
+        if (!configurationService.get(PluginSettings.VELOCITY_SYNC_ENABLED)) {
+            return;
+        }
+        velocitySyncClient = new VelocitySyncClient(this);
+        velocitySyncClient.start();
+    }
+
+    private void stopVelocitySyncClient() {
+        if (velocitySyncClient != null) {
+            velocitySyncClient.close();
+            velocitySyncClient = null;
+        }
+    }
+
+    private void restartVelocitySyncClient() {
+        startVelocitySyncClient();
+    }
+
     private void registerPlaceholderExpansion() {
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") &&
                 configurationService.get(PluginSettings.ENABLE_PLACEHOLDER)) {
@@ -230,7 +259,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
 
     private void scheduleViolationResetTask() {
         long resetIntervalTicks = configurationService.get(PluginSettings.VIOLATION_RESET_TIME) * 20L * 60L;
-        violationResetTask = new ViolationResetTask().runTaskTimerAsynchronously(this, resetIntervalTicks, resetIntervalTicks);
+        violationResetTask = new ViolationResetTask(configurationService).runTaskTimerAsynchronously(this, resetIntervalTicks, resetIntervalTicks);
     }
 
     private void checkForUpdatesAsync() {

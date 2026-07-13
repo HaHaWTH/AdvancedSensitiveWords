@@ -15,9 +15,11 @@ dependencies {
     implementation(project(":common"))
     implementation("org.bstats:bstats-velocity:3.1.0")
     implementation("com.github.thatsmusic99:ConfigurationMaster-API:v2.0.0-rc.3")
+    implementation("org.java-websocket:Java-WebSocket:${property("javaWebSocketVersion")}")
 
     compileOnly("com.velocitypowered:velocity-api:3.5.0-SNAPSHOT")
     compileOnly("com.google.guava:guava:33.4.0-jre")
+    compileOnly("com.google.code.gson:gson:2.12.1")
     annotationProcessor("com.velocitypowered:velocity-api:3.5.0-SNAPSHOT")
 }
 
@@ -37,8 +39,11 @@ tasks.named<ShadowJar>("shadowJar") {
 
     relocate("org.bstats", "io.wdsj.asw.velocity.libs.bstats")
     relocate("io.github.thatsmusic99", "io.wdsj.asw.velocity.libs.thatsmusic99")
+    relocate("org.java_websocket", "io.wdsj.asw.velocity.libs.websocket")
 
-    minimize()
+    minimize {
+        exclude(dependency("org.java-websocket:Java-WebSocket:.*"))
+    }
 }
 
 tasks.build {

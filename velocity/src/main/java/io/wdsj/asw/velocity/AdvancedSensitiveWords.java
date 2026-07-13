@@ -3,6 +3,7 @@ package io.wdsj.asw.velocity;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
+import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
@@ -13,6 +14,7 @@ import io.wdsj.asw.common.environment.PluginBuildInfo;
 import io.wdsj.asw.common.update.Updater;
 import io.wdsj.asw.velocity.config.Config;
 import io.wdsj.asw.velocity.subscriber.PluginMessageForwarder;
+import io.wdsj.asw.velocity.sync.VelocitySyncWebSocketServer;
 import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 
@@ -34,6 +36,7 @@ public class AdvancedSensitiveWords {
     private final ProxyServer server;
     private final Metrics.Factory metricsFactory;
     private final File dataFolder;
+    private VelocitySyncWebSocketServer syncWebSocketServer;
     public static final MinecraftChannelIdentifier CHANNEL = MinecraftChannelIdentifier.create("asw", "main");
     public static final ChannelIdentifier LEGACY_CHANNEL = new LegacyChannelIdentifier("asw:main");
     private static Config config;
@@ -52,6 +55,7 @@ public class AdvancedSensitiveWords {
         server.getChannelRegistrar().register(CHANNEL, LEGACY_CHANNEL);
         metricsFactory.make(this, 21637);
         server.getEventManager().register(this, new PluginMessageForwarder(logger, server));
+        startVelocitySyncServer();
         if (config.check_for_update) {
             server.getScheduler().buildTask(this, () -> {
                 logger.info("Checking for update...");
@@ -94,6 +98,14 @@ public class AdvancedSensitiveWords {
         }
     }
 
+    @Subscribe
+    public void onProxyShutdown(ProxyShutdownEvent event) {
+        if (syncWebSocketServer != null) {
+            syncWebSocketServer.close();
+            syncWebSocketServer = null;
+        }
+    }
+
     private void reloadConfiguration() {
         try {
             createDirectory(dataFolder);
@@ -114,6 +126,14 @@ public class AdvancedSensitiveWords {
 
     public Logger getLogger() {
         return this.logger;
+    }
+
+    private void startVelocitySyncServer() {
+        if (!config.velocity_sync_enabled) {
+            return;
+        }
+        syncWebSocketServer = new VelocitySyncWebSocketServer(this, logger, config);
+        syncWebSocketServer.start();
     }
 
     public static Config config() {

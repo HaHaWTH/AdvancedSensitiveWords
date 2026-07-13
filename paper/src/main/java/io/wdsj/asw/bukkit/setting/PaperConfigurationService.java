@@ -166,6 +166,7 @@ public final class PaperConfigurationService {
         }
         validateCategoryPolicy(ai.categoryPolicy);
         validateAntiSpam(settings.chat.antiSpam);
+        validateVelocitySync(settings.velocitySync);
         CommandArgumentRuleSet.compile(settings.chat.commandWhiteList);
 
         if (!ai.enabled) {
@@ -254,6 +255,33 @@ public final class PaperConfigurationService {
         }
         if (antiSpam.rateLimit.capacity < 1 || antiSpam.rateLimit.refillIntervalSeconds < 1) {
             throw new IllegalArgumentException("chat.anti-spam.rate-limit settings must be at least 1");
+        }
+    }
+
+    private static void validateVelocitySync(SettingsConfiguration.VelocitySync velocitySync) {
+        if (velocitySync == null || velocitySync.websocket == null) {
+            throw new IllegalArgumentException("velocity-sync settings cannot be null");
+        }
+        if (!velocitySync.enableViolationSync) {
+            return;
+        }
+        requireText(velocitySync.websocket.serverId, "velocity-sync.websocket.server-id");
+        requireText(velocitySync.websocket.secret, "velocity-sync.websocket.secret");
+        if (velocitySync.websocket.reconnectIntervalSeconds < 1) {
+            throw new IllegalArgumentException("velocity-sync.websocket.reconnect-interval-seconds must be at least 1");
+        }
+        URI uri;
+        try {
+            uri = URI.create(requireText(velocitySync.websocket.uri, "velocity-sync.websocket.uri"));
+        } catch (IllegalArgumentException exception) {
+            throw new IllegalArgumentException("velocity-sync.websocket.uri must be a valid ws(s) URI", exception);
+        }
+        if ((!"ws".equalsIgnoreCase(uri.getScheme()) && !"wss".equalsIgnoreCase(uri.getScheme()))
+                || uri.getHost() == null) {
+            throw new IllegalArgumentException("velocity-sync.websocket.uri must use ws or wss");
+        }
+        if (!"/asw".equals(uri.getPath())) {
+            throw new IllegalArgumentException("velocity-sync.websocket.uri path must be /asw");
         }
     }
 

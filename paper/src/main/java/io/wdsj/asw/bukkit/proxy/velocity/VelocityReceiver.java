@@ -20,7 +20,7 @@ public class VelocityReceiver implements PluginMessageListener {
 
     @Override
     public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, byte @NotNull [] message) {
-        if (!setting(PluginSettings.HOOK_VELOCITY)) return;
+        if (!setting(PluginSettings.ENABLE_ACTION_FORWARDING)) return;
         if (channel.equals(VelocityChannel.CHANNEL)) {
             ByteArrayDataInput input = ByteStreams.newDataInput(message);
             if (!input.readUTF().equals(AdvancedSensitiveWords.PLUGIN_VERSION) && !warned) {
