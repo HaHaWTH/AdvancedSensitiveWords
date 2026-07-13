@@ -49,6 +49,7 @@ public class Notifier {
     }
 
     public static void normalNotice(String message) {
+        if (message.isBlank()) return;
         Collection<? extends Player> players = Bukkit.getOnlinePlayers();
         for (Player player : players) {
             if (CachingPermTool.hasPermission(PermissionsEnum.NOTICE, player)) {
