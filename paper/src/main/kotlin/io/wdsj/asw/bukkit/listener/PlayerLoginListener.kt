@@ -1,7 +1,7 @@
 package io.wdsj.asw.bukkit.listener
 
 import io.papermc.paper.event.player.PlayerServerFullCheckEvent
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords.sensitiveWordBs
+import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.manage.notice.Notifier
 import io.wdsj.asw.bukkit.setting.PluginMessages
@@ -26,7 +26,7 @@ class PlayerLoginListener(private val configuration: PaperConfigurationService) 
 
         val playerName = event.playerProfile.name ?: return
         val startTime = System.currentTimeMillis()
-        val censoredWords = sensitiveWordBs.findAll(playerName)
+        val censoredWords = AdvancedSensitiveWords.findAllSensitive(playerName)
         SensitiveFilterEvents.post(
             event.isAsynchronous,
             ModuleType.NAME,

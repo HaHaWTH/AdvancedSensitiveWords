@@ -1,7 +1,10 @@
 package io.wdsj.asw.bukkit.listener
 
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords.sensitiveWordBs
+import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.permission.PermissionsEnum
+import io.wdsj.asw.bukkit.permission.option.PlayerOptionResolver
+import io.wdsj.asw.bukkit.permission.option.PlayerOptionView
+import io.wdsj.asw.bukkit.permission.option.PlayerOptions
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
@@ -25,25 +28,27 @@ class BookListener(private val configuration: PaperConfigurationService) : Liste
 
     @EventHandler(priority = EventPriority.LOWEST)
     fun onBook(event: PlayerEditBookEvent) {
-        if (!configuration.get(PluginSettings.ENABLE_BOOK_EDIT_CHECK)) return
+        val globalEnabled = configuration.get(PluginSettings.ENABLE_BOOK_EDIT_CHECK)
+        if (!globalEnabled) return
 
         val player = event.player
         if (processingGuard.shouldSkipBasic(player, PermissionsEnum.BYPASS_BOOK)) return
+        val options = PlayerOptionResolver.resolve(configuration, player)
 
         val startTime = System.currentTimeMillis()
         val bookMeta = event.newBookMeta
-        var violation = censorPages(event, bookMeta)
+        var violation = censorPages(event, bookMeta, options)
 
         if (violation == null) {
-            violation = censorCrossPage(event)
+            violation = censorCrossPage(event, options)
         }
-        censorAuthor(event, bookMeta)?.let { violation = it }
-        censorTitle(event, bookMeta)?.let { violation = it }
+        censorAuthor(event, bookMeta, options)?.let { violation = it }
+        censorTitle(event, bookMeta, options)?.let { violation = it }
         val finalViolation = violation ?: return
 
         event.newBookMeta = bookMeta
 
-        if (configuration.get(PluginSettings.BOOK_SEND_MESSAGE)) {
+        if (options.bool(PlayerOptions.BOOK_SEND_MESSAGE, PluginSettings.BOOK_SEND_MESSAGE)) {
             MessageUtils.sendMessage(player, PluginMessages.MESSAGE_ON_BOOK)
         }
 
@@ -59,35 +64,35 @@ class BookListener(private val configuration: PaperConfigurationService) : Liste
         )
     }
 
-    private fun censorPages(event: PlayerEditBookEvent, bookMeta: BookMeta): BookViolation? {
+    private fun censorPages(event: PlayerEditBookEvent, bookMeta: BookMeta, options: PlayerOptionView): BookViolation? {
         if (!bookMeta.hasPages()) return null
 
         var violation: BookViolation? = null
         for (pageIndex in 1..bookMeta.pageCount) {
             val page = bookMeta.page(pageIndex)
-            val originalPage = preprocessPage(page)
-            val censoredWords = findPageCensoredWords(originalPage)
+            val originalPage = preprocessPage(page, options)
+            val censoredWords = findPageCensoredWords(originalPage, options)
             SensitiveFilterEvents.post(event.isAsynchronous, ModuleType.BOOK, event.player, originalPage, censoredWords)
             if (censoredWords.isEmpty()) continue
 
             violation = BookViolation(originalPage, censoredWords)
-            if (isCancelMode()) {
+            if (isCancelMode(options)) {
                 event.isCancelled = true
                 break
             }
 
-            bookMeta.page(pageIndex, replacePage(page, originalPage, censoredWords))
+            bookMeta.page(pageIndex, replacePage(page, originalPage, censoredWords, options))
         }
         return violation
     }
 
-    private fun censorCrossPage(event: PlayerEditBookEvent): BookViolation? {
-        if (!configuration.get(PluginSettings.BOOK_CROSS_PAGE)) return null
+    private fun censorCrossPage(event: PlayerEditBookEvent, options: PlayerOptionView): BookViolation? {
+        if (!options.bool(PlayerOptions.BOOK_CROSS_PAGE_CHECK, PluginSettings.BOOK_CROSS_PAGE)) return null
 
         val originalPageCrossed = (1..event.newBookMeta.pageCount)
             .joinToString("") { MessageUtils.plainText(event.newBookMeta.page(it)) }
-            .let { preprocessPageText(it) }
-        val censoredWords = sensitiveWordBs.findAll(originalPageCrossed)
+            .let { preprocessPageText(it, options) }
+        val censoredWords = AdvancedSensitiveWords.findAllSensitive(originalPageCrossed)
         SensitiveFilterEvents.post(event.isAsynchronous, ModuleType.BOOK, event.player, originalPageCrossed, censoredWords)
         if (censoredWords.isEmpty()) return null
 
@@ -95,65 +100,65 @@ class BookListener(private val configuration: PaperConfigurationService) : Liste
         return BookViolation(originalPageCrossed, censoredWords)
     }
 
-    private fun censorAuthor(event: PlayerEditBookEvent, bookMeta: BookMeta): BookViolation? {
+    private fun censorAuthor(event: PlayerEditBookEvent, bookMeta: BookMeta, options: PlayerOptionView): BookViolation? {
         val author = event.newBookMeta.author() ?: return null
         val originalAuthor = preprocessText(MessageUtils.plainText(author))
-        val censoredWords = sensitiveWordBs.findAll(originalAuthor)
+        val censoredWords = AdvancedSensitiveWords.findAllSensitive(originalAuthor)
         SensitiveFilterEvents.post(event.isAsynchronous, ModuleType.BOOK, event.player, originalAuthor, censoredWords)
         if (censoredWords.isEmpty()) return null
 
-        if (isCancelMode()) {
+        if (isCancelMode(options)) {
             event.isCancelled = true
         } else {
-            bookMeta.author(MessageUtils.replaceLiteral(author, originalAuthor, sensitiveWordBs.replace(originalAuthor)))
+            bookMeta.author(MessageUtils.replaceLiteral(author, originalAuthor, AdvancedSensitiveWords.replaceSensitive(originalAuthor)))
         }
         return BookViolation(originalAuthor, censoredWords)
     }
 
-    private fun censorTitle(event: PlayerEditBookEvent, bookMeta: BookMeta): BookViolation? {
+    private fun censorTitle(event: PlayerEditBookEvent, bookMeta: BookMeta, options: PlayerOptionView): BookViolation? {
         val title = event.newBookMeta.title() ?: return null
         val originalTitle = preprocessText(MessageUtils.plainText(title))
-        val censoredWords = sensitiveWordBs.findAll(originalTitle)
+        val censoredWords = AdvancedSensitiveWords.findAllSensitive(originalTitle)
         SensitiveFilterEvents.post(event.isAsynchronous, ModuleType.BOOK, event.player, originalTitle, censoredWords)
         if (censoredWords.isEmpty()) return null
 
-        if (isCancelMode()) {
+        if (isCancelMode(options)) {
             event.isCancelled = true
         } else {
-            bookMeta.title(MessageUtils.replaceLiteral(title, originalTitle, sensitiveWordBs.replace(originalTitle)))
+            bookMeta.title(MessageUtils.replaceLiteral(title, originalTitle, AdvancedSensitiveWords.replaceSensitive(originalTitle)))
         }
         return BookViolation(originalTitle, censoredWords)
     }
 
-    private fun findPageCensoredWords(page: String): List<String> {
-        if (!configuration.get(PluginSettings.BOOK_CACHE)) {
-            return sensitiveWordBs.findAll(page)
+    private fun findPageCensoredWords(page: String, options: PlayerOptionView): List<String> {
+        if (!options.bool(PlayerOptions.BOOK_CACHE_ENABLE_CACHE, PluginSettings.BOOK_CACHE)) {
+            return AdvancedSensitiveWords.findAllSensitive(page)
         }
         if (BookCache.isBookCached(page)) {
             return BookCache.getCachedBookSensitiveWordList(page)
         }
-        return sensitiveWordBs.findAll(page)
+        return AdvancedSensitiveWords.findAllSensitive(page)
     }
 
-    private fun replacePage(page: Component, pagePlainText: String, censoredWords: List<String>): Component {
-        if (!configuration.get(PluginSettings.BOOK_CACHE)) {
-            return MessageUtils.replaceLiteral(page, pagePlainText, sensitiveWordBs.replace(pagePlainText))
+    private fun replacePage(page: Component, pagePlainText: String, censoredWords: List<String>, options: PlayerOptionView): Component {
+        if (!options.bool(PlayerOptions.BOOK_CACHE_ENABLE_CACHE, PluginSettings.BOOK_CACHE)) {
+            return MessageUtils.replaceLiteral(page, pagePlainText, AdvancedSensitiveWords.replaceSensitive(pagePlainText))
         }
         if (BookCache.isBookCached(pagePlainText)) {
             return MessageUtils.replaceLiteral(page, pagePlainText, BookCache.getCachedProcessedBookContent(pagePlainText))
         }
 
-        val processedPage = sensitiveWordBs.replace(pagePlainText)
+        val processedPage = AdvancedSensitiveWords.replaceSensitive(pagePlainText)
         BookCache.addToBookCache(pagePlainText, processedPage, censoredWords)
         return MessageUtils.replaceLiteral(page, pagePlainText, processedPage)
     }
 
-    private fun preprocessPage(page: Component): String {
-        return preprocessPageText(MessageUtils.plainText(page))
+    private fun preprocessPage(page: Component, options: PlayerOptionView): String {
+        return preprocessPageText(MessageUtils.plainText(page), options)
     }
 
-    private fun preprocessPageText(text: String): String {
-        val lineNormalized = if (configuration.get(PluginSettings.BOOK_IGNORE_NEWLINE)) {
+    private fun preprocessPageText(text: String, options: PlayerOptionView): String {
+        val lineNormalized = if (options.bool(PlayerOptions.BOOK_IGNORE_NEW_LINE, PluginSettings.BOOK_IGNORE_NEWLINE)) {
             text.replace("\n", "").replace("§0", "")
         } else {
             text
@@ -166,8 +171,8 @@ class BookListener(private val configuration: PaperConfigurationService) : Liste
         return text.replace(Utils.preProcessRegex.toRegex(), "")
     }
 
-    private fun isCancelMode(): Boolean {
-        return configuration.get(PluginSettings.BOOK_METHOD).isCancel
+    private fun isCancelMode(options: PlayerOptionView): Boolean {
+        return options.method(PlayerOptions.BOOK_METHOD, PluginSettings.BOOK_METHOD).isCancel
     }
 
     private data class BookViolation(

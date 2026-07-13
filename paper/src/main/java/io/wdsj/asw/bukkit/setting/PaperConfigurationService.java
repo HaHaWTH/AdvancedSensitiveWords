@@ -249,6 +249,12 @@ public final class PaperConfigurationService {
                 || antiSpam.similarMaxSimilarity > 1.1D) {
             throw new IllegalArgumentException("chat.anti-spam.similar-max-similarity must be between 0.0 and 1.1");
         }
+        if (antiSpam.rateLimit == null) {
+            throw new IllegalArgumentException("chat.anti-spam.rate-limit cannot be null");
+        }
+        if (antiSpam.rateLimit.capacity < 1 || antiSpam.rateLimit.refillIntervalSeconds < 1) {
+            throw new IllegalArgumentException("chat.anti-spam.rate-limit settings must be at least 1");
+        }
     }
 
     private static void validateHttpUrl(String value, String settingName) {

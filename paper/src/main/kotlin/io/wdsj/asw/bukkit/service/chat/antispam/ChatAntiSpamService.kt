@@ -1,5 +1,7 @@
 package io.wdsj.asw.bukkit.service.chat.antispam
 
+import io.wdsj.asw.bukkit.permission.option.PlayerOptionView
+import io.wdsj.asw.bukkit.permission.option.PlayerOptions
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.util.list.EvictingRingList
@@ -17,47 +19,98 @@ class ChatAntiSpamService(private val configuration: PaperConfigurationService) 
         .takeIf(String::isNotBlank)
         ?.let(Pattern::compile)
 
-    fun check(playerId: UUID, message: String, nowMillis: Long = System.currentTimeMillis()): Result {
-        if (!configuration.get(PluginSettings.CHAT_ANTI_SPAM_ENABLED)) return Result.CLEAN
+    fun check(
+        playerId: UUID,
+        message: String,
+        options: PlayerOptionView,
+        nowMillis: Long = System.currentTimeMillis(),
+    ): Result {
+        if (!options.bool(PlayerOptions.CHAT_ANTI_SPAM_ENABLED, PluginSettings.CHAT_ANTI_SPAM_ENABLED)) return Result.CLEAN
+        if (!consumeToken(playerId, options, nowMillis)) return Result.SPAM
 
         val preprocessed = preprocess(message)
         val visibleCodePoints = MessageEntropy.visibleCodePointCount(preprocessed)
         val normalized = normalize(preprocessed)
-        if (visibleCodePoints >= configuration.get(PluginSettings.CHAT_ANTI_SPAM_MINIMUM_ENTROPY_CODE_POINTS)) {
+        if (visibleCodePoints >= options.integer(
+                PlayerOptions.CHAT_ANTI_SPAM_MINIMUM_ENTROPY_CODE_POINTS,
+                PluginSettings.CHAT_ANTI_SPAM_MINIMUM_ENTROPY_CODE_POINTS,
+            ).coerceAtLeast(1)
+        ) {
             val entropy = MessageEntropy.shannonEntropyBits(normalized)
             val minimumEntropy = configuration.get(PluginSettings.CHAT_ANTI_SPAM_MINIMUM_ENTROPY_BITS)
             if (minimumEntropy >= 0.0 && entropy < minimumEntropy) {
-                remember(playerId, normalized, nowMillis)
+                remember(playerId, normalized, options, nowMillis)
                 return Result.SPAM
             }
 
             val minimumAverageEntropy = configuration.get(PluginSettings.CHAT_ANTI_SPAM_MINIMUM_AVERAGE_ENTROPY)
             if (minimumAverageEntropy >= 0.0 && averageEntropy(visibleCodePoints, entropy) < minimumAverageEntropy) {
-                remember(playerId, normalized, nowMillis)
+                remember(playerId, normalized, options, nowMillis)
                 return Result.SPAM
             }
         }
 
-        val result = if (visibleCodePoints >= configuration.get(PluginSettings.CHAT_ANTI_SPAM_MINIMUM_SIMILARITY_CODE_POINTS)) {
-            checkSimilarity(playerId, normalized, nowMillis)
+        val result = if (visibleCodePoints >= options.integer(
+                PlayerOptions.CHAT_ANTI_SPAM_MINIMUM_SIMILARITY_CODE_POINTS,
+                PluginSettings.CHAT_ANTI_SPAM_MINIMUM_SIMILARITY_CODE_POINTS,
+            ).coerceAtLeast(1)
+        ) {
+            checkSimilarity(playerId, normalized, options, nowMillis)
         } else {
             Result.CLEAN
         }
-        remember(playerId, normalized, nowMillis)
+        remember(playerId, normalized, options, nowMillis)
         return result
     }
 
-    private fun checkSimilarity(playerId: UUID, normalized: String, nowMillis: Long): Result {
+    private fun consumeToken(playerId: UUID, options: PlayerOptionView, nowMillis: Long): Boolean {
+        if (!options.bool(
+                PlayerOptions.CHAT_ANTI_SPAM_RATE_LIMIT_ENABLED,
+                PluginSettings.CHAT_ANTI_SPAM_RATE_LIMIT_ENABLED,
+            )
+        ) return true
+
+        val capacity = options.integer(
+            PlayerOptions.CHAT_ANTI_SPAM_RATE_LIMIT_CAPACITY,
+            PluginSettings.CHAT_ANTI_SPAM_RATE_LIMIT_CAPACITY,
+        ).coerceAtLeast(1)
+        val refillIntervalMillis = options.integer(
+            PlayerOptions.CHAT_ANTI_SPAM_RATE_LIMIT_REFILL_INTERVAL_SECONDS,
+            PluginSettings.CHAT_ANTI_SPAM_RATE_LIMIT_REFILL_INTERVAL_SECONDS,
+        ).coerceAtLeast(1) * 1000L
+        val bucket = tokenBuckets.compute(playerId) { _, existing ->
+            existing?.takeIf {
+                it.capacity == capacity && it.refillIntervalMillis == refillIntervalMillis
+            } ?: TokenBucket(capacity, refillIntervalMillis, nowMillis)
+        } ?: return true
+        return bucket.tryConsume(nowMillis)
+    }
+
+    private fun checkSimilarity(playerId: UUID, normalized: String, options: PlayerOptionView, nowMillis: Long): Result {
         val history = histories[playerId] ?: return Result.CLEAN
-        val maxAgeMillis = configuration.get(PluginSettings.CHAT_ANTI_SPAM_HISTORY_MAX_AGE_SECONDS) * 1000L
+        val maxAgeMillis = options.integer(
+            PlayerOptions.CHAT_ANTI_SPAM_HISTORY_MAX_AGE_SECONDS,
+            PluginSettings.CHAT_ANTI_SPAM_HISTORY_MAX_AGE_SECONDS,
+        ).coerceAtLeast(1) * 1000L
         val compared = synchronized(history.list) {
             history.list.removeIf { nowMillis - it.createdAtMillis > maxAgeMillis }
-            history.list.takeLast(configuration.get(PluginSettings.CHAT_ANTI_SPAM_SIMILAR_CHECK_AMOUNT)).toList()
+            history.list.takeLast(
+                options.integer(
+                    PlayerOptions.CHAT_ANTI_SPAM_SIMILAR_CHECK_AMOUNT,
+                    PluginSettings.CHAT_ANTI_SPAM_SIMILAR_CHECK_AMOUNT,
+                ).coerceAtLeast(1),
+            ).toList()
         }
         if (compared.isEmpty()) return Result.CLEAN
 
-        val maxSimilarity = configuration.get(PluginSettings.CHAT_ANTI_SPAM_SIMILAR_MAX_SIMILARITY)
-        val minDistance = configuration.get(PluginSettings.CHAT_ANTI_SPAM_SIMILAR_MIN_DISTANCE)
+        val maxSimilarity = options.decimal(
+            PlayerOptions.CHAT_ANTI_SPAM_SIMILAR_MAX_SIMILARITY,
+            PluginSettings.CHAT_ANTI_SPAM_SIMILAR_MAX_SIMILARITY,
+        )
+        val minDistance = options.integer(
+            PlayerOptions.CHAT_ANTI_SPAM_SIMILAR_MIN_DISTANCE,
+            PluginSettings.CHAT_ANTI_SPAM_SIMILAR_MIN_DISTANCE,
+        )
         for (entry in compared) {
             val distance = editDistance(normalized, entry.message)
             val similarity = similarity(normalized, entry.message, distance)
@@ -71,8 +124,11 @@ class ChatAntiSpamService(private val configuration: PaperConfigurationService) 
         return Result.CLEAN
     }
 
-    private fun remember(playerId: UUID, normalized: String, nowMillis: Long) {
-        val maxSize = configuration.get(PluginSettings.CHAT_ANTI_SPAM_HISTORY_SIZE)
+    private fun remember(playerId: UUID, normalized: String, options: PlayerOptionView, nowMillis: Long) {
+        val maxSize = options.integer(
+            PlayerOptions.CHAT_ANTI_SPAM_HISTORY_SIZE,
+            PluginSettings.CHAT_ANTI_SPAM_HISTORY_SIZE,
+        ).coerceAtLeast(1)
         val history = histories.compute(playerId) { _, existing ->
             existing?.takeIf { it.capacity == maxSize } ?: History(maxSize)
         } ?: return
@@ -92,6 +148,31 @@ class ChatAntiSpamService(private val configuration: PaperConfigurationService) 
         val list: EvictingRingList<Entry> = EvictingRingList<Entry>(capacity),
     )
 
+    private class TokenBucket(
+        val capacity: Int,
+        val refillIntervalMillis: Long,
+        nowMillis: Long,
+    ) {
+        private var tokens = capacity.toDouble()
+        private var lastRefillMillis = nowMillis
+
+        @Synchronized
+        fun tryConsume(nowMillis: Long): Boolean {
+            refill(nowMillis)
+            if (tokens < 1.0) return false
+            tokens -= 1.0
+            return true
+        }
+
+        private fun refill(nowMillis: Long) {
+            val elapsed = nowMillis - lastRefillMillis
+            if (elapsed <= 0L) return
+
+            tokens = min(capacity.toDouble(), tokens + elapsed.toDouble() * capacity / refillIntervalMillis)
+            lastRefillMillis = nowMillis
+        }
+    }
+
     enum class Result {
         CLEAN,
         SPAM,
@@ -99,15 +180,18 @@ class ChatAntiSpamService(private val configuration: PaperConfigurationService) 
 
     companion object {
         private val histories = ConcurrentHashMap<UUID, History>()
+        private val tokenBuckets = ConcurrentHashMap<UUID, TokenBucket>()
 
         @JvmStatic
         fun clear(playerId: UUID) {
             histories.remove(playerId)
+            tokenBuckets.remove(playerId)
         }
 
         @JvmStatic
         fun clearAll() {
             histories.clear()
+            tokenBuckets.clear()
         }
 
         private fun normalize(message: String): String {

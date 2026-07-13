@@ -36,7 +36,7 @@ dependencies {
     implementation("org.incendo:cloud-paper:${property("cloudVersion")}")
     implementation("org.incendo:cloud-minecraft-extras:${property("cloudVersion")}")
 
-    compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:${property("paperVersion")}")
     compileOnly("me.clip:placeholderapi:2.12.2")
     compileOnly("org.geysermc.floodgate:api:2.2.5-SNAPSHOT")
     compileOnly("fr.xephi:authme:5.7.0-SNAPSHOT")
@@ -55,7 +55,7 @@ dependencies {
     runtimeOnly("org.snakeyaml:snakeyaml-engine:2.7")
 
     testImplementation("org.junit.jupiter:junit-jupiter:6.1.1")
-    testImplementation("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
+    testImplementation("io.papermc.paper:paper-api:${property("paperVersion")}")
     testImplementation("dev.langchain4j:langchain4j-open-ai:${property("langchain4jVersion")}")
     testImplementation("dev.langchain4j:langchain4j-anthropic:${property("langchain4jVersion")}")
     testImplementation("dev.langchain4j:langchain4j-http-client-jdk:${property("langchain4jVersion")}")
@@ -63,7 +63,7 @@ dependencies {
 
     add(jmh.implementationConfigurationName, "org.openjdk.jmh:jmh-core:${property("jmhVersion")}")
     add(jmh.annotationProcessorConfigurationName, "org.openjdk.jmh:jmh-generator-annprocess:${property("jmhVersion")}")
-    add(jmh.runtimeOnlyConfigurationName, "com.google.guava:guava:33.4.0-jre")
+    add(jmh.runtimeOnlyConfigurationName, "com.google.guava:guava:${property("guavaVersion")}")
 }
 
 configurations.named(jmh.implementationConfigurationName) {

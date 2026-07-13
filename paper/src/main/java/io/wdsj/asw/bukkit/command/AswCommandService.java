@@ -48,6 +48,9 @@ public final class AswCommandService {
 
         plugin.reloadPluginConfiguration();
         AdvancedSensitiveWords.sensitiveWordBs.destroy();
+        if (AdvancedSensitiveWords.networkSensitiveWordBs != null) {
+            AdvancedSensitiveWords.networkSensitiveWordBs.destroy();
+        }
         plugin.doInitTasks();
         if (configuration.get(PluginSettings.BOOK_CACHE_CLEAR_ON_RELOAD)
                 && configuration.get(PluginSettings.BOOK_CACHE)) {
@@ -103,7 +106,7 @@ public final class AswCommandService {
             return;
         }
 
-        List<String> censoredWords = AdvancedSensitiveWords.sensitiveWordBs.findAll(text);
+        List<String> censoredWords = AdvancedSensitiveWords.findAllSensitive(text);
         if (censoredWords.isEmpty()) {
             MessageUtils.sendMessage(sender, PluginMessages.MESSAGE_ON_COMMAND_TEST_PASS);
             return;
@@ -111,7 +114,7 @@ public final class AswCommandService {
 
         String message = MessageUtils.retrieveMessage(PluginMessages.MESSAGE_ON_COMMAND_TEST)
                 .replace("%original_msg%", text)
-                .replace("%processed_msg%", AdvancedSensitiveWords.sensitiveWordBs.replace(text))
+                .replace("%processed_msg%", AdvancedSensitiveWords.replaceSensitive(text))
                 .replace("%censored_list%", censoredWords.toString());
         MessageUtils.sendMessage(sender, message);
     }
@@ -229,4 +232,5 @@ public final class AswCommandService {
                 .collect(Collectors.joining(", "));
         return result.isEmpty() ? "none" : result;
     }
+
 }

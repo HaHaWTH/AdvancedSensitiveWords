@@ -1,5 +1,6 @@
 package io.wdsj.asw.bukkit.ai;
 
+import io.wdsj.asw.bukkit.api.moderation.LlmModerationCategory;
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -37,9 +38,9 @@ class LlmChatDetectionServiceStatusTest {
             assertEquals("deepseek-v4-flash", status.modelName());
             assertEquals(LlmApiMode.CHAT_COMPLETIONS, status.apiMode());
             LlmCategoryPolicy harassment = status.categoryPolicy().get(
-                    io.wdsj.asw.bukkit.api.moderation.LlmModerationCategory.HARASSMENT);
+                    LlmModerationCategory.HARASSMENT);
             LlmCategoryPolicy clean = status.categoryPolicy().get(
-                    io.wdsj.asw.bukkit.api.moderation.LlmModerationCategory.CLEAN);
+                    LlmModerationCategory.CLEAN);
             assertEquals(0.75D, harassment.notifyConfidence());
             assertEquals(0.90D, harassment.punishConfidence());
             assertEquals(-1.0D, clean.notifyConfidence());

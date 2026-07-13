@@ -10,17 +10,25 @@ object SignContext {
     private val signEditHistory = ContextHistory<SignContextEntry>()
 
     fun addMessage(player: Player, entry: SignContextEntry) {
+        addMessage(player, entry, contextCapacity())
+    }
+
+    fun addMessage(player: Player, entry: SignContextEntry, capacity: Int) {
         if (entry.content.isBlank()) return
 
         signEditHistory.removeMatching(player.uniqueId) { it.target == entry.target }
-        signEditHistory.add(player.uniqueId, contextCapacity(), entry)
+        signEditHistory.add(player.uniqueId, capacity.coerceAtLeast(1), entry)
     }
 
     fun getHistory(player: Player): List<SignContextEntry> {
+        return getHistory(player, contextCapacity(), setting(PluginSettings.SIGN_CONTEXT_TIME_LIMIT))
+    }
+
+    fun getHistory(player: Player, capacity: Int, timeLimitSeconds: Int): List<SignContextEntry> {
         return signEditHistory.snapshot(
             player.uniqueId,
-            contextCapacity(),
-            setting(PluginSettings.SIGN_CONTEXT_TIME_LIMIT) * 1_000L,
+            capacity.coerceAtLeast(1),
+            timeLimitSeconds.coerceAtLeast(1) * 1_000L,
         ) { it.time }
     }
 

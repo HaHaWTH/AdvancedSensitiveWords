@@ -1,7 +1,7 @@
 package io.wdsj.asw.bukkit.listener
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords.isInitialized
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords.sensitiveWordBs
+import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.bukkit.type.ModuleType
@@ -24,7 +24,7 @@ class BroadcastListener(private val configuration: PaperConfigurationService) : 
         val originalComponent = event.message()
         val originalMessage = preprocess(MessageUtils.plainText(originalComponent))
         val startTime = System.currentTimeMillis()
-        val censoredWords = sensitiveWordBs.findAll(originalMessage)
+        val censoredWords = AdvancedSensitiveWords.findAllSensitive(originalMessage)
         SensitiveFilterEvents.post(
             event.isAsynchronous,
             ModuleType.BROADCAST,
@@ -43,7 +43,7 @@ class BroadcastListener(private val configuration: PaperConfigurationService) : 
                 MessageUtils.replaceLiteral(
                     originalComponent,
                     originalMessage,
-                    sensitiveWordBs.replace(originalMessage),
+                    AdvancedSensitiveWords.replaceSensitive(originalMessage),
                 ),
             )
         }

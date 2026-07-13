@@ -38,7 +38,7 @@ public final class AswCommandRegistrar {
                     .toList()
     );
     private static final ParserDescriptor<Source, ModuleType> VIOLATION_MODULE_PARSER =
-            StringParser.<Source>stringParser().flatMapSuccess(ModuleType.class, (context, value) -> {
+            StringParser.<Source>stringParser().flatMapSuccess(ModuleType.class, (ignored, value) -> {
                 ModuleType moduleType = ModuleType.parseViolationModule(value);
                 if (moduleType == null) {
                     return ArgumentParseResult.failureFuture(new ViolationModuleParseException(value));
@@ -235,4 +235,5 @@ public final class AswCommandRegistrar {
             return this;
         }
     }
+
 }

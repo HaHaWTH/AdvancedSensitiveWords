@@ -64,8 +64,6 @@ public final class SettingsConfiguration {
         public List<String> manualPunishment = new ArrayList<>();
         @Comment("Violation counter reset interval in minutes.")
         public long violationResetTime = 20L;
-        @Comment("Whether to reset only the violation counters of online players.")
-        public boolean onlyResetOnlinePlayers = false;
         @Comment("Whether to clear old violation logs on startup.")
         public boolean purgeLogFile = false;
         @Comment("Replacement character used for blocked content.")
@@ -92,10 +90,10 @@ public final class SettingsConfiguration {
         public boolean hookVelocity = false;
         @Comment("Plugin compatibility settings.")
         public Compatibility compatibility = new Compatibility();
-        @Comment("Characters ignored by the sensitive-word matcher.")
+        @Comment("Characters ignored by the sensitive-word matcher. URL/IP/email syntax characters are protected automatically when those checks are enabled.")
         public String ignoreChar = "`-—=~～!！@#$%^&§*()_+[]{}\\|;:'\"“”,，.。、（）<>?？¥【】《》 ";
         @Comment("Whether to remove formatting before detection.")
-        public boolean enablePreProcess = false;
+        public boolean enablePreProcess = true;
         @Comment("Regular expression used by preprocessing.")
         public String preProcessRegex = "[§&][0-9A-Fa-fK-Ok-oRr]";
         @Comment("Whether to ignore letter case.")
@@ -121,7 +119,7 @@ public final class SettingsConfiguration {
         @Comment("Whether to check URLs.")
         public boolean enableUrlCheck = true;
         @Comment("Whether URLs without an HTTP(S) prefix should be checked.")
-        public boolean urlCheckNoPrefix = false;
+        public boolean urlCheckNoPrefix = true;
         @Comment("Whether to check sensitive English words.")
         public boolean enableWordCheck = true;
         @Comment("Whether to check IPv4 addresses.")
@@ -204,8 +202,20 @@ public final class SettingsConfiguration {
         public int similarMinDistance = 2;
         @Comment("Similarity threshold from 0.0 to 1.0. Messages at or above this value are treated as spam. Use 1.1 to disable.")
         public double similarMaxSimilarity = 0.90D;
+        @Comment("Token-bucket message rate limit. This is part of chat anti-spam and applies to all checked chat messages.")
+        public AntiSpamRateLimit rateLimit = new AntiSpamRateLimit();
         @Comment("Whether to send a message when anti-spam cancels chat.")
         public boolean sendMessage = true;
+    }
+
+    @Configuration
+    public static final class AntiSpamRateLimit {
+        @Comment("Whether to enable token-bucket chat rate limiting.")
+        public boolean enabled = false;
+        @Comment("Maximum stored tokens, also the allowed burst size.")
+        public int capacity = 3;
+        @Comment("Seconds needed to refill the full bucket.")
+        public int refillIntervalSeconds = 30;
     }
 
     @Configuration
@@ -383,4 +393,5 @@ public final class SettingsConfiguration {
         @Comment("Punishment actions for item violations. Leave empty to disable automatic punishment.")
         public List<String> punishment = new ArrayList<>();
     }
+
 }

@@ -24,7 +24,6 @@ public final class PluginSettings {
     public static final SettingKey<Boolean> NOTICE_OPERATOR = key(settings -> settings.plugin.noticeOperator);
     public static final SettingKey<List<String>> MANUAL_PUNISHMENT = key(settings -> settings.plugin.manualPunishment);
     public static final SettingKey<Long> VIOLATION_RESET_TIME = key(settings -> settings.plugin.violationResetTime);
-    public static final SettingKey<Boolean> ONLY_RESET_ONLINE_PLAYERS = key(settings -> settings.plugin.onlyResetOnlinePlayers);
     public static final SettingKey<Boolean> PURGE_LOG_FILE = key(settings -> settings.plugin.purgeLogFile);
     public static final SettingKey<String> REPLACEMENT = key(settings -> settings.plugin.replacement);
     public static final SettingKey<List<String>> DEFINED_REPLACEMENT = key(settings -> settings.plugin.definedReplacement);
@@ -73,6 +72,9 @@ public final class PluginSettings {
     public static final SettingKey<Integer> CHAT_ANTI_SPAM_SIMILAR_CHECK_AMOUNT = key(settings -> settings.chat.antiSpam.similarCheckAmount);
     public static final SettingKey<Integer> CHAT_ANTI_SPAM_SIMILAR_MIN_DISTANCE = key(settings -> settings.chat.antiSpam.similarMinDistance);
     public static final SettingKey<Double> CHAT_ANTI_SPAM_SIMILAR_MAX_SIMILARITY = key(settings -> settings.chat.antiSpam.similarMaxSimilarity);
+    public static final SettingKey<Boolean> CHAT_ANTI_SPAM_RATE_LIMIT_ENABLED = key(settings -> settings.chat.antiSpam.rateLimit.enabled);
+    public static final SettingKey<Integer> CHAT_ANTI_SPAM_RATE_LIMIT_CAPACITY = key(settings -> settings.chat.antiSpam.rateLimit.capacity);
+    public static final SettingKey<Integer> CHAT_ANTI_SPAM_RATE_LIMIT_REFILL_INTERVAL_SECONDS = key(settings -> settings.chat.antiSpam.rateLimit.refillIntervalSeconds);
     public static final SettingKey<Boolean> CHAT_ANTI_SPAM_SEND_MESSAGE = key(settings -> settings.chat.antiSpam.sendMessage);
     public static final SettingKey<List<String>> CHAT_PUNISHMENT = key(settings -> settings.chat.punishment);
     public static final SettingKey<Boolean> CHAT_BROADCAST_CHECK = key(settings -> settings.chat.broadcastCheck);

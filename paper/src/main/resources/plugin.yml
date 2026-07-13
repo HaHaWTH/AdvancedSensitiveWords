@@ -30,6 +30,7 @@ permissions:
       advancedsensitivewords.notice: true
       advancedsensitivewords.update: true
       advancedsensitivewords.command.*: true
+      advancedsensitivewords.option.*: true
   advancedsensitivewords.bypass.*:
     description: Bypass all player-owned Advanced Sensitive Words filters.
     default: false
@@ -57,6 +58,34 @@ permissions:
       advancedsensitivewords.command.player.reset: true
       advancedsensitivewords.command.player.punish: true
       advancedsensitivewords.command.ai.status: true
+  advancedsensitivewords.option.*:
+    description: All Advanced Sensitive Words player option overrides.
+    default: false
+    children:
+      advancedsensitivewords.option.chat.*: true
+      advancedsensitivewords.option.book.*: true
+      advancedsensitivewords.option.sign.*: true
+      advancedsensitivewords.option.anvil.*: true
+      advancedsensitivewords.option.item.*: true
+      advancedsensitivewords.option.ai.*: true
+  advancedsensitivewords.option.chat.*:
+    description: Chat, command, anti-spam, and chat AI option overrides.
+    default: false
+  advancedsensitivewords.option.book.*:
+    description: Book option overrides.
+    default: false
+  advancedsensitivewords.option.sign.*:
+    description: Sign option overrides.
+    default: false
+  advancedsensitivewords.option.anvil.*:
+    description: Anvil option overrides.
+    default: false
+  advancedsensitivewords.option.item.*:
+    description: Item option overrides.
+    default: false
+  advancedsensitivewords.option.ai.*:
+    description: LLM moderation option overrides.
+    default: false
   advancedsensitivewords.bypass:
     description: Global bypass for all player-owned Advanced Sensitive Words filters.
     default: false

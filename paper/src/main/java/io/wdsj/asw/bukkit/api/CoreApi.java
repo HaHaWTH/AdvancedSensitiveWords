@@ -28,7 +28,7 @@ public final class CoreApi {
      * @see #isInitialized()
      */
     public List<String> findSensitiveWords(String text) {
-        return AdvancedSensitiveWords.sensitiveWordBs.findAll(text);
+        return AdvancedSensitiveWords.findAllSensitive(text);
     }
 
     /**
@@ -41,6 +41,6 @@ public final class CoreApi {
      * @see #isInitialized()
      */
     public String replaceSensitiveWords(String text) {
-        return AdvancedSensitiveWords.sensitiveWordBs.replace(text);
+        return AdvancedSensitiveWords.replaceSensitive(text);
     }
 }
