@@ -63,7 +63,7 @@ public final class SignFakeViewService {
     }
 
     public static boolean isOperational() {
-        return operational && isConfiguredForCancelFakeView();
+        return operational && AdvancedSensitiveWords.setting(PluginSettings.ENABLE_SIGN_EDIT_CHECK);
     }
 
     static void setOperational(boolean enabled) {
@@ -79,11 +79,6 @@ public final class SignFakeViewService {
             refreshExecutor.shutdownNow();
             refreshExecutor = null;
         }
-    }
-
-    public static boolean isConfiguredForCancelFakeView() {
-        return AdvancedSensitiveWords.setting(PluginSettings.ENABLE_SIGN_EDIT_CHECK)
-                && AdvancedSensitiveWords.setting(PluginSettings.SIGN_FAKE_ON_CANCEL);
     }
 
     public static void recordCancelledEdit(
@@ -106,10 +101,39 @@ public final class SignFakeViewService {
                 side,
                 player.getUniqueId(),
                 originalLines,
+                BLANK_LINES,
                 violationContent,
                 censoredWords,
                 createdAt
         ), 1L);
+    }
+
+    public static boolean recordShadowEdit(
+            SignChangeEvent event,
+            Player player,
+            List<Component> attemptedLines
+    ) {
+        if (!isOperational()) {
+            return false;
+        }
+
+        Location location = event.getBlock().getLocation();
+        Side side = event.getSide();
+        Component[] originalLines = toComponentLines(attemptedLines);
+        long createdAt = System.currentTimeMillis();
+        AdvancedSensitiveWords.getScheduler().runTaskLater(location, () -> {
+            writeRecord(
+                    location,
+                    side,
+                    player.getUniqueId(),
+                    originalLines,
+                    BLANK_LINES,
+                    "",
+                    List.of(),
+                    createdAt
+            );
+        }, 1L);
+        return true;
     }
 
     static void enqueueRefresh(Player viewer, World world, Collection<BlockKey> keys) {
@@ -133,6 +157,7 @@ public final class SignFakeViewService {
             Side side,
             UUID placer,
             Component[] originalLines,
+            Component[] publicLines,
             String violationContent,
             List<String> censoredWords,
             long createdAt
@@ -145,7 +170,7 @@ public final class SignFakeViewService {
         PersistentDataContainer pdc = sign.getPersistentDataContainer();
         pdc.set(VERSION_KEY, PersistentDataType.INTEGER, SCHEMA_VERSION);
         pdc.set(ORIGINAL_LINES_KEY, PersistentDataType.STRING, encodeComponents(originalLines));
-        pdc.set(BLANK_LINES_KEY, PersistentDataType.STRING, encodeComponents(BLANK_LINES));
+        pdc.set(BLANK_LINES_KEY, PersistentDataType.STRING, encodeComponents(publicLines));
         pdc.set(PLACER_KEY, PersistentDataType.STRING, placer.toString());
         pdc.set(SIDE_KEY, PersistentDataType.STRING, side.name());
         pdc.set(CREATED_AT_KEY, PersistentDataType.LONG, createdAt);

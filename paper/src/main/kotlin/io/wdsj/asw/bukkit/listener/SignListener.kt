@@ -7,7 +7,8 @@ import io.wdsj.asw.bukkit.permission.option.PlayerOptionResolver
 import io.wdsj.asw.bukkit.permission.option.PlayerOptionView
 import io.wdsj.asw.bukkit.permission.option.PlayerOptions
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
-import io.wdsj.asw.bukkit.integration.packetevents.sign.SignFakeViewService
+import io.wdsj.asw.bukkit.integration.packetevents.sign.SignFakeViewCompat
+import io.wdsj.asw.bukkit.manage.punish.PlayerShadowController
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
 import io.wdsj.asw.common.type.ModuleType
@@ -45,9 +46,15 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
         val player = event.player
         if (processingGuard.shouldSkipBasic(player, PermissionsEnum.BYPASS_SIGN)) return
         val options = PlayerOptionResolver.resolve(configuration, player)
+        val attemptedLines = event.lines().toList()
+        if (PlayerShadowController.isShadowed(player)) {
+            if (SignFakeViewCompat.recordShadowEdit(event, player, attemptedLines)) {
+                event.isCancelled = true
+                return
+            }
+        }
 
         val startTime = System.currentTimeMillis()
-        val attemptedLines = event.lines().toList()
         val lineScan = censorSingleLines(event, player, options)
         val violation = lineScan.violation
             ?: censorMultiLine(event, lineScan, options)
@@ -57,7 +64,7 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
         if (isCancelMode(options) && !violation.context &&
             options.bool(PlayerOptions.SIGN_FAKE_ON_CANCEL, PluginSettings.SIGN_FAKE_ON_CANCEL)
         ) {
-            SignFakeViewService.recordCancelledEdit(
+            SignFakeViewCompat.recordCancelledEdit(
                 event,
                 player,
                 attemptedLines,
