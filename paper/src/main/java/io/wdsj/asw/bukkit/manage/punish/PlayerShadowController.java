@@ -2,6 +2,9 @@ package io.wdsj.asw.bukkit.manage.punish;
 
 import org.bukkit.entity.Player;
 
+import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
+import io.wdsj.asw.bukkit.proxy.velocity.sync.VelocitySyncClient;
+
 import java.time.Duration;
 import java.util.Map;
 import java.util.Objects;
@@ -34,10 +37,14 @@ public final class PlayerShadowController {
      * @param duration shadow duration
      */
     public static void shadowPlayer(UUID uuid, Duration duration) {
+        shadowPlayer(uuid, duration, true);
+    }
+
+    public static void shadowPlayer(UUID uuid, Duration duration, boolean notifyProxy) {
         Objects.requireNonNull(uuid, "uuid");
         Objects.requireNonNull(duration, "duration");
         if (duration.isZero() || duration.isNegative()) {
-            unshadowPlayer(uuid);
+            unshadowPlayer(uuid, notifyProxy);
             return;
         }
 
@@ -47,7 +54,22 @@ public final class PlayerShadowController {
         } catch (ArithmeticException ignored) {
             expiresAtMillis = Long.MAX_VALUE;
         }
+        shadowPlayerUntil(uuid, expiresAtMillis, notifyProxy);
+    }
+
+    public static void shadowPlayerUntil(UUID uuid, long expiresAtMillis, boolean notifyProxy) {
+        Objects.requireNonNull(uuid, "uuid");
+        if (expiresAtMillis <= System.currentTimeMillis()) {
+            unshadowPlayer(uuid, notifyProxy);
+            return;
+        }
         SHADOWED_PLAYERS.put(uuid, new ShadowBan(expiresAtMillis));
+        if (notifyProxy) {
+            VelocitySyncClient client = AdvancedSensitiveWords.getInstance().getVelocitySyncClient();
+            if (client != null) {
+                client.sendShadowSet(uuid, expiresAtMillis);
+            }
+        }
     }
 
     /**
@@ -56,7 +78,7 @@ public final class PlayerShadowController {
      */
     public static void unshadowPlayer(Player player) {
         Objects.requireNonNull(player, "player");
-        SHADOWED_PLAYERS.remove(player.getUniqueId());
+        unshadowPlayer(player.getUniqueId());
     }
 
     /**
@@ -64,8 +86,18 @@ public final class PlayerShadowController {
      * @param uuid player uuid
      */
     public static void unshadowPlayer(UUID uuid) {
+        unshadowPlayer(uuid, true);
+    }
+
+    public static void unshadowPlayer(UUID uuid, boolean notifyProxy) {
         Objects.requireNonNull(uuid, "uuid");
         SHADOWED_PLAYERS.remove(uuid);
+        if (notifyProxy) {
+            VelocitySyncClient client = AdvancedSensitiveWords.getInstance().getVelocitySyncClient();
+            if (client != null) {
+                client.sendShadowClear(uuid);
+            }
+        }
     }
 
     /**

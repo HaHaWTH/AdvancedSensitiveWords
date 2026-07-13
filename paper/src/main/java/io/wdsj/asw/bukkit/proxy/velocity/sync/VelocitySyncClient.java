@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 import io.wdsj.asw.bukkit.manage.notice.Notifier;
+import io.wdsj.asw.bukkit.manage.punish.PlayerShadowController;
 import io.wdsj.asw.bukkit.manage.punish.ViolationCounter;
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService;
 import io.wdsj.asw.bukkit.setting.PluginMessages;
@@ -103,6 +104,32 @@ public final class VelocitySyncClient implements Listener, AutoCloseable {
         JsonObject message = base(VelocitySyncProtocol.TYPE_VL_QUERY);
         message.addProperty("playerUuid", player.getUniqueId().toString());
         message.addProperty("playerName", player.getName());
+        send(message);
+
+        JsonObject shadowQuery = base(VelocitySyncProtocol.TYPE_SHADOW_QUERY);
+        shadowQuery.addProperty("playerUuid", player.getUniqueId().toString());
+        shadowQuery.addProperty("playerName", player.getName());
+        send(shadowQuery);
+    }
+
+    public void sendShadowSet(UUID playerId, long expiresAtMillis) {
+        if (!authenticated()) {
+            return;
+        }
+        JsonObject message = base(VelocitySyncProtocol.TYPE_SHADOW_SET);
+        message.addProperty("requestId", UUID.randomUUID().toString());
+        message.addProperty("playerUuid", playerId.toString());
+        message.addProperty("expiresAtMillis", expiresAtMillis);
+        send(message);
+    }
+
+    public void sendShadowClear(UUID playerId) {
+        if (!authenticated()) {
+            return;
+        }
+        JsonObject message = base(VelocitySyncProtocol.TYPE_SHADOW_CLEAR);
+        message.addProperty("requestId", UUID.randomUUID().toString());
+        message.addProperty("playerUuid", playerId.toString());
         send(message);
     }
 
@@ -215,6 +242,7 @@ public final class VelocitySyncClient implements Listener, AutoCloseable {
             case VelocitySyncProtocol.TYPE_VL_SYNC -> handleSync(message);
             case VelocitySyncProtocol.TYPE_VL_RESET -> handleReset(message);
             case VelocitySyncProtocol.TYPE_VL_RESET_ALL -> handleResetAll();
+            case VelocitySyncProtocol.TYPE_SHADOW_SYNC -> handleShadowSync(message);
             case VelocitySyncProtocol.TYPE_PING -> send(base(VelocitySyncProtocol.TYPE_PONG));
             default -> {
             }
@@ -259,6 +287,19 @@ public final class VelocitySyncClient implements Listener, AutoCloseable {
         Notifier.normalNotice(MessageUtils.retrieveMessage(PluginMessages.MESSAGE_ON_VIOLATION_RESET));
     }
 
+    private void handleShadowSync(JsonObject message) {
+        UUID playerId = uuid(message, "playerUuid");
+        if (playerId == null) {
+            return;
+        }
+        long expiresAtMillis = longValue(message, "expiresAtMillis", 0L);
+        if (expiresAtMillis <= System.currentTimeMillis()) {
+            PlayerShadowController.unshadowPlayer(playerId, false);
+            return;
+        }
+        PlayerShadowController.shadowPlayerUntil(playerId, expiresAtMillis, false);
+    }
+
     private static JsonObject object(JsonObject object, String key) {
         JsonElement element = object.get(key);
         return element != null && element.isJsonObject() ? element.getAsJsonObject() : null;
@@ -276,6 +317,15 @@ public final class VelocitySyncClient implements Listener, AutoCloseable {
     private static String string(JsonObject object, String key) {
         JsonElement element = object.get(key);
         return element == null || element.isJsonNull() ? null : element.getAsString();
+    }
+
+    private static long longValue(JsonObject object, String key, long fallback) {
+        try {
+            JsonElement element = object.get(key);
+            return element == null || element.isJsonNull() ? fallback : element.getAsLong();
+        } catch (Exception exception) {
+            return fallback;
+        }
     }
 
     private final class BackendClient extends WebSocketClient {

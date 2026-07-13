@@ -19,6 +19,10 @@ public final class VelocitySyncProtocol {
     public static final String TYPE_VL_RESET_REQUEST = "vl-reset-request";
     public static final String TYPE_VL_RESET = "vl-reset";
     public static final String TYPE_VL_RESET_ALL = "vl-reset-all";
+    public static final String TYPE_SHADOW_SET = "shadow-set";
+    public static final String TYPE_SHADOW_CLEAR = "shadow-clear";
+    public static final String TYPE_SHADOW_SYNC = "shadow-sync";
+    public static final String TYPE_SHADOW_QUERY = "shadow-query";
     public static final String TYPE_PING = "ping";
     public static final String TYPE_PONG = "pong";
 

@@ -33,6 +33,7 @@ public final class VelocitySyncWebSocketServer implements AutoCloseable {
     private final Map<WebSocket, Session> sessions = new ConcurrentHashMap<>();
     private final Map<String, Long> nonceHistory = new ConcurrentHashMap<>();
     private final Map<UUID, Map<ModuleType, AtomicLong>> counts = new ConcurrentHashMap<>();
+    private final Map<UUID, Long> shadowExpiresAt = new ConcurrentHashMap<>();
 
     public VelocitySyncWebSocketServer(AdvancedSensitiveWords plugin, Logger logger, Config config) {
         this.plugin = plugin;
@@ -69,6 +70,7 @@ public final class VelocitySyncWebSocketServer implements AutoCloseable {
         sessions.clear();
         nonceHistory.clear();
         counts.clear();
+        shadowExpiresAt.clear();
     }
 
     private void handle(WebSocket socket, String raw) {
@@ -95,6 +97,9 @@ public final class VelocitySyncWebSocketServer implements AutoCloseable {
             case VelocitySyncProtocol.TYPE_VL_INCREMENT -> handleIncrement(socket, message);
             case VelocitySyncProtocol.TYPE_VL_QUERY -> sendSync(socket, uuid(message, "playerUuid"));
             case VelocitySyncProtocol.TYPE_VL_RESET_REQUEST -> handleResetRequest(message);
+            case VelocitySyncProtocol.TYPE_SHADOW_SET -> handleShadowSet(message);
+            case VelocitySyncProtocol.TYPE_SHADOW_CLEAR -> handleShadowClear(message);
+            case VelocitySyncProtocol.TYPE_SHADOW_QUERY -> sendShadowSync(socket, uuid(message, "playerUuid"));
             case VelocitySyncProtocol.TYPE_PING -> socket.send(base(VelocitySyncProtocol.TYPE_PONG).toString());
             default -> {
             }
@@ -171,6 +176,61 @@ public final class VelocitySyncWebSocketServer implements AutoCloseable {
         broadcast(base(VelocitySyncProtocol.TYPE_VL_RESET_ALL));
     }
 
+    private void handleShadowSet(JsonObject message) {
+        UUID playerId = uuid(message, "playerUuid");
+        long expiresAtMillis = longValue(message, "expiresAtMillis", 0L);
+        if (playerId == null) {
+            return;
+        }
+        if (expiresAtMillis <= Instant.now().toEpochMilli()) {
+            shadowExpiresAt.remove(playerId);
+            broadcastShadowSync(playerId, 0L);
+            return;
+        }
+        shadowExpiresAt.put(playerId, expiresAtMillis);
+        broadcastShadowSync(playerId, expiresAtMillis);
+    }
+
+    private void handleShadowClear(JsonObject message) {
+        UUID playerId = uuid(message, "playerUuid");
+        if (playerId == null) {
+            return;
+        }
+        shadowExpiresAt.remove(playerId);
+        broadcastShadowSync(playerId, 0L);
+    }
+
+    private void sendShadowSync(WebSocket socket, UUID playerId) {
+        if (playerId == null) {
+            return;
+        }
+        long expiresAtMillis = activeShadowExpiresAt(playerId);
+        socket.send(shadowSyncMessage(playerId, expiresAtMillis).toString());
+    }
+
+    private void broadcastShadowSync(UUID playerId, long expiresAtMillis) {
+        broadcast(shadowSyncMessage(playerId, expiresAtMillis));
+    }
+
+    private JsonObject shadowSyncMessage(UUID playerId, long expiresAtMillis) {
+        JsonObject message = base(VelocitySyncProtocol.TYPE_SHADOW_SYNC);
+        message.addProperty("playerUuid", playerId.toString());
+        message.addProperty("expiresAtMillis", expiresAtMillis);
+        return message;
+    }
+
+    private long activeShadowExpiresAt(UUID playerId) {
+        Long expiresAtMillis = shadowExpiresAt.get(playerId);
+        if (expiresAtMillis == null) {
+            return 0L;
+        }
+        if (expiresAtMillis <= Instant.now().toEpochMilli()) {
+            shadowExpiresAt.remove(playerId, expiresAtMillis);
+            return 0L;
+        }
+        return expiresAtMillis;
+    }
+
     private void broadcastSync(UUID playerId) {
         JsonObject message = syncMessage(playerId);
         if (message != null) {
@@ -235,6 +295,7 @@ public final class VelocitySyncWebSocketServer implements AutoCloseable {
                 socket.close(1001, "Heartbeat timeout");
             }
         });
+        shadowExpiresAt.entrySet().removeIf(entry -> entry.getValue() <= now);
     }
 
     private static ModuleType parseModule(String module) {
