@@ -91,7 +91,7 @@ public final class SettingsConfiguration {
         @Comment("Plugin compatibility settings.")
         public Compatibility compatibility = new Compatibility();
         @Comment("Characters ignored by the sensitive-word matcher. URL/IP/email syntax characters are protected automatically when those checks are enabled.")
-        public String ignoreChar = "`-—=~～!！@#$%^&§*()_+[]{}\\|;:'\"“”,，。、（）<>?？¥【】《》 ";
+        public String ignoreChar = "`-—=~～!！@#$%^&§*()_+[]{}\\|;:'\"“”,，.。、（）<>?？¥【】《》 ";
         @Comment("Whether to remove formatting before detection.")
         public boolean enablePreProcess = true;
         @Comment("Regular expression used by preprocessing.")

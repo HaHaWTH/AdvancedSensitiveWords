@@ -3,6 +3,9 @@ package io.wdsj.asw.bukkit.listener
 import com.github.houbb.sensitive.word.api.IWordResult
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.permission.PermissionsEnum
+import io.wdsj.asw.bukkit.permission.option.PlayerOptionResolver
+import io.wdsj.asw.bukkit.permission.option.PlayerOptionView
+import io.wdsj.asw.bukkit.permission.option.PlayerOptions
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.integration.packetevents.sign.SignFakeViewService
 import io.wdsj.asw.bukkit.setting.PluginMessages
@@ -41,16 +44,19 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
 
         val player = event.player
         if (processingGuard.shouldSkipBasic(player, PermissionsEnum.BYPASS_SIGN)) return
+        val options = PlayerOptionResolver.resolve(configuration, player)
 
         val startTime = System.currentTimeMillis()
         val attemptedLines = event.lines().toList()
-        val lineScan = censorSingleLines(event, player)
+        val lineScan = censorSingleLines(event, player, options)
         val violation = lineScan.violation
-            ?: censorMultiLine(event, lineScan)
-            ?: censorContext(event, player)
+            ?: censorMultiLine(event, lineScan, options)
+            ?: censorContext(event, player, options)
             ?: return
 
-        if (isCancelMode() && !violation.context && configuration.get(PluginSettings.SIGN_FAKE_ON_CANCEL)) {
+        if (isCancelMode(options) && !violation.context &&
+            options.bool(PlayerOptions.SIGN_FAKE_ON_CANCEL, PluginSettings.SIGN_FAKE_ON_CANCEL)
+        ) {
             SignFakeViewService.recordCancelledEdit(
                 event,
                 player,
@@ -60,7 +66,7 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
             )
         }
 
-        if (configuration.get(PluginSettings.SIGN_SEND_MESSAGE)) {
+        if (options.bool(PlayerOptions.SIGN_SEND_MESSAGE, PluginSettings.SIGN_SEND_MESSAGE)) {
             MessageUtils.sendMessage(player, PluginMessages.MESSAGE_ON_SIGN)
         }
 
@@ -96,7 +102,7 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
             ))
     }
 
-    private fun censorSingleLines(event: SignChangeEvent, player: Player): SignLineScan {
+    private fun censorSingleLines(event: SignChangeEvent, player: Player, options: PlayerOptionView): SignLineScan {
         var violation: SignViolation? = null
         val cleanLineIndexes = mutableListOf<Int>()
         val cleanLineContent = StringBuilder()
@@ -116,7 +122,7 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
             }
 
             violation = SignViolation(originalMessage, censoredWords)
-            if (isCancelMode()) {
+            if (isCancelMode(options)) {
                 event.isCancelled = true
                 continue
             }
@@ -127,8 +133,8 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
         return SignLineScan(violation, cleanLineIndexes, cleanLineContent.toString())
     }
 
-    private fun censorMultiLine(event: SignChangeEvent, lineScan: SignLineScan): SignViolation? {
-        if (!configuration.get(PluginSettings.SIGN_MULTI_LINE_CHECK)) return null
+    private fun censorMultiLine(event: SignChangeEvent, lineScan: SignLineScan, options: PlayerOptionView): SignViolation? {
+        if (!options.bool(PlayerOptions.SIGN_MULTI_LINE_CHECK, PluginSettings.SIGN_MULTI_LINE_CHECK)) return null
         if (lineScan.cleanLineIndexes.isEmpty()) return null
 
         val originalContent = lineScan.cleanLineContent
@@ -136,7 +142,7 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
         SensitiveFilterEvents.post(event.isAsynchronous, ModuleType.SIGN, event.player, originalContent, censoredWords)
         if (censoredWords.isEmpty()) return null
 
-        if (isCancelMode()) {
+        if (isCancelMode(options)) {
             event.isCancelled = true
         } else {
             val processedMessage = AdvancedSensitiveWords.replaceSensitive(originalContent)
@@ -148,19 +154,21 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
         return SignViolation(originalContent, censoredWords)
     }
 
-    private fun censorContext(event: SignChangeEvent, player: Player): SignViolation? {
-        if (!configuration.get(PluginSettings.SIGN_CONTEXT_CHECK)) return null
+    private fun censorContext(event: SignChangeEvent, player: Player, options: PlayerOptionView): SignViolation? {
+        if (!options.bool(PlayerOptions.SIGN_CONTEXT_CHECK, PluginSettings.SIGN_CONTEXT_CHECK)) return null
 
         val entry = contextEntry(event)
-        SignContext.addMessage(player, entry)
-        val entries = SignContext.getHistory(player)
+        val contextMaxSize = options.integer(PlayerOptions.SIGN_CONTEXT_MAX_SIZE, PluginSettings.SIGN_CONTEXT_MAX_SIZE)
+        val contextMaxTime = options.integer(PlayerOptions.SIGN_CONTEXT_MAX_TIME, PluginSettings.SIGN_CONTEXT_TIME_LIMIT)
+        SignContext.addMessage(player, entry, contextMaxSize)
+        val entries = SignContext.getHistory(player, contextMaxSize, contextMaxTime)
         val originalContext = entries.joinToString("") { it.content }
         val censoredWords = AdvancedSensitiveWords.findAllSensitive(originalContext)
         SensitiveFilterEvents.post(event.isAsynchronous, ModuleType.SIGN, player, originalContext, censoredWords)
         if (censoredWords.isEmpty()) return null
 
         val resolution = resolveContext(entries, originalContext)
-        applyContextAction(event, resolution)
+        applyContextAction(event, resolution, options)
         SignContext.clearPlayerContext(player)
         return SignViolation(originalContext, censoredWords, true)
     }
@@ -180,8 +188,8 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
         )
     }
 
-    private fun applyContextAction(event: SignChangeEvent, resolution: ContextResolution) {
-        if (isCancelMode()) {
+    private fun applyContextAction(event: SignChangeEvent, resolution: ContextResolution, options: PlayerOptionView) {
+        if (isCancelMode(options)) {
             event.isCancelled = true
             resolution.affectedEntries.forEach { scheduleSignMutation(it, null) }
             return
@@ -329,8 +337,8 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
         return text.replace(Utils.preProcessRegex.toRegex(), "")
     }
 
-    private fun isCancelMode(): Boolean {
-        return configuration.get(PluginSettings.SIGN_METHOD).isCancel
+    private fun isCancelMode(options: PlayerOptionView): Boolean {
+        return options.method(PlayerOptions.SIGN_METHOD, PluginSettings.SIGN_METHOD).isCancel
     }
 
     private data class SignLineScan(

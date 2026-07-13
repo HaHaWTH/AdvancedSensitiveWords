@@ -6,6 +6,9 @@ import io.wdsj.asw.bukkit.ai.LlmChatDetectionService
 import io.wdsj.asw.bukkit.integration.trchat.TrChatCompat
 import io.wdsj.asw.bukkit.listener.abstraction.AbstractFakeMessageExecutor
 import io.wdsj.asw.bukkit.permission.PermissionsEnum
+import io.wdsj.asw.bukkit.permission.option.PlayerOptionResolver
+import io.wdsj.asw.bukkit.permission.option.PlayerOptionView
+import io.wdsj.asw.bukkit.permission.option.PlayerOptions
 import io.wdsj.asw.bukkit.service.chat.antispam.ChatAntiSpamService
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.setting.PluginMessages
@@ -41,14 +44,15 @@ class PaperChatListener(
 
         val player = event.player
         if (processingGuard.shouldSkip(player, PermissionsEnum.BYPASS_CHAT)) return
+        val options = PlayerOptionResolver.resolve(configuration, player)
 
         val startTime = System.currentTimeMillis()
         val originalMessage = preprocess(event.message())
         val originalPlainText = PlainTextComponentSerializer.plainText().serialize(originalMessage)
 
-        if (antiSpamService.check(player.uniqueId, originalPlainText) == ChatAntiSpamService.Result.SPAM) {
+        if (antiSpamService.check(player.uniqueId, originalPlainText, options) == ChatAntiSpamService.Result.SPAM) {
             event.isCancelled = true
-            if (configuration.get(PluginSettings.CHAT_ANTI_SPAM_SEND_MESSAGE)) {
+            if (options.bool(PlayerOptions.CHAT_ANTI_SPAM_SEND_MESSAGE, PluginSettings.CHAT_ANTI_SPAM_SEND_MESSAGE)) {
                 MessageUtils.sendMessage(player, configuration.message(PluginMessages.MESSAGE_ON_CHAT_ANTI_SPAM))
             }
             return
@@ -64,12 +68,12 @@ class PaperChatListener(
         )
 
         if (censoredWords.isNotEmpty()) {
-            handleDirectMessage(event, player, originalMessage, originalPlainText = originalPlainText, censoredWords, startTime)
+            handleDirectMessage(event, player, options, originalMessage, originalPlainText = originalPlainText, censoredWords, startTime)
             return
         }
 
-        if (!handleContextMessage(event, player, originalPlainText, startTime)) {
-            llmChatDetectionService.submit(player.uniqueId, player.name, originalPlainText)
+        if (!handleContextMessage(event, player, options, originalPlainText, startTime)) {
+            llmChatDetectionService.submit(player, originalPlainText, options)
         }
     }
 
@@ -86,22 +90,24 @@ class PaperChatListener(
     private fun handleDirectMessage(
         event: AsyncChatEvent,
         player: Player,
+        options: PlayerOptionView,
         originalMessage: Component,
         originalPlainText: String,
         censoredWords: List<String>,
         startTime: Long,
     ) {
-        applyDirectMessageAction(event, originalMessage, originalPlainText)
-        recordViolation(event, player, originalPlainText, originalPlainText, censoredWords, false, startTime)
+        applyDirectMessageAction(event, options, originalMessage, originalPlainText)
+        recordViolation(event, player, options, originalPlainText, originalPlainText, censoredWords, false, startTime)
     }
 
     private fun applyDirectMessageAction(
         event: AsyncChatEvent,
+        options: PlayerOptionView,
         originalMessage: Component,
         originalPlainText: String,
     ) {
-        if (isCancelMode()) {
-            if (configuration.get(PluginSettings.CHAT_FAKE_MESSAGE_ON_CANCEL)) {
+        if (isCancelMode(options)) {
+            if (options.bool(PlayerOptions.CHAT_FAKE_MESSAGE_ON_CANCEL, PluginSettings.CHAT_FAKE_MESSAGE_ON_CANCEL)) {
                 markFakeMessage(event.player)
             } else {
                 event.isCancelled = true
@@ -120,10 +126,11 @@ class PaperChatListener(
     private fun handleContextMessage(
         event: AsyncChatEvent,
         player: Player,
+        options: PlayerOptionView,
         originalPlainText: String,
         startTime: Long,
     ): Boolean {
-        if (!configuration.get(PluginSettings.CHAT_CONTEXT_CHECK)) return false
+        if (!options.bool(PlayerOptions.CHAT_CONTEXT_CHECK, PluginSettings.CHAT_CONTEXT_CHECK)) return false
 
         ChatContext.addMessage(player, originalPlainText)
         val originalContext = ChatContext.getHistory(player).joinToString("")
@@ -132,26 +139,27 @@ class PaperChatListener(
         if (censoredWords.isEmpty()) return false
 
         ChatContext.pollPlayerContext(player)
-        if (configuration.get(PluginSettings.CHAT_FAKE_MESSAGE_ON_CANCEL)) {
+        if (options.bool(PlayerOptions.CHAT_FAKE_MESSAGE_ON_CANCEL, PluginSettings.CHAT_FAKE_MESSAGE_ON_CANCEL)) {
             markFakeMessage(player)
         } else {
             event.isCancelled = true
         }
 
-        recordViolation(event, player, originalPlainText, originalContext, censoredWords, true, startTime)
+        recordViolation(event, player, options, originalPlainText, originalContext, censoredWords, true, startTime)
         return true
     }
 
     private fun recordViolation(
         event: AsyncChatEvent,
         player: Player,
+        options: PlayerOptionView,
         playerMessage: String,
         violationContent: String,
         censoredWords: List<String>,
         contextCheck: Boolean,
         startTime: Long,
     ) {
-        if (configuration.get(PluginSettings.CHAT_SEND_MESSAGE)) {
+        if (options.bool(PlayerOptions.CHAT_SEND_MESSAGE, PluginSettings.CHAT_SEND_MESSAGE)) {
             MessageUtils.sendMessage(
                 player,
                 configuration.message(PluginMessages.MESSAGE_ON_CHAT)
@@ -173,8 +181,8 @@ class PaperChatListener(
         )
     }
 
-    private fun isCancelMode(): Boolean {
-        return configuration.get(PluginSettings.CHAT_METHOD).isCancel
+    private fun isCancelMode(options: PlayerOptionView): Boolean {
+        return options.method(PlayerOptions.CHAT_METHOD, PluginSettings.CHAT_METHOD).isCancel
     }
 
     private fun markFakeMessage(player: Player) {

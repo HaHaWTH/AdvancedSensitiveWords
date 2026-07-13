@@ -2,6 +2,9 @@ package io.wdsj.asw.bukkit.listener
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.permission.PermissionsEnum
+import io.wdsj.asw.bukkit.permission.option.PlayerOptionResolver
+import io.wdsj.asw.bukkit.permission.option.PlayerOptionView
+import io.wdsj.asw.bukkit.permission.option.PlayerOptions
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
@@ -31,6 +34,7 @@ class AnvilListener(private val configuration: PaperConfigurationService) : List
 
         val player = event.whoClicked as? Player ?: return
         if (processingGuard.shouldSkipBasic(player, PermissionsEnum.BYPASS_ANVIL)) return
+        val options = PlayerOptionResolver.resolve(configuration, player)
 
         val outputItem = event.currentItem ?: return
         if (!outputItem.hasItemMeta()) return
@@ -45,7 +49,7 @@ class AnvilListener(private val configuration: PaperConfigurationService) : List
         SensitiveFilterEvents.post(event.isAsynchronous, ModuleType.ANVIL, player, originalItemName, censoredWords)
         if (censoredWords.isEmpty()) return
 
-        if (isCancelMode()) {
+        if (isCancelMode(options)) {
             event.isCancelled = true
         } else {
             itemMeta.displayName(
@@ -58,7 +62,7 @@ class AnvilListener(private val configuration: PaperConfigurationService) : List
             outputItem.setItemMeta(itemMeta)
         }
 
-        if (configuration.get(PluginSettings.ANVIL_SEND_MESSAGE)) {
+        if (options.bool(PlayerOptions.ANVIL_SEND_MESSAGE, PluginSettings.ANVIL_SEND_MESSAGE)) {
             MessageUtils.sendMessage(player, PluginMessages.MESSAGE_ON_ANVIL_RENAME)
         }
 
@@ -79,7 +83,7 @@ class AnvilListener(private val configuration: PaperConfigurationService) : List
         return text.replace(Utils.preProcessRegex.toRegex(), "")
     }
 
-    private fun isCancelMode(): Boolean {
-        return configuration.get(PluginSettings.ANVIL_METHOD).isCancel
+    private fun isCancelMode(options: PlayerOptionView): Boolean {
+        return options.method(PlayerOptions.ANVIL_METHOD, PluginSettings.ANVIL_METHOD).isCancel
     }
 }

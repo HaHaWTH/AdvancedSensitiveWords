@@ -3,6 +3,9 @@ package io.wdsj.asw.bukkit.listener
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.listener.command.CommandArgumentRuleSet
 import io.wdsj.asw.bukkit.permission.PermissionsEnum
+import io.wdsj.asw.bukkit.permission.option.PlayerOptionResolver
+import io.wdsj.asw.bukkit.permission.option.PlayerOptionView
+import io.wdsj.asw.bukkit.permission.option.PlayerOptions
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
@@ -30,6 +33,7 @@ class CommandListener(private val configuration: PaperConfigurationService) : Li
         val originalCommand = preprocess(event.message)
         val player = event.player
         if (processingGuard.shouldSkip(player, PermissionsEnum.BYPASS_COMMAND)) return
+        val options = PlayerOptionResolver.resolve(configuration, player)
 
         val selection = configuration.commandArgumentRules().select(originalCommand)
         if (!configuration.shouldInspectCommand(selection) || selection.segments().isEmpty()) return
@@ -39,8 +43,8 @@ class CommandListener(private val configuration: PaperConfigurationService) : Li
         SensitiveFilterEvents.post(event.isAsynchronous, ModuleType.CHAT, player, selection.scannedContent(), censoredWords)
         if (censoredWords.isEmpty()) return
 
-        applyCommandAction(event, selection)
-        recordViolation(event, player, selection.scannedContent(), censoredWords, startTime)
+        applyCommandAction(event, selection, options)
+        recordViolation(event, player, options, selection.scannedContent(), censoredWords, startTime)
     }
 
     private fun preprocess(message: String): String {
@@ -51,8 +55,9 @@ class CommandListener(private val configuration: PaperConfigurationService) : Li
     private fun applyCommandAction(
         event: PlayerCommandPreprocessEvent,
         selection: CommandArgumentRuleSet.CommandSelection,
+        options: PlayerOptionView,
     ) {
-        if (isCancelMode()) {
+        if (isCancelMode(options)) {
             event.isCancelled = true
             return
         }
@@ -64,11 +69,12 @@ class CommandListener(private val configuration: PaperConfigurationService) : Li
     private fun recordViolation(
         event: PlayerCommandPreprocessEvent,
         player: Player,
+        options: PlayerOptionView,
         originalCommand: String,
         censoredWords: List<String>,
         startTime: Long,
     ) {
-        if (configuration.get(PluginSettings.CHAT_SEND_MESSAGE)) {
+        if (options.bool(PlayerOptions.CHAT_SEND_MESSAGE, PluginSettings.CHAT_SEND_MESSAGE)) {
             MessageUtils.sendMessage(
                 player,
                 configuration.message(PluginMessages.MESSAGE_ON_CHAT)
@@ -89,7 +95,7 @@ class CommandListener(private val configuration: PaperConfigurationService) : Li
         )
     }
 
-    private fun isCancelMode(): Boolean {
-        return configuration.get(PluginSettings.CHAT_METHOD).isCancel
+    private fun isCancelMode(options: PlayerOptionView): Boolean {
+        return options.method(PlayerOptions.CHAT_METHOD, PluginSettings.CHAT_METHOD).isCancel
     }
 }

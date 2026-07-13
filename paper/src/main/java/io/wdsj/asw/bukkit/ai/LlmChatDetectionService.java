@@ -4,14 +4,18 @@ import io.wdsj.asw.bukkit.AdvancedSensitiveWords;
 import io.wdsj.asw.bukkit.api.event.AsyncModerationResponseEvent;
 import io.wdsj.asw.bukkit.api.moderation.LlmChatModerationResult;
 import io.wdsj.asw.bukkit.api.moderation.LlmModerationCategory;
+import io.wdsj.asw.bukkit.permission.option.PlayerOptionView;
+import io.wdsj.asw.bukkit.permission.option.PlayerOptions;
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService;
 import io.wdsj.asw.bukkit.setting.PluginSettings;
+import io.wdsj.asw.bukkit.setting.SettingKey;
 import io.wdsj.asw.bukkit.type.ModuleType;
 import io.wdsj.asw.bukkit.util.SchedulingUtils;
 import io.wdsj.asw.bukkit.util.ViolationReporter;
 import io.wdsj.asw.common.utils.MessageEntropy;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -29,6 +33,7 @@ import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Function;
 import java.nio.charset.StandardCharsets;
 import io.wdsj.asw.bukkit.setting.SettingsConfiguration;
+import org.jetbrains.annotations.VisibleForTesting;
 
 public final class LlmChatDetectionService implements Listener, AutoCloseable {
     private final PaperConfigurationService configuration;
@@ -80,28 +85,46 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
         }
     }
 
+    @VisibleForTesting
     public void submit(UUID playerId, String playerName, String message) {
+        submit(playerId, playerName, message, null);
+    }
+
+    public void submit(Player player, String message, PlayerOptionView options) {
+        submit(player.getUniqueId(), player.getName(), message, options);
+    }
+
+    private void submit(UUID playerId, String playerName, String message, PlayerOptionView options) {
         RuntimeState state = runtime;
         if (state == null || closed || !AdvancedSensitiveWords.isInitialized || AdvancedSensitiveWords.sensitiveWordBs == null) {
             return;
         }
 
-        LlmSettings settings = state.settings();
+        if (!optionBoolean(options, PlayerOptions.AI_ENABLED, PluginSettings.AI_ENABLED)) {
+            return;
+        }
         int rawCodePoints = message.codePointCount(0, message.length());
-        if (rawCodePoints > settings.maximumMessageCodePoints()) {
+        if (rawCodePoints > optionInt(options, PlayerOptions.AI_MAXIMUM_MESSAGE_CODE_POINTS, PluginSettings.AI_MAXIMUM_MESSAGE_CODE_POINTS)) {
             return;
         }
         int visibleCodePoints = MessageEntropy.visibleCodePointCount(message);
-        if (visibleCodePoints < settings.minimumMessageCodePoints()) {
+        if (visibleCodePoints < optionInt(options, PlayerOptions.AI_MINIMUM_MESSAGE_CODE_POINTS, PluginSettings.AI_MINIMUM_MESSAGE_CODE_POINTS)) {
             return;
         }
 
         double entropy = MessageEntropy.shannonEntropyBits(message);
-        if (entropy < settings.minimumEntropyBits()) {
+        if (entropy < optionDouble(options, PlayerOptions.AI_MINIMUM_ENTROPY_BITS, PluginSettings.AI_MINIMUM_ENTROPY_BITS)) {
             return;
         }
 
-        Candidate candidate = reserveCandidate(state, playerId, playerName, message, entropy);
+        Candidate candidate = reserveCandidate(
+                state,
+                playerId,
+                playerName,
+                message,
+                entropy,
+                optionInt(options, PlayerOptions.AI_PER_PLAYER_COOLDOWN_SECONDS, PluginSettings.AI_PLAYER_COOLDOWN_SECONDS)
+        );
         if (candidate == null) {
             droppedRequests.increment();
             return;
@@ -207,14 +230,15 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
             UUID playerId,
             String playerName,
             String message,
-            double entropy
+            double entropy,
+            int cooldownSeconds
     ) {
         if (!isCurrent(state) || inFlightGenerations.putIfAbsent(playerId, state.generation()) != null) {
             return null;
         }
 
         long now = System.currentTimeMillis();
-        long deadline = now + TimeUnit.SECONDS.toMillis(state.settings().perPlayerCooldownSeconds());
+        long deadline = now + TimeUnit.SECONDS.toMillis(Math.max(0, cooldownSeconds));
         AtomicBoolean granted = new AtomicBoolean();
         cooldowns.compute(playerId, (ignored, existing) -> {
             if (existing != null && existing.deadlineMillis() > now) {
@@ -397,6 +421,18 @@ public final class LlmChatDetectionService implements Listener, AutoCloseable {
             ));
         }
         return policies;
+    }
+
+    private boolean optionBoolean(PlayerOptionView options, String optionPath, SettingKey<Boolean> key) {
+        return options == null ? configuration.get(key) : options.bool(optionPath, key);
+    }
+
+    private int optionInt(PlayerOptionView options, String optionPath, SettingKey<Integer> key) {
+        return options == null ? configuration.get(key) : options.integer(optionPath, key);
+    }
+
+    private double optionDouble(PlayerOptionView options, String optionPath, SettingKey<Double> key) {
+        return options == null ? configuration.get(key) : options.decimal(optionPath, key);
     }
 
     record LlmSettings(

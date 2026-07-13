@@ -2,6 +2,9 @@ package io.wdsj.asw.bukkit.listener
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.permission.PermissionsEnum
+import io.wdsj.asw.bukkit.permission.option.PlayerOptionResolver
+import io.wdsj.asw.bukkit.permission.option.PlayerOptionView
+import io.wdsj.asw.bukkit.permission.option.PlayerOptions
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.setting.PluginMessages
 import io.wdsj.asw.bukkit.setting.PluginSettings
@@ -34,9 +37,10 @@ class PlayerItemListener(private val configuration: PaperConfigurationService) :
 
         val player = event.player
         if (processingGuard.shouldSkipBasic(player, PermissionsEnum.BYPASS_ITEM)) return
+        val options = PlayerOptionResolver.resolve(configuration, player)
 
         val item = player.inventory.getItem(event.newSlot) ?: return
-        censorItemName(player, item, event)
+        censorItemName(player, item, event, options)
     }
 
     @EventHandler(priority = EventPriority.LOW)
@@ -46,8 +50,9 @@ class PlayerItemListener(private val configuration: PaperConfigurationService) :
 
         val player = event.player
         if (processingGuard.shouldSkipBasic(player, PermissionsEnum.BYPASS_ITEM)) return
+        val options = PlayerOptionResolver.resolve(configuration, player)
 
-        censorItemName(player, event.itemDrop.itemStack, event)
+        censorItemName(player, event.itemDrop.itemStack, event, options)
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -58,12 +63,13 @@ class PlayerItemListener(private val configuration: PaperConfigurationService) :
         val player = event.whoClicked as? Player ?: return
         if (processingGuard.shouldSkipBasic(player, PermissionsEnum.BYPASS_ITEM)) return
         if (event.clickedInventory?.type != InventoryType.PLAYER) return
+        val options = PlayerOptionResolver.resolve(configuration, player)
 
         val item = event.currentItem ?: return
-        censorItemName(player, item, event)
+        censorItemName(player, item, event, options)
     }
 
-    private fun censorItemName(player: Player, item: ItemStack, event: Cancellable) {
+    private fun censorItemName(player: Player, item: ItemStack, event: Cancellable, options: PlayerOptionView) {
         if (!item.hasItemMeta()) return
 
         val meta = item.itemMeta ?: return
@@ -77,7 +83,7 @@ class PlayerItemListener(private val configuration: PaperConfigurationService) :
         SensitiveFilterEvents.post(asynchronous, ModuleType.ITEM, player, originalName, censoredWords)
         if (censoredWords.isEmpty()) return
 
-        if (isCancelMode()) {
+        if (isCancelMode(options)) {
             event.isCancelled = true
         } else {
             meta.displayName(
@@ -90,7 +96,7 @@ class PlayerItemListener(private val configuration: PaperConfigurationService) :
             item.setItemMeta(meta)
         }
 
-        if (configuration.get(PluginSettings.ITEM_SEND_MESSAGE)) {
+        if (options.bool(PlayerOptions.ITEM_SEND_MESSAGE, PluginSettings.ITEM_SEND_MESSAGE)) {
             MessageUtils.sendMessage(player, PluginMessages.MESSAGE_ON_ITEM)
         }
 
@@ -110,7 +116,7 @@ class PlayerItemListener(private val configuration: PaperConfigurationService) :
         return text.replace(Utils.preProcessRegex.toRegex(), "")
     }
 
-    private fun isCancelMode(): Boolean {
-        return configuration.get(PluginSettings.ITEM_METHOD).isCancel
+    private fun isCancelMode(options: PlayerOptionView): Boolean {
+        return options.method(PlayerOptions.ITEM_METHOD, PluginSettings.ITEM_METHOD).isCancel
     }
 }
