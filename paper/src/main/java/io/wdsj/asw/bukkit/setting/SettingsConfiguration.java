@@ -3,15 +3,12 @@ package io.wdsj.asw.bukkit.setting;
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
 import io.wdsj.asw.bukkit.ai.LlmApiMode;
-import io.wdsj.asw.bukkit.core.persistence.StorageType;
-import io.wdsj.asw.bukkit.manage.playergroup.GroupModuleMode;
 import io.wdsj.asw.bukkit.type.ProcessMethod;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
 
 @Configuration
 public final class SettingsConfiguration {
@@ -31,8 +28,6 @@ public final class SettingsConfiguration {
     public Name name = new Name();
     @Comment({"Item filtering settings."})
     public Item item = new Item();
-    @Comment({"Player activity group settings."})
-    public PlayerGroups playerGroups = new PlayerGroups();
 
     @Configuration
     public static final class Plugin {
@@ -207,8 +202,20 @@ public final class SettingsConfiguration {
         public int similarMinDistance = 2;
         @Comment("Similarity threshold from 0.0 to 1.0. Messages at or above this value are treated as spam. Use 1.1 to disable.")
         public double similarMaxSimilarity = 0.90D;
+        @Comment("Token-bucket message rate limit. This is part of chat anti-spam and applies to all checked chat messages.")
+        public AntiSpamRateLimit rateLimit = new AntiSpamRateLimit();
         @Comment("Whether to send a message when anti-spam cancels chat.")
         public boolean sendMessage = true;
+    }
+
+    @Configuration
+    public static final class AntiSpamRateLimit {
+        @Comment("Whether to enable token-bucket chat rate limiting.")
+        public boolean enabled = false;
+        @Comment("Maximum stored tokens, also the allowed burst size.")
+        public int capacity = 3;
+        @Comment("Seconds needed to refill the full bucket.")
+        public int refillIntervalSeconds = 30;
     }
 
     @Configuration
@@ -387,141 +394,4 @@ public final class SettingsConfiguration {
         public List<String> punishment = new ArrayList<>();
     }
 
-    @Configuration
-    public static final class PlayerGroups {
-        @Comment("Whether to enable activity-based player groups.")
-        public boolean enabled = false;
-        @Comment("Activity score required to be treated as PLAYER instead of NEWBIE.")
-        public double playerThreshold = 6000.0D;
-        @Comment("Unique identifier for this backend server when aggregating activity across servers. Generated as a numeric string by default; keep it different on every backend server.")
-        public String serverId = Long.toUnsignedString(ThreadLocalRandom.current().nextLong());
-        @Comment("How often online player statistics are refreshed on the server thread.")
-        public int refreshIntervalSeconds = 60;
-        @Comment("Persistent storage for cross-server group states and manual group overrides.")
-        public GroupStorage storage = new GroupStorage();
-        @Comment("Statistic weights used to calculate activity score.")
-        public ActivityWeights weights = new ActivityWeights();
-        @Comment("NEWBIE group policy.")
-        public GroupPolicy newbie = GroupPolicy.newbie();
-        @Comment("PLAYER group policy.")
-        public GroupPolicy player = GroupPolicy.player();
-    }
-
-    @Configuration
-    public static final class GroupStorage {
-        @Comment("Storage backend for player group states: SQLITE or MYSQL.")
-        public StorageType type = StorageType.SQLITE;
-        @Comment("SQLite database path relative to the plugin data folder.")
-        public String sqliteFile = "player-groups/groups.db";
-        @Comment("Whether SQLite should use WAL journal mode.")
-        public boolean sqliteWal = true;
-        @Comment("HikariCP pool name.")
-        public String poolName = "ASW-PlayerGroups";
-        @Comment("Maximum HikariCP pool size. SQLite is capped internally to 3.")
-        public int maximumPoolSize = 3;
-        @Comment("Minimum idle HikariCP connections.")
-        public int minimumIdle = 1;
-        @Comment("Connection timeout in milliseconds.")
-        public long connectionTimeoutMillis = 5000L;
-        @Comment("MySQL storage settings. Used only when type is MYSQL.")
-        public Mysql mysql = new Mysql();
-    }
-
-    @Configuration
-    public static final class Mysql {
-        @Comment("MySQL host.")
-        public String host = "127.0.0.1";
-        @Comment("MySQL port.")
-        public int port = 3306;
-        @Comment("MySQL database.")
-        public String database = "advanced_sensitive_words";
-        @Comment("MySQL username.")
-        public String username = "root";
-        @Comment("MySQL password.")
-        public String password = "";
-    }
-
-    @Configuration
-    public static final class ActivityWeights {
-        @Comment("Weight per hour of play time.")
-        public double playTimeHours = 1.0D;
-        @Comment("Weight per mined block.")
-        public double minedBlocks = 0.2D;
-        @Comment("Weight per moved block.")
-        public double movedBlocks = 0.001D;
-        @Comment("Weight per mob kill.")
-        public double mobKills = 1.0D;
-        @Comment("Weight per used item statistic.")
-        public double usedItems = 0.02D;
-        @Comment("Weight per broken item statistic.")
-        public double brokenItems = 1.0D;
-        @Comment("Weight per crafted item statistic.")
-        public double craftedItems = 0.1D;
-        @Comment("Weight per raw damage-dealt statistic point.")
-        public double damageDealt = 0.01D;
-        @Comment("Weight per raw damage-taken statistic point.")
-        public double damageTaken = 0.01D;
-        @Comment("Weight per death.")
-        public double deaths = 1.0D;
-        @Comment("Weight per enchanted item.")
-        public double enchantedItems = 1.0D;
-        @Comment("Weight per fish caught.")
-        public double fishCaught = 1.0D;
-        @Comment("Weight per villager trade.")
-        public double villagerTrades = 1.0D;
-    }
-
-    @Configuration
-    public static final class GroupPolicy {
-        @Comment({
-                "Per-module overrides. DEFAULT inherits the global enable switch.",
-                "ENABLED only has an effect when the global module switch is already enabled.",
-                "DISABLED skips this module for players in this group."
-        })
-        public GroupModules modules = new GroupModules();
-        @Comment("NEWBIE-only whether players in this group receive a join message.")
-        public boolean sendJoinMessage = false;
-        @Comment("NEWBIE-only token-bucket chat/command rate limit.")
-        public RateLimit rateLimit = new RateLimit();
-        @Comment("NEWBIE-only link check for chat and selected command arguments.")
-        public LinkCheck linkCheck = new LinkCheck();
-
-        private static GroupPolicy newbie() {
-            GroupPolicy policy = new GroupPolicy();
-            policy.sendJoinMessage = true;
-            policy.rateLimit.enabled = true;
-            policy.linkCheck.enabled = true;
-            return policy;
-        }
-
-        private static GroupPolicy player() {
-            return new GroupPolicy();
-        }
-    }
-
-    @Configuration
-    public static final class GroupModules {
-        public GroupModuleMode chat = GroupModuleMode.DEFAULT;
-        public GroupModuleMode command = GroupModuleMode.DEFAULT;
-        public GroupModuleMode book = GroupModuleMode.DEFAULT;
-        public GroupModuleMode sign = GroupModuleMode.DEFAULT;
-        public GroupModuleMode anvil = GroupModuleMode.DEFAULT;
-        public GroupModuleMode item = GroupModuleMode.DEFAULT;
-    }
-
-    @Configuration
-    public static final class RateLimit {
-        @Comment("Whether to enable the NEWBIE token bucket.")
-        public boolean enabled = false;
-        @Comment("Maximum stored tokens, also the allowed burst size.")
-        public int capacity = 3;
-        @Comment("Seconds needed to refill the full bucket.")
-        public int refillIntervalSeconds = 30;
-    }
-
-    @Configuration
-    public static final class LinkCheck {
-        @Comment("Whether NEWBIE players are blocked from sending links in chat and selected command arguments.")
-        public boolean enabled = false;
-    }
 }

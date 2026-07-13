@@ -1,7 +1,6 @@
 package io.wdsj.asw.bukkit.listener
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
-import io.wdsj.asw.bukkit.manage.playergroup.GroupModule
 import io.wdsj.asw.bukkit.permission.PermissionsEnum
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.setting.PluginMessages
@@ -32,7 +31,6 @@ class AnvilListener(private val configuration: PaperConfigurationService) : List
 
         val player = event.whoClicked as? Player ?: return
         if (processingGuard.shouldSkipBasic(player, PermissionsEnum.BYPASS_ANVIL)) return
-        if (processingGuard.shouldSkipGroupModule(player, GroupModule.ANVIL, globalEnabled)) return
 
         val outputItem = event.currentItem ?: return
         if (!outputItem.hasItemMeta()) return

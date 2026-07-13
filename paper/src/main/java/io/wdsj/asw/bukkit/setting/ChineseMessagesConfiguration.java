@@ -27,21 +27,6 @@ public final class ChineseMessagesConfiguration extends MessagesConfiguration {
                 <dark_gray>  无效 <aqua>%invalid% <dark_gray>| <gray>已执行 <aqua>%enforced%
                 <dark_gray>  队列 <aqua>%active% 活跃 <gray>/ <aqua>%queued% 排队 <gray>/ <aqua>%pool_size% 线程
                 <dark_gray>  通知/处罚阈值 <aqua>%thresholds%""";
-        plugin.playerGroupNewbieJoin = "<yellow>服务器新玩家会有一段时间的聊天严管，请勿频繁发送消息、发送长消息或发送链接。正常游玩即可结束严管。";
-        plugin.playerGroupNewbieRateLimit = "<yellow>请放慢聊天速度，新玩家存在临时聊天频率限制。";
-        plugin.playerGroupNewbieLinkBlocked = "<red>新玩家暂时不能发送链接。";
-        plugin.playerGroupInfo = """
-                <gradient:#22d3ee:#4ade80><bold>玩家活跃分组</bold></gradient> <dark_gray>| <aqua>%player%
-                <dark_gray>  分组 <aqua>%group% <dark_gray>| <gray>来源 <aqua>%source%
-                <dark_gray>  活跃分 <aqua>%score% <gray>/ <aqua>%threshold%
-                <dark_gray>  游玩 <aqua>%play_hours%h <dark_gray>| <gray>移动 <aqua>%moved_blocks% <gray>方块 <dark_gray>| <gray>挖掘 <aqua>%mined_blocks%
-                <dark_gray>  击杀 <aqua>%mob_kills% <dark_gray>| <gray>使用 <aqua>%used_items% <dark_gray>| <gray>损坏 <aqua>%broken_items% <dark_gray>| <gray>合成 <aqua>%crafted_items%
-                <dark_gray>  伤害 <aqua>%damage_dealt%/%damage_taken% <dark_gray>| <gray>死亡 <aqua>%deaths% <dark_gray>| <gray>附魔 <aqua>%enchanted_items%
-                <dark_gray>  钓鱼 <aqua>%fish_caught% <dark_gray>| <gray>交易 <aqua>%villager_trades%""";
-        plugin.playerGroupSet = "<green>已将玩家 <aqua>%player% <green>设置为 <aqua>%group% <green>分组。";
-        plugin.playerGroupClear = "<green>已清除玩家 <aqua>%player% <green>的手动分组覆盖。";
-        plugin.playerGroupDisabled = "<red>玩家分组系统未启用。";
-        plugin.playerGroupStorageError = "<red>玩家分组存储操作失败。";
         plugin.commandTest.testResultTrue = """
                 <gradient:#22d3ee:#4ade80><bold>鉴定报告</bold></gradient>
                 <dark_gray>  原消息 <red>%original_msg%

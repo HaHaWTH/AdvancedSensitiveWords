@@ -3,7 +3,6 @@ package io.wdsj.asw.bukkit.listener
 import com.github.houbb.sensitive.word.api.IWordResult
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.permission.PermissionsEnum
-import io.wdsj.asw.bukkit.manage.playergroup.GroupModule
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.integration.packetevents.sign.SignFakeViewService
 import io.wdsj.asw.bukkit.setting.PluginMessages
@@ -42,7 +41,6 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
 
         val player = event.player
         if (processingGuard.shouldSkipBasic(player, PermissionsEnum.BYPASS_SIGN)) return
-        if (processingGuard.shouldSkipGroupModule(player, GroupModule.SIGN, globalEnabled)) return
 
         val startTime = System.currentTimeMillis()
         val attemptedLines = event.lines().toList()

@@ -5,7 +5,6 @@ import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.ai.LlmChatDetectionService
 import io.wdsj.asw.bukkit.integration.trchat.TrChatCompat
 import io.wdsj.asw.bukkit.listener.abstraction.AbstractFakeMessageExecutor
-import io.wdsj.asw.bukkit.manage.playergroup.GroupModule
 import io.wdsj.asw.bukkit.permission.PermissionsEnum
 import io.wdsj.asw.bukkit.service.chat.antispam.ChatAntiSpamService
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
@@ -42,12 +41,10 @@ class PaperChatListener(
 
         val player = event.player
         if (processingGuard.shouldSkip(player, PermissionsEnum.BYPASS_CHAT)) return
-        if (processingGuard.shouldSkipGroupModule(player, GroupModule.CHAT, globalEnabled)) return
 
         val startTime = System.currentTimeMillis()
         val originalMessage = preprocess(event.message())
         val originalPlainText = PlainTextComponentSerializer.plainText().serialize(originalMessage)
-        if (handleNewbieRestrictions(event, player, originalPlainText)) return
 
         if (antiSpamService.check(player.uniqueId, originalPlainText) == ChatAntiSpamService.Result.SPAM) {
             event.isCancelled = true
@@ -74,21 +71,6 @@ class PaperChatListener(
         if (!handleContextMessage(event, player, originalPlainText, startTime)) {
             llmChatDetectionService.submit(player.uniqueId, player.name, originalPlainText)
         }
-    }
-
-    private fun handleNewbieRestrictions(event: AsyncChatEvent, player: Player, content: String): Boolean {
-        val service = AdvancedSensitiveWords.getInstance().playerGroupService ?: return false
-        if (!service.consumeNewbieToken(player)) {
-            event.isCancelled = true
-            MessageUtils.sendMessage(player, PluginMessages.PLAYER_GROUP_NEWBIE_RATE_LIMIT)
-            return true
-        }
-        if (service.containsNewbieLink(player, content)) {
-            event.isCancelled = true
-            MessageUtils.sendMessage(player, PluginMessages.PLAYER_GROUP_NEWBIE_LINK_BLOCKED)
-            return true
-        }
-        return false
     }
 
     private fun preprocess(message: Component): Component {

@@ -1,6 +1,5 @@
 package io.wdsj.asw.bukkit.listener
 
-import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.service.chat.antispam.ChatAntiSpamService
 import io.wdsj.asw.bukkit.manage.punish.PlayerShadowController
 import io.wdsj.asw.bukkit.util.context.ChatContext
@@ -29,7 +28,6 @@ class QuitDataCleaner : Listener {
         ChatContext.clearPlayerContext(player)
         SignContext.clearPlayerContext(player)
         ChatAntiSpamService.clear(player.uniqueId)
-        AdvancedSensitiveWords.getInstance().playerGroupService?.handleQuit(player)
         PlayerShadowController.unshadowPlayer(player)
     }
 }

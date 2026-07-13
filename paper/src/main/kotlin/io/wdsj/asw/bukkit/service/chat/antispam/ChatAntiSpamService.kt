@@ -19,6 +19,7 @@ class ChatAntiSpamService(private val configuration: PaperConfigurationService) 
 
     fun check(playerId: UUID, message: String, nowMillis: Long = System.currentTimeMillis()): Result {
         if (!configuration.get(PluginSettings.CHAT_ANTI_SPAM_ENABLED)) return Result.CLEAN
+        if (!consumeToken(playerId, nowMillis)) return Result.SPAM
 
         val preprocessed = preprocess(message)
         val visibleCodePoints = MessageEntropy.visibleCodePointCount(preprocessed)
@@ -45,6 +46,19 @@ class ChatAntiSpamService(private val configuration: PaperConfigurationService) 
         }
         remember(playerId, normalized, nowMillis)
         return result
+    }
+
+    private fun consumeToken(playerId: UUID, nowMillis: Long): Boolean {
+        if (!configuration.get(PluginSettings.CHAT_ANTI_SPAM_RATE_LIMIT_ENABLED)) return true
+
+        val capacity = configuration.get(PluginSettings.CHAT_ANTI_SPAM_RATE_LIMIT_CAPACITY)
+        val refillIntervalMillis = configuration.get(PluginSettings.CHAT_ANTI_SPAM_RATE_LIMIT_REFILL_INTERVAL_SECONDS) * 1000L
+        val bucket = tokenBuckets.compute(playerId) { _, existing ->
+            existing?.takeIf {
+                it.capacity == capacity && it.refillIntervalMillis == refillIntervalMillis
+            } ?: TokenBucket(capacity, refillIntervalMillis, nowMillis)
+        } ?: return true
+        return bucket.tryConsume(nowMillis)
     }
 
     private fun checkSimilarity(playerId: UUID, normalized: String, nowMillis: Long): Result {
@@ -92,6 +106,31 @@ class ChatAntiSpamService(private val configuration: PaperConfigurationService) 
         val list: EvictingRingList<Entry> = EvictingRingList<Entry>(capacity),
     )
 
+    private class TokenBucket(
+        val capacity: Int,
+        val refillIntervalMillis: Long,
+        nowMillis: Long,
+    ) {
+        private var tokens = capacity.toDouble()
+        private var lastRefillMillis = nowMillis
+
+        @Synchronized
+        fun tryConsume(nowMillis: Long): Boolean {
+            refill(nowMillis)
+            if (tokens < 1.0) return false
+            tokens -= 1.0
+            return true
+        }
+
+        private fun refill(nowMillis: Long) {
+            val elapsed = nowMillis - lastRefillMillis
+            if (elapsed <= 0L) return
+
+            tokens = min(capacity.toDouble(), tokens + elapsed.toDouble() * capacity / refillIntervalMillis)
+            lastRefillMillis = nowMillis
+        }
+    }
+
     enum class Result {
         CLEAN,
         SPAM,
@@ -99,15 +138,18 @@ class ChatAntiSpamService(private val configuration: PaperConfigurationService) 
 
     companion object {
         private val histories = ConcurrentHashMap<UUID, History>()
+        private val tokenBuckets = ConcurrentHashMap<UUID, TokenBucket>()
 
         @JvmStatic
         fun clear(playerId: UUID) {
             histories.remove(playerId)
+            tokenBuckets.remove(playerId)
         }
 
         @JvmStatic
         fun clearAll() {
             histories.clear()
+            tokenBuckets.clear()
         }
 
         private fun normalize(message: String): String {

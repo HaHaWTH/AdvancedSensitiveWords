@@ -1,7 +1,6 @@
 package io.wdsj.asw.bukkit.listener
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
-import io.wdsj.asw.bukkit.manage.playergroup.GroupModule
 import io.wdsj.asw.bukkit.permission.PermissionsEnum
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.setting.PluginMessages
@@ -31,7 +30,6 @@ class BookListener(private val configuration: PaperConfigurationService) : Liste
 
         val player = event.player
         if (processingGuard.shouldSkipBasic(player, PermissionsEnum.BYPASS_BOOK)) return
-        if (processingGuard.shouldSkipGroupModule(player, GroupModule.BOOK, globalEnabled)) return
 
         val startTime = System.currentTimeMillis()
         val bookMeta = event.newBookMeta

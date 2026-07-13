@@ -2,7 +2,6 @@ package io.wdsj.asw.bukkit.listener
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
 import io.wdsj.asw.bukkit.listener.command.CommandArgumentRuleSet
-import io.wdsj.asw.bukkit.manage.playergroup.GroupModule
 import io.wdsj.asw.bukkit.permission.PermissionsEnum
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.setting.PluginMessages
@@ -31,11 +30,9 @@ class CommandListener(private val configuration: PaperConfigurationService) : Li
         val originalCommand = preprocess(event.message)
         val player = event.player
         if (processingGuard.shouldSkip(player, PermissionsEnum.BYPASS_COMMAND)) return
-        if (processingGuard.shouldSkipGroupModule(player, GroupModule.COMMAND, globalEnabled)) return
 
         val selection = configuration.commandArgumentRules().select(originalCommand)
         if (!configuration.shouldInspectCommand(selection) || selection.segments().isEmpty()) return
-        if (handleNewbieRestrictions(event, player, selection.scannedContent())) return
 
         val startTime = System.currentTimeMillis()
         val censoredWords = selection.segments().flatMap { segment -> AdvancedSensitiveWords.findAllSensitive(segment.content()) }
@@ -44,25 +41,6 @@ class CommandListener(private val configuration: PaperConfigurationService) : Li
 
         applyCommandAction(event, selection)
         recordViolation(event, player, selection.scannedContent(), censoredWords, startTime)
-    }
-
-    private fun handleNewbieRestrictions(
-        event: PlayerCommandPreprocessEvent,
-        player: Player,
-        content: String,
-    ): Boolean {
-        val service = io.wdsj.asw.bukkit.AdvancedSensitiveWords.getInstance().playerGroupService ?: return false
-        if (!service.consumeNewbieToken(player)) {
-            event.isCancelled = true
-            MessageUtils.sendMessage(player, PluginMessages.PLAYER_GROUP_NEWBIE_RATE_LIMIT)
-            return true
-        }
-        if (service.containsNewbieLink(player, content)) {
-            event.isCancelled = true
-            MessageUtils.sendMessage(player, PluginMessages.PLAYER_GROUP_NEWBIE_LINK_BLOCKED)
-            return true
-        }
-        return false
     }
 
     private fun preprocess(message: String): String {

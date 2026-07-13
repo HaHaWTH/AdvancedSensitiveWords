@@ -16,9 +16,6 @@ public final class CommandPermissions {
     public static final String PLAYER_INFO = PREFIX + "player.info";
     public static final String PLAYER_RESET = PREFIX + "player.reset";
     public static final String PLAYER_PUNISH = PREFIX + "player.punish";
-    public static final String GROUP_INFO = PREFIX + "group.info";
-    public static final String GROUP_SET = PREFIX + "group.set";
-    public static final String GROUP_CLEAR = PREFIX + "group.clear";
 
     private CommandPermissions() {
     }

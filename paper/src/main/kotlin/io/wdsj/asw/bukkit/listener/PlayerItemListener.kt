@@ -1,7 +1,6 @@
 package io.wdsj.asw.bukkit.listener
 
 import io.wdsj.asw.bukkit.AdvancedSensitiveWords
-import io.wdsj.asw.bukkit.manage.playergroup.GroupModule
 import io.wdsj.asw.bukkit.permission.PermissionsEnum
 import io.wdsj.asw.bukkit.setting.PaperConfigurationService
 import io.wdsj.asw.bukkit.setting.PluginMessages
@@ -35,7 +34,6 @@ class PlayerItemListener(private val configuration: PaperConfigurationService) :
 
         val player = event.player
         if (processingGuard.shouldSkipBasic(player, PermissionsEnum.BYPASS_ITEM)) return
-        if (processingGuard.shouldSkipGroupModule(player, GroupModule.ITEM, globalEnabled)) return
 
         val item = player.inventory.getItem(event.newSlot) ?: return
         censorItemName(player, item, event)
@@ -48,7 +46,6 @@ class PlayerItemListener(private val configuration: PaperConfigurationService) :
 
         val player = event.player
         if (processingGuard.shouldSkipBasic(player, PermissionsEnum.BYPASS_ITEM)) return
-        if (processingGuard.shouldSkipGroupModule(player, GroupModule.ITEM, globalEnabled)) return
 
         censorItemName(player, event.itemDrop.itemStack, event)
     }
@@ -60,7 +57,6 @@ class PlayerItemListener(private val configuration: PaperConfigurationService) :
 
         val player = event.whoClicked as? Player ?: return
         if (processingGuard.shouldSkipBasic(player, PermissionsEnum.BYPASS_ITEM)) return
-        if (processingGuard.shouldSkipGroupModule(player, GroupModule.ITEM, globalEnabled)) return
         if (event.clickedInventory?.type != InventoryType.PLAYER) return
 
         val item = event.currentItem ?: return

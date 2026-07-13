@@ -18,7 +18,6 @@ import io.wdsj.asw.bukkit.command.AswCommandRegistrar;
 import io.wdsj.asw.bukkit.ai.LlmChatDetectionService;
 import io.wdsj.asw.bukkit.core.condition.WordResultConditionNumMatch;
 import io.wdsj.asw.bukkit.integration.placeholder.ASWExpansion;
-import io.wdsj.asw.bukkit.manage.playergroup.PlayerGroupService;
 import io.wdsj.asw.bukkit.service.chat.antispam.ChatAntiSpamService;
 import io.wdsj.asw.bukkit.manage.punish.PlayerAltController;
 import io.wdsj.asw.bukkit.manage.punish.PlayerShadowController;
@@ -70,7 +69,6 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     private PaperConfigurationService configurationService;
     private volatile Updater.UpdateResult updateResult = Updater.UpdateResult.noUpdate();
     private AswCommandRegistrar commandRegistrar;
-    private PlayerGroupService playerGroupService;
     public static TaskScheduler getScheduler() {
         return scheduler;
     }
@@ -92,10 +90,6 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
             throw new IllegalStateException("Listeners have not been initialized yet");
         }
         return listenerService.getLlmChatDetectionService();
-    }
-
-    public PlayerGroupService getPlayerGroupService() {
-        return playerGroupService;
     }
 
     public static <T> T setting(SettingKey<T> key) {
@@ -125,7 +119,6 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         BookCache.initialize();
         doInitTasks();
         if (configurationService.get(PluginSettings.PURGE_LOG_FILE)) purgeLog();
-        initializePlayerGroups();
         listenerService = new ListenerService(this);
         listenerService.registerListeners();
         commandRegistrar = new AswCommandRegistrar(this);
@@ -193,10 +186,6 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         ViolationCounter.INSTANCE.resetAllViolations();
         SchedulingUtils.cancelTaskSafely(violationResetTask);
         if (permCache != null) permCache.disable();
-        if (playerGroupService != null) {
-            playerGroupService.close();
-            playerGroupService = null;
-        }
         if (isInitialized) {
             sensitiveWordBs.destroy();
             if (networkSensitiveWordBs != null) {
@@ -209,11 +198,6 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
 
     public void reloadPluginConfiguration() {
         configurationService.reload();
-        if (playerGroupService == null && configurationService.get(PluginSettings.PLAYER_GROUPS_ENABLED)) {
-            initializePlayerGroups();
-        } else if (playerGroupService != null) {
-            playerGroupService.reloadConfiguration();
-        }
         if (listenerService != null) {
             listenerService.reloadConfiguration();
         }
@@ -247,19 +231,6 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     private void scheduleViolationResetTask() {
         long resetIntervalTicks = configurationService.get(PluginSettings.VIOLATION_RESET_TIME) * 20L * 60L;
         violationResetTask = new ViolationResetTask().runTaskTimerAsynchronously(this, resetIntervalTicks, resetIntervalTicks);
-    }
-
-    private void initializePlayerGroups() {
-        if (!configurationService.get(PluginSettings.PLAYER_GROUPS_ENABLED)) {
-            return;
-        }
-        try {
-            playerGroupService = new PlayerGroupService(this);
-            playerGroupService.start();
-        } catch (Exception exception) {
-            LOGGER.error("Failed to initialize player group storage.", exception);
-            throw new IllegalStateException("Unable to initialize player group storage", exception);
-        }
     }
 
     private void checkForUpdatesAsync() {
