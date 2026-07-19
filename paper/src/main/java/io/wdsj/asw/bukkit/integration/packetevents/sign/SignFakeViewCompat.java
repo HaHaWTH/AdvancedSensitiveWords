@@ -21,6 +21,11 @@ public final class SignFakeViewCompat {
         if (!AdvancedSensitiveWords.setting(PluginSettings.ENABLE_SIGN_EDIT_CHECK)) {
             return;
         }
+        // Master toggle for the whole fake-view subsystem (packet listener + writes + refresh).
+        // Disabled here means the packet listener is never registered, so no per-sign scanning cost.
+        if (!AdvancedSensitiveWords.setting(PluginSettings.SIGN_ENABLE_FAKE_VIEW)) {
+            return;
+        }
 
         if (!isPacketEventsAvailable()) {
             logPacketEventsUnavailable();

@@ -353,6 +353,15 @@ public final class SettingsConfiguration {
         public ProcessMethod method = ProcessMethod.REPLACE;
         @Comment("Whether cancelled edits should be shown only to their author through PacketEvents.")
         public boolean fakeOnCancel = false;
+        @Comment({
+            "Master toggle for the PacketEvents-based sign fake-view subsystem.",
+            "When enabled, cancelled/shadowed edits are shown to their author while others see blank;",
+            "this requires scanning every sign tile entity the client receives (chunk loads and block-entity",
+            "update packets), which adds a per-sign block-state snapshot cost on the server thread.",
+            "Disable this to avoid the extra overhead if you do not need the fake-view behaviour.",
+            "Has no effect unless 'enableSignEditCheck' is true and PacketEvents is present."
+        })
+        public boolean enableSignFakeView = true;
         @Comment("Punishment actions for sign violations. Leave empty to disable automatic punishment.")
         public List<String> punishment = new ArrayList<>();
         @Comment("Whether to check words split across sign lines.")

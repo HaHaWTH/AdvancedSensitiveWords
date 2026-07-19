@@ -118,6 +118,7 @@ public final class PluginSettings {
 
     public static final SettingKey<ProcessMethod> SIGN_METHOD = key(settings -> settings.sign.method);
     public static final SettingKey<Boolean> SIGN_FAKE_ON_CANCEL = key(settings -> settings.sign.fakeOnCancel);
+    public static final SettingKey<Boolean> SIGN_ENABLE_FAKE_VIEW = key(settings -> settings.sign.enableSignFakeView);
     public static final SettingKey<List<String>> SIGN_PUNISHMENT = key(settings -> settings.sign.punishment);
     public static final SettingKey<Boolean> SIGN_MULTI_LINE_CHECK = key(settings -> settings.sign.multiLineCheck);
     public static final SettingKey<Boolean> SIGN_CONTEXT_CHECK = key(settings -> settings.sign.contextCheck);
