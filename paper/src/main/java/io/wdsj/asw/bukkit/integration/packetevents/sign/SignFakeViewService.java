@@ -188,7 +188,7 @@ public final class SignFakeViewService {
     }
 
     private static SignFakeRecord readRecordAt(Location location) {
-        BlockState state = location.getBlock().getState();
+        BlockState state = location.getBlock().getState(false);
         if (!(state instanceof Sign sign)) {
             return null;
         }
@@ -245,7 +245,7 @@ public final class SignFakeViewService {
 
     private static void sendRecordView(Player viewer, Location location, SignFakeRecord record) {
         if (!record.canSeeOriginal(viewer.getUniqueId())) return;
-        BlockState state = location.getBlock().getState();
+        BlockState state = location.getBlock().getState(false);
         if (!(state instanceof Sign sign)) {
             return;
         }
