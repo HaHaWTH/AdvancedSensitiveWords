@@ -8,9 +8,7 @@ import io.wdsj.asw.bukkit.util.SchedulingUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Mob;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -194,7 +192,9 @@ public final class PunishmentService {
             for (Entity entity : entities) {
                 SchedulingUtils.runSyncAtEntityIfFolia(entity, () -> {
                     if (entity instanceof Mob mob && !entity.hasMetadata("NPC")) {
-                        mob.setTarget(target);
+                        if (mob instanceof Monster || mob instanceof IronGolem) {
+                            mob.setTarget(target);
+                        }
                     }
                 });
             }

@@ -15,9 +15,7 @@ final class TrChatPendingFakeMessages {
 
     static void increment(Player player) {
         UUID uuid = player.getUniqueId();
-        synchronized (PENDING_MESSAGES) {
-            PENDING_MESSAGES.put(uuid, PENDING_MESSAGES.getInt(uuid) + 1);
-        }
+        PENDING_MESSAGES.mergeInt(uuid, 1, Integer::sum);
     }
 
     static boolean hasPending(Player player) {
