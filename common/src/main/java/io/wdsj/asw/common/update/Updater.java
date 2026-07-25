@@ -22,6 +22,7 @@ public final class Updater {
     private static final String RELEASE_URL = API_ROOT + "/releases/latest";
     private static final String COMMITS_URL = API_ROOT + "/commits/";
     private static final String COMPARE_URL = API_ROOT + "/compare/";
+    @SuppressWarnings("ConstantConditions")
     private static final boolean DEV_CHANNEL = "dev".equalsIgnoreCase(PluginBuildInfo.VERSION_CHANNEL);
 
     private Updater() {
