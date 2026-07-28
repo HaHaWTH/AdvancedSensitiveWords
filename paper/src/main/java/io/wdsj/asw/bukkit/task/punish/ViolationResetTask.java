@@ -24,7 +24,6 @@ public class ViolationResetTask extends UniversalRunnable {
             return;
         }
         ViolationCounter.INSTANCE.resetAllViolations();
-        String message = MessageUtils.retrieveMessage(PluginMessages.MESSAGE_ON_VIOLATION_RESET);
-        Notifier.normalNotice(message);
+        Notifier.normalNotice(MessageUtils.retrieveComponent(PluginMessages.MESSAGE_ON_VIOLATION_RESET));
     }
 }

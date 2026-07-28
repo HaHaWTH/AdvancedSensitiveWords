@@ -284,7 +284,7 @@ public final class VelocitySyncClient implements Listener, AutoCloseable {
 
     private void handleResetAll() {
         ViolationCounter.INSTANCE.resetAllViolations();
-        Notifier.normalNotice(MessageUtils.retrieveMessage(PluginMessages.MESSAGE_ON_VIOLATION_RESET));
+        Notifier.normalNotice(MessageUtils.retrieveComponent(PluginMessages.MESSAGE_ON_VIOLATION_RESET));
     }
 
     private void handleShadowSync(JsonObject message) {

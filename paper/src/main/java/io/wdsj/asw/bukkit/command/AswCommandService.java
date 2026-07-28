@@ -24,6 +24,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -51,6 +52,9 @@ public final class AswCommandService {
         if (AdvancedSensitiveWords.networkSensitiveWordBs != null) {
             AdvancedSensitiveWords.networkSensitiveWordBs.destroy();
         }
+        if (AdvancedSensitiveWords.obfuscatedUrlDetector != null) {
+            AdvancedSensitiveWords.obfuscatedUrlDetector.close();
+        }
         plugin.doInitTasks();
         if (configuration.get(PluginSettings.BOOK_CACHE_CLEAR_ON_RELOAD)
                 && configuration.get(PluginSettings.BOOK_CACHE)) {
@@ -69,36 +73,36 @@ public final class AswCommandService {
                 ? "Windows"
                 : OsUtil.isMac() ? "Mac" : OsUtil.isUnix() ? "Linux" : "Unknown";
         String bitness = OsUtil.is64() ? "64bit" : "32bit";
-        String message = MessageUtils.retrieveMessage(PluginMessages.MESSAGE_ON_COMMAND_STATUS)
-                .replace("%num%", String.valueOf(Utils.messagesFilteredNum.get()))
-                .replace("%mode%", "Event")
-                .replace("%init%", String.valueOf(AdvancedSensitiveWords.isInitialized))
-                .replace("%ms%", TimingUtils.getProcessAverage() + "ms")
-                .replace("%version%", AdvancedSensitiveWords.PLUGIN_VERSION)
-                .replace("%mc_version%", Utils.getMinecraftVersion())
-                .replace("%platform%", platform)
-                .replace("%bit%", bitness)
-                .replace("%java_version%", TimingUtils.getJvmVersion())
-                .replace("%java_vendor%", TimingUtils.getJvmVendor());
-        MessageUtils.sendMessage(sender, message);
+        sendTemplate(sender, PluginMessages.MESSAGE_ON_COMMAND_STATUS, Map.of(
+                "num", String.valueOf(Utils.messagesFilteredNum.get()),
+                "mode", "Event",
+                "init", String.valueOf(AdvancedSensitiveWords.isInitialized),
+                "ms", TimingUtils.getProcessAverage() + "ms",
+                "version", AdvancedSensitiveWords.PLUGIN_VERSION,
+                "mc_version", Utils.getMinecraftVersion(),
+                "platform", platform,
+                "bit", bitness,
+                "java_version", TimingUtils.getJvmVersion(),
+                "java_vendor", TimingUtils.getJvmVendor()
+        ));
     }
 
     public void showAiStatus(CommandSender sender) {
         LlmChatDetectionService.LlmRuntimeStatus status = plugin.getLlmChatDetectionService().runtimeStatus();
-        String message = MessageUtils.retrieveMessage(PluginMessages.MESSAGE_ON_AI_STATUS)
-                .replace("%enabled%", String.valueOf(status.enabled()))
-                .replace("%submitted%", String.valueOf(status.submittedRequests()))
-                .replace("%dropped%", String.valueOf(status.droppedRequests()))
-                .replace("%failed%", String.valueOf(status.failedRequests()))
-                .replace("%invalid%", String.valueOf(status.invalidResponses()))
-                .replace("%enforced%", String.valueOf(status.enforcedResponses()))
-                .replace("%active%", String.valueOf(status.activeRequests()))
-                .replace("%queued%", String.valueOf(status.queuedRequests()))
-                .replace("%pool_size%", String.valueOf(status.poolSize()))
-                .replace("%model%", status.modelName())
-                .replace("%api_mode%", status.apiMode().name())
-                .replace("%thresholds%", formatCategoryPolicies(status.categoryPolicy()));
-        MessageUtils.sendMessage(sender, message);
+        Map<String, String> placeholders = new LinkedHashMap<>();
+        placeholders.put("enabled", String.valueOf(status.enabled()));
+        placeholders.put("submitted", String.valueOf(status.submittedRequests()));
+        placeholders.put("dropped", String.valueOf(status.droppedRequests()));
+        placeholders.put("failed", String.valueOf(status.failedRequests()));
+        placeholders.put("invalid", String.valueOf(status.invalidResponses()));
+        placeholders.put("enforced", String.valueOf(status.enforcedResponses()));
+        placeholders.put("active", String.valueOf(status.activeRequests()));
+        placeholders.put("queued", String.valueOf(status.queuedRequests()));
+        placeholders.put("pool_size", String.valueOf(status.poolSize()));
+        placeholders.put("model", status.modelName());
+        placeholders.put("api_mode", status.apiMode().name());
+        placeholders.put("thresholds", formatCategoryPolicies(status.categoryPolicy()));
+        sendTemplate(sender, PluginMessages.MESSAGE_ON_AI_STATUS, placeholders);
     }
 
     public void test(CommandSender sender, String text) {
@@ -112,11 +116,11 @@ public final class AswCommandService {
             return;
         }
 
-        String message = MessageUtils.retrieveMessage(PluginMessages.MESSAGE_ON_COMMAND_TEST)
-                .replace("%original_msg%", text)
-                .replace("%processed_msg%", AdvancedSensitiveWords.replaceSensitive(text))
-                .replace("%censored_list%", censoredWords.toString());
-        MessageUtils.sendMessage(sender, message);
+        sendTemplate(sender, PluginMessages.MESSAGE_ON_COMMAND_TEST, Map.of(
+                "original_msg", text,
+                "processed_msg", AdvancedSensitiveWords.replaceSensitive(text),
+                "censored_list", censoredWords.toString()
+        ));
     }
 
     public void addBlockedWords(CommandSender sender, String[] words) {
@@ -152,14 +156,14 @@ public final class AswCommandService {
     }
 
     public void showPlayerInfo(CommandSender sender, Player player) {
-        String message = MessageUtils.retrieveMessage(PluginMessages.MESSAGE_ON_PLAYER_INFO)
-                .replace("%player%", player.getName())
-                .replace("%violation%", String.valueOf(ViolationCounter.INSTANCE.getTotalViolationCount(player)));
+        Map<String, String> placeholders = new LinkedHashMap<>();
+        placeholders.put("player", player.getName());
+        placeholders.put("violation", String.valueOf(ViolationCounter.INSTANCE.getTotalViolationCount(player)));
         for (ModuleType moduleType : ModuleType.violationModules()) {
-            String placeholder = "%" + moduleType.name().toLowerCase(Locale.ROOT) + "_violation%";
-            message = message.replace(placeholder, String.valueOf(ViolationCounter.INSTANCE.getViolationCount(player, moduleType)));
+            String placeholder = moduleType.name().toLowerCase(Locale.ROOT) + "_violation";
+            placeholders.put(placeholder, String.valueOf(ViolationCounter.INSTANCE.getViolationCount(player, moduleType)));
         }
-        MessageUtils.sendMessage(sender, message);
+        sendTemplate(sender, PluginMessages.MESSAGE_ON_PLAYER_INFO, placeholders);
     }
 
     public void resetPlayerViolations(CommandSender sender, Player player, ModuleType moduleType) {
@@ -172,10 +176,10 @@ public final class AswCommandService {
                 ViolationCounter.INSTANCE.resetViolationCount(player, moduleType);
             }
         }
-        String message = MessageUtils.retrieveMessage(PluginMessages.MESSAGE_ON_COMMAND_RESET)
-                .replace("%player%", player.getName())
-                .replace("%module%", moduleType == null ? "ALL" : moduleType.name());
-        MessageUtils.sendMessage(sender, message);
+        sendTemplate(sender, PluginMessages.MESSAGE_ON_COMMAND_RESET, Map.of(
+                "player", player.getName(),
+                "module", moduleType == null ? "ALL" : moduleType.name()
+        ));
     }
 
     public void teleportToReportedLocation(CommandSender sender, UUID worldId, double x, double y, double z) {
@@ -204,9 +208,9 @@ public final class AswCommandService {
             return;
         }
 
-        String message = MessageUtils.retrieveMessage(PluginMessages.MESSAGE_ON_COMMAND_PUNISH_SUCCESS)
-                .replace("%player%", player.getName());
-        MessageUtils.sendMessage(sender, message);
+        sendTemplate(sender, PluginMessages.MESSAGE_ON_COMMAND_PUNISH_SUCCESS, Map.of(
+                "player", player.getName()
+        ));
     }
 
     private boolean isInitialized(CommandSender sender) {
@@ -220,6 +224,14 @@ public final class AswCommandService {
     private void sendTemporaryMutationMessage(CommandSender sender, PluginMessages successMessage) {
         MessageUtils.sendMessage(sender, successMessage);
         MessageUtils.sendMessage(sender, PluginMessages.MESSAGE_ON_COMMAND_RUNTIME_ONLY);
+    }
+
+    private static void sendTemplate(
+            CommandSender sender,
+            PluginMessages template,
+            Map<String, String> placeholders
+    ) {
+        MessageUtils.sendTemplate(sender, MessageUtils.retrieveMessage(template), placeholders);
     }
 
     private List<String> toWordList(String[] words) {

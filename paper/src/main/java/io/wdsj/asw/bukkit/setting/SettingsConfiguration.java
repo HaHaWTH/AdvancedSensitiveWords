@@ -119,6 +119,8 @@ public final class SettingsConfiguration {
         public boolean enableEmailCheck = false;
         @Comment("Whether to check URLs.")
         public boolean enableUrlCheck = true;
+        @Comment("Whether to normalize Unicode confusables, emoji letters, dot aliases, and inserted noise before URL checks.")
+        public boolean enableObfuscatedUrlCheck = true;
         @Comment("Whether URLs without an HTTP(S) prefix should be checked.")
         public boolean urlCheckNoPrefix = true;
         @Comment("Whether to check sensitive English words.")

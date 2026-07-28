@@ -68,12 +68,16 @@ class PlayerLoginListener(private val configuration: PaperConfigurationService) 
         TimingUtils.addProcessStatistic(System.currentTimeMillis(), startTime)
 
         if (configuration.get(PluginSettings.NOTICE_OPERATOR)) {
-            val message = MessageUtils.retrieveMessage(PluginMessages.ADMIN_REMINDER)
-                .replace("%player%", playerName)
-                .replace("%type%", ModuleType.NAME.toString())
-                .replace("%message%", playerName)
-                .replace("%censored_list%", censoredWords.toString())
-                .replace("%violation%", "N/A")
+            val message = MessageUtils.deserializeTemplate(
+                MessageUtils.retrieveMessage(PluginMessages.ADMIN_REMINDER),
+                mapOf(
+                    "player" to playerName,
+                    "type" to ModuleType.NAME.toString(),
+                    "message" to playerName,
+                    "censored_list" to censoredWords.toString(),
+                    "violation" to "N/A",
+                ),
+            )
             Notifier.normalNotice(message)
         }
     }

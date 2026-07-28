@@ -5,11 +5,15 @@ import io.wdsj.asw.bukkit.setting.PluginMessages
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextReplacementConfig
 import net.kyori.adventure.text.minimessage.MiniMessage
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.command.CommandSender
 
 object MessageUtils {
+    private const val DYNAMIC_TAG_PREFIX = "asw_dynamic_"
+    private val placeholderName = Regex("[a-z0-9_-]+")
     private val miniMessage: MiniMessage = MiniMessage.miniMessage()
     private val plainTextSerializer: PlainTextComponentSerializer = PlainTextComponentSerializer.plainText()
     private val legacySectionSerializer: LegacyComponentSerializer = LegacyComponentSerializer.legacySection()
@@ -27,6 +31,21 @@ object MessageUtils {
     @JvmStatic
     fun deserialize(message: String): Component {
         return miniMessage.deserialize(message)
+    }
+
+    @JvmStatic
+    fun deserializeTemplate(template: String, placeholders: Map<String, String>): Component {
+        if (placeholders.isEmpty()) return deserialize(template)
+
+        var resolvedTemplate = template
+        val resolvers = TagResolver.builder()
+        placeholders.forEach { (name, value) ->
+            require(placeholderName.matches(name)) { "Invalid message placeholder name: $name" }
+            val tagName = DYNAMIC_TAG_PREFIX + name
+            resolvedTemplate = resolvedTemplate.replace("%$name%", "<$tagName>")
+            resolvers.resolver(Placeholder.unparsed(tagName, value))
+        }
+        return miniMessage.deserialize(resolvedTemplate, resolvers.build())
     }
 
     @JvmStatic
@@ -70,5 +89,10 @@ object MessageUtils {
         if (message.isNotEmpty()) {
             sender.sendMessage(deserialize(message))
         }
+    }
+
+    @JvmStatic
+    fun sendTemplate(sender: CommandSender, template: String, placeholders: Map<String, String>) {
+        sendMessage(sender, deserializeTemplate(template, placeholders))
     }
 }

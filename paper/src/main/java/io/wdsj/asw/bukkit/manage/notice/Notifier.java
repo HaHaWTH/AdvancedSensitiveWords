@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public class Notifier {
     /**
@@ -33,23 +34,25 @@ public class Notifier {
             List<String> censoredList,
             Component notificationInteraction
     ) {
-        Collection<? extends Player> players = Bukkit.getOnlinePlayers();
-        String message = MessageUtils.retrieveMessage(PluginMessages.ADMIN_REMINDER).replace("%player%", violatedPlayer.getName()).replace("%type%", moduleType.toString()).replace("%message%", stripFormatting(originalMessage)).replace("%censored_list%", censoredList.toString()).replace("%violation%", String.valueOf(ViolationCounter.INSTANCE.getViolationCount(violatedPlayer, moduleType)));
-        Component notification = MessageUtils.deserialize(message);
+        Component notification = MessageUtils.deserializeTemplate(
+                MessageUtils.retrieveMessage(PluginMessages.ADMIN_REMINDER),
+                Map.of(
+                        "player", violatedPlayer.getName(),
+                        "type", moduleType.toString(),
+                        "message", stripFormatting(originalMessage),
+                        "censored_list", censoredList.toString(),
+                        "violation", String.valueOf(ViolationCounter.INSTANCE.getViolationCount(violatedPlayer, moduleType))
+                )
+        );
         if (notificationInteraction != null) {
             notification = notification
                     .hoverEvent(notificationInteraction.hoverEvent())
                     .clickEvent(notificationInteraction.clickEvent());
         }
-        for (Player player : players) {
-            if (CachingPermTool.hasPermission(PermissionsEnum.NOTICE, player)) {
-                player.sendMessage(notification);
-            }
-        }
+        normalNotice(notification);
     }
 
-    public static void normalNotice(String message) {
-        if (message.isBlank()) return;
+    public static void normalNotice(Component message) {
         Collection<? extends Player> players = Bukkit.getOnlinePlayers();
         for (Player player : players) {
             if (CachingPermTool.hasPermission(PermissionsEnum.NOTICE, player)) {
@@ -63,12 +66,15 @@ public class Notifier {
             String originalMessage,
             LlmChatModerationResult result
     ) {
-        String message = MessageUtils.retrieveMessage(PluginMessages.AI_OBSERVATION)
-                .replace("%player%", violatedPlayer.getName())
-                .replace("%message%", stripFormatting(originalMessage))
-                .replace("%category%", result.category().wireName())
-                .replace("%confidence%", String.valueOf(result.confidence()));
-        normalNotice(message);
+        normalNotice(MessageUtils.deserializeTemplate(
+                MessageUtils.retrieveMessage(PluginMessages.AI_OBSERVATION),
+                Map.of(
+                        "player", violatedPlayer.getName(),
+                        "message", stripFormatting(originalMessage),
+                        "category", result.category().wireName(),
+                        "confidence", String.valueOf(result.confidence())
+                )
+        ));
     }
 
     /**
@@ -79,13 +85,17 @@ public class Notifier {
      * @param censoredList censored list
      */
     public static void noticeFromProxy(String violatedPlayer, String serverName, String eventType, String violationCount, String originalMessage, String censoredList) {
-        Collection<? extends Player> players = Bukkit.getOnlinePlayers();
-        String message = MessageUtils.retrieveMessage(PluginMessages.ADMIN_REMINDER_PROXY).replace("%player%", violatedPlayer).replace("%type%", eventType).replace("%message%", stripFormatting(originalMessage)).replace("%censored_list%", censoredList).replace("%server_name%", serverName).replace("%violation%", violationCount);
-        for (Player player : players) {
-            if (CachingPermTool.hasPermission(PermissionsEnum.NOTICE, player)) {
-                MessageUtils.sendMessage(player, message);
-            }
-        }
+        normalNotice(MessageUtils.deserializeTemplate(
+                MessageUtils.retrieveMessage(PluginMessages.ADMIN_REMINDER_PROXY),
+                Map.of(
+                        "player", violatedPlayer,
+                        "type", eventType,
+                        "message", stripFormatting(originalMessage),
+                        "censored_list", censoredList,
+                        "server_name", serverName,
+                        "violation", violationCount
+                )
+        ));
     }
 
     public static void noticeAiObservationFromProxy(
@@ -95,13 +105,16 @@ public class Notifier {
             String category,
             String confidence
     ) {
-        String message = MessageUtils.retrieveMessage(PluginMessages.AI_OBSERVATION_PROXY)
-                .replace("%player%", violatedPlayer)
-                .replace("%server_name%", serverName)
-                .replace("%message%", stripFormatting(originalMessage))
-                .replace("%category%", category)
-                .replace("%confidence%", confidence);
-        normalNotice(message);
+        normalNotice(MessageUtils.deserializeTemplate(
+                MessageUtils.retrieveMessage(PluginMessages.AI_OBSERVATION_PROXY),
+                Map.of(
+                        "player", violatedPlayer,
+                        "server_name", serverName,
+                        "message", stripFormatting(originalMessage),
+                        "category", category,
+                        "confidence", confidence
+                )
+        ));
     }
 
     private static String stripFormatting(String message) {

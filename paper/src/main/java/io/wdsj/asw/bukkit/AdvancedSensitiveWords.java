@@ -17,6 +17,7 @@ import com.github.houbb.sensitive.word.support.tag.WordTags;
 import io.wdsj.asw.bukkit.command.AswCommandRegistrar;
 import io.wdsj.asw.bukkit.ai.LlmChatDetectionService;
 import io.wdsj.asw.bukkit.core.condition.WordResultConditionNumMatch;
+import io.wdsj.asw.bukkit.core.network.ObfuscatedUrlDetector;
 import io.wdsj.asw.bukkit.integration.placeholder.ASWExpansion;
 import io.wdsj.asw.bukkit.service.chat.antispam.ChatAntiSpamService;
 import io.wdsj.asw.bukkit.manage.punish.PlayerAltController;
@@ -48,8 +49,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static io.wdsj.asw.bukkit.util.LoggingUtils.purgeLog;
 import static io.wdsj.asw.bukkit.util.TimingUtils.resetStatistics;
@@ -60,6 +63,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
     public static volatile boolean isInitialized = false;
     public static SensitiveWordBs sensitiveWordBs;
     public static SensitiveWordBs networkSensitiveWordBs;
+    public static ObfuscatedUrlDetector obfuscatedUrlDetector;
     public static boolean isAuthMeAvailable;
     public static final String PLUGIN_VERSION = PluginBuildInfo.VERSION;
     private static AdvancedSensitiveWords instance;
@@ -149,6 +153,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         isInitialized = false;
         sensitiveWordBs = null;
         networkSensitiveWordBs = null;
+        obfuscatedUrlDetector = null;
         IWordResultCondition condition = createWordResultCondition();
         getScheduler().runTaskAsynchronously(() -> {
             IWordDeny wordDeny = createWordDeny();
@@ -174,6 +179,12 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
                     .wordFailFast(configurationService.get(PluginSettings.FAIL_FAST))
                     .init();
             networkSensitiveWordBs = createNetworkSensitiveWordBs();
+            if (configurationService.get(PluginSettings.ENABLE_URL_CHECK)
+                    && configurationService.get(PluginSettings.ENABLE_OBFUSCATED_URL_CHECK)) {
+                obfuscatedUrlDetector = new ObfuscatedUrlDetector(
+                        configurationService.get(PluginSettings.URL_CHECK_NO_PREFIX)
+                );
+            }
             isInitialized = true;
         });
     }
@@ -198,6 +209,9 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
             sensitiveWordBs.destroy();
             if (networkSensitiveWordBs != null) {
                 networkSensitiveWordBs.destroy();
+            }
+            if (obfuscatedUrlDetector != null) {
+                obfuscatedUrlDetector.close();
             }
         }
         commandRegistrar = null;
@@ -377,6 +391,12 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         if (networkWordBs != null) {
             results.addAll(networkWordBs.findAll(text));
         }
+        ObfuscatedUrlDetector urlDetector = obfuscatedUrlDetector;
+        if (urlDetector != null) {
+            urlDetector.findAll(text).stream()
+                    .map(IWordResult::word)
+                    .forEach(results::add);
+        }
         return List.copyOf(results);
     }
 
@@ -390,14 +410,68 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
         if (networkWordBs != null) {
             results.addAll(networkWordBs.findAll(text, WordResultHandlers.raw()));
         }
+        ObfuscatedUrlDetector urlDetector = obfuscatedUrlDetector;
+        if (urlDetector != null) {
+            results.addAll(urlDetector.findAll(text));
+        }
         return results;
     }
 
     public static String replaceSensitive(String text) {
+        ObfuscatedUrlDetector urlDetector = obfuscatedUrlDetector;
+        String obfuscatedUrlReplaced = urlDetector == null
+                ? text
+                : replaceMappedResults(text, urlDetector.findAll(text));
         SensitiveWordBs wordBs = sensitiveWordBs;
-        String result = wordBs == null ? text : wordBs.replace(text);
+        String result = wordBs == null ? obfuscatedUrlReplaced : wordBs.replace(obfuscatedUrlReplaced);
         SensitiveWordBs networkWordBs = networkSensitiveWordBs;
         return networkWordBs == null ? result : networkWordBs.replace(result);
+    }
+
+    private static String replaceMappedResults(String text, List<IWordResult> results) {
+        if (results.isEmpty()) {
+            return text;
+        }
+
+        List<IWordResult> selected = results.stream()
+                .sorted(Comparator.comparingInt(IWordResult::startIndex)
+                        .thenComparing(Comparator.comparingInt(IWordResult::endIndex).reversed()))
+                .collect(Collectors.toCollection(ArrayList::new));
+        int cursor = 0;
+        for (int index = 0; index < selected.size(); ) {
+            IWordResult result = selected.get(index);
+            if (result.startIndex() < cursor || result.endIndex() <= result.startIndex()) {
+                selected.remove(index);
+                continue;
+            }
+            cursor = result.endIndex();
+            index++;
+        }
+
+        StringBuilder replaced = new StringBuilder(text);
+        for (int index = selected.size() - 1; index >= 0; index--) {
+            IWordResult result = selected.get(index);
+            int start = result.startIndex();
+            int end = result.endIndex();
+            if (start < 0 || end > text.length()) {
+                continue;
+            }
+            replaced.replace(start, end, replacementFor(text.substring(start, end)));
+        }
+        return replaced.toString();
+    }
+
+    private static String replacementFor(String sensitiveText) {
+        for (String definition : setting(PluginSettings.DEFINED_REPLACEMENT)) {
+            int separator = definition.indexOf('|');
+            if (separator <= 0 || definition.indexOf('|', separator + 1) >= 0) {
+                continue;
+            }
+            if (definition.substring(0, separator).equals(sensitiveText)) {
+                return definition.substring(separator + 1);
+            }
+        }
+        return setting(PluginSettings.REPLACEMENT).repeat(sensitiveText.length());
     }
 
 }

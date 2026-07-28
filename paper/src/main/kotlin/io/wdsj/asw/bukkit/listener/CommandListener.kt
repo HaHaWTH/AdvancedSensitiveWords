@@ -75,11 +75,13 @@ class CommandListener(private val configuration: PaperConfigurationService) : Li
         startTime: Long,
     ) {
         if (options.bool(PlayerOptions.CHAT_SEND_MESSAGE, PluginSettings.CHAT_SEND_MESSAGE)) {
-            MessageUtils.sendMessage(
+            MessageUtils.sendTemplate(
                 player,
-                configuration.message(PluginMessages.MESSAGE_ON_CHAT)
-                    .replace("%integrated_player%", player.name)
-                    .replace("%integrated_message%", originalCommand),
+                configuration.message(PluginMessages.MESSAGE_ON_CHAT),
+                mapOf(
+                    "integrated_player" to player.name,
+                    "integrated_message" to originalCommand,
+                ),
             )
         }
 

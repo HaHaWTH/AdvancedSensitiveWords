@@ -51,6 +51,7 @@ public final class PluginSettings {
     public static final SettingKey<Integer> NUM_CHECK_LEN = key(settings -> settings.plugin.numCheckLen);
     public static final SettingKey<Boolean> ENABLE_EMAIL_CHECK = key(settings -> settings.plugin.enableEmailCheck);
     public static final SettingKey<Boolean> ENABLE_URL_CHECK = key(settings -> settings.plugin.enableUrlCheck);
+    public static final SettingKey<Boolean> ENABLE_OBFUSCATED_URL_CHECK = key(settings -> settings.plugin.enableObfuscatedUrlCheck);
     public static final SettingKey<Boolean> URL_CHECK_NO_PREFIX = key(settings -> settings.plugin.urlCheckNoPrefix);
     public static final SettingKey<Boolean> ENABLE_WORD_CHECK = key(settings -> settings.plugin.enableWordCheck);
     public static final SettingKey<Boolean> ENABLE_IP_CHECK = key(settings -> settings.plugin.enableIpCheck);

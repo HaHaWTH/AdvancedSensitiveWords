@@ -37,10 +37,17 @@ class JoinUpdateNotifier(private val configuration: PaperConfigurationService) :
             } else {
                 result.latestVersion
             }
-            MessageUtils.sendMessage(player,
-                configuration.message(PluginMessages.UPDATE_AVAILABLE)
-                    .replace("%current_version%", if (Updater.isDevChannel()) PluginBuildInfo.COMMIT_HASH_SHORT else AdvancedSensitiveWords.PLUGIN_VERSION)
-                    .replace("%latest_version%", latestVersion)
+            MessageUtils.sendTemplate(
+                player,
+                configuration.message(PluginMessages.UPDATE_AVAILABLE),
+                mapOf(
+                    "current_version" to if (Updater.isDevChannel()) {
+                        PluginBuildInfo.COMMIT_HASH_SHORT
+                    } else {
+                        AdvancedSensitiveWords.PLUGIN_VERSION
+                    },
+                    "latest_version" to latestVersion,
+                ),
             )
         }
     }
