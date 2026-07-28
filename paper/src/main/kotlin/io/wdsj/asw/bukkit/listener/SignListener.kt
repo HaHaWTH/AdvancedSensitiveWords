@@ -21,6 +21,7 @@ import io.wdsj.asw.bukkit.util.context.SignContextEntry
 import io.wdsj.asw.bukkit.util.context.SignContextTarget
 import io.wdsj.asw.bukkit.util.message.MessageUtils
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.TextReplacementConfig
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.NamedTextColor
@@ -56,9 +57,21 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
 
         val startTime = System.currentTimeMillis()
         val lineScan = censorSingleLines(event, player, options)
+        val multiLineViolation = if (lineScan.violation == null || !isCancelMode(options)) {
+            censorMultiLine(event, options)
+        } else {
+            null
+        }
+        val contextViolation = if (
+            !isCancelMode(options) || (lineScan.violation == null && multiLineViolation == null)
+        ) {
+            censorContext(event, player, options)
+        } else {
+            null
+        }
         val violation = lineScan.violation
-            ?: censorMultiLine(event, lineScan, options)
-            ?: censorContext(event, player, options)
+            ?: multiLineViolation
+            ?: contextViolation
             ?: return
 
         if (isCancelMode(options) && !violation.context &&
@@ -111,20 +124,15 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
 
     private fun censorSingleLines(event: SignChangeEvent, player: Player, options: PlayerOptionView): SignLineScan {
         var violation: SignViolation? = null
-        val cleanLineIndexes = mutableListOf<Int>()
-        val cleanLineContent = StringBuilder()
 
         for (lineIndex in event.lines().indices) {
             val originalComponent = event.line(lineIndex) ?: continue
-            val originalMessage = preprocess(MessageUtils.plainText(originalComponent))
+            val scanComponent = preprocess(originalComponent)
+            val originalMessage = MessageUtils.plainText(scanComponent)
             val censoredWords = AdvancedSensitiveWords.findAllSensitive(originalMessage)
             SensitiveFilterEvents.post(event.isAsynchronous, ModuleType.SIGN, player, originalMessage, censoredWords)
 
             if (censoredWords.isEmpty()) {
-                if (originalMessage.trim().isNotEmpty()) {
-                    cleanLineIndexes.add(lineIndex)
-                    cleanLineContent.append(originalMessage)
-                }
                 continue
             }
 
@@ -134,17 +142,25 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
                 continue
             }
             val processedMessage = AdvancedSensitiveWords.replaceSensitive(originalMessage)
-            event.line(lineIndex, MessageUtils.replaceLiteral(originalComponent, originalMessage, processedMessage))
+            event.line(lineIndex, replaceWholeLine(scanComponent, originalMessage, processedMessage))
         }
 
-        return SignLineScan(violation, cleanLineIndexes, cleanLineContent.toString())
+        return SignLineScan(violation)
     }
 
-    private fun censorMultiLine(event: SignChangeEvent, lineScan: SignLineScan, options: PlayerOptionView): SignViolation? {
+    private fun censorMultiLine(event: SignChangeEvent, options: PlayerOptionView): SignViolation? {
         if (!options.bool(PlayerOptions.SIGN_MULTI_LINE_CHECK, PluginSettings.SIGN_MULTI_LINE_CHECK)) return null
-        if (lineScan.cleanLineIndexes.isEmpty()) return null
 
-        val originalContent = lineScan.cleanLineContent
+        val lines = event.lines().indices.mapNotNull { lineIndex ->
+            val component = event.line(lineIndex) ?: return@mapNotNull null
+            val scanComponent = preprocess(component)
+            val content = MessageUtils.plainText(scanComponent)
+            if (content.isBlank()) return@mapNotNull null
+            SignLineContent(lineIndex, scanComponent, content)
+        }
+        if (lines.size < 2) return null
+
+        val originalContent = lines.joinToString("") { it.content }
         val censoredWords = AdvancedSensitiveWords.findAllSensitive(originalContent)
         SensitiveFilterEvents.post(event.isAsynchronous, ModuleType.SIGN, event.player, originalContent, censoredWords)
         if (censoredWords.isEmpty()) return null
@@ -152,9 +168,15 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
         if (isCancelMode(options)) {
             event.isCancelled = true
         } else {
-            val processedMessage = AdvancedSensitiveWords.replaceSensitive(originalContent)
-            for (lineIndex in lineScan.cleanLineIndexes) {
-                event.line(lineIndex, MessageUtils.plainTextComponent(processedMessage))
+            val processedLines = resolveSegmentReplacements(
+                lines.map { it.content.length },
+                originalContent,
+            )
+            lines.forEachIndexed { index, line ->
+                event.line(
+                    line.index,
+                    replaceWholeLine(line.component, line.content, processedLines[index]),
+                )
             }
         }
 
@@ -181,7 +203,7 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
     }
 
     private fun contextEntry(event: SignChangeEvent): SignContextEntry {
-        val lines = event.lines().map { preprocess(MessageUtils.plainText(it)) }
+        val lines = event.lines().map { MessageUtils.plainText(preprocess(it)) }
         return SignContextEntry(
             content = lines.joinToString(""),
             target = SignContextTarget(
@@ -191,7 +213,7 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
                 event.block.z,
                 event.side,
             ),
-            lineLengths = lines.map(String::length),
+            lineContents = lines,
         )
     }
 
@@ -219,37 +241,79 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
         }
     }
 
-    private fun applyEventReplacement(event: SignChangeEvent, entry: SignContextEntry, replacement: String) {
-        splitLines(entry.lineLengths, replacement).forEachIndexed { index, line ->
-            event.line(index, Component.text(line))
+    private fun applyEventReplacement(event: SignChangeEvent, entry: SignContextEntry, replacement: List<String>) {
+        replacement.forEachIndexed { index, line ->
+            val component = preprocess(event.line(index) ?: Component.empty())
+            val originalLine = entry.lineContents.getOrElse(index) { "" }
+            event.line(index, replaceWholeLine(component, originalLine, line))
         }
     }
 
-    private fun scheduleSignMutation(entry: SignContextEntry, replacement: String?) {
+    private fun scheduleSignMutation(entry: SignContextEntry, replacement: List<String>?) {
         val world = Bukkit.getWorld(entry.target.worldId) ?: return
         val location = Location(world, entry.target.x.toDouble(), entry.target.y.toDouble(), entry.target.z.toDouble())
         AdvancedSensitiveWords.getScheduler().runTaskLater(location, Runnable {
             val sign = location.block.state as? Sign ?: return@Runnable
             val signSide = sign.getSide(entry.target.side)
-            val currentContent = (0 until 4).joinToString("") { line ->
-                preprocess(MessageUtils.plainText(signSide.line(line)))
-            }
+            val currentLines = (0 until 4).map { line -> preprocess(signSide.line(line)) }
+            val currentContent = currentLines.joinToString("") { MessageUtils.plainText(it) }
             if (currentContent != entry.content) return@Runnable
 
-            val lines = replacement?.let { splitLines(entry.lineLengths, it) } ?: List(4) { "" }
-            lines.forEachIndexed { index, line -> signSide.line(index, Component.text(line)) }
+            val lines = replacement ?: List(4) { "" }
+            lines.forEachIndexed { index, line ->
+                val component = if (replacement == null) {
+                    Component.empty()
+                } else {
+                    replaceWholeLine(currentLines[index], entry.lineContents[index], line)
+                }
+                signSide.line(index, component)
+            }
             sign.update(false, false)
         }, 1L)
     }
 
+    private fun resolveSegmentReplacements(segmentLengths: List<Int>, context: String): List<String> {
+        return SignTextLayout.replaceSegments(segmentLengths, context, replacementSpans(context))
+    }
+
     private fun resolveContext(entries: List<SignContextEntry>, context: String): ContextResolution {
-        val starts = IntArray(entries.size)
-        for (index in 1 until entries.size) {
-            starts[index] = starts[index - 1] + entries[index - 1].content.length
+        val entryLengths = IntArray(entries.size) { entries[it].content.length }
+        val entryStarts = segmentStarts(entryLengths)
+        val lineReferences = buildList {
+            entries.forEachIndexed { entryIndex, entry ->
+                entry.lineContents.forEachIndexed { lineIndex, content ->
+                    if (content.isNotEmpty()) {
+                        add(ContextLineReference(entryIndex, lineIndex, content))
+                    }
+                }
+            }
+        }
+        val spans = replacementSpans(context)
+        val resolvedLines = SignTextLayout.replaceSegments(
+            lineReferences.map { it.content.length },
+            context,
+            spans,
+        )
+        val replacements = entries.associateWith {
+            MutableList(it.lineContents.size) { "" }
+        }
+        lineReferences.forEachIndexed { index, reference ->
+            replacements.getValue(entries[reference.entryIndex])[reference.lineIndex] = resolvedLines[index]
         }
 
-        val replacements = Array(entries.size) { StringBuilder() }
         val affectedEntries = linkedSetOf<SignContextEntry>()
+        spans.forEach { span ->
+            markAffectedEntries(affectedEntries, entries, entryStarts, span.start, span.end)
+        }
+
+        return ContextResolution(
+            replacements.mapValues { it.value.toList() },
+            affectedEntries,
+        )
+    }
+
+    private fun replacementSpans(context: String): List<SignReplacementSpan> {
+        val spans = mutableListOf<SignReplacementSpan>()
         val results = AdvancedSensitiveWords.findAllSensitiveRaw(context)
             .sortedWith(compareBy<IWordResult> { it.startIndex() }.thenByDescending { it.endIndex() })
         var cursor = 0
@@ -257,43 +321,18 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
             val start = result.startIndex().coerceIn(0, context.length)
             val end = result.endIndex().coerceIn(start, context.length)
             if (start < cursor || start == end) continue
-
-            appendUnchangedContext(replacements, entries, starts, context, cursor, start)
-            replacements[entryIndexAt(starts, start)].append(replacementFor(context, result))
-            markAffectedEntries(affectedEntries, entries, starts, start, end)
+            spans.add(SignReplacementSpan(start, end, replacementFor(context, start, end)))
             cursor = end
         }
-        appendUnchangedContext(replacements, entries, starts, context, cursor, context.length)
-
-        return ContextResolution(
-            entries.indices.associate { index -> entries[index] to replacements[index].toString() },
-            affectedEntries,
-        )
+        return spans
     }
 
-    private fun appendUnchangedContext(
-        replacements: Array<StringBuilder>,
-        entries: List<SignContextEntry>,
-        starts: IntArray,
-        context: String,
-        start: Int,
-        end: Int,
-    ) {
-        var cursor = start
-        while (cursor < end) {
-            val entryIndex = entryIndexAt(starts, cursor)
-            val entryEnd = starts[entryIndex] + entries[entryIndex].content.length
-            val segmentEnd = minOf(end, entryEnd)
-            replacements[entryIndex].append(context, cursor, segmentEnd)
-            cursor = segmentEnd
+    private fun segmentStarts(lengths: IntArray): IntArray {
+        val starts = IntArray(lengths.size)
+        for (index in 1 until lengths.size) {
+            starts[index] = starts[index - 1] + lengths[index - 1]
         }
-    }
-
-    private fun entryIndexAt(starts: IntArray, index: Int): Int {
-        for (entryIndex in starts.indices.reversed()) {
-            if (index >= starts[entryIndex]) return entryIndex
-        }
-        return 0
+        return starts
     }
 
     private fun markAffectedEntries(
@@ -312,8 +351,8 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
         }
     }
 
-    private fun replacementFor(context: String, result: IWordResult): String {
-        val sensitiveWord = context.substring(result.startIndex(), result.endIndex())
+    private fun replacementFor(context: String, start: Int, end: Int): String {
+        val sensitiveWord = context.substring(start, end)
         configuration.get(PluginSettings.DEFINED_REPLACEMENT).forEach { definition ->
             val separator = definition.indexOf('|')
             if (separator <= 0 || definition.indexOf('|', separator + 1) >= 0) return@forEach
@@ -321,27 +360,25 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
                 return definition.substring(separator + 1)
             }
         }
-        return configuration.get(PluginSettings.REPLACEMENT).repeat(result.endIndex() - result.startIndex())
+        return configuration.get(PluginSettings.REPLACEMENT).repeat(end - start)
     }
 
-    private fun splitLines(lineLengths: List<Int>, content: String): List<String> {
-        val lines = MutableList(4) { "" }
-        var offset = 0
-        for (lineIndex in lines.indices) {
-            val expectedLength = lineLengths.getOrElse(lineIndex) { 0 }
-            val end = minOf(content.length, offset + expectedLength)
-            lines[lineIndex] = content.substring(offset, end)
-            offset = end
-        }
-        if (offset < content.length) {
-            lines[3] += content.substring(offset)
-        }
-        return lines
+    private fun replaceWholeLine(component: Component, originalText: String, replacement: String): Component {
+        if (originalText == replacement) return component
+
+        val replaced = MessageUtils.replaceLiteral(component, originalText, replacement)
+        if (MessageUtils.plainText(replaced) == replacement) return replaced
+        return Component.text(replacement).style(component.style())
     }
 
-    private fun preprocess(text: String): String {
-        if (!configuration.get(PluginSettings.PRE_PROCESS)) return text
-        return text.replace(Utils.preProcessRegex.toRegex(), "")
+    private fun preprocess(component: Component): Component {
+        if (!configuration.get(PluginSettings.PRE_PROCESS)) return component
+
+        val replacementConfig = TextReplacementConfig.builder()
+            .match(Utils.preProcessRegex.toPattern())
+            .replacement("")
+            .build()
+        return component.replaceText(replacementConfig)
     }
 
     private fun isCancelMode(options: PlayerOptionView): Boolean {
@@ -350,8 +387,18 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
 
     private data class SignLineScan(
         val violation: SignViolation?,
-        val cleanLineIndexes: List<Int>,
-        val cleanLineContent: String,
+    )
+
+    private data class SignLineContent(
+        val index: Int,
+        val component: Component,
+        val content: String,
+    )
+
+    private data class ContextLineReference(
+        val entryIndex: Int,
+        val lineIndex: Int,
+        val content: String,
     )
 
     private data class SignViolation(
@@ -361,7 +408,7 @@ class SignListener(private val configuration: PaperConfigurationService) : Liste
     )
 
     private data class ContextResolution(
-        val replacements: Map<SignContextEntry, String>,
+        val replacements: Map<SignContextEntry, List<String>>,
         val affectedEntries: Set<SignContextEntry>,
     )
 }

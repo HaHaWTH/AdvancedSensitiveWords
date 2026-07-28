@@ -47,7 +47,7 @@ object SignContext {
 data class SignContextEntry(
     val content: String,
     val target: SignContextTarget,
-    val lineLengths: List<Int>,
+    val lineContents: List<String>,
     val time: Long = System.currentTimeMillis(),
 )
 

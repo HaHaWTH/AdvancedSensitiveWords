@@ -267,7 +267,7 @@ public final class AdvancedSensitiveWords extends JavaPlugin {
             return;
         }
         getScheduler().runTaskAsynchronously(() -> {
-            LOGGER.info("Checking for update...");
+            LOGGER.info("Checking for updates...");
             Updater.UpdateResult result = Updater.checkNow();
             updateResult = result;
             if (result.isUpdateAvailable()) {
