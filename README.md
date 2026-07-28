@@ -4,15 +4,6 @@ AdvancedSensitiveWords is a Paper moderation plugin built around DFA word matchi
 
 > **2.x is a breaking release.** It targets Paper only, uses Gradle with Kotlin DSL, and generates a new kebab-case configuration model. Do not reuse pre-2.0 configuration files without reviewing every setting.
 
-## Requirements
-
-| Component | Requirement                                            |
-| --- |--------------------------------------------------------|
-| Server | Paper 1.21.11                                          |
-| Java | Java 21                                                |
-| Proxy (optional) | Velocity with the matching Velocity jar             |
-| Optional integrations | TrChat, PacketEvents, PlaceholderAPI, floodgate, AuthMe |
-
 Spigot, CraftBukkit, and BungeeCord are not supported since version 2.x.
 
 ## Installation
@@ -24,7 +15,7 @@ Spigot, CraftBukkit, and BungeeCord are not supported since version 2.x.
 
 For Velocity notifications and proxy commands, install the Velocity artifact on the proxy, set `plugin.hook-velocity: true` on Paper, then restart both sides. The proxy module does not filter chat by itself.
 
-## What 2.x Filters
+## Filters
 
 - **Chat and commands**: Paper `AsyncChatEvent`, command preprocessing, cross-message chat context, configurable replacement or cancellation, fake messages on cancellation, and TrChat fake-message/shadowban compatibility.
 - **Books**: event-based writable-book checking, optional cross-page checking in cancel mode, and a bounded cache for processed book content.
@@ -33,7 +24,7 @@ For Velocity notifications and proxy commands, install the Velocity artifact on 
 - **Player names and broadcasts**: login rejection for blocked names and optional broadcast filtering.
 - **Optional LLM chat review**: asynchronous, cost-gated review for messages that did not match DFA or chat context. It is disabled by default and never retracts chat; it can notify, record, increment the separate AI VL, and run configured actions after a validated response.
 
-## Quick Configuration
+## Configuration
 
 Configuration is generated in lower kebab-case. The generated file is the authoritative list of defaults and inline comments.
 
@@ -154,13 +145,7 @@ import java.time.Duration;
 AdvancedSensitiveWordsApi.shadowBan().shadow(player, Duration.ofMinutes(5));
 ```
 
-`AsyncModerationResponseEvent` is fired asynchronously after an LLM response. Event handlers may observe, cancel ASW follow-up, or replace the validated result, but must schedule Bukkit entity/world work themselves.
-
-## Building From Source
-
-```powershell
-.\gradlew.bat --no-daemon build
-```
+`AsyncModerationResponseEvent` is fired asynchronously after an LLM response. Event handlers may observe, cancel ASW follow-up, or replace the validated result.
 
 ## License
 
