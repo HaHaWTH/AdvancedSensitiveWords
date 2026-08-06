@@ -11,7 +11,7 @@ java {
 
 dependencies {
     compileOnly("org.jetbrains:annotations:26.1.0")
-    compileOnly("com.google.code.gson:gson:2.12.1")
+    compileOnly("com.google.code.gson:gson:2.14.0")
     compileOnly("com.google.guava:guava:${property("guavaVersion")}")
 }
 
