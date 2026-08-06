@@ -1,6 +1,6 @@
 plugins {
     `java-base`
-    kotlin("jvm") version "2.2.0" apply false
+    kotlin("jvm") version "2.4.0" apply false
     id("com.gradleup.shadow") version "9.4.2" apply false
     id("com.github.gmazzo.buildconfig") version "6.0.10" apply false
 }
