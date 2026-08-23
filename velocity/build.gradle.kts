@@ -13,7 +13,7 @@ java {
 
 dependencies {
     implementation(project(":common"))
-    implementation("org.bstats:bstats-velocity:3.1.0")
+    implementation("org.bstats:bstats-velocity:3.2.1")
     implementation("com.github.thatsmusic99:ConfigurationMaster-API:v2.0.0-rc.3")
     implementation("org.java-websocket:Java-WebSocket:${property("javaWebSocketVersion")}")
 
