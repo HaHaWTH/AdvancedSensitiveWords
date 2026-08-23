@@ -19,7 +19,7 @@ dependencies {
 
     compileOnly("com.velocitypowered:velocity-api:3.5.0-SNAPSHOT")
     compileOnly("com.google.guava:guava:33.4.0-jre")
-    compileOnly("com.google.code.gson:gson:2.12.1")
+    compileOnly("com.google.code.gson:gson:2.14.0")
     annotationProcessor("com.velocitypowered:velocity-api:3.5.0-SNAPSHOT")
 }
 
